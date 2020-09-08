@@ -24,7 +24,10 @@ $ npm run build-ts
 ```
 
 ### Link as node_module
-If your dApp is using ***node_modules*** for dependencies, call the following command from your dApp's main folder.
+If your dApp is using ***node_modules*** for dependencies, call the following command from your dApp's main folder. 
+
+Make sure that your dApp preserves *symbolic links* (symlink) as below command creates one inside your *node_modules* folder. 
+
 ```sh
 $ npm link ../path/to/iam-client-lib/
 ```
