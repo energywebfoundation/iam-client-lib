@@ -34,7 +34,7 @@ $ npm link ../path/to/iam-client-lib/
 
 The `iam-client-lib` folder must now exist in your *node_modules* folder.
 
-### Sample Import 
+### Sample Import (TypeScript)
 ```sh
 import { IAM } from 'iam-client-lib';
 
