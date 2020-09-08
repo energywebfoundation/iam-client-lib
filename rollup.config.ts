@@ -5,7 +5,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 
 const pkg = require('./package.json');
-const libraryName = 'switchboard-iam-library';
+const libraryName = 'iam-client-lib';
 
 export default {
     input: `src/${libraryName}.ts`,

@@ -1,10 +1,10 @@
 {
-  "name": "switchboard-iam-library",
+  "name": "iam-client-lib",
   "version": "1.0.0",
   "description": "Library for Decentralized Identity and Access Management",
-  "main": "dist/switchboard-iam-library.umd.js",
-  "module": "dist/switchboard-iam-library.es5.js",
-  "types": "dist/types/switchboard-iam-library.d.ts",
+  "main": "dist/iam-client-lib.umd.js",
+  "module": "dist/iam-client-lib.es5.js",
+  "types": "dist/types/iam-client-lib.d.ts",
   "files": [
     "dist"
   ],
