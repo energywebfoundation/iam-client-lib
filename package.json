@@ -1,0 +1,89 @@
+{
+  "name": "switchboard-iam-library",
+  "version": "1.0.0",
+  "description": "Library for Decentralized Identity and Access Management",
+  "main": "dist/switchboard-iam-library.umd.js",
+  "module": "dist/switchboard-iam-library.es5.js",
+  "types": "dist/types/switchboard-iam-library.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
+    "prebuild-ts": "rimraf dist docs",
+    "build-ts": "tsc --module commonjs && rollup -c rollup.config.ts && tsc -d --emitDeclarationOnly --declarationDir dist/types && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "postbuild-ts": "rimraf ./src/**/*.js*",
+    "start": "rollup -c rollup.config.ts -w",
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watch",
+    "test:prod": "npm run lint && npm run test -- --no-cache"
+  },
+  "keywords": [
+    "decentralized",
+    "identity",
+    "access",
+    "library",
+    "energy web",
+    "iam",
+    "switchboard"
+  ],
+  "author": "Kim Honoridez <kim.energyweb@gmail.com> (https://github.com/kim-energyweb)",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "engines": {
+    "node": ">= 10.0.0",
+    "npm": ">= 6.0.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    },
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ]
+  },
+  "dependencies": {
+    "web3": "^1.2.11"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-typescript": "^5.0.2",
+    "@types/jest": "^26.0.13",
+    "@types/node": "^14.6.4",
+    "@types/web3": "^1.2.2",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "coveralls": "^3.1.0",
+    "eslint": "^7.8.1",
+    "ganache-cli": "^6.10.1",
+    "jest": "^26.4.2",
+    "jest-config": "^26.4.2",
+    "lodash.camelcase": "^4.3.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.26.10",
+    "ts-jest": "^26.3.0",
+    "typedoc": "^0.19.1",
+    "typescript": "^4.0.2"
+  }
+}
