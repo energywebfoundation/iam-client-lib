@@ -5,7 +5,7 @@ Authentication and Authorisation Library for Decentralised Front-end Application
  - [Kim Honoridez](https://github.com/kim-energyweb>)
 
 ## Getting Started
-For development purposes, please follow the following steps to integrate the library with your dApps.
+For development purposes, please follow below steps to integrate the library with your dApps.
 
 ### Prerequisites
 `iam-client-lib` is written in TypeScript. Make sure to have Node.js (>= v10) installed.
