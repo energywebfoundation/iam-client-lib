@@ -21,34 +21,26 @@ import { EnrolmentFormData } from './models/enrolment-form-data';
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM {
-    private _orgKey: string | undefined;
-
-    private _contract: any | undefined;
-    private _contractAddress: string | undefined;
-
-    private _web3: Web3 | undefined;
-
+    private _web3: (Web3 | undefined);
+    private _contractAddress: (string | undefined);
     private _did: any;
 
     /**
      * IAM Constructor
      * 
-     * @param orgKey Organization's unique identification
      * @param web3 Web3 object
      * @param address Smart Contract Address
      */
-    public constructor(orgKey: string, web3: Web3, address?: string) {
-        // Make sure that organization key is provided
-        if (!orgKey || !orgKey.trim()) {
-            throw new Error("[IAM] Organization Key is required.");
-        }
-
-        this._orgKey            = orgKey.trim();
+    public constructor(web3: Web3, address?: string) {
         this._web3              = web3;
 
-        // If contract address is not provided, use default
+        // If contract address is not provided, use default (as may be provided in a config file)
         this._contractAddress   = address ? address.trim() : address;
     }
+
+    // TODO:
+    // Below should contain public and private methods related to IAM.
+    // Currently, below methods are dummy methods.
 
     hello() {
         console.log('hello');
@@ -69,7 +61,7 @@ export class IAM {
         return isLoggedIn; // TODO: Should return a promise
     }
 
-    async login(): Promise<Object> {
+    async login(orgKey: string, appId: string): Promise<Object> {
         let userData = new Object();
 
         // TODO: Login here and retrieve user data including roles
