@@ -26,7 +26,7 @@ export class EnrolmentFormData {
     meteringId: (string | undefined);
     emailAddress: (string | undefined);
 
-    public EnrolmentFormData(orgKey: string,
+    constructor(orgKey: string,
         appId: string,
         roleId: string,
         firstName: string,
@@ -59,7 +59,7 @@ export class EnrolmentFormData {
 
     /**
      * Checks the validity of the Enrolment Form Data
-     * 
+     *
      * @param orgKey Organization's unique identifier
      * @param appId Application ID under the orgKey
      * @param roleId Role ID
@@ -67,7 +67,7 @@ export class EnrolmentFormData {
      * @param lastName Last Name
      * @param meteringId Metering ID
      * @param emailAddress Email Address
-     * 
+     *
      * @returns true | false
      */
     private isValidFormData(orgKey: string,

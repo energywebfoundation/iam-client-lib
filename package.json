@@ -2,18 +2,17 @@
   "name": "iam-client-lib",
   "version": "1.0.0",
   "description": "Library for Decentralized Identity and Access Management",
-  "main": "dist/iam-client-lib.umd.js",
-  "module": "dist/iam-client-lib.es5.js",
-  "types": "dist/types/iam-client-lib.d.ts",
+  "main": "dist/iam-client-lib.js",
+  "module": "dist/iam-client-lib.esm.js",
+  "types": "dist/src/iam-client-lib.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
-    "prebuild-ts": "rimraf dist docs",
-    "build-ts": "tsc --module commonjs && rollup -c rollup.config.ts && tsc -d --emitDeclarationOnly --declarationDir dist/types && typedoc --out docs --target es6 --theme minimal --mode file src",
-    "postbuild-ts": "rimraf ./src/**/*.js*",
-    "start": "rollup -c rollup.config.ts -w",
+    "prebuild": "rimraf dist docs",
+    "build": "bili && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "prepare": "npm run build",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache"
@@ -62,26 +61,22 @@
     ]
   },
   "dependencies": {
+    "@walletconnect/web3-provider": "^1.2.2",
+    "ethers": "^4.0.45",
     "web3": "^1.2.11"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^15.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
-    "@rollup/plugin-typescript": "^5.0.2",
     "@types/jest": "^26.0.13",
-    "@types/node": "^14.6.4",
     "@types/web3": "^1.2.2",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
+    "bili": "^5.0.5",
     "coveralls": "^3.1.0",
     "eslint": "^7.8.1",
-    "ganache-cli": "^6.10.1",
     "jest": "^26.4.2",
     "jest-config": "^26.4.2",
-    "lodash.camelcase": "^4.3.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.26.10",
+    "rollup-plugin-typescript2": "^0.27.2",
     "ts-jest": "^26.3.0",
     "typedoc": "^0.19.1",
     "typescript": "^4.0.2"

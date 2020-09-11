@@ -20,7 +20,7 @@ $ npm install
 ### Compile & Build
 To generate bundled JS files and types, use the following command. Generated files are located in the ***dist*** folder.
 ```sh
-$ npm run build-ts
+$ npm run build
 ```
 
 ### Link as node_module
@@ -31,8 +31,16 @@ Make sure that your dApp preserves *symbolic links* (symlink) as below command c
 ```sh
 $ npm link ../path/to/iam-client-lib/
 ```
-
 The `iam-client-lib` folder must now exist in your *node_modules* folder.
+
+### Add library as a dependency
+
+You can add this library as a dependency
+
+```sh
+$ npm i https://github.com/energywebfoundation/iam-client-lib.git#branch_name
+```
+
 
 ### Sample Import (TypeScript)
 ```sh
@@ -41,14 +49,23 @@ import { IAM } from 'iam-client-lib';
 export class Sample {
     private _iam: IAM;
 
+
     constructor() {
-        this._iam = new IAM(/* args here */);
+      // create IAM instance with provided rpc URL
+        this._iam = new IAM({
+          rpcUrl: 'https://volta-rpc.energyweb.org/',
+          chainId: 73799
+        });
     }
 
-    callIAMHello() {
-        this._iam.hello();
+    async initializeIAM() {
+      // this will show connection modal and authenticate
+      const { did, connected } = await this._iam.initializeConnection();
+
+      // after successfully authentication you can retrieve the signer
+      const signer = this._iam.getSigner();
     }
-}
+
 ```
 
 

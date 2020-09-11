@@ -5,7 +5,7 @@ node_js:
 
 install:
   - npm install
-  - npm run build-ts --prod
+  - npm run build --prod
 
 script:
   - echo "skipping tests"

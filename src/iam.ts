@@ -14,82 +14,174 @@
 //
 // @authors: Kim Honoridez
 
-import Web3 from 'web3';
-import { EnrolmentFormData } from './models/enrolment-form-data';
+import WalletConnectProvider from "@walletconnect/web3-provider";
+
+import { providers } from "ethers";
+import { EnrolmentFormData } from "./models/enrolment-form-data";
+
+type ConnectionOptions = {
+  rpcUrl: string;
+  chainId?: number;
+  infuraId?: string;
+};
+
+type InitializeData = {
+  did: string | undefined;
+  connected: boolean;
+  userClosedModal: boolean;
+};
 
 /**
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM {
-    private _web3: (Web3 | undefined);
-    private _contractAddress: (string | undefined);
-    private _did: any;
+  private _did: string | undefined;
+  private _provider: providers.Web3Provider | undefined;
+  private _walletConnectProvider: WalletConnectProvider;
+  private _address: string | undefined;
+  private _signer: providers.JsonRpcSigner | undefined;
 
-    /**
-     * IAM Constructor
-     * 
-     * @param web3 Web3 object
-     * @param address Smart Contract Address
-     */
-    public constructor(web3: Web3, address?: string) {
-        this._web3              = web3;
+  /**
+   * IAM Constructor
+   *
+   * @param opts connection options to connect with wallet connect
+   */
+  public constructor({ rpcUrl, chainId = 1, infuraId }: ConnectionOptions) {
+    this._walletConnectProvider = new WalletConnectProvider({
+      rpc: {
+        [chainId]: rpcUrl,
+      },
+      infuraId,
+    });
+  }
 
-        // If contract address is not provided, use default (as may be provided in a config file)
-        this._contractAddress   = address ? address.trim() : address;
+  // INITIAL
+
+  private async init() {
+    await this._walletConnectProvider.enable();
+    this._provider = new providers.Web3Provider(this._walletConnectProvider);
+    this.setAddress();
+    this.setSigner();
+    this.setDid();
+  }
+
+  // SETTERS
+
+  private setAddress() {
+    this._address = this._walletConnectProvider.accounts[0];
+  }
+
+  private setSigner() {
+    this._signer = this._provider?.getSigner();
+  }
+
+  private setDid(): void {
+    this._did = `did:etc:${this._address}`;
+  }
+
+
+  // GETTERS
+
+  /**
+   * Get DID
+   *
+   * @returns did string if connected to wallet, if not returns undefined
+   */
+
+  getDid(): string | undefined {
+    return this._did;
+  }
+
+  /**
+   * Get signer
+   *
+   * @returns JsonRpcSigner if connected to wallet, if not returns undefined
+   */
+
+  getSigner(): providers.JsonRpcSigner | undefined {
+    return this._signer;
+  }
+
+  // CONNECTION
+
+  /**
+   * Initialize connection to wallet
+   * @description creates web3 provider and establishes secure connection to selected wallet
+   * @summary if not connected to wallet will show connection modal, but if already connected (data stored in localStorage) will only return initial data without showing modal
+   * @requires needs to be called before any of other methods
+   *
+   * @returns did string, status of connection and info if the user closed the wallet selection modal
+   */
+  async initializeConnection(): Promise<InitializeData> {
+    try {
+      await this.init();
+    } catch (err) {
+      return {
+        did: undefined,
+        connected: false,
+        userClosedModal: true,
+      };
     }
 
-    // TODO:
-    // Below should contain public and private methods related to IAM.
-    // Currently, below methods are dummy methods.
+    return {
+      did: this.getDid(),
+      connected: this.isConnected() || false,
+      userClosedModal: false,
+    };
+  }
 
-    hello() {
-        console.log('hello');
-    }
+  /**
+   * Close connection to wallet
+   * @description closes the connection between dApp and the wallet
+   *
+   */
 
-    async getOrgRoles(orgKey: string): Promise<Array<Object>> {
+  async closeConnection() {
+    await this._walletConnectProvider.close();
+    this._did = undefined;
+    this._address = undefined;
+    this._signer = undefined;
+  }
 
-        // TODO: Retrieve roles based on organization key
+  /**
+   * isConnected
+   *
+   * @returns info if the connection is already established
+   *
+   */
+  isConnected(): boolean {
+    return this._walletConnectProvider.connected;
+  }
 
-        return [];
-    }
+  // TODO:
+  // Below should contain public and private methods related to IAM.
+  // Currently, below methods are dummy methods.
 
-    async isLoggedIn(): Promise<boolean> {
-        let isLoggedIn = false; 
+  async getOrgRoles(orgKey: string): Promise<Array<Record<string, unknown>>> {
+    // TODO: Retrieve roles based on organization key
 
-        // TODO: Check if user is logged in
+    return [{[orgKey]: orgKey}];
+  }
 
-        return isLoggedIn; // TODO: Should return a promise
-    }
+  async enrol(data: EnrolmentFormData): Promise<Record<string, unknown>> {
+    const enrolmentStatus = {
+      ...data
+    };
 
-    async login(orgKey: string, appId: string): Promise<Object> {
-        let userData = new Object();
+    // TODO: Enrol here (Generate DID, etc)
 
-        // TODO: Login here and retrieve user data including roles
+    return enrolmentStatus;
+  }
 
-        return userData;
-    }
+  async getEnrolmentStatus(): Promise<Record<string, unknown>> {
+    const enrolmentStatus = {};
 
-    async enrol(data: EnrolmentFormData): Promise<Object> {
-        let enrolmentStatus = new Object();
+    // TODO: Get Enrolment Status here
 
-        // TODO: Enrol here (Generate DID, etc)
+    return enrolmentStatus;
+  }
 
-        return enrolmentStatus;
-    }
-
-    async getEnrolmentstatus(): Promise<Object> {
-        let enrolmentStatus = new Object();
-
-        // TODO: Get Enrolment Status here
-
-        return enrolmentStatus;
-    }
-
-    private generateDID() {
-
-    }
-
-    public getIdentities() {
-
-    }
+  public getIdentities() {
+    return null;
+  }
 }
