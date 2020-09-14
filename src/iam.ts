@@ -48,7 +48,11 @@ export class IAM {
   /**
    * IAM Constructor
    *
-   * @param opts connection options to connect with wallet connect
+   * @param {object} options connection options to connect with wallet connect
+   * @param {string} options.rpcUrl url to the ethereum network
+   * @param {number} options.chainID id of chain, default = 1
+   * @param {number} options.infuraId id of infura network, default = undefined
+   *
    */
   public constructor({ rpcUrl, chainId = 1, infuraId }: ConnectionOptions) {
     this._walletConnectProvider = new WalletConnectProvider({
@@ -62,7 +66,7 @@ export class IAM {
         uriOrInfo: rpcUrl,
         type: ProviderTypes.HTTP,
       },
-      abi: abi1056 as any,
+      abi: abi1056,
       address: address1056,
       method: Methods.Erc1056,
     });
@@ -91,7 +95,6 @@ export class IAM {
   private setDid(): void {
     this._did = `did:etc:${this._address}`;
   }
-
 
   // GETTERS
 
@@ -166,6 +169,14 @@ export class IAM {
     return this._walletConnectProvider.connected;
   }
 
+  // DID DOCUMENT
+
+  /**
+   * getDidDocument
+   *
+   * @returns whole did document if connected, if not returns null
+   *
+   */
   async getDidDocument() {
     if (this._did) {
       return this._resolver.read(this._did);
@@ -180,12 +191,12 @@ export class IAM {
   async getOrgRoles(orgKey: string): Promise<Array<Record<string, unknown>>> {
     // TODO: Retrieve roles based on organization key
 
-    return [{[orgKey]: orgKey}];
+    return [{ [orgKey]: orgKey }];
   }
 
   async enrol(data: EnrolmentFormData): Promise<Record<string, unknown>> {
     const enrolmentStatus = {
-      ...data
+      ...data,
     };
 
     // TODO: Enrol here (Generate DID, etc)
