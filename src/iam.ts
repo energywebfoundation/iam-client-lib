@@ -15,9 +15,12 @@
 // @authors: Kim Honoridez
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
-
 import { providers } from "ethers";
+import { abi1056, address1056, Resolver } from "@ew-did-registry/did-ethr-resolver";
+
 import { EnrolmentFormData } from "./models/enrolment-form-data";
+import { ProviderTypes } from "@ew-did-registry/did-resolver-interface";
+import { Methods } from "@ew-did-registry/did";
 
 type ConnectionOptions = {
   rpcUrl: string;
@@ -40,6 +43,7 @@ export class IAM {
   private _walletConnectProvider: WalletConnectProvider;
   private _address: string | undefined;
   private _signer: providers.JsonRpcSigner | undefined;
+  private _resolver: Resolver;
 
   /**
    * IAM Constructor
@@ -52,6 +56,15 @@ export class IAM {
         [chainId]: rpcUrl,
       },
       infuraId,
+    });
+    this._resolver = new Resolver({
+      provider: {
+        uriOrInfo: rpcUrl,
+        type: ProviderTypes.HTTP,
+      },
+      abi: abi1056 as any,
+      address: address1056,
+      method: Methods.Erc1056,
     });
   }
 
@@ -151,6 +164,13 @@ export class IAM {
    */
   isConnected(): boolean {
     return this._walletConnectProvider.connected;
+  }
+
+  async getDidDocument() {
+    if (this._did) {
+      return this._resolver.read(this._did);
+    }
+    return null;
   }
 
   // TODO:
