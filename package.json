@@ -65,6 +65,7 @@
     "@ew-did-registry/did-document": "0.0.1-alpha.573.0",
     "@ew-did-registry/did-ethr-resolver": "0.0.1-alpha.573.0",
     "@ew-did-registry/did-resolver-interface": "0.0.1-alpha.573.0",
+    "@ew-did-registry/keys": "0.0.1-alpha.573.0",
     "@walletconnect/web3-provider": "^1.2.2",
     "ethers": "^4.0.45",
     "web3": "^1.2.11"
