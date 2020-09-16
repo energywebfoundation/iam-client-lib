@@ -15,9 +15,12 @@
 // @authors: Kim Honoridez
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
-
 import { providers } from "ethers";
+import { abi1056, address1056, Resolver } from "@ew-did-registry/did-ethr-resolver";
+
 import { EnrolmentFormData } from "./models/enrolment-form-data";
+import { ProviderTypes } from "@ew-did-registry/did-resolver-interface";
+import { Methods } from "@ew-did-registry/did";
 
 type ConnectionOptions = {
   rpcUrl: string;
@@ -40,11 +43,16 @@ export class IAM {
   private _walletConnectProvider: WalletConnectProvider;
   private _address: string | undefined;
   private _signer: providers.JsonRpcSigner | undefined;
+  private _resolver: Resolver;
 
   /**
    * IAM Constructor
    *
-   * @param opts connection options to connect with wallet connect
+   * @param {object} options connection options to connect with wallet connect
+   * @param {string} options.rpcUrl url to the ethereum network
+   * @param {number} options.chainID id of chain, default = 1
+   * @param {number} options.infuraId id of infura network, default = undefined
+   *
    */
   public constructor({ rpcUrl, chainId = 1, infuraId }: ConnectionOptions) {
     this._walletConnectProvider = new WalletConnectProvider({
@@ -52,6 +60,15 @@ export class IAM {
         [chainId]: rpcUrl,
       },
       infuraId,
+    });
+    this._resolver = new Resolver({
+      provider: {
+        uriOrInfo: rpcUrl,
+        type: ProviderTypes.HTTP,
+      },
+      abi: abi1056,
+      address: address1056,
+      method: Methods.Erc1056,
     });
   }
 
@@ -78,7 +95,6 @@ export class IAM {
   private setDid(): void {
     this._did = `did:etc:${this._address}`;
   }
-
 
   // GETTERS
 
@@ -153,6 +169,21 @@ export class IAM {
     return this._walletConnectProvider.connected;
   }
 
+  // DID DOCUMENT
+
+  /**
+   * getDidDocument
+   *
+   * @returns whole did document if connected, if not returns null
+   *
+   */
+  async getDidDocument() {
+    if (this._did) {
+      return this._resolver.read(this._did);
+    }
+    return null;
+  }
+
   // TODO:
   // Below should contain public and private methods related to IAM.
   // Currently, below methods are dummy methods.
@@ -160,12 +191,12 @@ export class IAM {
   async getOrgRoles(orgKey: string): Promise<Array<Record<string, unknown>>> {
     // TODO: Retrieve roles based on organization key
 
-    return [{[orgKey]: orgKey}];
+    return [{ [orgKey]: orgKey }];
   }
 
   async enrol(data: EnrolmentFormData): Promise<Record<string, unknown>> {
     const enrolmentStatus = {
-      ...data
+      ...data,
     };
 
     // TODO: Enrol here (Generate DID, etc)
