@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "iam-client-lib": "git+https://github.com/energywebfoundation/iam-client-lib.git#feat/MYEN-73-boilerplate",
+    "iam-client-lib": "git+https://github.com/energywebfoundation/iam-client-lib.git#develop",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11"
   },

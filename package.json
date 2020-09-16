@@ -1,0 +1,84 @@
+{
+  "name": "iam-client-lib",
+  "version": "1.0.0",
+  "description": "Library for Decentralized Identity and Access Management",
+  "main": "dist/iam-client-lib.js",
+  "module": "dist/iam-client-lib.esm.js",
+  "types": "dist/src/iam-client-lib.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
+    "prebuild": "rimraf dist docs",
+    "build": "bili && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "prepare": "npm run build",
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watch",
+    "test:prod": "npm run lint && npm run test -- --no-cache"
+  },
+  "keywords": [
+    "decentralized",
+    "identity",
+    "access",
+    "library",
+    "energy web",
+    "iam",
+    "switchboard"
+  ],
+  "author": "Kim Honoridez <kim.energyweb@gmail.com> (https://github.com/kim-energyweb)",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "engines": {
+    "node": ">= 10.0.0",
+    "npm": ">= 6.0.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    },
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ]
+  },
+  "dependencies": {
+    "@walletconnect/web3-provider": "^1.2.2",
+    "ethers": "^4.0.45",
+    "web3": "^1.2.11"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.13",
+    "@types/web3": "^1.2.2",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "bili": "^5.0.5",
+    "coveralls": "^3.1.0",
+    "eslint": "^7.8.1",
+    "jest": "^26.4.2",
+    "jest-config": "^26.4.2",
+    "rimraf": "^3.0.2",
+    "rollup-plugin-typescript2": "^0.27.2",
+    "ts-jest": "^26.3.0",
+    "typedoc": "^0.19.1",
+    "typescript": "^4.0.2"
+  }
+}

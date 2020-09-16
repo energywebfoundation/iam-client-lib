@@ -10,7 +10,7 @@
     "@types/node": "^12.12.57",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
-    "iam-client-lib": "git+https://github.com/energywebfoundation/iam-client-lib.git#feat/MYEN-73-boilerplate",
+    "iam-client-lib": "git+https://github.com/energywebfoundation/iam-client-lib.git#develop",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",
