@@ -16,6 +16,12 @@
 
 import { IAM } from "./iam";
 import { EnrolmentFormData } from "./models/enrolment-form-data";
+import {
+  DIDAttribute,
+  Encoding,
+  Algorithms,
+  PubKeyType
+} from "@ew-did-registry/did-resolver-interface";
 
 // MAIN
 export { IAM };
@@ -23,4 +29,6 @@ export { IAM };
 // MODELS
 export { EnrolmentFormData };
 
-// WRAPPERS
+// ENUMS
+
+export { DIDAttribute, Encoding, Algorithms, PubKeyType};

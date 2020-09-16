@@ -16,11 +16,18 @@
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers } from "ethers";
-import { abi1056, address1056, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 
 import { EnrolmentFormData } from "./models/enrolment-form-data";
-import { ProviderTypes } from "@ew-did-registry/did-resolver-interface";
+import {
+  DIDAttribute,
+  IResolverSettings,
+  IUpdateData,
+  ProviderTypes,
+} from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
+import { DIDDocumentFull } from "@ew-did-registry/did-document";
+import { Keys } from "@ew-did-registry/keys";
 
 type ConnectionOptions = {
   rpcUrl: string;
@@ -34,6 +41,7 @@ type InitializeData = {
   userClosedModal: boolean;
 };
 
+
 /**
  * Decentralized Identity and Access Management (IAM) Type
  */
@@ -43,7 +51,9 @@ export class IAM {
   private _walletConnectProvider: WalletConnectProvider;
   private _address: string | undefined;
   private _signer: providers.JsonRpcSigner | undefined;
-  private _resolver: Resolver;
+  private _resolverSetting: IResolverSettings;
+  private _resolver: Resolver | undefined;
+  private _document: DIDDocumentFull | undefined;
 
   /**
    * IAM Constructor
@@ -61,7 +71,7 @@ export class IAM {
       },
       infuraId,
     });
-    this._resolver = new Resolver({
+    this._resolverSetting = {
       provider: {
         uriOrInfo: rpcUrl,
         type: ProviderTypes.HTTP,
@@ -69,7 +79,7 @@ export class IAM {
       abi: abi1056,
       address: address1056,
       method: Methods.Erc1056,
-    });
+    };
   }
 
   // INITIAL
@@ -78,11 +88,11 @@ export class IAM {
     await this._walletConnectProvider.enable();
     this._provider = new providers.Web3Provider(this._walletConnectProvider);
     this.setAddress();
+    this.setResolver();
     this.setSigner();
     this.setDid();
+    await this.setDocument();
   }
-
-  // SETTERS
 
   private setAddress() {
     this._address = this._walletConnectProvider.accounts[0];
@@ -92,8 +102,23 @@ export class IAM {
     this._signer = this._provider?.getSigner();
   }
 
-  private setDid(): void {
+  private setResolver() {
+    this._resolver = new Resolver(this._resolverSetting);
+  }
+
+  private setDid() {
     this._did = `did:etc:${this._address}`;
+  }
+
+  private async setDocument() {
+    if (this._did) {
+      const document = new DIDDocumentFull(
+        this._did,
+        new Operator(new Keys(), this._resolverSetting)
+      );
+      await document.create();
+      this._document = document;
+    }
   }
 
   // GETTERS
@@ -178,10 +203,33 @@ export class IAM {
    *
    */
   async getDidDocument() {
-    if (this._did) {
+    if (this._did && this._resolver) {
       return this._resolver.read(this._did);
     }
     return null;
+  }
+
+  /**
+   * updateDidDocument
+   *
+   * @description updates did document based on data provided
+   * @returns info if did document was updated
+   *
+   */
+  async updateDidDocument({
+    didAttribute,
+    data,
+    validity,
+  }: {
+    didAttribute: DIDAttribute;
+    data: IUpdateData;
+    validity?: number;
+  }) {
+    if (this._document) {
+      const updated = await this._document.update(didAttribute, data, validity);
+      return updated;
+    }
+    return false;
   }
 
   // TODO:
