@@ -21,6 +21,7 @@ import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-e
 import { EnrolmentFormData } from "./models/enrolment-form-data";
 import {
   DIDAttribute,
+  IDIDDocument,
   IResolverSettings,
   IUpdateData,
   ProviderTypes,
@@ -202,7 +203,7 @@ export class IAM {
    * @returns whole did document if connected, if not returns null
    *
    */
-  async getDidDocument() {
+  async getDidDocument(): Promise<IDIDDocument | null> {
     if (this._did && this._resolver) {
       return this._resolver.read(this._did);
     }
@@ -224,10 +225,24 @@ export class IAM {
     didAttribute: DIDAttribute;
     data: IUpdateData;
     validity?: number;
-  }) {
+  }): Promise<boolean> {
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
       return updated;
+    }
+    return false;
+  }
+
+  /**
+   * revokeDidDocument
+   *
+   * @description revokes did document
+   * @returns information (true/false) if the DID document was revoked
+   *
+   */
+  async revokeDidDocument(): Promise<boolean> {
+    if (this._document) {
+      return this._document.deactivate();
     }
     return false;
   }
