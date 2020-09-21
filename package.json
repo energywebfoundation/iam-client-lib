@@ -11,7 +11,12 @@
   "scripts": {
     "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
     "prebuild": "rimraf dist docs",
-    "build": "bili && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build": "npm run build:contracts && npm run build:ts",
+    "build:ts": "bili",
+    "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build:contracts": "npm run build:typechain:registry && npm run build:typechain:resolver",
+    "build:typechain:registry": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json'",
+    "build:typechain:resolver": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/resolver/build/contracts/PublicResolver.json'",
     "prepare": "npm run build",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
@@ -61,18 +66,21 @@
     ]
   },
   "dependencies": {
+    "@ensdomains/ens": "^0.4.5",
+    "@ensdomains/resolver": "^0.2.4",
     "@ew-did-registry/did": "0.0.1-alpha.573.0",
     "@ew-did-registry/did-document": "0.0.1-alpha.573.0",
     "@ew-did-registry/did-ethr-resolver": "0.0.1-alpha.573.0",
     "@ew-did-registry/did-resolver-interface": "0.0.1-alpha.573.0",
     "@ew-did-registry/keys": "0.0.1-alpha.573.0",
     "@walletconnect/web3-provider": "^1.2.2",
-    "ethers": "^4.0.45",
-    "web3": "^1.2.11"
+    "eth-ens-namehash": "^2.0.8",
+    "ethers": "^4.0.48",
+    "js-sha3": "^0.8.0"
   },
   "devDependencies": {
+    "@typechain/ethers-v4": "^1.0.1",
     "@types/jest": "^26.0.13",
-    "@types/web3": "^1.2.2",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "bili": "^5.0.5",
@@ -83,6 +91,7 @@
     "rimraf": "^3.0.2",
     "rollup-plugin-typescript2": "^0.27.2",
     "ts-jest": "^26.3.0",
+    "typechain": "^2.0.0",
     "typedoc": "^0.19.1",
     "typescript": "^4.0.2"
   }

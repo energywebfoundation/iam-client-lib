@@ -34,6 +34,7 @@
     "target": "es5",
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "ethers/**/*"
   ]
 }

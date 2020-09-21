@@ -4,7 +4,7 @@ const config: Config = {
   plugins: {
     typescript2: {
       tsconfigOverride: {
-        include: ['src']
+        include: ['src', 'ethers']
       }
     }
   },
