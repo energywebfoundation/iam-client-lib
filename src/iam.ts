@@ -158,11 +158,14 @@ export class IAM {
     try {
       await this.init();
     } catch (err) {
-      return {
-        did: undefined,
-        connected: false,
-        userClosedModal: true,
-      };
+      console.log(err);
+      if (err === 'User closed modal') {
+        return {
+          did: undefined,
+          connected: false,
+          userClosedModal: true,
+        };
+      }
     }
 
     return {
