@@ -17,6 +17,7 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils } from "ethers";
 import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import { abi as ensContract } from "@ensdomains/ens/build/contracts/ENS.json";
 
 import { EnrolmentFormData } from "./models/enrolment-form-data";
 import {
@@ -33,7 +34,8 @@ import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
 import { PublicResolverFactory } from "../ethers/PublicResolverFactory";
 import { EnsRegistry } from "../ethers/EnsRegistry";
 import { PublicResolver } from "../ethers/PublicResolver";
-import { labelhash, namehash } from "./utils/ENS_hash";
+import { encodeLabelhash, labelhash, namehash, decryptHashes } from "./utils/ENS_hash";
+import uniqBy from "lodash.uniqby";
 
 type ConnectionOptions = {
   rpcUrl: string;
@@ -300,7 +302,7 @@ export class IAM {
         }
       );
       await setDomainTx.wait();
-      console.log(`Subdomain ${subdomain + '.' + domain} created`);
+      console.log(`Subdomain ${subdomain + "." + domain} created`);
     }
   }
 
@@ -314,6 +316,27 @@ export class IAM {
       await setTextTx.wait();
       console.log(`Added data: ${data} to ${domain} metadata`);
     }
+  }
+
+  private async getENSRegistryNewOwnerEventLogs({ domain }) {
+    if (this._ensRegistry && this._provider) {
+      const domainHash = namehash(domain);
+      const ensInterface = new utils.Interface(ensContract);
+      const Event = this._ensRegistry.filters.NewOwner(domainHash, null, null);
+      const filter = {
+        fromBlock: 0,
+        toBlock: "latest",
+        address: Event.address,
+        topics: [...(Event.topics as string[])]
+      };
+      const logs = await this._provider.getLogs(filter);
+      const rawLogs = logs.map(log => {
+        const parsedLog = ensInterface.parseLog(log);
+        return parsedLog.values;
+      });
+      return rawLogs.reverse();
+    }
+    return [];
   }
 
   async createRole({
@@ -343,6 +366,26 @@ export class IAM {
       return meta;
     }
     return "";
+  }
+
+  async getSubdomains({ domain }: { domain: string }) {
+    if (this._ensRegistry) {
+      const rawLogs = await this.getENSRegistryNewOwnerEventLogs({ domain });
+      const uniqueLogs: {label: string; owner: string}[] = uniqBy(rawLogs, "label");
+      const labelHashes = uniqueLogs.map(log => ({ label: log.label, owner: log.owner }));
+      const labels = await decryptHashes(labelHashes);
+      return labels.map(({ label, owner }, index) => {
+        return {
+          label,
+          labelhash: uniqueLogs[index].label as string,
+          decrypted: label !== null,
+          node: domain,
+          name: `${label || encodeLabelhash(uniqueLogs[index].label)}.${domain}`,
+          owner
+        };
+      });
+    }
+    return [];
   }
 
   // TODO:
