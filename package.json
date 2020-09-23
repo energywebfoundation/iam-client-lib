@@ -15,7 +15,7 @@
     "build:ts": "bili",
     "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src",
     "build:contracts": "npm run build:typechain:registry && npm run build:typechain:resolver",
-    "build:typechain:registry": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/ens/build/contracts/ENS.json'",
+    "build:typechain:registry": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json'",
     "build:typechain:resolver": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/resolver/build/contracts/PublicResolver.json'",
     "prepare": "npm run build",
     "test": "jest --coverage",
@@ -73,12 +73,10 @@
     "@ew-did-registry/did-ethr-resolver": "0.0.1-alpha.573.0",
     "@ew-did-registry/did-resolver-interface": "0.0.1-alpha.573.0",
     "@ew-did-registry/keys": "0.0.1-alpha.573.0",
-    "@types/lodash.uniqby": "^4.7.6",
     "@walletconnect/web3-provider": "^1.2.2",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "^4.0.48",
-    "js-sha3": "^0.8.0",
-    "lodash.uniqby": "^4.7.0"
+    "js-sha3": "^0.8.0"
   },
   "devDependencies": {
     "@typechain/ethers-v4": "^1.0.1",

@@ -2,20 +2,6 @@
 const sha3 = require("js-sha3").keccak_256;
 import { normalize } from "eth-ens-namehash";
 
-const rootUrl = "https://preimagedb.appspot.com/keccak256/query";
-
-export function encodeLabelhash(hash: string) {
-  if (!hash.startsWith("0x")) {
-    throw new Error("Expected label hash to start with 0x");
-  }
-
-  if (hash.length !== 66) {
-    throw new Error("Expected label hash to have a length of 66");
-  }
-
-  return `[${hash.slice(2)}]`;
-}
-
 export function decodeLabelhash(hash: string) {
   if (!(hash.startsWith("[") && hash.endsWith("]"))) {
     throw Error("Expected encoded labelhash to start and end with square brackets");
@@ -60,21 +46,4 @@ export function labelhash(unnormalizedLabelOrLabelhash: string) {
   return isEncodedLabelhash(unnormalizedLabelOrLabelhash)
     ? "0x" + decodeLabelhash(unnormalizedLabelOrLabelhash)
     : "0x" + sha3(normalize(unnormalizedLabelOrLabelhash));
-}
-
-export async function decryptHashes(
-  hashes: { label: string; owner: string }[]
-): Promise<{ label: string | null; owner: string }[]> {
-  const trimmedHashes = hashes.map(({ label }) => label.slice(2));
-
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  const res = await fetch(rootUrl, {
-    method: "POST",
-    headers: myHeaders,
-    body: JSON.stringify(trimmedHashes)
-  });
-  const json = await res.json();
-  return json.data.map((label: string, index: number) => ({ label, owner: hashes[index].owner }));
 }
