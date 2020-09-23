@@ -13,10 +13,12 @@
 // GNU General Public License for more details, at <http://www.gnu.org/licenses/>.
 //
 // @authors: Kim Honoridez
+// @authors: Daniel Wojno
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils } from "ethers";
 import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 
 import { EnrolmentFormData } from "./models/enrolment-form-data";
 import {
@@ -24,7 +26,7 @@ import {
   IDIDDocument,
   IResolverSettings,
   IUpdateData,
-  ProviderTypes
+  ProviderTypes,
 } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
@@ -82,22 +84,22 @@ export class IAM {
     chainId = 1,
     infuraId,
     ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
-    ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680"
+    ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
   }: ConnectionOptions) {
     this._walletConnectProvider = new WalletConnectProvider({
       rpc: {
-        [chainId]: rpcUrl
+        [chainId]: rpcUrl,
       },
-      infuraId
+      infuraId,
     });
     this._resolverSetting = {
       provider: {
         uriOrInfo: rpcUrl,
-        type: ProviderTypes.HTTP
+        type: ProviderTypes.HTTP,
       },
       abi: abi1056,
       address: address1056,
-      method: Methods.Erc1056
+      method: Methods.Erc1056,
     };
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
@@ -193,7 +195,7 @@ export class IAM {
         return {
           did: undefined,
           connected: false,
-          userClosedModal: true
+          userClosedModal: true,
         };
       }
       console.log(err);
@@ -202,7 +204,7 @@ export class IAM {
     return {
       did: this.getDid(),
       connected: this.isConnected() || false,
-      userClosedModal: false
+      userClosedModal: false,
     };
   }
 
@@ -254,7 +256,7 @@ export class IAM {
   async updateDidDocument({
     didAttribute,
     data,
-    validity
+    validity,
   }: {
     didAttribute: DIDAttribute;
     data: IUpdateData;
@@ -296,46 +298,105 @@ export class IAM {
         ttl,
         {
           gasLimit: utils.hexlify(25000),
-          gasPrice: utils.hexlify(10e9)
+          gasPrice: utils.hexlify(10e9),
         }
       );
       await setDomainTx.wait();
-      console.log(`Subdomain ${subdomain + '.' + domain} created`);
+      console.log(`Subdomain ${subdomain + "." + domain} created`);
     }
   }
 
-  private async setMetadata({ domain, data }: { domain: string; data: string }) {
+  private async setDomainName({ domain }) {
+    if (this._ensResolver) {
+      const namespaceHash = namehash(domain) as string;
+      const setDomainNameTx = await this._ensResolver.setName(namespaceHash, domain, {
+        gasLimit: utils.hexlify(25000),
+        gasPrice: utils.hexlify(10e9),
+      });
+      await setDomainNameTx.wait();
+      console.log(`Set the name of the domain to ${domain}`);
+    }
+  }
+
+  private async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
+    if (this._ensResolver && this._provider) {
+      const ensInterface = new utils.Interface(ensResolverContract);
+      const Event = this._ensResolver.filters.TextChanged(null, "metadata", null);
+      const filter = {
+        fromBlock: 0,
+        toBlock: "latest",
+        address: Event.address,
+        topics: [...(Event.topics as string[])],
+      };
+      const logs = await this._provider.getLogs(filter);
+      const rawLogs = logs.map((log) => {
+        const parsedLog = ensInterface.parseLog(log);
+        return parsedLog.values;
+      });
+      const domains = await Promise.all(
+        rawLogs.map(async ({ node }) => {
+          return this._ensResolver?.name(node);
+        })
+      );
+      const uniqDomains: Record<string, unknown> = {};
+      for (const item of domains) {
+        if (item && item.endsWith(domain) && !uniqDomains[item]) {
+          uniqDomains[item] = null;
+        }
+      }
+      return Object.keys(uniqDomains);
+    }
+    return [];
+  }
+
+  /**
+   * setRoleDefinition
+   *
+   * @description sets role definition in ENS domain
+   * @description please use it only when you want to update role definitions for already created role (domain)
+   *
+   */
+  async setRoleDefinition({ domain, data }: { domain: string; data: string }) {
     if (this._signer && this._ensResolver) {
       const namespaceHash = namehash(domain) as string;
       const setTextTx = await this._ensResolver.setText(namespaceHash, "metadata", data, {
         gasLimit: utils.hexlify(25000),
-        gasPrice: utils.hexlify(10e9)
+        gasPrice: utils.hexlify(10e9),
       });
       await setTextTx.wait();
       console.log(`Added data: ${data} to ${domain} metadata`);
     }
   }
 
+  /**
+   * createRole
+   *
+   * @description creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
+   * @returns information (true/false) if the role was created
+   *
+   */
   async createRole({
     roleName,
     namespace,
-    data
+    data,
   }: {
     roleName: string;
     namespace: string;
     data: string;
   }) {
-    try {
-      const newDomain = roleName + "." + namespace;
-      await this.createSubdomain({ subdomain: roleName, domain: namespace });
-      await this.setMetadata({ data, domain: newDomain });
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
-    }
+    const newDomain = roleName + "." + namespace;
+    await this.createSubdomain({ subdomain: roleName, domain: namespace });
+    await this.setDomainName({ domain: newDomain });
+    await this.setRoleDefinition({ data, domain: newDomain });
   }
 
+  /**
+   * getRoleDefinition
+   *
+   * @description get role definition form ens domain metadata record
+   * @returns metadata string or empty string when there is no metadata
+   *
+   */
   async getRoleDefinition({ roleName }: { roleName: string }) {
     if (this._ensResolver) {
       const roleHash = namehash(roleName);
@@ -343,6 +404,28 @@ export class IAM {
       return meta;
     }
     return "";
+  }
+
+  /**
+   * getSubdomains
+   *
+   * @description get all subdomains for certain domain
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  async getSubdomains({ domain }: { domain: string }) {
+    if (this._ensRegistry) {
+      const domains = await this.getFilteredDomainsFromEvent({ domain });
+      const role = domain.split(".");
+      const subdomains: string[] = [];
+      for (const name of domains) {
+        const nameArray = name.split(".").reverse();
+        if (nameArray.length <= role.length) return;
+        subdomains.push(nameArray[role.length]);
+      }
+      return subdomains;
+    }
+    return [];
   }
 
   // TODO:
@@ -357,7 +440,7 @@ export class IAM {
 
   async enrol(data: EnrolmentFormData): Promise<Record<string, unknown>> {
     const enrolmentStatus = {
-      ...data
+      ...data,
     };
 
     // TODO: Enrol here (Generate DID, etc)
