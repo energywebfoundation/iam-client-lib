@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers } from "ethers";
+import { providers, Signer, utils } from "ethers";
 import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 
 import { EnrolmentFormData } from "./models/enrolment-form-data";
@@ -24,16 +24,23 @@ import {
   IDIDDocument,
   IResolverSettings,
   IUpdateData,
-  ProviderTypes,
+  ProviderTypes
 } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { Keys } from "@ew-did-registry/keys";
+import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
+import { PublicResolverFactory } from "../ethers/PublicResolverFactory";
+import { EnsRegistry } from "../ethers/EnsRegistry";
+import { PublicResolver } from "../ethers/PublicResolver";
+import { labelhash, namehash } from "./utils/ENS_hash";
 
 type ConnectionOptions = {
   rpcUrl: string;
   chainId?: number;
   infuraId?: string;
+  ensResolverAddress?: string;
+  ensRegistryAddress?: string;
 };
 
 type InitializeData = {
@@ -41,7 +48,6 @@ type InitializeData = {
   connected: boolean;
   userClosedModal: boolean;
 };
-
 
 /**
  * Decentralized Identity and Access Management (IAM) Type
@@ -51,10 +57,16 @@ export class IAM {
   private _provider: providers.Web3Provider | undefined;
   private _walletConnectProvider: WalletConnectProvider;
   private _address: string | undefined;
-  private _signer: providers.JsonRpcSigner | undefined;
+  private _signer: Signer | undefined;
+
   private _resolverSetting: IResolverSettings;
   private _resolver: Resolver | undefined;
   private _document: DIDDocumentFull | undefined;
+
+  private _ensRegistry: EnsRegistry | undefined;
+  private _ensResolver: PublicResolver | undefined;
+  private _ensResolverAddress: string;
+  private _ensRegistryAddress: string;
 
   /**
    * IAM Constructor
@@ -65,22 +77,30 @@ export class IAM {
    * @param {number} options.infuraId id of infura network, default = undefined
    *
    */
-  public constructor({ rpcUrl, chainId = 1, infuraId }: ConnectionOptions) {
+  public constructor({
+    rpcUrl,
+    chainId = 1,
+    infuraId,
+    ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
+    ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680"
+  }: ConnectionOptions) {
     this._walletConnectProvider = new WalletConnectProvider({
       rpc: {
-        [chainId]: rpcUrl,
+        [chainId]: rpcUrl
       },
-      infuraId,
+      infuraId
     });
     this._resolverSetting = {
       provider: {
         uriOrInfo: rpcUrl,
-        type: ProviderTypes.HTTP,
+        type: ProviderTypes.HTTP
       },
       abi: abi1056,
       address: address1056,
-      method: Methods.Erc1056,
+      method: Methods.Erc1056
     };
+    this._ensRegistryAddress = ensRegistryAddress;
+    this._ensResolverAddress = ensResolverAddress;
   }
 
   // INITIAL
@@ -88,10 +108,12 @@ export class IAM {
   private async init() {
     await this._walletConnectProvider.enable();
     this._provider = new providers.Web3Provider(this._walletConnectProvider);
+
     this.setAddress();
     this.setResolver();
     this.setSigner();
     this.setDid();
+    this.setupENS();
     await this.setDocument();
   }
 
@@ -104,11 +126,20 @@ export class IAM {
   }
 
   private setResolver() {
-    this._resolver = new Resolver(this._resolverSetting);
+    if (this._resolverSetting) {
+      this._resolver = new Resolver(this._resolverSetting);
+    }
   }
 
   private setDid() {
-    this._did = `did:etc:${this._address}`;
+    this._did = `did:${Methods.Erc1056}:${this._address}`;
+  }
+
+  private setupENS() {
+    if (this._signer) {
+      this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._signer);
+      this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._signer);
+    }
   }
 
   private async setDocument() {
@@ -140,7 +171,7 @@ export class IAM {
    * @returns JsonRpcSigner if connected to wallet, if not returns undefined
    */
 
-  getSigner(): providers.JsonRpcSigner | undefined {
+  getSigner(): providers.JsonRpcSigner | Signer | undefined {
     return this._signer;
   }
 
@@ -158,20 +189,20 @@ export class IAM {
     try {
       await this.init();
     } catch (err) {
-      console.log(err);
-      if (err === 'User closed modal') {
+      if (err === "User closed modal") {
         return {
           did: undefined,
           connected: false,
-          userClosedModal: true,
+          userClosedModal: true
         };
       }
+      console.log(err);
     }
 
     return {
       did: this.getDid(),
       connected: this.isConnected() || false,
-      userClosedModal: false,
+      userClosedModal: false
     };
   }
 
@@ -223,7 +254,7 @@ export class IAM {
   async updateDidDocument({
     didAttribute,
     data,
-    validity,
+    validity
   }: {
     didAttribute: DIDAttribute;
     data: IUpdateData;
@@ -250,6 +281,70 @@ export class IAM {
     return false;
   }
 
+  /// ROLES
+
+  private async createSubdomain({ subdomain, domain }: { subdomain: string; domain: string }) {
+    if (this._signer && this._ensRegistry && this._address) {
+      const roleHash = labelhash(subdomain) as string;
+      const namespaceHash = namehash(domain) as string;
+      const ttl = utils.bigNumberify(0);
+      const setDomainTx = await this._ensRegistry.setSubnodeRecord(
+        namespaceHash,
+        roleHash,
+        this._address,
+        this._ensResolverAddress,
+        ttl,
+        {
+          gasLimit: utils.hexlify(25000),
+          gasPrice: utils.hexlify(10e9)
+        }
+      );
+      await setDomainTx.wait();
+      console.log(`Subdomain ${subdomain + '.' + domain} created`);
+    }
+  }
+
+  private async setMetadata({ domain, data }: { domain: string; data: string }) {
+    if (this._signer && this._ensResolver) {
+      const namespaceHash = namehash(domain) as string;
+      const setTextTx = await this._ensResolver.setText(namespaceHash, "metadata", data, {
+        gasLimit: utils.hexlify(25000),
+        gasPrice: utils.hexlify(10e9)
+      });
+      await setTextTx.wait();
+      console.log(`Added data: ${data} to ${domain} metadata`);
+    }
+  }
+
+  async createRole({
+    roleName,
+    namespace,
+    data
+  }: {
+    roleName: string;
+    namespace: string;
+    data: string;
+  }) {
+    try {
+      const newDomain = roleName + "." + namespace;
+      await this.createSubdomain({ subdomain: roleName, domain: namespace });
+      await this.setMetadata({ data, domain: newDomain });
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  }
+
+  async getRoleDefinition({ roleName }: { roleName: string }) {
+    if (this._ensResolver) {
+      const roleHash = namehash(roleName);
+      const meta = await this._ensResolver.text(roleHash, "metadata");
+      return meta;
+    }
+    return "";
+  }
+
   // TODO:
   // Below should contain public and private methods related to IAM.
   // Currently, below methods are dummy methods.
@@ -262,7 +357,7 @@ export class IAM {
 
   async enrol(data: EnrolmentFormData): Promise<Record<string, unknown>> {
     const enrolmentStatus = {
-      ...data,
+      ...data
     };
 
     // TODO: Enrol here (Generate DID, etc)
