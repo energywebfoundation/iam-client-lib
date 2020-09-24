@@ -596,6 +596,38 @@ export class IAM {
     return [];
   }
 
+  /**
+   * checkExistenceOfDomain
+   *
+   * @description check existence of domain in ENS registry
+   * @returns true or false whatever the domain is present
+   *
+   */
+  async checkExistenceOfDomain({ domain }: { domain: string }) {
+    if (this._ensRegistry) {
+      const domainHash = namehash(domain);
+      return this._ensRegistry.recordExists(domainHash);
+    }
+    return false;
+  }
+
+  /**
+   * isOwner
+   *
+   * @description check ownership of the domain
+   * @default if user is not specified it will check the current logged user
+   * @returns true or false whatever the passed is user is a owner of domain
+   *
+   */
+  async isOwner({ domain, user = this._address }: { domain: string, user?: string }) {
+    if (this._ensRegistry){
+      const domainHash = namehash(domain);
+      const owner = await this._ensRegistry.owner(domainHash);
+      return owner === user;
+    }
+    return false;
+  }
+
   // TODO:
   // Below should contain public and private methods related to IAM.
   // Currently, below methods are dummy methods.
