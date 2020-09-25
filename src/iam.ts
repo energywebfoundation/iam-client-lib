@@ -26,16 +26,24 @@ import {
   IDIDDocument,
   IResolverSettings,
   IUpdateData,
-  ProviderTypes,
+  ProviderTypes
 } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
-import { Keys } from "@ew-did-registry/keys";
+import {
+  ClaimsIssuer,
+  ClaimsUser,
+  ClaimsVerifier,
+  IProofData,
+  ISaltedFields
+} from "@ew-did-registry/claims";
+import { DidStore } from "@ew-did-registry/did-ipfs-store";
 import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
 import { PublicResolverFactory } from "../ethers/PublicResolverFactory";
 import { EnsRegistry } from "../ethers/EnsRegistry";
 import { PublicResolver } from "../ethers/PublicResolver";
 import { labelhash, namehash } from "./utils/ENS_hash";
+import { JWT } from "@ew-did-registry/jwt";
 
 type ConnectionOptions = {
   rpcUrl: string;
@@ -43,6 +51,7 @@ type ConnectionOptions = {
   infuraId?: string;
   ensResolverAddress?: string;
   ensRegistryAddress?: string;
+  ipfsUrl?: string;
 };
 
 type InitializeData = {
@@ -64,6 +73,11 @@ export class IAM {
   private _resolverSetting: IResolverSettings;
   private _resolver: Resolver | undefined;
   private _document: DIDDocumentFull | undefined;
+  private _userClaims: ClaimsUser | undefined;
+  private _issuerClaims: ClaimsIssuer | undefined;
+  private _verifierClaims: ClaimsVerifier | undefined;
+  private _ipfsStore: DidStore;
+  private _jwt: JWT | undefined;
 
   private _ensRegistry: EnsRegistry | undefined;
   private _ensResolver: PublicResolver | undefined;
@@ -85,24 +99,26 @@ export class IAM {
     infuraId,
     ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
     ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
+    ipfsUrl = "https://ipfs.infura.io:5001/api/v0/"
   }: ConnectionOptions) {
     this._walletConnectProvider = new WalletConnectProvider({
       rpc: {
-        [chainId]: rpcUrl,
+        [chainId]: rpcUrl
       },
-      infuraId,
+      infuraId
     });
     this._resolverSetting = {
       provider: {
         uriOrInfo: rpcUrl,
-        type: ProviderTypes.HTTP,
+        type: ProviderTypes.HTTP
       },
       abi: abi1056,
       address: address1056,
-      method: Methods.Erc1056,
+      method: Methods.Erc1056
     };
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
+    this._ipfsStore = new DidStore(ipfsUrl);
   }
 
   // INITIAL
@@ -117,6 +133,8 @@ export class IAM {
     this.setDid();
     this.setupENS();
     await this.setDocument();
+    this.setClaims();
+    this.setJWT();
   }
 
   private setAddress() {
@@ -145,13 +163,27 @@ export class IAM {
   }
 
   private async setDocument() {
-    if (this._did) {
+    if (this._did && this._signer) {
       const document = new DIDDocumentFull(
         this._did,
-        new Operator(new Keys(), this._resolverSetting)
+        new Operator(this._signer, this._resolverSetting)
       );
       await document.create();
       this._document = document;
+    }
+  }
+
+  private setClaims() {
+    if (this._signer && this._document) {
+      this._userClaims = new ClaimsUser(this._signer, this._document, this._ipfsStore);
+      this._issuerClaims = new ClaimsIssuer(this._signer, this._document, this._ipfsStore);
+      this._verifierClaims = new ClaimsVerifier(this._signer, this._document, this._ipfsStore);
+    }
+  }
+
+  private setJWT() {
+    if (this._signer) {
+      this._jwt = new JWT(this._signer);
     }
   }
 
@@ -195,7 +227,7 @@ export class IAM {
         return {
           did: undefined,
           connected: false,
-          userClosedModal: true,
+          userClosedModal: true
         };
       }
       console.log(err);
@@ -204,7 +236,7 @@ export class IAM {
     return {
       did: this.getDid(),
       connected: this.isConnected() || false,
-      userClosedModal: false,
+      userClosedModal: false
     };
   }
 
@@ -256,7 +288,7 @@ export class IAM {
   async updateDidDocument({
     didAttribute,
     data,
-    validity,
+    validity
   }: {
     didAttribute: DIDAttribute;
     data: IUpdateData;
@@ -283,6 +315,142 @@ export class IAM {
     return false;
   }
 
+  /**
+   * createPublicClaim
+   *
+   * @description create a public claim based on data provided
+   * @returns JWT token of created claim
+   *
+   */
+  async createPublicClaim({ data }: { data: Record<string, unknown> }) {
+    if (this._userClaims) {
+      return this._userClaims.createPublicClaim(data);
+    }
+    return null;
+  }
+
+  /**
+   * publishPublicClaim
+   *
+   * @description store claim data in ipfs and save url to DID document services
+   * @returns ulr to ipfs
+   *
+   */
+  async publishPublicClaim({
+    token,
+    claimData
+  }: {
+    token: string;
+    claimData: Record<string, unknown>;
+  }) {
+    if (this._userClaims) {
+      return this._userClaims.publishPublicClaim(token, claimData);
+    }
+    return null;
+  }
+
+  /**
+   * createProofClaim
+   *
+   * @description creates a proof of a claim
+   * @returns proof token
+   *
+   */
+  async createProofClaim({
+    claimUrl,
+    saltedFields
+  }: {
+    claimUrl: string;
+    saltedFields: ISaltedFields;
+  }) {
+    if (this._userClaims) {
+      const encryptedSaltedFields: IProofData = {};
+      let counter = 0;
+      Object.entries(saltedFields).forEach(([key, value]) => {
+        if (counter % 2 === 0) {
+          encryptedSaltedFields[key] = {
+            value,
+            encrypted: true
+          };
+        } else {
+          encryptedSaltedFields[key] = {
+            value,
+            encrypted: false
+          };
+        }
+        counter++;
+      });
+      return this._userClaims?.createProofClaim(claimUrl, encryptedSaltedFields);
+    }
+    return null;
+  }
+
+  /**
+   * issuePublicClaim
+   *
+   * @description issue a public claim
+   * @returns return issued token
+   *
+   */
+  async issuePublicClaim({ token }: { token: string }) {
+    if (this._issuerClaims) {
+      return this._issuerClaims.issuePublicClaim(token);
+    }
+    return null;
+  }
+
+  /**
+   * verifyPublicClaim
+   *
+   * @description verifies issued token of claim
+   * @returns public claim data
+   *
+   */
+  async verifyPublicClaim({ issuedToken }: { issuedToken: string }) {
+    if (this._verifierClaims) {
+      return this._verifierClaims.verifyPublicProof(issuedToken);
+    }
+    return null;
+  }
+
+  /**
+   * createSelfSignedClaim
+   *
+   * @description creates self signed claim and upload the data to ipfs
+   *
+   */
+  async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
+    if (this._userClaims) {
+      const claim = await this._userClaims.createPublicClaim(data);
+      await this._userClaims.publishPublicClaim(claim, data);
+    }
+  }
+
+  /**
+   * getUserClaims
+   *
+   * @description get user claims
+   *
+   */
+  async getUserClaims() {
+    if (this._resolver && this._did) {
+      const document = await this._resolver.read(this._did);
+      const services = document.service && document.service.length > 1 ? document.service : [];
+      const claims = await Promise.all(
+        services.map(async ({ serviceEndpoint, ...rest }) => {
+          const data = await this._ipfsStore.get(serviceEndpoint);
+          const { claimData } = this._jwt?.decode(data) as { claimData: Record<string, string> };
+          return {
+            ...rest,
+            ...claimData
+          };
+        })
+      );
+      return claims;
+    }
+    return [];
+  }
+
   /// ROLES
 
   private async createSubdomain({ subdomain, domain }: { subdomain: string; domain: string }) {
@@ -298,7 +466,7 @@ export class IAM {
         ttl,
         {
           gasLimit: utils.hexlify(25000),
-          gasPrice: utils.hexlify(10e9),
+          gasPrice: utils.hexlify(10e9)
         }
       );
       await setDomainTx.wait();
@@ -311,7 +479,7 @@ export class IAM {
       const namespaceHash = namehash(domain) as string;
       const setDomainNameTx = await this._ensResolver.setName(namespaceHash, domain, {
         gasLimit: utils.hexlify(25000),
-        gasPrice: utils.hexlify(10e9),
+        gasPrice: utils.hexlify(10e9)
       });
       await setDomainNameTx.wait();
       console.log(`Set the name of the domain to ${domain}`);
@@ -326,10 +494,10 @@ export class IAM {
         fromBlock: 0,
         toBlock: "latest",
         address: Event.address,
-        topics: [...(Event.topics as string[])],
+        topics: [...(Event.topics as string[])]
       };
       const logs = await this._provider.getLogs(filter);
-      const rawLogs = logs.map((log) => {
+      const rawLogs = logs.map(log => {
         const parsedLog = ensInterface.parseLog(log);
         return parsedLog.values;
       });
@@ -361,7 +529,7 @@ export class IAM {
       const namespaceHash = namehash(domain) as string;
       const setTextTx = await this._ensResolver.setText(namespaceHash, "metadata", data, {
         gasLimit: utils.hexlify(25000),
-        gasPrice: utils.hexlify(10e9),
+        gasPrice: utils.hexlify(10e9)
       });
       await setTextTx.wait();
       console.log(`Added data: ${data} to ${domain} metadata`);
@@ -378,7 +546,7 @@ export class IAM {
   async createRole({
     roleName,
     namespace,
-    data,
+    data
   }: {
     roleName: string;
     namespace: string;
@@ -440,7 +608,7 @@ export class IAM {
 
   async enrol(data: EnrolmentFormData): Promise<Record<string, unknown>> {
     const enrolmentStatus = {
-      ...data,
+      ...data
     };
 
     // TODO: Enrol here (Generate DID, etc)
