@@ -14,8 +14,10 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSPrefixes, MessagingMethod } from "./iam";
+import { IAM, ENSPrefixes } from "./iam";
 import { EnrolmentFormData } from "./models/enrolment-form-data";
+import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
+import { MessagingMethod } from './iam/iam-base';
 import {
   DIDAttribute,
   Encoding,
@@ -30,5 +32,7 @@ export { IAM };
 export { EnrolmentFormData };
 
 // ENUMS
-
 export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSPrefixes, MessagingMethod };
+
+// CACHE CLIENT
+export { CacheServerClient, ICacheServerClient };
