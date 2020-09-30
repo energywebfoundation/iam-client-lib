@@ -52,6 +52,7 @@ type ConnectionOptions = {
   ensResolverAddress?: string;
   ensRegistryAddress?: string;
   ipfsUrl?: string;
+  bridgeUrl?: string;
 };
 
 type InitializeData = {
@@ -59,6 +60,12 @@ type InitializeData = {
   connected: boolean;
   userClosedModal: boolean;
 };
+
+export enum ENSPrefixes {
+  Roles = "roles",
+  Application = "app",
+  Organization = "org"
+}
 
 /**
  * Decentralized Identity and Access Management (IAM) Type
@@ -99,13 +106,16 @@ export class IAM {
     infuraId,
     ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
     ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
-    ipfsUrl = "https://ipfs.infura.io:5001/api/v0/"
+    ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
+    bridgeUrl = "https://walletconnect.energyweb.org"
   }: ConnectionOptions) {
     this._walletConnectProvider = new WalletConnectProvider({
       rpc: {
         [chainId]: rpcUrl
       },
-      infuraId
+      infuraId,
+      chainId,
+      bridge: bridgeUrl
     });
     this._resolverSetting = {
       provider: {
@@ -537,6 +547,117 @@ export class IAM {
   }
 
   /**
+   * createOrganization
+   *
+   * @description creates organization (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
+   * @description and sets subdomain for roles and app for org namespace
+   *
+   */
+  async createOrganization({
+    orgName,
+    data,
+    namespace,
+    returnSteps
+  }: {
+    orgName: string;
+    data: string;
+    namespace: string;
+    returnSteps?: boolean;
+  }) {
+    const newDomain = `${orgName}.${namespace}`;
+    const rolesDomain = `${ENSPrefixes.Roles}.${newDomain}`;
+    const appsDomain = `${ENSPrefixes.Application}.${newDomain}`;
+    const steps = [
+      {
+        next: () => this.createSubdomain({ subdomain: orgName, domain: namespace }),
+        info: "Create organization subdomain"
+      },
+      {
+        next: () => this.setDomainName({ domain: newDomain }),
+        info: "Register reverse name for organization subdomain"
+      },
+      {
+        next: () => this.setRoleDefinition({ data, domain: newDomain }),
+        info: "Set definition for organization"
+      },
+      {
+        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Roles, domain: newDomain }),
+        info: "Create roles subdomain for organization"
+      },
+      {
+        next: () => this.setDomainName({ domain: rolesDomain }),
+        info: "Register reverse name for roles subdomain"
+      },
+      {
+        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Application, domain: newDomain }),
+        info: "Create app subdomain for organization"
+      },
+      {
+        next: () => this.setDomainName({ domain: appsDomain }),
+        info: "Register reverse name for app subdomain"
+      }
+    ];
+    if (returnSteps) {
+      return steps;
+    }
+    for (const { next } of steps) {
+      await next();
+    }
+    return [];
+  }
+
+  /**
+   * createApp
+   *
+   * @description creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
+   * @description creates roles subdomain for the app namespace
+   *
+   */
+  async createApplication({
+    appName,
+    namespace,
+    data,
+    returnSteps
+  }: {
+    appName: string;
+    namespace: string;
+    data: string;
+    returnSteps?: boolean;
+  }) {
+    const newDomain = `${appName}.${namespace}`;
+    const rolesNamespace = `${ENSPrefixes.Roles}.${newDomain}`;
+    const steps = [
+      {
+        next: () => this.createSubdomain({ subdomain: appName, domain: namespace }),
+        info: "Set subdomain for application"
+      },
+      {
+        next: () => this.setDomainName({ domain: newDomain }),
+        info: "Set name for application"
+      },
+      {
+        next: () => this.setRoleDefinition({ data, domain: newDomain }),
+        info: "Set definition for application"
+      },
+      {
+        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Roles, domain: newDomain }),
+        info: "Create roles subdomain for application"
+      },
+      {
+        next: () => this.setDomainName({ domain: rolesNamespace }),
+        info: "Set name for roles subdomain for application"
+      }
+    ];
+    if (returnSteps) {
+      return steps;
+    }
+    for (const { next } of steps) {
+      await next();
+    }
+    return [];
+  }
+
+  /**
    * createRole
    *
    * @description creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
@@ -546,16 +667,36 @@ export class IAM {
   async createRole({
     roleName,
     namespace,
-    data
+    data,
+    returnSteps
   }: {
     roleName: string;
     namespace: string;
     data: string;
+    returnSteps?: boolean;
   }) {
-    const newDomain = roleName + "." + namespace;
-    await this.createSubdomain({ subdomain: roleName, domain: namespace });
-    await this.setDomainName({ domain: newDomain });
-    await this.setRoleDefinition({ data, domain: newDomain });
+    const newDomain = `${roleName}.${namespace}`;
+    const steps = [
+      {
+        next: () => this.createSubdomain({ subdomain: roleName, domain: namespace }),
+        info: "Create subdomain for role"
+      },
+      {
+        next: () => this.setDomainName({ domain: newDomain }),
+        info: "Set name for role"
+      },
+      {
+        next: () => this.setRoleDefinition({ data, domain: newDomain }),
+        info: "Set role definition for role"
+      }
+    ];
+    if (returnSteps) {
+      return steps;
+    }
+    for (const { next } of steps) {
+      await next();
+    }
+    return [];
   }
 
   /**
@@ -585,13 +726,13 @@ export class IAM {
     if (this._ensRegistry) {
       const domains = await this.getFilteredDomainsFromEvent({ domain });
       const role = domain.split(".");
-      const subdomains: string[] = [];
+      const subdomains: Record<string, null> = {};
       for (const name of domains) {
         const nameArray = name.split(".").reverse();
         if (nameArray.length <= role.length) return;
-        subdomains.push(nameArray[role.length]);
+        subdomains[nameArray[role.length]] = null;
       }
-      return subdomains;
+      return Object.keys(subdomains);
     }
     return [];
   }
@@ -619,8 +760,8 @@ export class IAM {
    * @returns true or false whatever the passed is user is a owner of domain
    *
    */
-  async isOwner({ domain, user = this._address }: { domain: string, user?: string }) {
-    if (this._ensRegistry){
+  async isOwner({ domain, user = this._address }: { domain: string; user?: string }) {
+    if (this._ensRegistry) {
       const domainHash = namehash(domain);
       const owner = await this._ensRegistry.owner(domainHash);
       return owner === user;

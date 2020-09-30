@@ -14,7 +14,7 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM } from "./iam";
+import { IAM, ENSPrefixes } from "./iam";
 import { EnrolmentFormData } from "./models/enrolment-form-data";
 import {
   DIDAttribute,
@@ -31,4 +31,4 @@ export { EnrolmentFormData };
 
 // ENUMS
 
-export { DIDAttribute, Encoding, Algorithms, PubKeyType};
+export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSPrefixes };
