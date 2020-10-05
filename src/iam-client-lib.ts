@@ -14,10 +14,19 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSPrefixes } from "./iam";
+import { IAM, ENSNamespaceTypes } from "./iam";
 import { EnrolmentFormData } from "./models/enrolment-form-data";
 import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
 import { MessagingMethod } from './iam/iam-base';
+import {
+  IApp,
+  IAppDefinition,
+  IOrganization,
+  IOrganizationDefinition,
+  IRole,
+  IRoleDefinition
+} from "./cacheServerClient/cacheServerClient.types";
+
 import {
   DIDAttribute,
   Encoding,
@@ -32,7 +41,16 @@ export { IAM };
 export { EnrolmentFormData };
 
 // ENUMS
-export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSPrefixes, MessagingMethod };
+export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSNamespaceTypes, MessagingMethod };
 
 // CACHE CLIENT
-export { CacheServerClient, ICacheServerClient };
+export {
+  CacheServerClient,
+  ICacheServerClient,
+  IApp,
+  IAppDefinition,
+  IOrganization,
+  IOrganizationDefinition,
+  IRole,
+  IRoleDefinition
+};

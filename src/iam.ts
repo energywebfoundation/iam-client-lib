@@ -27,6 +27,14 @@ import { IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
 import { IAMBase } from "./iam/iam-base";
+import { ENSTypeNotSupportedError } from "./errors/ENSTypeNOtSupportedError";
+import { CacheClientNotProvidedError } from "./errors/CacheClientNotProvided";
+import { MethodNotAvailableInNodeEnvError } from "./errors/MethodNotAvailableInNodeError";
+import {
+  IAppDefinition,
+  IOrganizationDefinition,
+  IRoleDefinition
+} from "./cacheServerClient/cacheServerClient.types";
 
 type InitializeData = {
   did: string | undefined;
@@ -42,7 +50,7 @@ interface IMessage {
   issuer: string;
 }
 
-export enum ENSPrefixes {
+export enum ENSNamespaceTypes {
   Roles = "roles",
   Application = "apps",
   Organization = "org"
@@ -153,9 +161,6 @@ export class IAM extends IAMBase {
   async getDidDocument({
     did = this._did
   }: { did?: string } | undefined = {}): Promise<IDIDDocument | null> {
-    if (this._cacheClient && did) {
-      return this._cacheClient.getDidDocument({ did });
-    }
     if (did && this._resolver) {
       const document = await this._resolver.read(did);
       const services = await this.downloadClaims({
@@ -183,6 +188,9 @@ export class IAM extends IAMBase {
     data: IUpdateData;
     validity?: number;
   }): Promise<boolean> {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("updateDidDocument");
+    }
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
       return updated;
@@ -198,6 +206,9 @@ export class IAM extends IAMBase {
    *
    */
   async revokeDidDocument(): Promise<boolean> {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("revokeDidDocument");
+    }
     if (this._document) {
       return this._document.deactivate();
     }
@@ -309,6 +320,9 @@ export class IAM extends IAMBase {
    *
    */
   async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createSelfSignedClaim");
+    }
     if (this._userClaims) {
       const claim = await this._userClaims.createPublicClaim(data);
       await this._userClaims.publishPublicClaim(claim, data);
@@ -322,9 +336,6 @@ export class IAM extends IAMBase {
    *
    */
   async getUserClaims({ did = this._did }: { did?: string } | undefined = {}) {
-    if (did && this._cacheClient) {
-      return this._cacheClient.getClaims({ did });
-    }
     if (this._resolver && did) {
       const document = await this._resolver.read(did);
       const services = await this.downloadClaims({
@@ -351,15 +362,30 @@ export class IAM extends IAMBase {
    * @description please use it only when you want to update role definitions for already created role (domain)
    *
    */
-  async setRoleDefinition({ domain, data }: { domain: string; data: string }) {
+  async setRoleDefinition({
+    domain,
+    data
+  }: {
+    domain: string;
+    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
+  }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("setRoleDefinition");
+    }
     if (this._signer && this._ensResolver) {
+      const stringifiedData = JSON.stringify(data);
       const namespaceHash = namehash(domain) as string;
-      const setTextTx = await this._ensResolver.setText(namespaceHash, "metadata", data, {
-        gasLimit: utils.hexlify(4900000),
-        gasPrice: utils.hexlify(0.1)
-      });
+      const setTextTx = await this._ensResolver.setText(
+        namespaceHash,
+        "metadata",
+        stringifiedData,
+        {
+          gasLimit: utils.hexlify(4900000),
+          gasPrice: utils.hexlify(0.1)
+        }
+      );
       await setTextTx.wait();
-      console.log(`Added data: ${data} to ${domain} metadata`);
+      console.log(`Added data: ${stringifiedData} to ${domain} metadata`);
     }
   }
 
@@ -377,13 +403,16 @@ export class IAM extends IAMBase {
     returnSteps
   }: {
     orgName: string;
-    data: string;
+    data: IOrganizationDefinition;
     namespace: string;
     returnSteps?: boolean;
   }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createOrganization");
+    }
     const newDomain = `${orgName}.${namespace}`;
-    const rolesDomain = `${ENSPrefixes.Roles}.${newDomain}`;
-    const appsDomain = `${ENSPrefixes.Application}.${newDomain}`;
+    const rolesDomain = `${ENSNamespaceTypes.Roles}.${newDomain}`;
+    const appsDomain = `${ENSNamespaceTypes.Application}.${newDomain}`;
     const steps = [
       {
         next: () => this.createSubdomain({ subdomain: orgName, domain: namespace }),
@@ -398,7 +427,7 @@ export class IAM extends IAMBase {
         info: "Set definition for organization"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Roles, domain: newDomain }),
+        next: () => this.createSubdomain({ subdomain: ENSNamespaceTypes.Roles, domain: newDomain }),
         info: "Create roles subdomain for organization"
       },
       {
@@ -406,7 +435,8 @@ export class IAM extends IAMBase {
         info: "Register reverse name for roles subdomain"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Application, domain: newDomain }),
+        next: () =>
+          this.createSubdomain({ subdomain: ENSNamespaceTypes.Application, domain: newDomain }),
         info: "Create app subdomain for organization"
       },
       {
@@ -438,11 +468,14 @@ export class IAM extends IAMBase {
   }: {
     appName: string;
     namespace: string;
-    data: string;
+    data: IAppDefinition;
     returnSteps?: boolean;
   }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createApplication");
+    }
     const newDomain = `${appName}.${namespace}`;
-    const rolesNamespace = `${ENSPrefixes.Roles}.${newDomain}`;
+    const rolesNamespace = `${ENSNamespaceTypes.Roles}.${newDomain}`;
     const steps = [
       {
         next: () => this.createSubdomain({ subdomain: appName, domain: namespace }),
@@ -457,7 +490,7 @@ export class IAM extends IAMBase {
         info: "Set definition for application"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Roles, domain: newDomain }),
+        next: () => this.createSubdomain({ subdomain: ENSNamespaceTypes.Roles, domain: newDomain }),
         info: "Create roles subdomain for application"
       },
       {
@@ -489,9 +522,12 @@ export class IAM extends IAMBase {
   }: {
     roleName: string;
     namespace: string;
-    data: string;
+    data: IRoleDefinition;
     returnSteps?: boolean;
   }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createRole");
+    }
     const newDomain = `${roleName}.${namespace}`;
     const steps = [
       {
@@ -523,16 +559,88 @@ export class IAM extends IAMBase {
    * @returns metadata string or empty string when there is no metadata
    *
    */
-  async getRoleDefinition({ roleName }: { roleName: string }) {
-    if (this._cacheClient) {
-      return this._cacheClient.getRoleDefinition({ role: roleName });
+  async getDefinition({ type, namespace }: { type: ENSNamespaceTypes; namespace: string }) {
+    if (this._cacheClient && type) {
+      if (type === ENSNamespaceTypes.Roles) {
+        return this._cacheClient.getRoleDefinition({ namespace });
+      }
+      if (type === ENSNamespaceTypes.Application) {
+        return this._cacheClient.getAppDefinition({ namespace });
+      }
+      if (type === ENSNamespaceTypes.Organization) {
+        return this._cacheClient.getOrgDefinition({ namespace });
+      }
+      throw new ENSTypeNotSupportedError();
     }
     if (this._ensResolver) {
-      const roleHash = namehash(roleName);
-      const meta = await this._ensResolver.text(roleHash, "metadata");
-      return meta;
+      const roleHash = namehash(namespace);
+      const metadata = await this._ensResolver.text(roleHash, "metadata");
+      return JSON.parse(metadata) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
     }
-    return "";
+    throw new Error('ENS resolver not initialized');
+  }
+
+  /**
+   * getRolesByNamespace
+   *
+   * @description get all subdomains for certain domain
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getRolesByNamespace({
+    parentType,
+    namespace
+  }: {
+    parentType: ENSNamespaceTypes.Application | ENSNamespaceTypes.Organization;
+    namespace: string;
+  }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    if (parentType === ENSNamespaceTypes.Organization) {
+      return this._cacheClient.getOrganizationRoles({ namespace });
+    }
+    if (parentType === ENSNamespaceTypes.Application) {
+      return this._cacheClient.getApplicationRoles({ namespace });
+    }
+    throw new ENSTypeNotSupportedError();
+  }
+
+  /**
+   * getENSTypesByOwner
+   *
+   * @description get all subdomains for certain domain
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getENSTypesByOwner({ type, owner }: { type: ENSNamespaceTypes; owner: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    if (type === ENSNamespaceTypes.Organization) {
+      return this._cacheClient.getOrganizationsByOwner({ owner });
+    }
+    if (type === ENSNamespaceTypes.Application) {
+      return this._cacheClient.getApplicationsByOwner({ owner });
+    }
+    if (type === ENSNamespaceTypes.Roles) {
+      return this._cacheClient.getRolesByOwner({ owner });
+    }
+    throw new ENSTypeNotSupportedError();
+  }
+
+  /**
+   * getENSTypesByOwner
+   *
+   * @description get all applications for organization namespace
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getAppsByOrgNamespace({ namespace }: { namespace: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getApplicationsByOrganization({ namespace });
   }
 
   /**
@@ -543,9 +651,6 @@ export class IAM extends IAMBase {
    *
    */
   async getSubdomains({ domain }: { domain: string }) {
-    if (this._cacheClient) {
-      return this._cacheClient.getSubRoles({ role: domain });
-    }
     if (this._ensRegistry) {
       const domains = await this.getFilteredDomainsFromEvent({ domain });
       const role = domain.split(".");
@@ -557,7 +662,7 @@ export class IAM extends IAMBase {
       }
       return Object.keys(subdomains);
     }
-    return [];
+    throw new Error('ENS registry was not initialized');
   }
 
   /**
@@ -568,14 +673,11 @@ export class IAM extends IAMBase {
    *
    */
   async checkExistenceOfDomain({ domain }: { domain: string }) {
-    if (this._cacheClient) {
-      return this._cacheClient.isRoleExist({ role: domain });
-    }
     if (this._ensRegistry) {
       const domainHash = namehash(domain);
       return this._ensRegistry.recordExists(domainHash);
     }
-    return false;
+    throw new Error('ENS registry was not initialized');
   }
 
   /**
@@ -587,15 +689,12 @@ export class IAM extends IAMBase {
    *
    */
   async isOwner({ domain, user = this._address }: { domain: string; user?: string }) {
-    if (this._cacheClient && user) {
-      return this._cacheClient.isOwnerOfRole({ domain, user });
-    }
     if (this._ensRegistry) {
       const domainHash = namehash(domain);
       const owner = await this._ensRegistry.owner(domainHash);
       return owner === user;
     }
-    return false;
+    throw new Error('ENS registry was not initialized');
   }
 
   // NATS

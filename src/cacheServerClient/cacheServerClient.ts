@@ -1,43 +1,23 @@
-import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import axios, { AxiosInstance } from "axios";
+import {
+  IApp,
+  IAppDefinition,
+  IOrganization,
+  IRole,
+  IOrganizationDefinition,
+  IRoleDefinition
+} from "./cacheServerClient.types";
 
 export interface ICacheServerClient {
-  getDidDocument: ({ did }: { did: string }) => Promise<IDIDDocument | null>;
-  getClaims: ({ did }: { did: string }) => Promise<Record<string, unknown>[]>;
-  getClaimsByClaimType: ({
-    did,
-    claimType
-  }: {
-    did: string;
-    claimType: string;
-  }) => Promise<Record<string, unknown>[]>;
-  getIssuedClaimsByClaimType: ({
-    did,
-    claimType
-  }: {
-    did: string;
-    claimType: string;
-  }) => Promise<Record<string, unknown>[]>;
-  getIssuedClaimsByIssuer: ({
-    did,
-    issuer
-  }: {
-    did: string;
-    issuer: string;
-  }) => Promise<Record<string, unknown>[]>;
-  getIssuedClaimsByIssuerAndClaimType: ({
-    did,
-    issuer,
-    claimType
-  }: {
-    did: string;
-    issuer: string;
-    claimType: string;
-  }) => Promise<Record<string, unknown>[]>;
-  getSubRoles: ({ role }: { role: string }) => Promise<string[]>;
-  getRoleDefinition: ({ role }: { role: string }) => Promise<Record<string, unknown>>;
-  isOwnerOfRole: ({ user, domain }: { user: string; domain: string }) => Promise<boolean>;
-  isRoleExist: ({ role }: { role: string }) => Promise<boolean>;
+  getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
+  getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
+  getAppDefinition: ({ namespace }: { namespace: string }) => Promise<IAppDefinition>;
+  getApplicationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
+  getOrganizationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
+  getOrganizationsByOwner: ({ owner }: { owner: string }) => Promise<IOrganization[]>;
+  getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
+  getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
+  getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -49,59 +29,48 @@ export class CacheServerClient implements ICacheServerClient {
     });
   }
 
-  async getDidDocument({ did }) {
-    const didDocument = await this.httpClient.get<IDIDDocument | null>(`/did/${did}`);
-    return didDocument.data;
+  async getRoleDefinition({ namespace }) {
+    const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
+    return data.definition;
   }
 
-  async getClaims({ did }) {
-    const { data } = await this.httpClient.get<Record<string, unknown>[]>(`/claims/${did}`);
+  async getOrgDefinition({ namespace }) {
+    const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
+    return data.definition;
+  }
+
+  async getAppDefinition({ namespace }) {
+    const { data } = await this.httpClient.get<IApp>(`/app/${namespace}`);
+    return data.definition;
+  }
+
+  async getApplicationRoles({ namespace }) {
+    const { data } = await this.httpClient.get<{ Data: IRole[] }>(`/app/${namespace}/roles`);
+    return data.Data;
+  }
+
+  async getOrganizationRoles({ namespace }) {
+    const { data } = await this.httpClient.get<IRole[]>(`/org/${namespace}/roles`);
     return data;
   }
 
-  async getClaimsByClaimType({ did, claimType }) {
-    const { data } = await this.httpClient.get<Record<string, unknown>[]>(
-      `/claims/${did}/${claimType}`
-    );
-    return data;
+  async getOrganizationsByOwner({ owner }) {
+    const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(`/owner/${owner}/orgs`);
+    return data.orgs;
   }
 
-  async getIssuedClaimsByClaimType({ did, claimType }) {
-    const { data } = await this.httpClient.get<Record<string, unknown>[]>(
-      `/claims/${did}/${claimType}`
-    );
-    return data;
+  async getApplicationsByOwner({ owner }) {
+    const { data } = await this.httpClient.get<{ apps: IApp[] }>(`/owner/${owner}/apps`);
+    return data.apps;
   }
 
-  async getIssuedClaimsByIssuer({ did, issuer }) {
-    const { data } = await this.httpClient.get<Record<string, unknown>[]>(`/claims/${did}/${issuer}`);
-    return data;
+  async getApplicationsByOrganization({ namespace }) {
+    const { data } = await this.httpClient.get<{ Data: IApp[] }>(`/org/${namespace}/apps`);
+    return data.Data;
   }
 
-  async getIssuedClaimsByIssuerAndClaimType({ did, issuer, claimType }) {
-    const { data } = await this.httpClient.get<Record<string, unknown>[]>(
-      `/claims/${did}/${issuer}/${claimType}`
-    );
-    return data;
-  }
-
-  async getRoleDefinition({ role }) {
-    const { data } = await this.httpClient.get<Record<string, unknown>>(`/roles/${role}`);
-    return data;
-  }
-
-  async getSubRoles({ role }) {
-    const { data } = await this.httpClient.get<string[]>(`/roles/${role}`);
-    return data;
-  }
-
-  async isOwnerOfRole({ user, domain }) {
-    const { data } = await this.httpClient.get<boolean>(`/owner/${domain}/${user}`);
-    return data;
-  }
-
-  async isRoleExist({ role }) {
-    const { data } = await this.httpClient.get<boolean>(`/role/${role}`);
-    return data;
+  async getRolesByOwner({ owner }) {
+    const { data } = await this.httpClient.get<{ roles: IRole[] }>(`/owner/${owner}/roles`);
+    return data.roles;
   }
 }
