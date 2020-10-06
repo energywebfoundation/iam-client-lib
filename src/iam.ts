@@ -63,7 +63,7 @@ type InitializeData = {
 
 export enum ENSPrefixes {
   Roles = "roles",
-  Application = "app",
+  Application = "apps",
   Organization = "org"
 }
 
@@ -233,7 +233,7 @@ export class IAM {
     try {
       await this.init();
     } catch (err) {
-      if (err === "User closed modal") {
+      if (err.message === "User closed modal") {
         return {
           did: undefined,
           connected: false,
