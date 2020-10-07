@@ -44,6 +44,8 @@ import { EnsRegistry } from "../ethers/EnsRegistry";
 import { PublicResolver } from "../ethers/PublicResolver";
 import { labelhash, namehash } from "./utils/ENS_hash";
 import { JWT } from "@ew-did-registry/jwt";
+import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+import { v4 as uuid } from "uuid";
 
 type ConnectionOptions = {
   rpcUrl: string;
@@ -53,6 +55,8 @@ type ConnectionOptions = {
   ensRegistryAddress?: string;
   ipfsUrl?: string;
   bridgeUrl?: string;
+  messagingMethod?: MessagingMethod;
+  natsServerUrl?: string;
 };
 
 type InitializeData = {
@@ -61,11 +65,27 @@ type InitializeData = {
   userClosedModal: boolean;
 };
 
+interface IMessage {
+  id: string;
+  token: string;
+  issuedToken?: string;
+  requester: string;
+  issuer: string;
+}
+
 export enum ENSPrefixes {
   Roles = "roles",
   Application = "apps",
   Organization = "org"
 }
+
+export enum MessagingMethod {
+  CacheServer = "cacheServer",
+  WebRTC = "webRTC",
+  SmartContractStorage = "smartContractStorage"
+}
+
+const NATS_EXCHANGE_TOPIC = "claim.exchange";
 
 /**
  * Decentralized Identity and Access Management (IAM) Type
@@ -91,6 +111,10 @@ export class IAM {
   private _ensResolverAddress: string;
   private _ensRegistryAddress: string;
 
+  private _natsServerUrl: string | undefined;
+  private _natsConnection: NatsConnection | undefined;
+  private _jsonCodec: Codec<any> | undefined;
+
   /**
    * IAM Constructor
    *
@@ -107,7 +131,9 @@ export class IAM {
     ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
     ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
     ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
-    bridgeUrl = "https://walletconnect.energyweb.org"
+    bridgeUrl = "https://walletconnect.energyweb.org",
+    messagingMethod,
+    natsServerUrl
   }: ConnectionOptions) {
     this._walletConnectProvider = new WalletConnectProvider({
       rpc: {
@@ -129,6 +155,10 @@ export class IAM {
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
     this._ipfsStore = new DidStore(ipfsUrl);
+    if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
+      this._natsServerUrl = natsServerUrl;
+      this._jsonCodec = JSONCodec();
+    }
   }
 
   // INITIAL
@@ -145,6 +175,7 @@ export class IAM {
     await this.setDocument();
     this.setClaims();
     this.setJWT();
+    await this.setupNATS();
   }
 
   private setAddress() {
@@ -194,6 +225,13 @@ export class IAM {
   private setJWT() {
     if (this._signer) {
       this._jwt = new JWT(this._signer);
+    }
+  }
+
+  private async setupNATS() {
+    if (this._natsServerUrl) {
+      this._natsConnection = await connect({ servers: `ws://${this._natsServerUrl}` });
+      console.log(`Nats server connected at ${this._natsConnection.getServer()}`);
     }
   }
 
@@ -459,6 +497,13 @@ export class IAM {
       return claims;
     }
     return [];
+  }
+
+  async decodeJWTToken({ token }: { token: string }) {
+    if (!this._jwt) {
+      throw new Error("JWT was not initialized");
+    }
+    return this._jwt.decode(token);
   }
 
   /// ROLES
@@ -767,6 +812,78 @@ export class IAM {
       return owner === user;
     }
     return false;
+  }
+
+  // NATS
+
+  async createClaimRequest({
+    issuerDID,
+    claim
+  }: {
+    issuerDID: string;
+    claim: Record<string, unknown>;
+  }) {
+    if (!this._natsConnection) {
+      throw new Error("NATS connection not established");
+    }
+    const token = await this.createPublicClaim({ data: claim });
+    if (!token) {
+      throw new Error("Token was not generated");
+    }
+    const message: IMessage = {
+      id: uuid(),
+      token,
+      issuer: issuerDID,
+      requester: this._did || ""
+    };
+    const data = this._jsonCodec?.encode(message);
+    this._natsConnection.publish(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`, data);
+  }
+
+  async issueClaimRequest({
+    requesterDID,
+    id,
+    token
+  }: {
+    requesterDID: string;
+    token: string;
+    id: string;
+  }) {
+    if (!this._natsConnection) {
+      throw new Error("NATS connection not established");
+    }
+
+    // Uncomment when the did library issue is resolved
+    // const issuedToken = await this.issuePublicClaim({ token });
+    // if (!issuedToken) {
+    //   throw new Error("Token was not generated");
+    // }
+    const preparedData: IMessage = {
+      id,
+      issuedToken: token,
+      requester: requesterDID,
+      issuer: this._did || "",
+      token
+    };
+    const dataToSend = this._jsonCodec?.encode(preparedData);
+    this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+  }
+
+  async subscribeToMessages({
+    topic = `${this._did}.${NATS_EXCHANGE_TOPIC}`,
+    messageHandler
+  }: {
+    topic?: string;
+    messageHandler: (data: IMessage) => void;
+  }) {
+    if (!this._natsConnection) {
+      throw new Error("NATS connection not established");
+    }
+    const subscription = this._natsConnection.subscribe(topic);
+    for await (const msg of subscription) {
+      const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
+      messageHandler(decodedMessage);
+    }
   }
 
   // TODO:

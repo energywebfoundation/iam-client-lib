@@ -77,12 +77,15 @@
     "@ew-did-registry/keys": "prerelease",
     "@walletconnect/web3-provider": "^1.2.2",
     "eth-ens-namehash": "^2.0.8",
-    "ethers": "4.0.45",
-    "js-sha3": "^0.8.0"
+    "ethers": "^4.0.45",
+    "js-sha3": "^0.8.0",
+    "nats.ws": "^1.0.0-111",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@typechain/ethers-v4": "^1.0.1",
     "@types/jest": "^26.0.13",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "bili": "^5.0.5",
