@@ -14,7 +14,7 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSNamespaceTypes } from "./iam";
+import { IAM, ENSNamespaceTypes, NATS_EXCHANGE_TOPIC } from "./iam";
 import { EnrolmentFormData } from "./models/enrolment-form-data";
 import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
 import { MessagingMethod } from './iam/iam-base';
@@ -39,6 +39,10 @@ export { IAM };
 
 // MODELS
 export { EnrolmentFormData };
+
+// CONSTANTS
+
+export { NATS_EXCHANGE_TOPIC };
 
 // ENUMS
 export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSNamespaceTypes, MessagingMethod };

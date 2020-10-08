@@ -3,7 +3,6 @@ import { providers, Signer, utils } from "ethers";
 import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
-
 import {
   IResolverSettings,
   IServiceEndpoint,
@@ -22,6 +21,8 @@ import { ICacheServerClient } from "../iam-client-lib";
 import { Keys } from "@ew-did-registry/keys";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+
+const { hexlify, bigNumberify, Interface } = utils;
 
 export enum MessagingMethod {
   CacheServer = "cacheServer",
@@ -104,6 +105,7 @@ export class IAMBase {
       this._ensResolverAddress = ensResolverAddress;
       this._cacheClient = cacheClient;
     }
+
     this._resolverSetting = {
       provider: {
         uriOrInfo: rpcUrl,
@@ -113,7 +115,9 @@ export class IAMBase {
       address: address1056,
       method: Methods.Erc1056
     };
+
     this._ipfsStore = new DidStore(ipfsUrl);
+
     if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
       this._natsServerUrl = natsServerUrl;
       this._jsonCodec = JSONCodec();
@@ -129,7 +133,7 @@ export class IAMBase {
     this.setupUniversalEnv();
   }
 
-  protected async setupBrowserEnv() {
+  private async setupBrowserEnv() {
     if (this._walletConnectProvider) {
       await this._walletConnectProvider.enable();
       this._provider = new providers.Web3Provider(this._walletConnectProvider);
@@ -143,39 +147,39 @@ export class IAMBase {
     }
   }
 
-  protected setupUniversalEnv() {
+  private setupUniversalEnv() {
     this.setResolver();
     this.setJWT();
   }
 
-  protected setAddress() {
+  private setAddress() {
     if (this._walletConnectProvider) {
       this._address = this._walletConnectProvider.accounts[0];
     }
   }
 
-  protected setSigner() {
+  private setSigner() {
     this._signer = this._provider?.getSigner();
   }
 
-  protected setResolver() {
+  private setResolver() {
     if (this._resolverSetting) {
       this._resolver = new Resolver(this._resolverSetting);
     }
   }
 
-  protected setDid() {
+  private setDid() {
     this._did = `did:${Methods.Erc1056}:${this._address}`;
   }
 
-  protected setupENS() {
+  private setupENS() {
     if (this._signer && this._ensRegistryAddress && this._ensResolverAddress) {
       this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._signer);
       this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._signer);
     }
   }
 
-  protected async setDocument() {
+  private async setDocument() {
     if (this._did && this._signer) {
       const document = new DIDDocumentFull(
         this._did,
@@ -186,7 +190,7 @@ export class IAMBase {
     }
   }
 
-  protected setClaims() {
+  private setClaims() {
     if (this._signer && this._document) {
       this._userClaims = new ClaimsUser(this._signer, this._document, this._ipfsStore);
       this._issuerClaims = new ClaimsIssuer(this._signer, this._document, this._ipfsStore);
@@ -194,14 +198,14 @@ export class IAMBase {
     }
   }
 
-  protected setJWT() {
+  private setJWT() {
     if (this._signer) {
       this._jwt = new JWT(this._signer);
     }
     this._jwt = new JWT(new Keys());
   }
 
-  protected async setupNATS() {
+  private async setupNATS() {
     if (this._natsServerUrl) {
       this._natsConnection = await connect({ servers: `ws://${this._natsServerUrl}` });
       console.log(`Nats server connected at ${this._natsConnection.getServer()}`);
@@ -226,7 +230,7 @@ export class IAMBase {
     if (this._signer && this._ensRegistry && this._address && this._ensResolverAddress) {
       const roleHash = labelhash(subdomain) as string;
       const namespaceHash = namehash(domain) as string;
-      const ttl = utils.bigNumberify(0);
+      const ttl = bigNumberify(0);
       const setDomainTx = await this._ensRegistry.setSubnodeRecord(
         namespaceHash,
         roleHash,
@@ -234,8 +238,8 @@ export class IAMBase {
         this._ensResolverAddress,
         ttl,
         {
-          gasLimit: utils.hexlify(4900000),
-          gasPrice: utils.hexlify(0.1)
+          gasLimit: hexlify(4900000),
+          gasPrice: hexlify(0.1)
         }
       );
       await setDomainTx.wait();
@@ -247,8 +251,8 @@ export class IAMBase {
     if (this._ensResolver) {
       const namespaceHash = namehash(domain) as string;
       const setDomainNameTx = await this._ensResolver.setName(namespaceHash, domain, {
-        gasLimit: utils.hexlify(4900000),
-        gasPrice: utils.hexlify(0.1)
+        gasLimit: hexlify(4900000),
+        gasPrice: hexlify(0.1)
       });
       await setDomainNameTx.wait();
       console.log(`Set the name of the domain to ${domain}`);
@@ -257,7 +261,7 @@ export class IAMBase {
 
   protected async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
     if (this._ensResolver && this._provider) {
-      const ensInterface = new utils.Interface(ensResolverContract);
+      const ensInterface = new Interface(ensResolverContract);
       const Event = this._ensResolver.filters.TextChanged(null, "metadata", null);
       const filter = {
         fromBlock: 0,

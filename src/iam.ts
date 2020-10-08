@@ -16,7 +16,6 @@
 // @authors: Daniel Wojno
 
 import { providers, Signer, utils } from "ethers";
-
 import {
   DIDAttribute,
   IDIDDocument,
@@ -27,14 +26,21 @@ import { IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
 import { IAMBase } from "./iam/iam-base";
-import { ENSTypeNotSupportedError } from "./errors/ENSTypeNOtSupportedError";
-import { CacheClientNotProvidedError } from "./errors/CacheClientNotProvided";
-import { MethodNotAvailableInNodeEnvError } from "./errors/MethodNotAvailableInNodeError";
+import {
+  ENSTypeNotSupportedError,
+  CacheClientNotProvidedError,
+  MethodNotAvailableInNodeEnvError,
+  NATSConnectionNotEstablishedError,
+  ENSResolverNotInitializedError,
+  ENSRegistryNotInitializedError
+} from "./errors";
 import {
   IAppDefinition,
   IOrganizationDefinition,
   IRoleDefinition
 } from "./cacheServerClient/cacheServerClient.types";
+
+const { hexlify } = utils;
 
 type InitializeData = {
   did: string | undefined;
@@ -56,7 +62,7 @@ export enum ENSNamespaceTypes {
   Organization = "org"
 }
 
-const NATS_EXCHANGE_TOPIC = "claim.exchange";
+export const NATS_EXCHANGE_TOPIC = "claim.exchange";
 
 /**
  * Decentralized Identity and Access Management (IAM) Type
@@ -105,7 +111,7 @@ export class IAM extends IAMBase {
           userClosedModal: true
         };
       }
-      console.log(err);
+      throw new Error(err);
     }
     if (!this._runningInBrowser) {
       return {
@@ -380,8 +386,8 @@ export class IAM extends IAMBase {
         "metadata",
         stringifiedData,
         {
-          gasLimit: utils.hexlify(4900000),
-          gasPrice: utils.hexlify(0.1)
+          gasLimit: hexlify(4900000),
+          gasPrice: hexlify(0.1)
         }
       );
       await setTextTx.wait();
@@ -577,7 +583,7 @@ export class IAM extends IAMBase {
       const metadata = await this._ensResolver.text(roleHash, "metadata");
       return JSON.parse(metadata) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
     }
-    throw new Error('ENS resolver not initialized');
+    throw new ENSResolverNotInitializedError();
   }
 
   /**
@@ -662,7 +668,7 @@ export class IAM extends IAMBase {
       }
       return Object.keys(subdomains);
     }
-    throw new Error('ENS registry was not initialized');
+    throw new ENSRegistryNotInitializedError();
   }
 
   /**
@@ -677,7 +683,7 @@ export class IAM extends IAMBase {
       const domainHash = namehash(domain);
       return this._ensRegistry.recordExists(domainHash);
     }
-    throw new Error('ENS registry was not initialized');
+    throw new ENSRegistryNotInitializedError();
   }
 
   /**
@@ -694,7 +700,7 @@ export class IAM extends IAMBase {
       const owner = await this._ensRegistry.owner(domainHash);
       return owner === user;
     }
-    throw new Error('ENS registry was not initialized');
+    throw new ENSRegistryNotInitializedError();
   }
 
   // NATS
@@ -707,7 +713,7 @@ export class IAM extends IAMBase {
     claim: Record<string, unknown>;
   }) {
     if (!this._natsConnection) {
-      throw new Error("NATS connection not established");
+      throw new NATSConnectionNotEstablishedError();
     }
     const token = await this.createPublicClaim({ data: claim });
     if (!token) {
@@ -733,7 +739,7 @@ export class IAM extends IAMBase {
     id: string;
   }) {
     if (!this._natsConnection) {
-      throw new Error("NATS connection not established");
+      throw new NATSConnectionNotEstablishedError();
     }
 
     // Uncomment when the did library issue is resolved
@@ -760,7 +766,7 @@ export class IAM extends IAMBase {
     messageHandler: (data: IMessage) => void;
   }) {
     if (!this._natsConnection) {
-      throw new Error("NATS connection not established");
+      throw new NATSConnectionNotEstablishedError();
     }
     const subscription = this._natsConnection.subscribe(topic);
     for await (const msg of subscription) {

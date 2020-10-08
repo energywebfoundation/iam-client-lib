@@ -50,8 +50,8 @@ export class CacheServerClient implements ICacheServerClient {
   }
 
   async getOrganizationRoles({ namespace }) {
-    const { data } = await this.httpClient.get<IRole[]>(`/org/${namespace}/roles`);
-    return data;
+    const { data } = await this.httpClient.get<{ Data: IRole[] }>(`/org/${namespace}/roles`);
+    return data.Data;
   }
 
   async getOrganizationsByOwner({ owner }) {

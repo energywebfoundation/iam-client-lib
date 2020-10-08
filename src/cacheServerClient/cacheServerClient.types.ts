@@ -11,6 +11,7 @@ export interface IRoleDefinition {
   issuer: {
     issuerType?: string;
     did?: string[];
+    roleName?: string;
   };
 }
 
