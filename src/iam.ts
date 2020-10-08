@@ -475,8 +475,8 @@ export class IAM {
         this._ensResolverAddress,
         ttl,
         {
-          gasLimit: utils.hexlify(25000),
-          gasPrice: utils.hexlify(10e9)
+          gasLimit: utils.hexlify(4900000),
+          gasPrice: utils.hexlify(0.1)
         }
       );
       await setDomainTx.wait();
@@ -488,8 +488,8 @@ export class IAM {
     if (this._ensResolver) {
       const namespaceHash = namehash(domain) as string;
       const setDomainNameTx = await this._ensResolver.setName(namespaceHash, domain, {
-        gasLimit: utils.hexlify(25000),
-        gasPrice: utils.hexlify(10e9)
+        gasLimit: utils.hexlify(4900000),
+        gasPrice: utils.hexlify(0.1)
       });
       await setDomainNameTx.wait();
       console.log(`Set the name of the domain to ${domain}`);
@@ -538,8 +538,8 @@ export class IAM {
     if (this._signer && this._ensResolver) {
       const namespaceHash = namehash(domain) as string;
       const setTextTx = await this._ensResolver.setText(namespaceHash, "metadata", data, {
-        gasLimit: utils.hexlify(25000),
-        gasPrice: utils.hexlify(10e9)
+        gasLimit: utils.hexlify(4900000),
+        gasPrice: utils.hexlify(0.1)
       });
       await setTextTx.wait();
       console.log(`Added data: ${data} to ${domain} metadata`);
