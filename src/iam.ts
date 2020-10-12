@@ -379,9 +379,10 @@ export class IAM extends IAMBase {
       throw new MethodNotAvailableInNodeEnvError("setRoleDefinition");
     }
     if (this._signer && this._ensResolver) {
+      const ensResolverWithSigner = this._ensResolver.connect(this._signer);
       const stringifiedData = JSON.stringify(data);
       const namespaceHash = namehash(domain) as string;
-      const setTextTx = await this._ensResolver.setText(
+      const setTextTx = await ensResolverWithSigner.setText(
         namespaceHash,
         "metadata",
         stringifiedData,

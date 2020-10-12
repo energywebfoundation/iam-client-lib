@@ -21,6 +21,7 @@ import { ICacheServerClient } from "../iam-client-lib";
 import { Keys } from "@ew-did-registry/keys";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+import { MethodNotAvailableInNodeEnvError } from "../errors";
 
 const { hexlify, bigNumberify, Interface } = utils;
 
@@ -47,7 +48,7 @@ export class IAMBase {
   protected _runningInBrowser: boolean;
 
   protected _did: string | undefined;
-  protected _provider: providers.Web3Provider | undefined;
+  protected _provider: providers.JsonRpcProvider | undefined;
   protected _walletConnectProvider: WalletConnectProvider | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
@@ -63,8 +64,8 @@ export class IAMBase {
 
   protected _ensRegistry: EnsRegistry | undefined;
   protected _ensResolver: PublicResolver | undefined;
-  protected _ensResolverAddress: string | undefined;
-  protected _ensRegistryAddress: string | undefined;
+  protected _ensResolverAddress: string;
+  protected _ensRegistryAddress: string;
 
   protected _cacheClient: ICacheServerClient | undefined;
 
@@ -93,6 +94,8 @@ export class IAMBase {
     natsServerUrl
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
+    this._ensRegistryAddress = ensRegistryAddress;
+    this._ensResolverAddress = ensResolverAddress;
 
     if (this._runningInBrowser) {
       this._walletConnectProvider = new WalletConnectProvider({
@@ -101,8 +104,6 @@ export class IAMBase {
         },
         infuraId
       });
-      this._ensRegistryAddress = ensRegistryAddress;
-      this._ensResolverAddress = ensResolverAddress;
       this._cacheClient = cacheClient;
     }
 
@@ -117,6 +118,7 @@ export class IAMBase {
     };
 
     this._ipfsStore = new DidStore(ipfsUrl);
+    this._provider = new providers.JsonRpcProvider(rpcUrl);
 
     if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
       this._natsServerUrl = natsServerUrl;
@@ -136,11 +138,9 @@ export class IAMBase {
   private async setupBrowserEnv() {
     if (this._walletConnectProvider) {
       await this._walletConnectProvider.enable();
-      this._provider = new providers.Web3Provider(this._walletConnectProvider);
+      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
       this.setAddress();
-      this.setSigner();
       this.setDid();
-      this.setupENS();
       await this.setDocument();
       this.setClaims();
       await this.setupNATS();
@@ -150,16 +150,13 @@ export class IAMBase {
   private setupUniversalEnv() {
     this.setResolver();
     this.setJWT();
+    this.setupENS();
   }
 
   private setAddress() {
     if (this._walletConnectProvider) {
       this._address = this._walletConnectProvider.accounts[0];
     }
-  }
-
-  private setSigner() {
-    this._signer = this._provider?.getSigner();
   }
 
   private setResolver() {
@@ -173,9 +170,9 @@ export class IAMBase {
   }
 
   private setupENS() {
-    if (this._signer && this._ensRegistryAddress && this._ensResolverAddress) {
-      this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._signer);
-      this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._signer);
+    if (this._provider) {
+      this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._provider);
+      this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._provider);
     }
   }
 
@@ -227,11 +224,12 @@ export class IAMBase {
   }
 
   protected async createSubdomain({ subdomain, domain }: { subdomain: string; domain: string }) {
-    if (this._signer && this._ensRegistry && this._address && this._ensResolverAddress) {
+    if (this._signer && this._ensRegistry && this._address) {
+      const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
       const roleHash = labelhash(subdomain) as string;
       const namespaceHash = namehash(domain) as string;
       const ttl = bigNumberify(0);
-      const setDomainTx = await this._ensRegistry.setSubnodeRecord(
+      const setDomainTx = await ensRegistryWithSigner.setSubnodeRecord(
         namespaceHash,
         roleHash,
         this._address,
@@ -244,19 +242,24 @@ export class IAMBase {
       );
       await setDomainTx.wait();
       console.log(`Subdomain ${subdomain + "." + domain} created`);
+      return;
     }
+    throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
   }
 
   protected async setDomainName({ domain }) {
-    if (this._ensResolver) {
+    if (this._signer && this._ensResolver) {
+      const ensResolverWithSigner = this._ensResolver.connect(this._signer);
       const namespaceHash = namehash(domain) as string;
-      const setDomainNameTx = await this._ensResolver.setName(namespaceHash, domain, {
-        gasLimit: hexlify(4900000),
-        gasPrice: hexlify(0.1)
+      const setDomainNameTx = await ensResolverWithSigner.setName(namespaceHash, domain, {
+        gasLimit: utils.hexlify(4900000),
+        gasPrice: utils.hexlify(0.1)
       });
       await setDomainNameTx.wait();
       console.log(`Set the name of the domain to ${domain}`);
+      return;
     }
+    throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
   }
 
   protected async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
