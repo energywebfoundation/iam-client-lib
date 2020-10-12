@@ -44,17 +44,21 @@ $ npm i https://github.com/energywebfoundation/iam-client-lib.git#branch_name
 
 ### Sample Import (TypeScript)
 ```sh
-import { IAM } from 'iam-client-lib';
+import { IAM, CacheServerClient } from 'iam-client-lib';
 
 export class Sample {
     private _iam: IAM;
 
 
     constructor() {
+      // create default cache server client (optional)
+        const cacheClient = new CacheServerClient({ url: 'http://cache-server.com'})
+
       // create IAM instance with provided rpc URL
         this._iam = new IAM({
           rpcUrl: 'https://volta-rpc.energyweb.org/',
-          chainId: 73799
+          chainId: 73799,
+          cacheClient // optional
         });
     }
 

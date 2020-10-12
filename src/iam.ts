@@ -15,49 +15,32 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils } from "ethers";
-import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
-import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
-
-import { EnrolmentFormData } from "./models/enrolment-form-data";
 import {
   DIDAttribute,
   IDIDDocument,
-  IResolverSettings,
-  IUpdateData,
-  ProviderTypes
+  IServiceEndpoint,
+  IUpdateData
 } from "@ew-did-registry/did-resolver-interface";
-import { Methods } from "@ew-did-registry/did";
-import { DIDDocumentFull } from "@ew-did-registry/did-document";
-import {
-  ClaimsIssuer,
-  ClaimsUser,
-  ClaimsVerifier,
-  IProofData,
-  ISaltedFields
-} from "@ew-did-registry/claims";
-import { DidStore } from "@ew-did-registry/did-ipfs-store";
-import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
-import { PublicResolverFactory } from "../ethers/PublicResolverFactory";
-import { EnsRegistry } from "../ethers/EnsRegistry";
-import { PublicResolver } from "../ethers/PublicResolver";
-import { labelhash, namehash } from "./utils/ENS_hash";
-import { JWT } from "@ew-did-registry/jwt";
-import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+import { IProofData, ISaltedFields } from "@ew-did-registry/claims";
+import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
+import { IAMBase } from "./iam/iam-base";
+import {
+  ENSTypeNotSupportedError,
+  CacheClientNotProvidedError,
+  MethodNotAvailableInNodeEnvError,
+  NATSConnectionNotEstablishedError,
+  ENSResolverNotInitializedError,
+  ENSRegistryNotInitializedError
+} from "./errors";
+import {
+  IAppDefinition,
+  IOrganizationDefinition,
+  IRoleDefinition
+} from "./cacheServerClient/cacheServerClient.types";
 
-type ConnectionOptions = {
-  rpcUrl: string;
-  chainId?: number;
-  infuraId?: string;
-  ensResolverAddress?: string;
-  ensRegistryAddress?: string;
-  ipfsUrl?: string;
-  bridgeUrl?: string;
-  messagingMethod?: MessagingMethod;
-  natsServerUrl?: string;
-};
+const { hexlify } = utils;
 
 type InitializeData = {
   did: string | undefined;
@@ -73,168 +56,18 @@ interface IMessage {
   issuer: string;
 }
 
-export enum ENSPrefixes {
+export enum ENSNamespaceTypes {
   Roles = "roles",
   Application = "apps",
   Organization = "org"
 }
 
-export enum MessagingMethod {
-  CacheServer = "cacheServer",
-  WebRTC = "webRTC",
-  SmartContractStorage = "smartContractStorage"
-}
-
-const NATS_EXCHANGE_TOPIC = "claim.exchange";
+export const NATS_EXCHANGE_TOPIC = "claim.exchange";
 
 /**
  * Decentralized Identity and Access Management (IAM) Type
  */
-export class IAM {
-  private _did: string | undefined;
-  private _provider: providers.Web3Provider | undefined;
-  private _walletConnectProvider: WalletConnectProvider;
-  private _address: string | undefined;
-  private _signer: Signer | undefined;
-
-  private _resolverSetting: IResolverSettings;
-  private _resolver: Resolver | undefined;
-  private _document: DIDDocumentFull | undefined;
-  private _userClaims: ClaimsUser | undefined;
-  private _issuerClaims: ClaimsIssuer | undefined;
-  private _verifierClaims: ClaimsVerifier | undefined;
-  private _ipfsStore: DidStore;
-  private _jwt: JWT | undefined;
-
-  private _ensRegistry: EnsRegistry | undefined;
-  private _ensResolver: PublicResolver | undefined;
-  private _ensResolverAddress: string;
-  private _ensRegistryAddress: string;
-
-  private _natsServerUrl: string | undefined;
-  private _natsConnection: NatsConnection | undefined;
-  private _jsonCodec: Codec<any> | undefined;
-
-  /**
-   * IAM Constructor
-   *
-   * @param {object} options connection options to connect with wallet connect
-   * @param {string} options.rpcUrl url to the ethereum network
-   * @param {number} options.chainID id of chain, default = 1
-   * @param {number} options.infuraId id of infura network, default = undefined
-   *
-   */
-  public constructor({
-    rpcUrl,
-    chainId = 1,
-    infuraId,
-    ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
-    ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
-    ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
-    bridgeUrl = "https://walletconnect.energyweb.org",
-    messagingMethod,
-    natsServerUrl
-  }: ConnectionOptions) {
-    this._walletConnectProvider = new WalletConnectProvider({
-      rpc: {
-        [chainId]: rpcUrl
-      },
-      infuraId,
-      chainId,
-      bridge: bridgeUrl
-    });
-    this._resolverSetting = {
-      provider: {
-        uriOrInfo: rpcUrl,
-        type: ProviderTypes.HTTP
-      },
-      abi: abi1056,
-      address: address1056,
-      method: Methods.Erc1056
-    };
-    this._ensRegistryAddress = ensRegistryAddress;
-    this._ensResolverAddress = ensResolverAddress;
-    this._ipfsStore = new DidStore(ipfsUrl);
-    if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
-      this._natsServerUrl = natsServerUrl;
-      this._jsonCodec = JSONCodec();
-    }
-  }
-
-  // INITIAL
-
-  private async init() {
-    await this._walletConnectProvider.enable();
-    this._provider = new providers.Web3Provider(this._walletConnectProvider);
-
-    this.setAddress();
-    this.setResolver();
-    this.setSigner();
-    this.setDid();
-    this.setupENS();
-    await this.setDocument();
-    this.setClaims();
-    this.setJWT();
-    await this.setupNATS();
-  }
-
-  private setAddress() {
-    this._address = this._walletConnectProvider.accounts[0];
-  }
-
-  private setSigner() {
-    this._signer = this._provider?.getSigner();
-  }
-
-  private setResolver() {
-    if (this._resolverSetting) {
-      this._resolver = new Resolver(this._resolverSetting);
-    }
-  }
-
-  private setDid() {
-    this._did = `did:${Methods.Erc1056}:${this._address}`;
-  }
-
-  private setupENS() {
-    if (this._signer) {
-      this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._signer);
-      this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._signer);
-    }
-  }
-
-  private async setDocument() {
-    if (this._did && this._signer) {
-      const document = new DIDDocumentFull(
-        this._did,
-        new Operator(this._signer, this._resolverSetting)
-      );
-      await document.create();
-      this._document = document;
-    }
-  }
-
-  private setClaims() {
-    if (this._signer && this._document) {
-      this._userClaims = new ClaimsUser(this._signer, this._document, this._ipfsStore);
-      this._issuerClaims = new ClaimsIssuer(this._signer, this._document, this._ipfsStore);
-      this._verifierClaims = new ClaimsVerifier(this._signer, this._document, this._ipfsStore);
-    }
-  }
-
-  private setJWT() {
-    if (this._signer) {
-      this._jwt = new JWT(this._signer);
-    }
-  }
-
-  private async setupNATS() {
-    if (this._natsServerUrl) {
-      this._natsConnection = await connect({ servers: `ws://${this._natsServerUrl}` });
-      console.log(`Nats server connected at ${this._natsConnection.getServer()}`);
-    }
-  }
-
+export class IAM extends IAMBase {
   // GETTERS
 
   /**
@@ -278,7 +111,14 @@ export class IAM {
           userClosedModal: true
         };
       }
-      console.log(err);
+      throw new Error(err);
+    }
+    if (!this._runningInBrowser) {
+      return {
+        did: undefined,
+        connected: true,
+        userClosedModal: false
+      };
     }
 
     return {
@@ -295,10 +135,12 @@ export class IAM {
    */
 
   async closeConnection() {
-    await this._walletConnectProvider.close();
-    this._did = undefined;
-    this._address = undefined;
-    this._signer = undefined;
+    if (this._walletConnectProvider) {
+      await this._walletConnectProvider.close();
+      this._did = undefined;
+      this._address = undefined;
+      this._signer = undefined;
+    }
   }
 
   /**
@@ -308,7 +150,10 @@ export class IAM {
    *
    */
   isConnected(): boolean {
-    return this._walletConnectProvider.connected;
+    if (this._walletConnectProvider) {
+      return this._walletConnectProvider.connected;
+    }
+    return false;
   }
 
   // DID DOCUMENT
@@ -319,9 +164,16 @@ export class IAM {
    * @returns whole did document if connected, if not returns null
    *
    */
-  async getDidDocument(): Promise<IDIDDocument | null> {
-    if (this._did && this._resolver) {
-      return this._resolver.read(this._did);
+  async getDidDocument({
+    did = this._did
+  }: { did?: string } | undefined = {}): Promise<IDIDDocument | null> {
+    if (did && this._resolver) {
+      const document = await this._resolver.read(did);
+      const services = await this.downloadClaims({
+        services: document.service && document.service.length > 1 ? document.service : []
+      });
+      document.service = (services as unknown) as IServiceEndpoint[];
+      return document;
     }
     return null;
   }
@@ -342,6 +194,9 @@ export class IAM {
     data: IUpdateData;
     validity?: number;
   }): Promise<boolean> {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("updateDidDocument");
+    }
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
       return updated;
@@ -357,6 +212,9 @@ export class IAM {
    *
    */
   async revokeDidDocument(): Promise<boolean> {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("revokeDidDocument");
+    }
     if (this._document) {
       return this._document.deactivate();
     }
@@ -468,6 +326,9 @@ export class IAM {
    *
    */
   async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createSelfSignedClaim");
+    }
     if (this._userClaims) {
       const claim = await this._userClaims.createPublicClaim(data);
       await this._userClaims.publishPublicClaim(claim, data);
@@ -480,21 +341,13 @@ export class IAM {
    * @description get user claims
    *
    */
-  async getUserClaims() {
-    if (this._resolver && this._did) {
-      const document = await this._resolver.read(this._did);
-      const services = document.service && document.service.length > 1 ? document.service : [];
-      const claims = await Promise.all(
-        services.map(async ({ serviceEndpoint, ...rest }) => {
-          const data = await this._ipfsStore.get(serviceEndpoint);
-          const { claimData } = this._jwt?.decode(data) as { claimData: Record<string, string> };
-          return {
-            ...rest,
-            ...claimData
-          };
-        })
-      );
-      return claims;
+  async getUserClaims({ did = this._did }: { did?: string } | undefined = {}) {
+    if (this._resolver && did) {
+      const document = await this._resolver.read(did);
+      const services = await this.downloadClaims({
+        services: document.service && document.service.length > 1 ? document.service : []
+      });
+      return services;
     }
     return [];
   }
@@ -508,70 +361,6 @@ export class IAM {
 
   /// ROLES
 
-  private async createSubdomain({ subdomain, domain }: { subdomain: string; domain: string }) {
-    if (this._signer && this._ensRegistry && this._address) {
-      const roleHash = labelhash(subdomain) as string;
-      const namespaceHash = namehash(domain) as string;
-      const ttl = utils.bigNumberify(0);
-      const setDomainTx = await this._ensRegistry.setSubnodeRecord(
-        namespaceHash,
-        roleHash,
-        this._address,
-        this._ensResolverAddress,
-        ttl,
-        {
-          gasLimit: utils.hexlify(4900000),
-          gasPrice: utils.hexlify(0.1)
-        }
-      );
-      await setDomainTx.wait();
-      console.log(`Subdomain ${subdomain + "." + domain} created`);
-    }
-  }
-
-  private async setDomainName({ domain }) {
-    if (this._ensResolver) {
-      const namespaceHash = namehash(domain) as string;
-      const setDomainNameTx = await this._ensResolver.setName(namespaceHash, domain, {
-        gasLimit: utils.hexlify(4900000),
-        gasPrice: utils.hexlify(0.1)
-      });
-      await setDomainNameTx.wait();
-      console.log(`Set the name of the domain to ${domain}`);
-    }
-  }
-
-  private async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
-    if (this._ensResolver && this._provider) {
-      const ensInterface = new utils.Interface(ensResolverContract);
-      const Event = this._ensResolver.filters.TextChanged(null, "metadata", null);
-      const filter = {
-        fromBlock: 0,
-        toBlock: "latest",
-        address: Event.address,
-        topics: [...(Event.topics as string[])]
-      };
-      const logs = await this._provider.getLogs(filter);
-      const rawLogs = logs.map(log => {
-        const parsedLog = ensInterface.parseLog(log);
-        return parsedLog.values;
-      });
-      const domains = await Promise.all(
-        rawLogs.map(async ({ node }) => {
-          return this._ensResolver?.name(node);
-        })
-      );
-      const uniqDomains: Record<string, unknown> = {};
-      for (const item of domains) {
-        if (item && item.endsWith(domain) && !uniqDomains[item]) {
-          uniqDomains[item] = null;
-        }
-      }
-      return Object.keys(uniqDomains);
-    }
-    return [];
-  }
-
   /**
    * setRoleDefinition
    *
@@ -579,15 +368,30 @@ export class IAM {
    * @description please use it only when you want to update role definitions for already created role (domain)
    *
    */
-  async setRoleDefinition({ domain, data }: { domain: string; data: string }) {
+  async setRoleDefinition({
+    domain,
+    data
+  }: {
+    domain: string;
+    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
+  }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("setRoleDefinition");
+    }
     if (this._signer && this._ensResolver) {
+      const stringifiedData = JSON.stringify(data);
       const namespaceHash = namehash(domain) as string;
-      const setTextTx = await this._ensResolver.setText(namespaceHash, "metadata", data, {
-        gasLimit: utils.hexlify(4900000),
-        gasPrice: utils.hexlify(0.1)
-      });
+      const setTextTx = await this._ensResolver.setText(
+        namespaceHash,
+        "metadata",
+        stringifiedData,
+        {
+          gasLimit: hexlify(4900000),
+          gasPrice: hexlify(0.1)
+        }
+      );
       await setTextTx.wait();
-      console.log(`Added data: ${data} to ${domain} metadata`);
+      console.log(`Added data: ${stringifiedData} to ${domain} metadata`);
     }
   }
 
@@ -605,13 +409,16 @@ export class IAM {
     returnSteps
   }: {
     orgName: string;
-    data: string;
+    data: IOrganizationDefinition;
     namespace: string;
     returnSteps?: boolean;
   }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createOrganization");
+    }
     const newDomain = `${orgName}.${namespace}`;
-    const rolesDomain = `${ENSPrefixes.Roles}.${newDomain}`;
-    const appsDomain = `${ENSPrefixes.Application}.${newDomain}`;
+    const rolesDomain = `${ENSNamespaceTypes.Roles}.${newDomain}`;
+    const appsDomain = `${ENSNamespaceTypes.Application}.${newDomain}`;
     const steps = [
       {
         next: () => this.createSubdomain({ subdomain: orgName, domain: namespace }),
@@ -626,7 +433,7 @@ export class IAM {
         info: "Set definition for organization"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Roles, domain: newDomain }),
+        next: () => this.createSubdomain({ subdomain: ENSNamespaceTypes.Roles, domain: newDomain }),
         info: "Create roles subdomain for organization"
       },
       {
@@ -634,7 +441,8 @@ export class IAM {
         info: "Register reverse name for roles subdomain"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Application, domain: newDomain }),
+        next: () =>
+          this.createSubdomain({ subdomain: ENSNamespaceTypes.Application, domain: newDomain }),
         info: "Create app subdomain for organization"
       },
       {
@@ -666,11 +474,14 @@ export class IAM {
   }: {
     appName: string;
     namespace: string;
-    data: string;
+    data: IAppDefinition;
     returnSteps?: boolean;
   }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createApplication");
+    }
     const newDomain = `${appName}.${namespace}`;
-    const rolesNamespace = `${ENSPrefixes.Roles}.${newDomain}`;
+    const rolesNamespace = `${ENSNamespaceTypes.Roles}.${newDomain}`;
     const steps = [
       {
         next: () => this.createSubdomain({ subdomain: appName, domain: namespace }),
@@ -685,7 +496,7 @@ export class IAM {
         info: "Set definition for application"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSPrefixes.Roles, domain: newDomain }),
+        next: () => this.createSubdomain({ subdomain: ENSNamespaceTypes.Roles, domain: newDomain }),
         info: "Create roles subdomain for application"
       },
       {
@@ -717,9 +528,12 @@ export class IAM {
   }: {
     roleName: string;
     namespace: string;
-    data: string;
+    data: IRoleDefinition;
     returnSteps?: boolean;
   }) {
+    if (!this._runningInBrowser) {
+      throw new MethodNotAvailableInNodeEnvError("createRole");
+    }
     const newDomain = `${roleName}.${namespace}`;
     const steps = [
       {
@@ -751,13 +565,88 @@ export class IAM {
    * @returns metadata string or empty string when there is no metadata
    *
    */
-  async getRoleDefinition({ roleName }: { roleName: string }) {
-    if (this._ensResolver) {
-      const roleHash = namehash(roleName);
-      const meta = await this._ensResolver.text(roleHash, "metadata");
-      return meta;
+  async getDefinition({ type, namespace }: { type: ENSNamespaceTypes; namespace: string }) {
+    if (this._cacheClient && type) {
+      if (type === ENSNamespaceTypes.Roles) {
+        return this._cacheClient.getRoleDefinition({ namespace });
+      }
+      if (type === ENSNamespaceTypes.Application) {
+        return this._cacheClient.getAppDefinition({ namespace });
+      }
+      if (type === ENSNamespaceTypes.Organization) {
+        return this._cacheClient.getOrgDefinition({ namespace });
+      }
+      throw new ENSTypeNotSupportedError();
     }
-    return "";
+    if (this._ensResolver) {
+      const roleHash = namehash(namespace);
+      const metadata = await this._ensResolver.text(roleHash, "metadata");
+      return JSON.parse(metadata) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
+    }
+    throw new ENSResolverNotInitializedError();
+  }
+
+  /**
+   * getRolesByNamespace
+   *
+   * @description get all subdomains for certain domain
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getRolesByNamespace({
+    parentType,
+    namespace
+  }: {
+    parentType: ENSNamespaceTypes.Application | ENSNamespaceTypes.Organization;
+    namespace: string;
+  }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    if (parentType === ENSNamespaceTypes.Organization) {
+      return this._cacheClient.getOrganizationRoles({ namespace });
+    }
+    if (parentType === ENSNamespaceTypes.Application) {
+      return this._cacheClient.getApplicationRoles({ namespace });
+    }
+    throw new ENSTypeNotSupportedError();
+  }
+
+  /**
+   * getENSTypesByOwner
+   *
+   * @description get all subdomains for certain domain
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getENSTypesByOwner({ type, owner }: { type: ENSNamespaceTypes; owner: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    if (type === ENSNamespaceTypes.Organization) {
+      return this._cacheClient.getOrganizationsByOwner({ owner });
+    }
+    if (type === ENSNamespaceTypes.Application) {
+      return this._cacheClient.getApplicationsByOwner({ owner });
+    }
+    if (type === ENSNamespaceTypes.Roles) {
+      return this._cacheClient.getRolesByOwner({ owner });
+    }
+    throw new ENSTypeNotSupportedError();
+  }
+
+  /**
+   * getENSTypesByOwner
+   *
+   * @description get all applications for organization namespace
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getAppsByOrgNamespace({ namespace }: { namespace: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getApplicationsByOrganization({ namespace });
   }
 
   /**
@@ -779,7 +668,7 @@ export class IAM {
       }
       return Object.keys(subdomains);
     }
-    return [];
+    throw new ENSRegistryNotInitializedError();
   }
 
   /**
@@ -794,7 +683,7 @@ export class IAM {
       const domainHash = namehash(domain);
       return this._ensRegistry.recordExists(domainHash);
     }
-    return false;
+    throw new ENSRegistryNotInitializedError();
   }
 
   /**
@@ -811,7 +700,7 @@ export class IAM {
       const owner = await this._ensRegistry.owner(domainHash);
       return owner === user;
     }
-    return false;
+    throw new ENSRegistryNotInitializedError();
   }
 
   // NATS
@@ -824,7 +713,7 @@ export class IAM {
     claim: Record<string, unknown>;
   }) {
     if (!this._natsConnection) {
-      throw new Error("NATS connection not established");
+      throw new NATSConnectionNotEstablishedError();
     }
     const token = await this.createPublicClaim({ data: claim });
     if (!token) {
@@ -850,7 +739,7 @@ export class IAM {
     id: string;
   }) {
     if (!this._natsConnection) {
-      throw new Error("NATS connection not established");
+      throw new NATSConnectionNotEstablishedError();
     }
 
     // Uncomment when the did library issue is resolved
@@ -877,44 +766,12 @@ export class IAM {
     messageHandler: (data: IMessage) => void;
   }) {
     if (!this._natsConnection) {
-      throw new Error("NATS connection not established");
+      throw new NATSConnectionNotEstablishedError();
     }
     const subscription = this._natsConnection.subscribe(topic);
     for await (const msg of subscription) {
       const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
       messageHandler(decodedMessage);
     }
-  }
-
-  // TODO:
-  // Below should contain public and private methods related to IAM.
-  // Currently, below methods are dummy methods.
-
-  async getOrgRoles(orgKey: string): Promise<Array<Record<string, unknown>>> {
-    // TODO: Retrieve roles based on organization key
-
-    return [{ [orgKey]: orgKey }];
-  }
-
-  async enrol(data: EnrolmentFormData): Promise<Record<string, unknown>> {
-    const enrolmentStatus = {
-      ...data
-    };
-
-    // TODO: Enrol here (Generate DID, etc)
-
-    return enrolmentStatus;
-  }
-
-  async getEnrolmentStatus(): Promise<Record<string, unknown>> {
-    const enrolmentStatus = {};
-
-    // TODO: Get Enrolment Status here
-
-    return enrolmentStatus;
-  }
-
-  public getIdentities() {
-    return null;
   }
 }

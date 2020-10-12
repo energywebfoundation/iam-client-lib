@@ -14,8 +14,19 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSPrefixes, MessagingMethod } from "./iam";
+import { IAM, ENSNamespaceTypes, NATS_EXCHANGE_TOPIC } from "./iam";
 import { EnrolmentFormData } from "./models/enrolment-form-data";
+import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
+import { MessagingMethod } from './iam/iam-base';
+import {
+  IApp,
+  IAppDefinition,
+  IOrganization,
+  IOrganizationDefinition,
+  IRole,
+  IRoleDefinition
+} from "./cacheServerClient/cacheServerClient.types";
+
 import {
   DIDAttribute,
   Encoding,
@@ -29,6 +40,21 @@ export { IAM };
 // MODELS
 export { EnrolmentFormData };
 
-// ENUMS
+// CONSTANTS
 
-export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSPrefixes, MessagingMethod };
+export { NATS_EXCHANGE_TOPIC };
+
+// ENUMS
+export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSNamespaceTypes, MessagingMethod };
+
+// CACHE CLIENT
+export {
+  CacheServerClient,
+  ICacheServerClient,
+  IApp,
+  IAppDefinition,
+  IOrganization,
+  IOrganizationDefinition,
+  IRole,
+  IRoleDefinition
+};
