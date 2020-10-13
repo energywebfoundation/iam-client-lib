@@ -1,5 +1,5 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers, Signer, utils } from "ethers";
+import { providers, Signer, utils, errors } from "ethers";
 import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
@@ -96,6 +96,8 @@ export class IAMBase {
     this._runningInBrowser = isBrowser();
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
+
+    errors.setLogLevel('error');
 
     if (this._runningInBrowser) {
       this._walletConnectProvider = new WalletConnectProvider({
