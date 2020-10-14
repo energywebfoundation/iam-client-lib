@@ -743,14 +743,13 @@ export class IAM extends IAMBase {
       throw new NATSConnectionNotEstablishedError();
     }
 
-    // Uncomment when the did library issue is resolved
-    // const issuedToken = await this.issuePublicClaim({ token });
-    // if (!issuedToken) {
-    //   throw new Error("Token was not generated");
-    // }
+    const issuedToken = await this.issuePublicClaim({ token });
+    if (!issuedToken) {
+      throw new Error("Token was not generated");
+    }
     const preparedData: IMessage = {
       id,
-      issuedToken: token,
+      issuedToken,
       requester: requesterDID,
       issuer: this._did || "",
       token
