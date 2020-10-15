@@ -91,7 +91,8 @@ export class IAMBase {
     ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
     cacheClient,
     messagingMethod,
-    natsServerUrl
+    natsServerUrl,
+    bridgeUrl = "https://walletconnect.energyweb.org",
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
     this._ensRegistryAddress = ensRegistryAddress;
@@ -104,7 +105,8 @@ export class IAMBase {
         rpc: {
           [chainId]: rpcUrl
         },
-        infuraId
+        infuraId,
+        bridge: bridgeUrl
       });
       this._cacheClient = cacheClient;
     }
