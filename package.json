@@ -81,7 +81,7 @@
     "ethers": "^4.0.45",
     "js-sha3": "^0.8.0",
     "nats.ws": "^1.0.0-111",
-    "uuid": "^8.3.1"
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "@typechain/ethers-v4": "^1.0.1",
