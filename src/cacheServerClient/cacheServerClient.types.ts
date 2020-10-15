@@ -54,3 +54,15 @@ export interface IApp {
   owner: string;
   definition: IAppDefinition;
 }
+
+export interface Claim {
+  id: string;
+  requester: string;
+  issuer: string;
+  claimType: string;
+  token: string;
+  issuedToken?: string;
+  isAccepted: boolean;
+  createdAt: string;
+  parentNamespace: string;
+}

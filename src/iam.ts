@@ -774,4 +774,36 @@ export class IAM extends IAMBase {
       messageHandler(decodedMessage);
     }
   }
+
+  // CLAIMS
+
+  async getRequestedClaims({
+    did,
+    isAccepted,
+    parentNamespace
+  }: {
+    did: string;
+    isAccepted?: boolean;
+    parentNamespace?: string;
+  }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getRequestedClaims({ did, isAccepted, parentNamespace });
+  }
+
+  async getIssuedClaims({
+    did,
+    isAccepted,
+    parentNamespace
+  }: {
+    did: string;
+    isAccepted?: boolean;
+    parentNamespace?: string;
+  }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getIssuedClaims({ did, isAccepted, parentNamespace });
+  }
 }
