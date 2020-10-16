@@ -58,7 +58,7 @@ export interface IApp {
 export interface Claim {
   id: string;
   requester: string;
-  issuer: string;
+  claimIssuer: string;
   claimType: string;
   token: string;
   issuedToken?: string;
