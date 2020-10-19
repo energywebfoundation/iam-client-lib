@@ -1,8 +1,9 @@
 # Identity and Access Management (IAM) Client Library
-Authentication and Authorisation Library for Decentralised Front-end Applications
+TypeScript library to be used within decentralised applications for authentication and authorisation using DIDs (Decentralised Identifiers) and VCs (Verifiable Credentials)
 
 ## Developers
  - [Kim Honoridez](https://github.com/kim-energyweb>)
+ - [Daniel Wojno] (https://github.com/dwojno>)
 
 ## Getting Started
 For development purposes, please follow below steps to integrate the library with your dApps.
