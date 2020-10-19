@@ -3,7 +3,7 @@ TypeScript library to be used within decentralised applications for authenticati
 
 ## Developers
  - [Kim Honoridez](https://github.com/kim-energyweb>)
- - [Daniel Wojno] (https://github.com/dwojno>)
+ - [Daniel Wojno](https://github.com/dwojno>)
 
 ## Getting Started
 For development purposes, please follow below steps to integrate the library with your dApps.
