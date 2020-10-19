@@ -560,6 +560,124 @@ export class IAM extends IAMBase {
   }
 
   /**
+   * changeOrgOwnership
+   *
+   * @description change owner ship of org subdomain and all org owned roles subdomains
+   * @returns return array of steps needed to change ownership
+   *
+   */
+  async changeOrgOwnership({
+    namespace,
+    newOwner,
+    returnSteps = false
+  }: {
+    namespace: string;
+    newOwner: string;
+    returnSteps?: boolean;
+  }) {
+    const [label, ...rest] = namespace.split(".");
+    const steps: { next: () => Promise<void>; info: string }[] = [
+      {
+        next: () => this.changeSubdomainOwner({ newOwner, namespace: rest.join("."), label }),
+        info: `Changing ownership of ${namespace}`
+      },
+      {
+        next: () =>
+          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Application }),
+        info: `Changing ownership of ${ENSNamespaceTypes.Application}.${namespace}`
+      },
+      {
+        next: () =>
+          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Roles }),
+        info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
+      }
+    ];
+    const roles =
+      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
+    for (const role of roles) {
+      steps.push({
+        next: () =>
+          this.changeSubdomainOwner({
+            label: role,
+            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`,
+            newOwner
+          }),
+        info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
+      });
+    }
+    if (returnSteps) {
+      return steps;
+    }
+    for (const { info, next } of steps) {
+      console.log(info);
+      await next();
+    }
+    return [];
+  }
+
+  /**
+   * changeAppOwnership
+   *
+   * @description change owner ship of app subdomain and all app owned subdomains
+   * @returns return array of steps needed to change ownership
+   *
+   */
+  async changeAppOwnership({
+    namespace,
+    newOwner,
+    returnSteps
+  }: {
+    namespace: string;
+    newOwner: string;
+    returnSteps?: boolean;
+  }) {
+    const [label, ...rest] = namespace.split(".");
+    const steps: { next: () => Promise<void>; info: string }[] = [
+      {
+        next: () => this.changeSubdomainOwner({ newOwner, namespace: rest.join("."), label }),
+        info: `Changing ownership of ${namespace}`
+      },
+      {
+        next: () =>
+          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Roles }),
+        info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
+      }
+    ];
+    const roles =
+      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
+    for (const role of roles) {
+      steps.push({
+        next: () =>
+          this.changeSubdomainOwner({
+            label: role,
+            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`,
+            newOwner
+          }),
+        info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
+      });
+    }
+    if (returnSteps) {
+      return steps;
+    }
+    for (const { info, next } of steps) {
+      console.log(info);
+      await next();
+    }
+    return [];
+  }
+
+  /**
+   * changeRoleOwnership
+   *
+   * @description change owner ship of role subdomain
+   *
+   */
+  async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
+    const [label, ...rest] = namespace.split(".");
+    await this.changeSubdomainOwner({ label, namespace: rest.join("."), newOwner });
+  }
+
+  /**
    * getRoleDefinition
    *
    * @description get role definition form ens domain metadata record
