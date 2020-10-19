@@ -170,7 +170,7 @@ export class IAM extends IAMBase {
     if (did && this._resolver) {
       const document = await this._resolver.read(did);
       const services = await this.downloadClaims({
-        services: document.service && document.service.length > 1 ? document.service : []
+        services: document.service && document.service.length > 0 ? document.service : []
       });
       document.service = (services as unknown) as IServiceEndpoint[];
       return document;
@@ -345,7 +345,7 @@ export class IAM extends IAMBase {
     if (this._resolver && did) {
       const document = await this._resolver.read(did);
       const services = await this.downloadClaims({
-        services: document.service && document.service.length > 1 ? document.service : []
+        services: document.service && document.service.length > 0 ? document.service : []
       });
       return services;
     }
