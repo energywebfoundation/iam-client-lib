@@ -21,7 +21,9 @@ import { ICacheServerClient } from "../iam-client-lib";
 import { Keys } from "@ew-did-registry/keys";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
-import { ENSRegistryNotInitializedError, MethodNotAvailableInNodeEnvError } from "../errors";
+import { ENSRegistryNotInitializedError, ENSResolverNotInitializedError, MethodNotAvailableInNodeEnvError } from "../errors";
+import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
+import difference from 'lodash.difference';
 
 const { hexlify, bigNumberify, Interface } = utils;
 
@@ -322,4 +324,24 @@ export class IAMBase {
     }
     return [];
   }
+
+  protected async validateIssuers({
+    issuer,
+    namespace
+  }: {
+    issuer: string[];
+    namespace: string;
+  }) {
+    if (!this._ensResolver) {
+      throw new ENSResolverNotInitializedError();
+    }
+      const roleHash = namehash(namespace);
+      const metadata = await this._ensResolver.text(roleHash, "metadata");
+      const definition = JSON.parse(metadata) as IRoleDefinition;
+      const diff = difference(issuer, definition.issuer.did || []);
+      if (diff.length > 0) {
+        throw new Error(`Issuer validation failed for: ${diff.join(', ')}`);
+      }
+  }
+
 }

@@ -48,12 +48,13 @@ type InitializeData = {
   userClosedModal: boolean;
 };
 
-interface IMessage {
+export interface IMessage {
   id: string;
   token: string;
   issuedToken?: string;
   requester: string;
-  issuer: string;
+  claimIssuer: string[];
+  acceptedBy?: string;
 }
 
 export enum ENSNamespaceTypes {
@@ -228,8 +229,11 @@ export class IAM extends IAMBase {
    * @returns JWT token of created claim
    *
    */
-  async createPublicClaim({ data }: { data: Record<string, unknown> }) {
+  async createPublicClaim({ data, subject }: { data: Record<string, unknown>; subject?: string }) {
     if (this._userClaims) {
+      if (subject) {
+        return this._userClaims.createPublicClaim(data, { subject, issuer: "" });
+      }
       return this._userClaims.createPublicClaim(data);
     }
     return null;
@@ -825,27 +829,38 @@ export class IAM extends IAMBase {
   // NATS
 
   async createClaimRequest({
-    issuerDID,
+    issuer,
     claim
   }: {
-    issuerDID: string;
-    claim: Record<string, unknown>;
+    issuer: string[];
+    claim: { claimType: string; fields: { key: string; value: string | number }[] };
   }) {
-    if (!this._natsConnection) {
-      throw new NATSConnectionNotEstablishedError();
+    if (!this._did) {
+      throw new Error("User not logged in");
     }
-    const token = await this.createPublicClaim({ data: claim });
+    const token = await this.createPublicClaim({ data: claim, subject: claim.claimType });
     if (!token) {
       throw new Error("Token was not generated");
     }
     const message: IMessage = {
       id: uuid(),
       token,
-      issuer: issuerDID,
+      claimIssuer: issuer,
       requester: this._did || ""
     };
+
+    if (!this._natsConnection) {
+      if (this._cacheClient) {
+        return this._cacheClient.requestClaim({ did: this._did, message });
+      }
+      throw new NATSConnectionNotEstablishedError();
+    }
+
     const data = this._jsonCodec?.encode(message);
-    this._natsConnection.publish(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`, data);
+
+    issuer.map(issuerDID => {
+      this._natsConnection?.publish(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`, data);
+    });
   }
 
   async issueClaimRequest({
@@ -857,8 +872,8 @@ export class IAM extends IAMBase {
     token: string;
     id: string;
   }) {
-    if (!this._natsConnection) {
-      throw new NATSConnectionNotEstablishedError();
+    if (!this._did) {
+      throw new Error("User not logged in");
     }
 
     const issuedToken = await this.issuePublicClaim({ token });
@@ -869,9 +884,18 @@ export class IAM extends IAMBase {
       id,
       issuedToken,
       requester: requesterDID,
-      issuer: this._did || "",
-      token
+      claimIssuer: [this._did],
+      token,
+      acceptedBy: this._did
     };
+
+    if (!this._natsConnection) {
+      if (this._cacheClient) {
+        return this._cacheClient.issueClaim({ did: this._did, message: preparedData });
+      }
+      throw new NATSConnectionNotEstablishedError();
+    }
+
     const dataToSend = this._jsonCodec?.encode(preparedData);
     this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
   }

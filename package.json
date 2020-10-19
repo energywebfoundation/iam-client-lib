@@ -80,12 +80,14 @@
     "eth-ens-namehash": "^2.0.8",
     "ethers": "^4.0.45",
     "js-sha3": "^0.8.0",
+    "lodash.difference": "^4.5.0",
     "nats.ws": "^1.0.0-111",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
     "@typechain/ethers-v4": "^1.0.1",
     "@types/jest": "^26.0.13",
+    "@types/lodash.difference": "^4.5.6",
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
