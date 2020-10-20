@@ -21,7 +21,7 @@ import { ICacheServerClient } from "../iam-client-lib";
 import { Keys } from "@ew-did-registry/keys";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
-import { MethodNotAvailableInNodeEnvError } from "../errors";
+import { ENSRegistryNotInitializedError, MethodNotAvailableInNodeEnvError } from "../errors";
 
 const { hexlify, bigNumberify, Interface } = utils;
 
@@ -92,13 +92,13 @@ export class IAMBase {
     cacheClient,
     messagingMethod,
     natsServerUrl,
-    bridgeUrl = "https://walletconnect.energyweb.org",
+    bridgeUrl = "https://walletconnect.energyweb.org"
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
 
-    errors.setLogLevel('error');
+    errors.setLogLevel("error");
 
     if (this._runningInBrowser) {
       this._walletConnectProvider = new WalletConnectProvider({
@@ -252,7 +252,7 @@ export class IAMBase {
     throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
   }
 
-  protected async setDomainName({ domain }) {
+  protected async setDomainName({ domain }: { domain: string }) {
     if (this._signer && this._ensResolver) {
       const ensResolverWithSigner = this._ensResolver.connect(this._signer);
       const namespaceHash = namehash(domain) as string;
@@ -265,6 +265,31 @@ export class IAMBase {
       return;
     }
     throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
+  }
+
+  protected async changeSubdomainOwner({
+    newOwner,
+    label,
+    namespace
+  }: {
+    newOwner: string;
+    namespace: string;
+    label: string;
+  }) {
+    if (!this._ensRegistry) {
+      throw new ENSRegistryNotInitializedError();
+    }
+    if (!this._signer) {
+      throw new Error("Signer not initialized");
+    }
+    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
+    const namespaceHash = namehash(namespace);
+    const labelHash = labelhash(label);
+    const tx = await ensRegistryWithSigner.setSubnodeOwner(namespaceHash, labelHash, newOwner, {
+      gasLimit: hexlify(4900000),
+      gasPrice: hexlify(0.1)
+    });
+    await tx.wait();
   }
 
   protected async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
