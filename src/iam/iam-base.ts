@@ -217,11 +217,12 @@ export class IAMBase {
     return Promise.all(
       services.map(async ({ serviceEndpoint, ...rest }) => {
         const data = await this._ipfsStore.get(serviceEndpoint);
-        const { claimData } = this._jwt?.decode(data) as { claimData: Record<string, string> };
+        const { claimData, ...claimRest } = this._jwt?.decode(data) as { claimData: Record<string, string> };
         return {
           serviceEndpoint,
           ...rest,
-          ...claimData
+          ...claimData,
+          ...claimRest
         };
       })
     );
