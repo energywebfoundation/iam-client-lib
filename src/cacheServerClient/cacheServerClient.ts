@@ -9,6 +9,8 @@ import {
   Claim
 } from "./cacheServerClient.types";
 
+import { IMessage } from '../iam';
+
 export interface ICacheServerClient {
   getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
   getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
@@ -37,6 +39,8 @@ export interface ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
+  requestClaim: ({ message, did }: { message: IMessage, did: string}) => Promise<void>;
+  issueClaim: ({ message, did }: { message: IMessage, did: string}) => Promise<void>;
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -127,5 +131,13 @@ export class CacheServerClient implements ICacheServerClient {
       }
     });
     return data.claim;
+  }
+
+  async requestClaim ({ message, did }: { message: IMessage, did: string}) {
+    await this.httpClient.post<void>(`/claim/request/${did}`, message);
+  }
+
+  async issueClaim ({ message, did }: { message: IMessage, did: string}) {
+    await this.httpClient.post<void>(`/claim/issue/${did}`, message);
   }
 }

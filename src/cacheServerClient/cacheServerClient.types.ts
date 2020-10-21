@@ -56,13 +56,15 @@ export interface IApp {
 }
 
 export interface Claim {
+  uid: string;
   id: string;
   requester: string;
-  claimIssuer: string;
+  claimIssuer: string[];
   claimType: string;
   token: string;
   issuedToken?: string;
   isAccepted: boolean;
   createdAt: string;
   parentNamespace: string;
+  acceptedBy?: string;
 }
