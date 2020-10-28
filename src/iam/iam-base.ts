@@ -210,7 +210,11 @@ export class IAMBase {
 
   private async setupNATS() {
     if (this._natsServerUrl) {
-      this._natsConnection = await connect({ servers: `ws://${this._natsServerUrl}` });
+      let protocol = 'ws';
+      if (this._natsServerUrl.indexOf('https://') === 0) {
+        protocol = 'wss';
+      }
+      this._natsConnection = await connect({ servers: `${protocol}://${this._natsServerUrl}` });
       console.log(`Nats server connected at ${this._natsConnection.getServer()}`);
     }
   }
