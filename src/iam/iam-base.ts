@@ -1,5 +1,5 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers, Signer, utils, errors } from "ethers";
+import { providers, Signer, utils, errors, Wallet } from "ethers";
 import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
@@ -21,9 +21,14 @@ import { ICacheServerClient } from "../iam-client-lib";
 import { Keys } from "@ew-did-registry/keys";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
-import { ENSRegistryNotInitializedError, ENSResolverNotInitializedError, MethodNotAvailableInNodeEnvError } from "../errors";
+import {
+  ENSRegistryNotInitializedError,
+  ENSResolverNotInitializedError,
+  MethodNotAvailableInNodeEnvError
+} from "../errors";
 import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
-import difference from 'lodash.difference';
+import difference from "lodash.difference";
+import { TransactionOverrides } from "../../ethers";
 
 const { hexlify, bigNumberify, Interface } = utils;
 
@@ -44,6 +49,7 @@ type ConnectionOptions = {
   messagingMethod?: MessagingMethod;
   natsServerUrl?: string;
   cacheClient?: ICacheServerClient;
+  privateKey?: string;
 };
 
 export class IAMBase {
@@ -54,6 +60,8 @@ export class IAMBase {
   protected _walletConnectProvider: WalletConnectProvider | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
+  protected _keys: Keys | undefined;
+  protected _transactionOverrides: TransactionOverrides = {};
 
   protected _resolverSetting: IResolverSettings;
   protected _resolver: Resolver | undefined;
@@ -94,7 +102,8 @@ export class IAMBase {
     cacheClient,
     messagingMethod,
     natsServerUrl,
-    bridgeUrl = "https://walletconnect.energyweb.org"
+    bridgeUrl = "https://walletconnect.energyweb.org",
+    privateKey
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
     this._ensRegistryAddress = ensRegistryAddress;
@@ -103,13 +112,19 @@ export class IAMBase {
     errors.setLogLevel("error");
 
     if (this._runningInBrowser) {
-      this._walletConnectProvider = new WalletConnectProvider({
-        rpc: {
-          [chainId]: rpcUrl
-        },
-        infuraId,
-        bridge: bridgeUrl
-      });
+      if (!privateKey) {
+        this._walletConnectProvider = new WalletConnectProvider({
+          rpc: {
+            [chainId]: rpcUrl
+          },
+          infuraId,
+          bridge: bridgeUrl
+        });
+        this._transactionOverrides = {
+          gasLimit: hexlify(4900000),
+          gasPrice: hexlify(0.1)
+        };
+      }
       this._cacheClient = cacheClient;
     }
 
@@ -125,6 +140,11 @@ export class IAMBase {
 
     this._ipfsStore = new DidStore(ipfsUrl);
     this._provider = new providers.JsonRpcProvider(rpcUrl);
+
+    if (privateKey) {
+      this._keys = new Keys({ privateKey });
+      this._signer = new Wallet(privateKey, this._provider);
+    }
 
     if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
       this._natsServerUrl = natsServerUrl;
@@ -145,12 +165,12 @@ export class IAMBase {
     if (this._walletConnectProvider) {
       await this._walletConnectProvider.enable();
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-      this.setAddress();
-      this.setDid();
-      await this.setDocument();
-      this.setClaims();
-      await this.setupNATS();
     }
+    await this.setAddress();
+    this.setDid();
+    await this.setDocument();
+    this.setClaims();
+    await this.setupNATS();
   }
 
   private setupUniversalEnv() {
@@ -159,9 +179,9 @@ export class IAMBase {
     this.setupENS();
   }
 
-  private setAddress() {
-    if (this._walletConnectProvider) {
-      this._address = this._walletConnectProvider.accounts[0];
+  private async setAddress() {
+    if (this._signer) {
+      this._address = await this._signer.getAddress();
     }
   }
 
@@ -186,7 +206,7 @@ export class IAMBase {
     if (this._did && this._signer) {
       const document = new DIDDocumentFull(
         this._did,
-        new Operator(this._signer, this._resolverSetting)
+        new Operator(this._keys || this._signer, this._resolverSetting)
       );
       await document.create();
       this._document = document;
@@ -195,24 +215,36 @@ export class IAMBase {
 
   private setClaims() {
     if (this._signer && this._document) {
-      this._userClaims = new ClaimsUser(this._signer, this._document, this._ipfsStore);
-      this._issuerClaims = new ClaimsIssuer(this._signer, this._document, this._ipfsStore);
-      this._verifierClaims = new ClaimsVerifier(this._signer, this._document, this._ipfsStore);
+      this._userClaims = new ClaimsUser(
+        this._keys || this._signer,
+        this._document,
+        this._ipfsStore
+      );
+      this._issuerClaims = new ClaimsIssuer(
+        this._keys || this._signer,
+        this._document,
+        this._ipfsStore
+      );
+      this._verifierClaims = new ClaimsVerifier(
+        this._keys || this._signer,
+        this._document,
+        this._ipfsStore
+      );
     }
   }
 
   private setJWT() {
     if (this._signer) {
-      this._jwt = new JWT(this._signer);
+      this._jwt = new JWT(this._keys || this._signer);
     }
     this._jwt = new JWT(new Keys());
   }
 
   private async setupNATS() {
     if (this._natsServerUrl) {
-      let protocol = 'ws';
-      if (this._natsServerUrl.indexOf('https://') === 0) {
-        protocol = 'wss';
+      let protocol = "ws";
+      if (this._natsServerUrl.indexOf("https://") === 0) {
+        protocol = "wss";
       }
       this._natsConnection = await connect({ servers: `${protocol}://${this._natsServerUrl}` });
       console.log(`Nats server connected at ${this._natsConnection.getServer()}`);
@@ -223,7 +255,9 @@ export class IAMBase {
     return Promise.all(
       services.map(async ({ serviceEndpoint, ...rest }) => {
         const data = await this._ipfsStore.get(serviceEndpoint);
-        const { claimData, ...claimRest } = this._jwt?.decode(data) as { claimData: Record<string, string> };
+        const { claimData, ...claimRest } = this._jwt?.decode(data) as {
+          claimData: Record<string, string>;
+        };
         return {
           serviceEndpoint,
           ...rest,
@@ -246,10 +280,7 @@ export class IAMBase {
         this._address,
         this._ensResolverAddress,
         ttl,
-        {
-          gasLimit: hexlify(4900000),
-          gasPrice: hexlify(0.1)
-        }
+        this._transactionOverrides
       );
       await setDomainTx.wait();
       console.log(`Subdomain ${subdomain + "." + domain} created`);
@@ -262,10 +293,7 @@ export class IAMBase {
     if (this._signer && this._ensResolver) {
       const ensResolverWithSigner = this._ensResolver.connect(this._signer);
       const namespaceHash = namehash(domain) as string;
-      const setDomainNameTx = await ensResolverWithSigner.setName(namespaceHash, domain, {
-        gasLimit: utils.hexlify(4900000),
-        gasPrice: utils.hexlify(0.1)
-      });
+      const setDomainNameTx = await ensResolverWithSigner.setName(namespaceHash, domain, this._transactionOverrides);
       await setDomainNameTx.wait();
       console.log(`Set the name of the domain to ${domain}`);
       return;
@@ -291,10 +319,7 @@ export class IAMBase {
     const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
     const namespaceHash = namehash(namespace);
     const labelHash = labelhash(label);
-    const tx = await ensRegistryWithSigner.setSubnodeOwner(namespaceHash, labelHash, newOwner, {
-      gasLimit: hexlify(4900000),
-      gasPrice: hexlify(0.1)
-    });
+    const tx = await ensRegistryWithSigner.setSubnodeOwner(namespaceHash, labelHash, newOwner, this._transactionOverrides);
     await tx.wait();
   }
 
@@ -329,23 +354,16 @@ export class IAMBase {
     return [];
   }
 
-  protected async validateIssuers({
-    issuer,
-    namespace
-  }: {
-    issuer: string[];
-    namespace: string;
-  }) {
+  protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
     if (!this._ensResolver) {
       throw new ENSResolverNotInitializedError();
     }
-      const roleHash = namehash(namespace);
-      const metadata = await this._ensResolver.text(roleHash, "metadata");
-      const definition = JSON.parse(metadata) as IRoleDefinition;
-      const diff = difference(issuer, definition.issuer.did || []);
-      if (diff.length > 0) {
-        throw new Error(`Issuer validation failed for: ${diff.join(', ')}`);
-      }
+    const roleHash = namehash(namespace);
+    const metadata = await this._ensResolver.text(roleHash, "metadata");
+    const definition = JSON.parse(metadata) as IRoleDefinition;
+    const diff = difference(issuer, definition.issuer.did || []);
+    if (diff.length > 0) {
+      throw new Error(`Issuer validation failed for: ${diff.join(", ")}`);
+    }
   }
-
 }

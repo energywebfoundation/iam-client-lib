@@ -390,10 +390,7 @@ export class IAM extends IAMBase {
         namespaceHash,
         "metadata",
         stringifiedData,
-        {
-          gasLimit: hexlify(4900000),
-          gasPrice: hexlify(0.1)
-        }
+        this._transactionOverrides
       );
       await setTextTx.wait();
       console.log(`Added data: ${stringifiedData} to ${domain} metadata`);
