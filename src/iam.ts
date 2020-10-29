@@ -116,7 +116,7 @@ export class IAM extends IAMBase {
     }
     if (!this._runningInBrowser) {
       return {
-        did: undefined,
+        did: this.getDid(),
         connected: true,
         userClosedModal: false
       };
@@ -153,6 +153,9 @@ export class IAM extends IAMBase {
   isConnected(): boolean {
     if (this._walletConnectProvider) {
       return this._walletConnectProvider.connected;
+    }
+    if (this._address) {
+      return true;
     }
     return false;
   }
