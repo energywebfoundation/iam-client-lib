@@ -579,6 +579,13 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
+    const changeOwnershipPossible = this.validateOwnership({
+      namespace,
+      type: ENSNamespaceTypes.Organization
+    });
+    if (!changeOwnershipPossible) {
+      throw new Error(`Change ownership of ${namespace} not possible`);
+    }
     const [label, ...rest] = namespace.split(".");
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
@@ -609,10 +616,11 @@ export class IAM extends IAMBase {
         info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
       });
     }
+    const reversedSteps = steps.reverse();
     if (returnSteps) {
-      return steps;
+      return reversedSteps;
     }
-    for (const { info, next } of steps) {
+    for (const { info, next } of reversedSteps) {
       console.log(info);
       await next();
     }
@@ -635,6 +643,13 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
+    const changeOwnershipPossible = this.validateOwnership({
+      namespace,
+      type: ENSNamespaceTypes.Application
+    });
+    if (!changeOwnershipPossible) {
+      throw new Error(`Change ownership of ${namespace} not possible`);
+    }
     const [label, ...rest] = namespace.split(".");
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
@@ -660,10 +675,11 @@ export class IAM extends IAMBase {
         info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
       });
     }
+    const reversedSteps = steps.reverse();
     if (returnSteps) {
-      return steps;
+      return reversedSteps;
     }
-    for (const { info, next } of steps) {
+    for (const { info, next } of reversedSteps) {
       console.log(info);
       await next();
     }
@@ -677,8 +693,147 @@ export class IAM extends IAMBase {
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
+    const changeOwnershipPossible = this.validateOwnership({
+      namespace,
+      type: ENSNamespaceTypes.Roles
+    });
+    if (!changeOwnershipPossible) {
+      throw new Error(`Change ownership of ${namespace} not possible`);
+    }
     const [label, ...rest] = namespace.split(".");
     await this.changeSubdomainOwner({ label, namespace: rest.join("."), newOwner });
+  }
+
+  /**
+   * deleteOrganization
+   *
+   * @description delete organization and roles
+   *
+   */
+  async deleteOrganization({
+    namespace,
+    returnSteps
+  }: {
+    namespace: string;
+    returnSteps?: boolean;
+  }) {
+    const apps = await this.getSubdomains({
+      domain: `${ENSNamespaceTypes.Application}.${namespace}`
+    });
+    if (apps && apps.length > 0) {
+      throw new Error("You are not able to remove organization with registered apps");
+    }
+    const deletePossible = await this.validateOwnership({
+      namespace,
+      type: ENSNamespaceTypes.Organization
+    });
+    if (!deletePossible) {
+      throw new Error(`Deleting ${namespace} not possible`);
+    }
+    const steps: { next: () => Promise<void>; info: string }[] = [
+      {
+        next: () => this.deleteSubdomain({ namespace }),
+        info: `Deleting ${namespace}`
+      },
+      {
+        next: () =>
+          this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Application}.${namespace}` }),
+        info: `Deleting ${ENSNamespaceTypes.Application}.${namespace}`
+      },
+      {
+        next: () => this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
+        info: `Deleting ${ENSNamespaceTypes.Roles}.${namespace}`
+      }
+    ];
+    const roles =
+      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
+    for (const role of roles) {
+      steps.push({
+        next: () =>
+          this.deleteSubdomain({
+            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`
+          }),
+        info: `Deleting ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
+      });
+    }
+    const reversedSteps = steps.reverse();
+    if (returnSteps) {
+      return reversedSteps;
+    }
+    for (const { info, next } of reversedSteps) {
+      console.log(info);
+      await next();
+    }
+    return [];
+  }
+
+  /**
+   * deleteApplication
+   *
+   * @description delete application and roles
+   *
+   */
+  async deleteApplication({
+    namespace,
+    returnSteps
+  }: {
+    namespace: string;
+    returnSteps?: boolean;
+  }) {
+    const deletePossible = await this.validateOwnership({
+      namespace,
+      type: ENSNamespaceTypes.Application
+    });
+    if (!deletePossible) {
+      throw new Error(`Deleting ${namespace} not possible`);
+    }
+    const steps: { next: () => Promise<void>; info: string }[] = [
+      {
+        next: () => this.deleteSubdomain({ namespace }),
+        info: `Deleting ${namespace}`
+      },
+      {
+        next: () => this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
+        info: `Deleting ${ENSNamespaceTypes.Roles}.${namespace}`
+      }
+    ];
+    const roles =
+      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
+    for (const role of roles) {
+      steps.push({
+        next: () =>
+          this.deleteSubdomain({
+            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`
+          }),
+        info: `Deleting ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
+      });
+    }
+    const reversedSteps = steps.reverse();
+    if (returnSteps) {
+      return reversedSteps;
+    }
+    for (const { info, next } of reversedSteps) {
+      console.log(info);
+      await next();
+    }
+    return [];
+  }
+
+  /**
+   * deleteRole
+   *
+   * @description delete role
+   *
+   */
+  async deleteRole({ namespace }: { namespace: string }) {
+    const deletePossible = await this.validateOwnership({
+      namespace,
+      type: ENSNamespaceTypes.Roles
+    });
+    if (!deletePossible) {
+      throw new Error(`Deleting ${namespace} not possible`);
+    }
+    await this.deleteSubdomain({ namespace });
   }
 
   /**
@@ -824,6 +979,47 @@ export class IAM extends IAMBase {
       return owner === user;
     }
     throw new ENSRegistryNotInitializedError();
+  }
+
+  /**
+   * validateOwnership
+   *
+   * @description check ownership of the domain and subdomains of org, app or role
+   * @returns true or false whatever the passed is user is a owner of org, app or role
+   *
+   */
+  async validateOwnership({ namespace, type }: { namespace: string; type: ENSNamespaceTypes }) {
+    if (this._address) {
+      if (type === ENSNamespaceTypes.Roles) {
+        const [, ...parentDomain] = namespace.split(".");
+        const owner = await this.getOwner({ namespace: parentDomain.join('.') });
+        return owner === this._address;
+      }
+      if (type === ENSNamespaceTypes.Application) {
+        const [, ...appsNamespace] = namespace.split(".");
+        const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
+        const owners = await Promise.all([
+          this.getOwner({ namespace: appsNamespace.join('.') }),
+          this.getOwner({ namespace: appRolesNamespace }),
+          this.getOwner({ namespace })
+        ]);
+        return owners.every(owner => owner === this._address);
+      }
+      if (type === ENSNamespaceTypes.Organization) {
+        const [, ...iamNamespace] = namespace.split(".");
+        const rolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
+        const appsNamespace = `${ENSNamespaceTypes.Application}.${namespace}`;
+        const owners = await Promise.all([
+          this.getOwner({ namespace: iamNamespace.join('.') }),
+          this.getOwner({ namespace: rolesNamespace }),
+          this.getOwner({ namespace: appsNamespace }),
+          this.getOwner({ namespace })
+        ]);
+        return owners.every(owner => owner === this._address);
+      }
+      throw new Error("ENS type not supported");
+    }
+    throw new Error("User not logged in");
   }
 
   // NATS

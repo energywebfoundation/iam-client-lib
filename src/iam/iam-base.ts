@@ -17,7 +17,7 @@ import { PublicResolverFactory } from "../../ethers/PublicResolverFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { PublicResolver } from "../../ethers/PublicResolver";
 import { JWT } from "@ew-did-registry/jwt";
-import { ICacheServerClient } from "../iam-client-lib";
+import { ICacheServerClient } from "../cacheServerClient/cacheServerClient";
 import { Keys } from "@ew-did-registry/keys";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
@@ -51,6 +51,8 @@ type ConnectionOptions = {
   cacheClient?: ICacheServerClient;
   privateKey?: string;
 };
+
+const emptyAddress = "0x0000000000000000000000000000000000000000";
 
 export class IAMBase {
   protected _runningInBrowser: boolean;
@@ -293,7 +295,11 @@ export class IAMBase {
     if (this._signer && this._ensResolver) {
       const ensResolverWithSigner = this._ensResolver.connect(this._signer);
       const namespaceHash = namehash(domain) as string;
-      const setDomainNameTx = await ensResolverWithSigner.setName(namespaceHash, domain, this._transactionOverrides);
+      const setDomainNameTx = await ensResolverWithSigner.setName(
+        namespaceHash,
+        domain,
+        this._transactionOverrides
+      );
       await setDomainNameTx.wait();
       console.log(`Set the name of the domain to ${domain}`);
       return;
@@ -319,7 +325,12 @@ export class IAMBase {
     const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
     const namespaceHash = namehash(namespace);
     const labelHash = labelhash(label);
-    const tx = await ensRegistryWithSigner.setSubnodeOwner(namespaceHash, labelHash, newOwner, this._transactionOverrides);
+    const tx = await ensRegistryWithSigner.setSubnodeOwner(
+      namespaceHash,
+      labelHash,
+      newOwner,
+      this._transactionOverrides
+    );
     await tx.wait();
   }
 
@@ -365,5 +376,36 @@ export class IAMBase {
     if (diff.length > 0) {
       throw new Error(`Issuer validation failed for: ${diff.join(", ")}`);
     }
+  }
+
+  protected async deleteSubdomain({ namespace }: { namespace: string }) {
+    if (this._signer && this._ensRegistry) {
+      const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
+      const namespaceArray = namespace.split(".");
+      const label = namespaceArray[0];
+      const node = namespaceArray.slice(1).join(".");
+      const labelHash = labelhash(label);
+      const nodeHash = namehash(node);
+      const ttl = bigNumberify(0);
+      const tx = await ensRegistryWithSigner.setSubnodeRecord(
+        nodeHash,
+        labelHash,
+        emptyAddress,
+        emptyAddress,
+        ttl,
+        this._transactionOverrides
+      );
+      await tx.wait();
+      return;
+    }
+    throw new MethodNotAvailableInNodeEnvError("deleteSubdomain");
+  }
+
+  protected async getOwner({ namespace }: { namespace: string }) {
+    if (this._ensRegistry) {
+      const node = namehash(namespace);
+      return this._ensRegistry.owner(node);
+    }
+    throw new ENSRegistryNotInitializedError();
   }
 }
