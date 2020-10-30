@@ -20,9 +20,10 @@ import {
   DIDAttribute,
   IDIDDocument,
   IServiceEndpoint,
-  IUpdateData
+  IUpdateData,
+  PubKeyType
 } from "@ew-did-registry/did-resolver-interface";
-import { IProofData, ISaltedFields } from "@ew-did-registry/claims";
+import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
 import { IAMBase } from "./iam/iam-base";
@@ -39,8 +40,6 @@ import {
   IOrganizationDefinition,
   IRoleDefinition
 } from "./cacheServerClient/cacheServerClient.types";
-
-const { hexlify } = utils;
 
 type InitializeData = {
   did: string | undefined;
@@ -249,15 +248,24 @@ export class IAM extends IAMBase {
    * @returns ulr to ipfs
    *
    */
-  async publishPublicClaim({
-    token,
-    claimData
-  }: {
-    token: string;
-    claimData: Record<string, unknown>;
-  }) {
+  async publishPublicClaim({ token }: { token: string }) {
     if (this._userClaims) {
-      return this._userClaims.publishPublicClaim(token, claimData);
+      const claim = (await this.decodeJWTToken({ token })) as { iss: string };
+      const issuer = claim.iss;
+      if (!(await this._userClaims.verifySignature(token, issuer))) {
+        throw new Error("Incorrect signature");
+      }
+      const url = await this._ipfsStore.save(token);
+      await this.updateDidDocument(
+        {
+          didAttribute: DIDAttribute.ServicePoint,
+          data: {
+            type: PubKeyType.VerificationKey2018,
+            value: { serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: 'SHA256' }
+          }
+        }
+      );
+      return url;
     }
     return null;
   }
@@ -992,14 +1000,14 @@ export class IAM extends IAMBase {
     if (this._address) {
       if (type === ENSNamespaceTypes.Roles) {
         const [, ...parentDomain] = namespace.split(".");
-        const owner = await this.getOwner({ namespace: parentDomain.join('.') });
+        const owner = await this.getOwner({ namespace: parentDomain.join(".") });
         return owner === this._address;
       }
       if (type === ENSNamespaceTypes.Application) {
         const [, ...appsNamespace] = namespace.split(".");
         const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
         const owners = await Promise.all([
-          this.getOwner({ namespace: appsNamespace.join('.') }),
+          this.getOwner({ namespace: appsNamespace.join(".") }),
           this.getOwner({ namespace: appRolesNamespace }),
           this.getOwner({ namespace })
         ]);
@@ -1010,7 +1018,7 @@ export class IAM extends IAMBase {
         const rolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
         const appsNamespace = `${ENSNamespaceTypes.Application}.${namespace}`;
         const owners = await Promise.all([
-          this.getOwner({ namespace: iamNamespace.join('.') }),
+          this.getOwner({ namespace: iamNamespace.join(".") }),
           this.getOwner({ namespace: rolesNamespace }),
           this.getOwner({ namespace: appsNamespace }),
           this.getOwner({ namespace })
