@@ -29,6 +29,7 @@ import {
 import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
+import detectMetamask from "@metamask/detect-provider";
 
 const { hexlify, bigNumberify, Interface } = utils;
 
@@ -56,6 +57,13 @@ const emptyAddress = "0x0000000000000000000000000000000000000000";
 
 export class IAMBase {
   protected _runningInBrowser: boolean;
+  protected _connectionOptions: {
+    rpcUrl: string;
+    chainId: number;
+    privateKey?: string;
+    bridgeUrl: string;
+    infuraId?: string;
+  };
 
   protected _did: string | undefined;
   protected _provider: providers.JsonRpcProvider | undefined;
@@ -113,22 +121,15 @@ export class IAMBase {
 
     errors.setLogLevel("error");
 
-    if (this._runningInBrowser) {
-      if (!privateKey) {
-        this._walletConnectProvider = new WalletConnectProvider({
-          rpc: {
-            [chainId]: rpcUrl
-          },
-          infuraId,
-          bridge: bridgeUrl
-        });
-        this._transactionOverrides = {
-          gasLimit: hexlify(4900000),
-          gasPrice: hexlify(0.1)
-        };
-      }
-      this._cacheClient = cacheClient;
-    }
+    this._connectionOptions = {
+      chainId,
+      privateKey,
+      rpcUrl,
+      bridgeUrl,
+      infuraId
+    };
+
+    this._cacheClient = cacheClient;
 
     this._resolverSetting = {
       provider: {
@@ -143,11 +144,6 @@ export class IAMBase {
     this._ipfsStore = new DidStore(ipfsUrl);
     this._provider = new providers.JsonRpcProvider(rpcUrl);
 
-    if (privateKey) {
-      this._keys = new Keys({ privateKey });
-      this._signer = new Wallet(privateKey, this._provider);
-    }
-
     if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
       this._natsServerUrl = natsServerUrl;
       this._jsonCodec = JSONCodec();
@@ -157,6 +153,7 @@ export class IAMBase {
   // INITIAL
 
   protected async init() {
+    await this.setupProvider();
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
@@ -164,10 +161,6 @@ export class IAMBase {
   }
 
   private async setupBrowserEnv() {
-    if (this._walletConnectProvider) {
-      await this._walletConnectProvider.enable();
-      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-    }
     await this.setAddress();
     this.setDid();
     await this.setDocument();
@@ -179,6 +172,37 @@ export class IAMBase {
     this.setResolver();
     this.setJWT();
     this.setupENS();
+  }
+
+  private async setupProvider() {
+    this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
+    if (this._connectionOptions.privateKey) {
+      this._keys = new Keys({ privateKey: this._connectionOptions.privateKey });
+      this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
+      return;
+    }
+    if (this._runningInBrowser) {
+      const metamaskProvider = await detectMetamask({ mustBeMetaMask: true }) as providers.AsyncSendable;
+      if (metamaskProvider) {
+        await (metamaskProvider as any).request({ method: 'eth_requestAccounts'});
+        const provider = new providers.Web3Provider(metamaskProvider as any);
+        this._signer = provider.getSigner();
+        return;
+      }
+      this._transactionOverrides = {
+        gasLimit: hexlify(4900000),
+        gasPrice: hexlify(0.1)
+      };
+      this._walletConnectProvider = new WalletConnectProvider({
+        rpc: {
+          [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
+        },
+        infuraId: this._connectionOptions.infuraId,
+        bridge: this._connectionOptions.bridgeUrl
+      });
+      await this._walletConnectProvider.enable();
+      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+    }
   }
 
   private async setAddress() {

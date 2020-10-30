@@ -75,6 +75,7 @@
     "@ew-did-registry/did-resolver-interface": "prerelease",
     "@ew-did-registry/jwt": "prerelease",
     "@ew-did-registry/keys": "prerelease",
+    "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/web3-provider": "1.0.0-rc.4",
     "axios": "^0.20.0",
     "eth-ens-namehash": "^2.0.8",
