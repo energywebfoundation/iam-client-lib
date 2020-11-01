@@ -232,7 +232,7 @@ export class IAMBase {
     if (this._did && this._signer) {
       const document = new DIDDocumentFull(
         this._did,
-        new Operator(this._keys || this._signer, this._resolverSetting)
+        new Operator(this._signer, this._resolverSetting)
       );
       await document.create();
       this._document = document;
