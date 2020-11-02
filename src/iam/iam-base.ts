@@ -1,6 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import {
@@ -55,6 +55,9 @@ type ConnectionOptions = {
 };
 
 const emptyAddress = "0x0000000000000000000000000000000000000000";
+const address1056 = {
+  'https://volta-internal-archive.energyweb.org/': VoltaAddress1056
+};
 
 export class IAMBase {
   protected _runningInBrowser: boolean;
@@ -134,7 +137,7 @@ export class IAMBase {
 
     this._registrySetting = {
       abi: abi1056,
-      address: this._connectionOptions.rpcUrl,
+      address: address1056[this._connectionOptions.rpcUrl],
       method: Methods.Erc1056
     };
 
