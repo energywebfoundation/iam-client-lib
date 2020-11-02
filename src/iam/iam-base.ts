@@ -152,8 +152,8 @@ export class IAMBase {
 
   // INITIAL
 
-  protected async init() {
-    await this.setupProvider();
+  protected async init({ useMetamask }: { useMetamask: boolean }) {
+    await this.setupProvider({ useMetamask });
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
@@ -174,7 +174,7 @@ export class IAMBase {
     this.setupENS();
   }
 
-  private async setupProvider() {
+  private async setupProvider({ useMetamask }: { useMetamask: boolean }) {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
       this._keys = new Keys({ privateKey: this._connectionOptions.privateKey });
@@ -182,10 +182,12 @@ export class IAMBase {
       return;
     }
     if (this._runningInBrowser) {
-      const metamaskProvider = await detectMetamask({ mustBeMetaMask: true }) as providers.AsyncSendable;
-      if (metamaskProvider) {
-        await (metamaskProvider as any).request({ method: 'eth_requestAccounts' });
-        const provider = new providers.Web3Provider(metamaskProvider as any);
+      const metamaskProvider = (await detectMetamask({
+        mustBeMetaMask: true
+      })) as any;
+      if (metamaskProvider && useMetamask) {
+        await metamaskProvider.request({ method: "wallet_requestPermissions" });
+        const provider = new providers.Web3Provider(metamaskProvider);
         this._signer = provider.getSigner();
         return;
       }

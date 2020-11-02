@@ -40,6 +40,7 @@ import {
   IOrganizationDefinition,
   IRoleDefinition
 } from "./cacheServerClient/cacheServerClient.types";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 type InitializeData = {
   did: string | undefined;
@@ -68,6 +69,10 @@ export const NATS_EXCHANGE_TOPIC = "claim.exchange";
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM extends IAMBase {
+  static async isMetamaskExtensionPresent() {
+    const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+    return !!provider;
+  }
   // GETTERS
 
   /**
@@ -100,9 +105,11 @@ export class IAM extends IAMBase {
    *
    * @returns did string, status of connection and info if the user closed the wallet selection modal
    */
-  async initializeConnection(): Promise<InitializeData> {
+  async initializeConnection(
+    { useMetamaskExtension }: { useMetamaskExtension: boolean } = { useMetamaskExtension: false }
+  ): Promise<InitializeData> {
     try {
-      await this.init();
+      await this.init({ useMetamask: useMetamaskExtension });
     } catch (err) {
       if (err.message === "User closed modal") {
         return {
@@ -141,6 +148,8 @@ export class IAM extends IAMBase {
       this._address = undefined;
       this._signer = undefined;
     }
+    const provider = await detectEthereumProvider() as any;
+    provider && provider.close();
   }
 
   /**
@@ -256,15 +265,13 @@ export class IAM extends IAMBase {
         throw new Error("Incorrect signature");
       }
       const url = await this._ipfsStore.save(token);
-      await this.updateDidDocument(
-        {
-          didAttribute: DIDAttribute.ServicePoint,
-          data: {
-            type: PubKeyType.VerificationKey2018,
-            value: { serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: 'SHA256' }
-          }
+      await this.updateDidDocument({
+        didAttribute: DIDAttribute.ServicePoint,
+        data: {
+          type: PubKeyType.VerificationKey2018,
+          value: { serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: "SHA256" }
         }
-      );
+      });
       return url;
     }
     return null;
