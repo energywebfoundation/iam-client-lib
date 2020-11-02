@@ -1,12 +1,11 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { abi1056, address1056, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import {
-  IResolverSettings,
   IServiceEndpoint,
-  ProviderTypes
+  RegistrySettings
 } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
@@ -30,8 +29,10 @@ import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
+import { Provider } from 'ethers/providers';
 
 const { hexlify, bigNumberify, Interface } = utils;
+const { abi: abi1056 } = ethrReg;
 
 export enum MessagingMethod {
   CacheServer = "cacheServer",
@@ -54,6 +55,9 @@ type ConnectionOptions = {
 };
 
 const emptyAddress = "0x0000000000000000000000000000000000000000";
+const address1056 = {
+  'https://volta-internal-archive.energyweb.org/': VoltaAddress1056
+};
 
 export class IAMBase {
   protected _runningInBrowser: boolean;
@@ -73,7 +77,7 @@ export class IAMBase {
   protected _keys: Keys | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
 
-  protected _resolverSetting: IResolverSettings;
+  protected _registrySetting: RegistrySettings;
   protected _resolver: Resolver | undefined;
   protected _document: DIDDocumentFull | undefined;
   protected _userClaims: ClaimsUser | undefined;
@@ -131,13 +135,9 @@ export class IAMBase {
 
     this._cacheClient = cacheClient;
 
-    this._resolverSetting = {
-      provider: {
-        uriOrInfo: rpcUrl,
-        type: ProviderTypes.HTTP
-      },
+    this._registrySetting = {
       abi: abi1056,
-      address: address1056,
+      address: address1056[this._connectionOptions.rpcUrl],
       method: Methods.Erc1056
     };
 
@@ -184,7 +184,7 @@ export class IAMBase {
     if (this._runningInBrowser) {
       const metamaskProvider = await detectMetamask({ mustBeMetaMask: true }) as providers.AsyncSendable;
       if (metamaskProvider) {
-        await (metamaskProvider as any).request({ method: 'eth_requestAccounts'});
+        await (metamaskProvider as any).request({ method: 'eth_requestAccounts' });
         const provider = new providers.Web3Provider(metamaskProvider as any);
         this._signer = provider.getSigner();
         return;
@@ -212,8 +212,8 @@ export class IAMBase {
   }
 
   private setResolver() {
-    if (this._resolverSetting) {
-      this._resolver = new Resolver(this._resolverSetting);
+    if (this._registrySetting) {
+      this._resolver = new Resolver(this._provider as Provider, this._registrySetting);
     }
   }
 
@@ -232,7 +232,7 @@ export class IAMBase {
     if (this._did && this._signer) {
       const document = new DIDDocumentFull(
         this._did,
-        new Operator(this._keys || this._signer, this._resolverSetting)
+        new Operator(this._signer, this._registrySetting)
       );
       await document.create();
       this._document = document;
