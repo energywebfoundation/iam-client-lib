@@ -106,10 +106,18 @@ export class IAM extends IAMBase {
    * @returns did string, status of connection and info if the user closed the wallet selection modal
    */
   async initializeConnection(
-    { useMetamaskExtension }: { useMetamaskExtension: boolean } = { useMetamaskExtension: false }
+    {
+      useMetamaskExtension,
+      reinitializeMetamask
+    }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
+      useMetamaskExtension: false
+    }
   ): Promise<InitializeData> {
     try {
-      await this.init({ useMetamask: useMetamaskExtension });
+      await this.init({
+        useMetamask: useMetamaskExtension,
+        initializeMetamask: reinitializeMetamask
+      });
     } catch (err) {
       if (err.message === "User closed modal") {
         return {
@@ -148,8 +156,6 @@ export class IAM extends IAMBase {
       this._address = undefined;
       this._signer = undefined;
     }
-    const provider = await detectEthereumProvider() as any;
-    provider && provider.close();
   }
 
   /**
