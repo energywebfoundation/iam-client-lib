@@ -3,10 +3,7 @@ import { providers, Signer, utils, errors, Wallet } from "ethers";
 import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
-import {
-  IServiceEndpoint,
-  RegistrySettings
-} from "@ew-did-registry/did-resolver-interface";
+import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
@@ -17,7 +14,6 @@ import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { PublicResolver } from "../../ethers/PublicResolver";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { Keys } from "@ew-did-registry/keys";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import {
@@ -29,7 +25,7 @@ import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
-import { Provider } from 'ethers/providers';
+import { Provider } from "ethers/providers";
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
@@ -46,6 +42,7 @@ type ConnectionOptions = {
   infuraId?: string;
   ensResolverAddress?: string;
   ensRegistryAddress?: string;
+  didContractAddress?: string;
   ipfsUrl?: string;
   bridgeUrl?: string;
   messagingMethod?: MessagingMethod;
@@ -55,9 +52,6 @@ type ConnectionOptions = {
 };
 
 const emptyAddress = "0x0000000000000000000000000000000000000000";
-const address1056 = {
-  'https://volta-internal-archive.energyweb.org/': VoltaAddress1056
-};
 
 export class IAMBase {
   protected _runningInBrowser: boolean;
@@ -74,7 +68,6 @@ export class IAMBase {
   protected _walletConnectProvider: WalletConnectProvider | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
-  protected _keys: Keys | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
 
   protected _registrySetting: RegistrySettings;
@@ -117,7 +110,8 @@ export class IAMBase {
     messagingMethod,
     natsServerUrl,
     bridgeUrl = "https://walletconnect.energyweb.org",
-    privateKey
+    privateKey,
+    didContractAddress = VoltaAddress1056
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
     this._ensRegistryAddress = ensRegistryAddress;
@@ -137,7 +131,7 @@ export class IAMBase {
 
     this._registrySetting = {
       abi: abi1056,
-      address: address1056[this._connectionOptions.rpcUrl],
+      address: didContractAddress,
       method: Methods.Erc1056
     };
 
@@ -152,8 +146,14 @@ export class IAMBase {
 
   // INITIAL
 
-  protected async init({ useMetamask }: { useMetamask: boolean }) {
-    await this.setupProvider({ useMetamask });
+  protected async init({
+    useMetamask,
+    initializeMetamask
+  }: {
+    useMetamask: boolean;
+    initializeMetamask?: boolean;
+  }) {
+    await this.setupProvider({ useMetamask, initializeMetamask });
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
@@ -174,10 +174,15 @@ export class IAMBase {
     this.setupENS();
   }
 
-  private async setupProvider({ useMetamask }: { useMetamask: boolean }) {
+  private async setupProvider({
+    useMetamask,
+    initializeMetamask
+  }: {
+    useMetamask: boolean;
+    initializeMetamask?: boolean;
+  }) {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
-      this._keys = new Keys({ privateKey: this._connectionOptions.privateKey });
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
       return;
     }
@@ -186,7 +191,20 @@ export class IAMBase {
         mustBeMetaMask: true
       })) as any;
       if (metamaskProvider && useMetamask) {
-        await metamaskProvider.request({ method: "wallet_requestPermissions" });
+        if (initializeMetamask) {
+          await metamaskProvider.request({
+            method: "wallet_requestPermissions",
+            params: [
+              {
+                eth_accounts: {}
+              }
+            ]
+          });
+        } else {
+          await metamaskProvider.request({
+            method: "eth_accounts"
+          });
+        }
         const provider = new providers.Web3Provider(metamaskProvider);
         this._signer = provider.getSigner();
         return;
@@ -243,29 +261,18 @@ export class IAMBase {
 
   private setClaims() {
     if (this._signer && this._document) {
-      this._userClaims = new ClaimsUser(
-        this._keys || this._signer,
-        this._document,
-        this._ipfsStore
-      );
-      this._issuerClaims = new ClaimsIssuer(
-        this._keys || this._signer,
-        this._document,
-        this._ipfsStore
-      );
-      this._verifierClaims = new ClaimsVerifier(
-        this._keys || this._signer,
-        this._document,
-        this._ipfsStore
-      );
+      this._userClaims = new ClaimsUser(this._signer, this._document, this._ipfsStore);
+      this._issuerClaims = new ClaimsIssuer(this._signer, this._document, this._ipfsStore);
+      this._verifierClaims = new ClaimsVerifier(this._signer, this._document, this._ipfsStore);
     }
   }
 
   private setJWT() {
     if (this._signer) {
-      this._jwt = new JWT(this._keys || this._signer);
+      this._jwt = new JWT(this._signer);
+      return;
     }
-    this._jwt = new JWT(new Keys());
+    throw new Error("Signer not available");
   }
 
   private async setupNATS() {
