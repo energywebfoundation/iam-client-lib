@@ -1,6 +1,6 @@
 {
   "name": "iam-client-lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library for Decentralized Identity and Access Management",
   "main": "dist/iam-client-lib.js",
   "module": "dist/iam-client-lib.esm.js",
@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
     "prebuild": "rimraf dist docs",
-    "build": "npm run build:contracts && npm run build:ts",
+    "build": "npm run build:contracts && npm run build:ts && copyfiles -u 1 \"ethers/**/*.d.ts\" dist/ethers",
     "build:ts": "bili",
     "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src",
     "build:contracts": "npm run build:typechain:registry && npm run build:typechain:resolver",
@@ -93,6 +93,7 @@
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "bili": "^5.0.5",
+    "copyfiles": "^2.4.0",
     "coveralls": "^3.1.0",
     "eslint": "^7.8.1",
     "jest": "^26.4.2",
