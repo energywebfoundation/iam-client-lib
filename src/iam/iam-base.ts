@@ -26,7 +26,8 @@ import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
-import { IdentityOwner } from "../signer/Signer";
+import { Owner as IdentityOwner } from "../signer/Signer";
+import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
@@ -186,8 +187,8 @@ export class IAMBase {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
-      this._didSigner = new IdentityOwner(this._signer, this._provider);
-      await this._didSigner.initPublicKey();
+      const publicKey = await this.getPublicKey();
+      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey, this._connectionOptions.privateKey);
       return;
     }
     if (this._runningInBrowser) {
@@ -205,14 +206,29 @@ export class IAMBase {
             ]
           });
         } else {
-          await metamaskProvider.request({
-            method: "eth_accounts"
+          const accounts: string[] = await metamaskProvider.request({
+            method: "eth_accounts",
+            params: [
+              {
+                eth_accounts: {}
+              }
+            ]
           });
+          if(accounts.length < 1) {
+            await metamaskProvider.request({
+              method: "wallet_requestPermissions",
+              params: [
+                {
+                  eth_accounts: {}
+                }
+              ]
+            });
+          }
         }
         const provider = new providers.Web3Provider(metamaskProvider);
         this._signer = provider.getSigner();
-        this._didSigner = new IdentityOwner(this._signer, this._provider);
-        await this._didSigner.initPublicKey();
+        const publicKey = await this.getPublicKey();
+        this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
         return;
       }
       this._transactionOverrides = {
@@ -228,9 +244,24 @@ export class IAMBase {
       });
       await this._walletConnectProvider.enable();
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-      this._didSigner = new IdentityOwner(this._signer, this._provider);
-      await this._didSigner.initPublicKey();
+      const publicKey = await this.getPublicKey();
+      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
     }
+  }
+
+  private async getPublicKey() {
+    if (this._signer) {
+      const address = await this._signer.getAddress();
+      const hash = keccak256(address);
+      const digest = hashMessage(arrayify(hash));
+      if (((this._signer?.provider as any)?.provider as WalletConnectProvider)?.isWalletConnect) {
+        const sig = await this._signer.signMessage(arrayify(digest));
+        return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+      }
+      const sig = await this._signer.signMessage(arrayify(hash));
+      return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+    }
+    throw new Error('Signer not initialized');
   }
 
   private async setAddress() {
