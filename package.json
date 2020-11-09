@@ -79,7 +79,7 @@
     "@walletconnect/web3-provider": "1.0.0-rc.4",
     "axios": "^0.20.0",
     "eth-ens-namehash": "^2.0.8",
-    "ethers": "^4.0.45",
+    "ethers": "4.0.45",
     "js-sha3": "^0.8.0",
     "lodash.difference": "^4.5.0",
     "nats.ws": "^1.0.0-111",
