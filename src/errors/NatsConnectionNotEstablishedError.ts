@@ -1,5 +1,5 @@
 export class NATSConnectionNotEstablishedError extends Error {
-  constructor(){
+  constructor() {
     super("NATS connection not established");
   }
 }

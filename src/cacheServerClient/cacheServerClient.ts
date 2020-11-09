@@ -9,7 +9,7 @@ import {
   Claim
 } from "./cacheServerClient.types";
 
-import { IMessage } from '../iam';
+import { IMessage } from "../iam";
 
 export interface ICacheServerClient {
   getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
@@ -20,6 +20,8 @@ export interface ICacheServerClient {
   getOrganizationsByOwner: ({ owner }: { owner: string }) => Promise<IOrganization[]>;
   getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
   getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
+  getOrganizationsBySearchPhrase: ({ search }: { search: string }) => Promise<IOrganization[]>;
+  getApplicationsBySearchPhrase: ({ search }: { search: string }) => Promise<IApp[]>;
   getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
   getIssuedClaims: ({
     did,
@@ -39,8 +41,8 @@ export interface ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
-  requestClaim: ({ message, did }: { message: IMessage, did: string}) => Promise<void>;
-  issueClaim: ({ message, did }: { message: IMessage, did: string}) => Promise<void>;
+  requestClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
+  issueClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -80,6 +82,16 @@ export class CacheServerClient implements ICacheServerClient {
   async getOrganizationsByOwner({ owner }: { owner: string }) {
     const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(`/owner/${owner}/orgs`);
     return data.orgs;
+  }
+
+  async getOrganizationsBySearchPhrase({ search }: { search: string }) {
+    const { data } = await this.httpClient.get<{ Data: IOrganization[] }>(`/org?${search}`);
+    return data.Data;
+  }
+
+  async getApplicationsBySearchPhrase({ search }: { search: string }) {
+    const { data } = await this.httpClient.get<{ Data: IApp[] }>(`/app?${search}`);
+    return data.Data;
   }
 
   async getApplicationsByOwner({ owner }: { owner: string }) {
@@ -133,11 +145,11 @@ export class CacheServerClient implements ICacheServerClient {
     return data.claim;
   }
 
-  async requestClaim ({ message, did }: { message: IMessage, did: string}) {
+  async requestClaim({ message, did }: { message: IMessage; did: string }) {
     await this.httpClient.post<void>(`/claim/request/${did}`, message);
   }
 
-  async issueClaim ({ message, did }: { message: IMessage, did: string}) {
+  async issueClaim({ message, did }: { message: IMessage; did: string }) {
     await this.httpClient.post<void>(`/claim/issue/${did}`, message);
   }
 }

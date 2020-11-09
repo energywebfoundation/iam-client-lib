@@ -913,10 +913,6 @@ export class IAM extends IAMBase {
 
   /**
    * getENSTypesByOwner
-   *
-   * @description get all subdomains for certain domain
-   * @returns array of subdomains or empty array when there is no subdomains
-   *
    */
   getENSTypesByOwner({ type, owner }: { type: ENSNamespaceTypes; owner: string }) {
     if (!this._cacheClient) {
@@ -930,6 +926,22 @@ export class IAM extends IAMBase {
     }
     if (type === ENSNamespaceTypes.Roles) {
       return this._cacheClient.getRolesByOwner({ owner });
+    }
+    throw new ENSTypeNotSupportedError();
+  }
+
+  /**
+   * getENSTypesBySearchPhrase
+   */
+  getENSTypesBySearchPhrase({ type, search }: { type: ENSNamespaceTypes; search: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    if (type === ENSNamespaceTypes.Organization) {
+      return this._cacheClient.getOrganizationsBySearchPhrase({ search });
+    }
+    if (type === ENSNamespaceTypes.Application) {
+      return this._cacheClient.getApplicationsBySearchPhrase({ search });
     }
     throw new ENSTypeNotSupportedError();
   }
