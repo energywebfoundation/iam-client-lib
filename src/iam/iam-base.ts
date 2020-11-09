@@ -26,6 +26,8 @@ import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
+import { Owner as IdentityOwner } from "../signer/Signer";
+import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
@@ -68,6 +70,7 @@ export class IAMBase {
   protected _walletConnectProvider: WalletConnectProvider | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
+  protected _didSigner: IdentityOwner | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
 
   protected _registrySetting: RegistrySettings;
@@ -184,6 +187,8 @@ export class IAMBase {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
+      const publicKey = await this.getPublicKey();
+      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey, this._connectionOptions.privateKey);
       return;
     }
     if (this._runningInBrowser) {
@@ -201,12 +206,29 @@ export class IAMBase {
             ]
           });
         } else {
-          await metamaskProvider.request({
-            method: "eth_accounts"
+          const accounts: string[] = await metamaskProvider.request({
+            method: "eth_accounts",
+            params: [
+              {
+                eth_accounts: {}
+              }
+            ]
           });
+          if(accounts.length < 1) {
+            await metamaskProvider.request({
+              method: "wallet_requestPermissions",
+              params: [
+                {
+                  eth_accounts: {}
+                }
+              ]
+            });
+          }
         }
         const provider = new providers.Web3Provider(metamaskProvider);
         this._signer = provider.getSigner();
+        const publicKey = await this.getPublicKey();
+        this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
         return;
       }
       this._transactionOverrides = {
@@ -222,7 +244,24 @@ export class IAMBase {
       });
       await this._walletConnectProvider.enable();
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+      const publicKey = await this.getPublicKey();
+      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
     }
+  }
+
+  private async getPublicKey() {
+    if (this._signer) {
+      const address = await this._signer.getAddress();
+      const hash = keccak256(address);
+      const digest = hashMessage(arrayify(hash));
+      if (((this._signer?.provider as any)?.provider as WalletConnectProvider)?.isWalletConnect) {
+        const sig = await this._signer.signMessage(arrayify(digest));
+        return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+      }
+      const sig = await this._signer.signMessage(arrayify(hash));
+      return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+    }
+    throw new Error('Signer not initialized');
   }
 
   private async setAddress() {
@@ -249,10 +288,10 @@ export class IAMBase {
   }
 
   private async setDocument() {
-    if (this._did && this._signer) {
+    if (this._did && this._didSigner) {
       const document = new DIDDocumentFull(
         this._did,
-        new Operator(this._signer, this._registrySetting)
+        new Operator(this._didSigner, this._registrySetting)
       );
       await document.create();
       this._document = document;
@@ -260,16 +299,16 @@ export class IAMBase {
   }
 
   private setClaims() {
-    if (this._signer && this._document) {
-      this._userClaims = new ClaimsUser(this._signer, this._document, this._ipfsStore);
-      this._issuerClaims = new ClaimsIssuer(this._signer, this._document, this._ipfsStore);
-      this._verifierClaims = new ClaimsVerifier(this._signer, this._document, this._ipfsStore);
+    if (this._didSigner && this._document) {
+      this._userClaims = new ClaimsUser(this._didSigner, this._document, this._ipfsStore);
+      this._issuerClaims = new ClaimsIssuer(this._didSigner, this._document, this._ipfsStore);
+      this._verifierClaims = new ClaimsVerifier(this._didSigner, this._document, this._ipfsStore);
     }
   }
 
   private setJWT() {
-    if (this._signer) {
-      this._jwt = new JWT(this._signer);
+    if (this._didSigner) {
+      this._jwt = new JWT(this._didSigner);
       return;
     }
     throw new Error("Signer not available");
