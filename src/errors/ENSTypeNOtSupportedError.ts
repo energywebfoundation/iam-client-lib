@@ -1,5 +1,5 @@
 export class ENSTypeNotSupportedError extends Error {
-  constructor(){
+  constructor() {
     super("ENS type not supported");
   }
 }

@@ -188,7 +188,12 @@ export class IAMBase {
     if (this._connectionOptions.privateKey) {
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
       const publicKey = await this.getPublicKey();
-      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey, this._connectionOptions.privateKey);
+      this._didSigner = new IdentityOwner(
+        this._signer,
+        this._provider,
+        publicKey,
+        this._connectionOptions.privateKey
+      );
       return;
     }
     if (this._runningInBrowser) {
@@ -214,7 +219,7 @@ export class IAMBase {
               }
             ]
           });
-          if(accounts.length < 1) {
+          if (accounts.length < 1) {
             await metamaskProvider.request({
               method: "wallet_requestPermissions",
               params: [
@@ -261,7 +266,7 @@ export class IAMBase {
       const sig = await this._signer.signMessage(arrayify(hash));
       return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
     }
-    throw new Error('Signer not initialized');
+    throw new Error("Signer not initialized");
   }
 
   private async setAddress() {
