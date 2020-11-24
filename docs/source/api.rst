@@ -1,0 +1,6 @@
+====
+API
+====
+
+.. js:autoclass:: IAM
+

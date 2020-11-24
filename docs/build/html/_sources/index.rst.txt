@@ -11,5 +11,6 @@ and VCs (Verifiable Credentials)
    :maxdepth: 2
    
    intro
+   api
 
 
