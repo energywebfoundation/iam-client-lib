@@ -34,9 +34,13 @@ extensions = ['sphinx_js']
 
 js_language = 'typescript'
 
-js_source_path = '../../src'
+root_for_relative_js_paths = '../../'
+
+js_source_path = ['../../src/']
 
 primary_domain = 'js'
+
+jsdoc_config_path = '../../tsconfig.json'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
