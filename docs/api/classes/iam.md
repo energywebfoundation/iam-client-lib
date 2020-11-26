@@ -16,40 +16,11 @@
 
 * [constructor](iam.md#constructor)
 
-### Properties
-
-* [\_address](iam.md#_address)
-* [\_cacheClient](iam.md#_cacheclient)
-* [\_connectionOptions](iam.md#_connectionoptions)
-* [\_did](iam.md#_did)
-* [\_didSigner](iam.md#_didsigner)
-* [\_document](iam.md#_document)
-* [\_ensRegistry](iam.md#_ensregistry)
-* [\_ensRegistryAddress](iam.md#_ensregistryaddress)
-* [\_ensResolver](iam.md#_ensresolver)
-* [\_ensResolverAddress](iam.md#_ensresolveraddress)
-* [\_ipfsStore](iam.md#_ipfsstore)
-* [\_issuerClaims](iam.md#_issuerclaims)
-* [\_jsonCodec](iam.md#_jsoncodec)
-* [\_jwt](iam.md#_jwt)
-* [\_natsConnection](iam.md#_natsconnection)
-* [\_natsServerUrl](iam.md#_natsserverurl)
-* [\_provider](iam.md#_provider)
-* [\_registrySetting](iam.md#_registrysetting)
-* [\_resolver](iam.md#_resolver)
-* [\_runningInBrowser](iam.md#_runninginbrowser)
-* [\_signer](iam.md#_signer)
-* [\_transactionOverrides](iam.md#_transactionoverrides)
-* [\_userClaims](iam.md#_userclaims)
-* [\_verifierClaims](iam.md#_verifierclaims)
-* [\_walletConnectProvider](iam.md#_walletconnectprovider)
-
 ### Methods
 
 * [changeAppOwnership](iam.md#changeappownership)
 * [changeOrgOwnership](iam.md#changeorgownership)
 * [changeRoleOwnership](iam.md#changeroleownership)
-* [changeSubdomainOwner](iam.md#changesubdomainowner)
 * [checkExistenceOfDomain](iam.md#checkexistenceofdomain)
 * [closeConnection](iam.md#closeconnection)
 * [createApplication](iam.md#createapplication)
@@ -59,28 +30,22 @@
 * [createPublicClaim](iam.md#createpublicclaim)
 * [createRole](iam.md#createrole)
 * [createSelfSignedClaim](iam.md#createselfsignedclaim)
-* [createSubdomain](iam.md#createsubdomain)
 * [decodeJWTToken](iam.md#decodejwttoken)
 * [deleteApplication](iam.md#deleteapplication)
 * [deleteOrganization](iam.md#deleteorganization)
 * [deleteRole](iam.md#deleterole)
-* [deleteSubdomain](iam.md#deletesubdomain)
-* [downloadClaims](iam.md#downloadclaims)
 * [getAppsByOrgNamespace](iam.md#getappsbyorgnamespace)
 * [getDefinition](iam.md#getdefinition)
 * [getDid](iam.md#getdid)
 * [getDidDocument](iam.md#getdiddocument)
 * [getENSTypesByOwner](iam.md#getenstypesbyowner)
 * [getENSTypesBySearchPhrase](iam.md#getenstypesbysearchphrase)
-* [getFilteredDomainsFromEvent](iam.md#getfiltereddomainsfromevent)
 * [getIssuedClaims](iam.md#getissuedclaims)
-* [getOwner](iam.md#getowner)
 * [getRequestedClaims](iam.md#getrequestedclaims)
 * [getRolesByNamespace](iam.md#getrolesbynamespace)
 * [getSigner](iam.md#getsigner)
 * [getSubdomains](iam.md#getsubdomains)
 * [getUserClaims](iam.md#getuserclaims)
-* [init](iam.md#init)
 * [initializeConnection](iam.md#initializeconnection)
 * [isConnected](iam.md#isconnected)
 * [isOwner](iam.md#isowner)
@@ -88,11 +53,9 @@
 * [issuePublicClaim](iam.md#issuepublicclaim)
 * [publishPublicClaim](iam.md#publishpublicclaim)
 * [revokeDidDocument](iam.md#revokediddocument)
-* [setDomainName](iam.md#setdomainname)
 * [setRoleDefinition](iam.md#setroledefinition)
 * [subscribeToMessages](iam.md#subscribetomessages)
 * [updateDidDocument](iam.md#updatediddocument)
-* [validateIssuers](iam.md#validateissuers)
 * [validateOwnership](iam.md#validateownership)
 * [verifyPublicClaim](iam.md#verifypublicclaim)
 * [isMetamaskExtensionPresent](iam.md#ismetamaskextensionpresent)
@@ -114,216 +77,6 @@ Name | Type |
 `__namedParameters` | { bridgeUrl: string = "https://walletconnect.energyweb.org"; cacheClient: undefined \| [ICacheServerClient](../interfaces/icacheserverclient.md) ; chainId: number = 1; didContractAddress: string = VoltaAddress1056; ensRegistryAddress: string = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac"; ensResolverAddress: string = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680"; infuraId: undefined \| string ; ipfsUrl: string = "https://ipfs.infura.io:5001/api/v0/"; messagingMethod: undefined \| [CacheServer](../enums/messagingmethod.md#cacheserver) \| [WebRTC](../enums/messagingmethod.md#webrtc) \| [SmartContractStorage](../enums/messagingmethod.md#smartcontractstorage) ; natsServerUrl: undefined \| string ; privateKey: undefined \| string ; rpcUrl: string  } |
 
 **Returns:** [IAM](iam.md)
-
-## Properties
-
-### \_address
-
-• `Protected` **\_address**: string \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_address](iambase.md#_address)*
-
-___
-
-### \_cacheClient
-
-• `Protected` **\_cacheClient**: [ICacheServerClient](../interfaces/icacheserverclient.md) \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_cacheClient](iambase.md#_cacheclient)*
-
-___
-
-### \_connectionOptions
-
-• `Protected` **\_connectionOptions**: { bridgeUrl: string ; chainId: number ; infuraId?: undefined \| string ; privateKey?: undefined \| string ; rpcUrl: string  }
-
-*Inherited from [IAMBase](iambase.md).[_connectionOptions](iambase.md#_connectionoptions)*
-
-#### Type declaration:
-
-Name | Type |
------- | ------ |
-`bridgeUrl` | string |
-`chainId` | number |
-`infuraId?` | undefined \| string |
-`privateKey?` | undefined \| string |
-`rpcUrl` | string |
-
-___
-
-### \_did
-
-• `Protected` **\_did**: string \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_did](iambase.md#_did)*
-
-___
-
-### \_didSigner
-
-• `Protected` **\_didSigner**: IdentityOwner \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_didSigner](iambase.md#_didsigner)*
-
-___
-
-### \_document
-
-• `Protected` **\_document**: DIDDocumentFull \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_document](iambase.md#_document)*
-
-___
-
-### \_ensRegistry
-
-• `Protected` **\_ensRegistry**: EnsRegistry \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_ensRegistry](iambase.md#_ensregistry)*
-
-___
-
-### \_ensRegistryAddress
-
-• `Protected` **\_ensRegistryAddress**: string
-
-*Inherited from [IAMBase](iambase.md).[_ensRegistryAddress](iambase.md#_ensregistryaddress)*
-
-___
-
-### \_ensResolver
-
-• `Protected` **\_ensResolver**: PublicResolver \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_ensResolver](iambase.md#_ensresolver)*
-
-___
-
-### \_ensResolverAddress
-
-• `Protected` **\_ensResolverAddress**: string
-
-*Inherited from [IAMBase](iambase.md).[_ensResolverAddress](iambase.md#_ensresolveraddress)*
-
-___
-
-### \_ipfsStore
-
-• `Protected` **\_ipfsStore**: DidStore
-
-*Inherited from [IAMBase](iambase.md).[_ipfsStore](iambase.md#_ipfsstore)*
-
-___
-
-### \_issuerClaims
-
-• `Protected` **\_issuerClaims**: ClaimsIssuer \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_issuerClaims](iambase.md#_issuerclaims)*
-
-___
-
-### \_jsonCodec
-
-• `Protected` **\_jsonCodec**: Codec\<any> \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_jsonCodec](iambase.md#_jsoncodec)*
-
-___
-
-### \_jwt
-
-• `Protected` **\_jwt**: JWT \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_jwt](iambase.md#_jwt)*
-
-___
-
-### \_natsConnection
-
-• `Protected` **\_natsConnection**: NatsConnection \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_natsConnection](iambase.md#_natsconnection)*
-
-___
-
-### \_natsServerUrl
-
-• `Protected` **\_natsServerUrl**: string \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_natsServerUrl](iambase.md#_natsserverurl)*
-
-___
-
-### \_provider
-
-• `Protected` **\_provider**: JsonRpcProvider \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_provider](iambase.md#_provider)*
-
-___
-
-### \_registrySetting
-
-• `Protected` **\_registrySetting**: RegistrySettings
-
-*Inherited from [IAMBase](iambase.md).[_registrySetting](iambase.md#_registrysetting)*
-
-___
-
-### \_resolver
-
-• `Protected` **\_resolver**: Resolver \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_resolver](iambase.md#_resolver)*
-
-___
-
-### \_runningInBrowser
-
-• `Protected` **\_runningInBrowser**: boolean
-
-*Inherited from [IAMBase](iambase.md).[_runningInBrowser](iambase.md#_runninginbrowser)*
-
-___
-
-### \_signer
-
-• `Protected` **\_signer**: Signer \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_signer](iambase.md#_signer)*
-
-___
-
-### \_transactionOverrides
-
-• `Protected` **\_transactionOverrides**: TransactionOverrides
-
-*Inherited from [IAMBase](iambase.md).[_transactionOverrides](iambase.md#_transactionoverrides)*
-
-___
-
-### \_userClaims
-
-• `Protected` **\_userClaims**: ClaimsUser \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_userClaims](iambase.md#_userclaims)*
-
-___
-
-### \_verifierClaims
-
-• `Protected` **\_verifierClaims**: ClaimsVerifier \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_verifierClaims](iambase.md#_verifierclaims)*
-
-___
-
-### \_walletConnectProvider
-
-• `Protected` **\_walletConnectProvider**: WalletConnectProvider \| undefined
-
-*Inherited from [IAMBase](iambase.md).[_walletConnectProvider](iambase.md#_walletconnectprovider)*
 
 ## Methods
 
@@ -380,22 +133,6 @@ changeRoleOwnership
 Name | Type |
 ------ | ------ |
 `__namedParameters` | { namespace: string ; newOwner: string  } |
-
-**Returns:** Promise\<void>
-
-___
-
-### changeSubdomainOwner
-
-▸ `Protected`**changeSubdomainOwner**(`__namedParameters`: { label: string ; namespace: string ; newOwner: string  }): Promise\<void>
-
-*Inherited from [IAMBase](iambase.md).[changeSubdomainOwner](iambase.md#changesubdomainowner)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { label: string ; namespace: string ; newOwner: string  } |
 
 **Returns:** Promise\<void>
 
@@ -565,22 +302,6 @@ Name | Type |
 
 ___
 
-### createSubdomain
-
-▸ `Protected`**createSubdomain**(`__namedParameters`: { domain: string ; subdomain: string  }): Promise\<void>
-
-*Inherited from [IAMBase](iambase.md).[createSubdomain](iambase.md#createsubdomain)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { domain: string ; subdomain: string  } |
-
-**Returns:** Promise\<void>
-
-___
-
 ### decodeJWTToken
 
 ▸ **decodeJWTToken**(`__namedParameters`: { token: string  }): Promise\<string \| { [key:string]: string \| object;  }>
@@ -646,38 +367,6 @@ Name | Type |
 `__namedParameters` | { namespace: string  } |
 
 **Returns:** Promise\<void>
-
-___
-
-### deleteSubdomain
-
-▸ `Protected`**deleteSubdomain**(`__namedParameters`: { namespace: string  }): Promise\<void>
-
-*Inherited from [IAMBase](iambase.md).[deleteSubdomain](iambase.md#deletesubdomain)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { namespace: string  } |
-
-**Returns:** Promise\<void>
-
-___
-
-### downloadClaims
-
-▸ `Protected`**downloadClaims**(`__namedParameters`: { services: IServiceEndpoint[]  }): Promise\<{ serviceEndpoint: string  }[]>
-
-*Inherited from [IAMBase](iambase.md).[downloadClaims](iambase.md#downloadclaims)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { services: IServiceEndpoint[]  } |
-
-**Returns:** Promise\<{ serviceEndpoint: string  }[]>
 
 ___
 
@@ -783,22 +472,6 @@ Name | Type |
 
 ___
 
-### getFilteredDomainsFromEvent
-
-▸ `Protected`**getFilteredDomainsFromEvent**(`__namedParameters`: { domain: string  }): Promise\<string[]>
-
-*Inherited from [IAMBase](iambase.md).[getFilteredDomainsFromEvent](iambase.md#getfiltereddomainsfromevent)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { domain: string  } |
-
-**Returns:** Promise\<string[]>
-
-___
-
 ### getIssuedClaims
 
 ▸ **getIssuedClaims**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
@@ -810,22 +483,6 @@ Name | Type |
 `__namedParameters` | { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  } |
 
 **Returns:** Promise\<[Claim](../interfaces/claim.md)[]>
-
-___
-
-### getOwner
-
-▸ `Protected`**getOwner**(`__namedParameters`: { namespace: string  }): Promise\<string>
-
-*Inherited from [IAMBase](iambase.md).[getOwner](iambase.md#getowner)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { namespace: string  } |
-
-**Returns:** Promise\<string>
 
 ___
 
@@ -910,22 +567,6 @@ Name | Type | Default value |
 `__namedParameters` | { did: undefined \| string = this.\_did } | {} |
 
 **Returns:** Promise\<{ serviceEndpoint: string  }[]>
-
-___
-
-### init
-
-▸ `Protected`**init**(`__namedParameters`: { initializeMetamask: undefined \| false \| true ; useMetamask: boolean  }): Promise\<void>
-
-*Inherited from [IAMBase](iambase.md).[init](iambase.md#init)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { initializeMetamask: undefined \| false \| true ; useMetamask: boolean  } |
-
-**Returns:** Promise\<void>
 
 ___
 
@@ -1057,22 +698,6 @@ information (true/false) if the DID document was revoked
 
 ___
 
-### setDomainName
-
-▸ `Protected`**setDomainName**(`__namedParameters`: { domain: string  }): Promise\<void>
-
-*Inherited from [IAMBase](iambase.md).[setDomainName](iambase.md#setdomainname)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { domain: string  } |
-
-**Returns:** Promise\<void>
-
-___
-
 ### setRoleDefinition
 
 ▸ **setRoleDefinition**(`__namedParameters`: { data: [IRoleDefinition](../interfaces/iroledefinition.md) \| [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) \| [IAppDefinition](../interfaces/iappdefinition.md) ; domain: string  }): Promise\<void>
@@ -1124,22 +749,6 @@ Name | Type |
 **Returns:** Promise\<boolean>
 
 info if did document was updated
-
-___
-
-### validateIssuers
-
-▸ `Protected`**validateIssuers**(`__namedParameters`: { issuer: string[] ; namespace: string  }): Promise\<void>
-
-*Inherited from [IAMBase](iambase.md).[validateIssuers](iambase.md#validateissuers)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { issuer: string[] ; namespace: string  } |
-
-**Returns:** Promise\<void>
 
 ___
 

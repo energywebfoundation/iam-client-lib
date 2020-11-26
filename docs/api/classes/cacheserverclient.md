@@ -18,10 +18,6 @@
 
 * [constructor](cacheserverclient.md#constructor)
 
-### Properties
-
-* [httpClient](cacheserverclient.md#httpclient)
-
 ### Methods
 
 * [getAppDefinition](cacheserverclient.md#getappdefinition)
@@ -53,12 +49,6 @@ Name | Type |
 `__namedParameters` | { url: string  } |
 
 **Returns:** [CacheServerClient](cacheserverclient.md)
-
-## Properties
-
-### httpClient
-
-• `Private` **httpClient**: AxiosInstance
 
 ## Methods
 

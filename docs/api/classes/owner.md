@@ -25,7 +25,6 @@
 * [privateKey](owner.md#privatekey)
 * [provider](owner.md#provider)
 * [publicKey](owner.md#publickey)
-* [signer](owner.md#signer)
 
 ### Methods
 
@@ -72,12 +71,6 @@ ___
 ### publicKey
 
 •  **publicKey**: string
-
-___
-
-### signer
-
-• `Private` **signer**: Signer
 
 ## Methods
 

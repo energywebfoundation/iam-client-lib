@@ -3,5 +3,9 @@
   "out": ["docs/api"],
   "exclude": ["**/node_modules/**"],
   "mode": "file",
-  "disableSources": true
+  "disableSources": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "excludeNotExported": true
 }
