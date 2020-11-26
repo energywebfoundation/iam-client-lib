@@ -1,0 +1,7 @@
+{
+  "inputFiles": ["src/"],
+  "out": ["docs/api"],
+  "exclude": ["**/node_modules/**"],
+  "mode": "file",
+  "disableSources": true
+}

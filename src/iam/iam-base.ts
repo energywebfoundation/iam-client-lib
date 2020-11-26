@@ -55,6 +55,9 @@ type ConnectionOptions = {
 
 const emptyAddress = "0x0000000000000000000000000000000000000000";
 
+/**
+ * @class
+ */
 export class IAMBase {
   protected _runningInBrowser: boolean;
   protected _connectionOptions: {

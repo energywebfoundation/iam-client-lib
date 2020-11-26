@@ -1,1 +1,5 @@
-site_name: My Docs
+site_name: IAM client library
+nav:
+    - Home: index.md
+    - API: api/globals.md
+theme: readthedocs
