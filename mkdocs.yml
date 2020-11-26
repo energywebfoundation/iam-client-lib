@@ -3,3 +3,6 @@ nav:
     - Home: index.md
     - API: api/globals.md
 theme: readthedocs
+
+docs_dir: docs
+site_dir: site
