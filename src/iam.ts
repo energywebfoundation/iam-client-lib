@@ -275,7 +275,7 @@ export class IAM extends IAMBase {
         didAttribute: DIDAttribute.ServicePoint,
         data: {
           type: PubKeyType.VerificationKey2018,
-          value: { serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: "SHA256" }
+          value: { id: uuid(), serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: "SHA256" }
         }
       });
       return url;
