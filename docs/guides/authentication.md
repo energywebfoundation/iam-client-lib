@@ -1,4 +1,3 @@
 # Authentication
 
-## Instanitation
 

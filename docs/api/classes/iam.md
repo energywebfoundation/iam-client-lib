@@ -1,8 +1,8 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / IAM
-
 # Class: IAM
+
+Decentralized Identity and Access Management (IAM) Type
 
 ## Hierarchy
 

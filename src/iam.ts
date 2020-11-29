@@ -66,7 +66,6 @@ export enum ENSNamespaceTypes {
 export const NATS_EXCHANGE_TOPIC = "claim.exchange";
 
 /**
- * @class
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM extends IAMBase {

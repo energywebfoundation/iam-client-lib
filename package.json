@@ -13,7 +13,7 @@
     "prebuild": "rimraf dist docs",
     "build": "npm run build:contracts && npm run build:ts && copyfiles -u 1 \"ethers/**/*.d.ts\" dist/ethers",
     "build:ts": "bili",
-    "build:docs": "rm -rf docs/api && typedoc",
+    "build:api_docs": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true",
     "build:contracts": "npm run build:typechain:registry && npm run build:typechain:resolver",
     "build:typechain:registry": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json'",
     "build:typechain:resolver": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/resolver/build/contracts/PublicResolver.json'",

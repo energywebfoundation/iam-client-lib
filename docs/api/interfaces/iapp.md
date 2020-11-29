@@ -1,7 +1,5 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / IApp
-
 # Interface: IApp
 
 ## Hierarchy
