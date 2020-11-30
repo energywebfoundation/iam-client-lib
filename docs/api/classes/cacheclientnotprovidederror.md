@@ -1,5 +1,7 @@
 **[iam-client-lib](../README.md)**
 
+> [Globals](../globals.md) / CacheClientNotProvidedError
+
 # Class: CacheClientNotProvidedError
 
 ## Hierarchy

@@ -1,5 +1,7 @@
 **[iam-client-lib](../README.md)**
 
+> [Globals](../globals.md) / IRoleDefinition
+
 # Interface: IRoleDefinition
 
 ## Hierarchy

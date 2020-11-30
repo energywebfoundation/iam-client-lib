@@ -1,5 +1,7 @@
 **[iam-client-lib](../README.md)**
 
+> [Globals](../globals.md) / IAM
+
 # Class: IAM
 
 Decentralized Identity and Access Management (IAM) Type
@@ -587,8 +589,8 @@ Initialize connection to wallet
 Name | Type | Default value |
 ------ | ------ | ------ |
 `__namedParameters` | { reinitializeMetamask: undefined \| false \| true ; useMetamaskExtension: boolean  } | {
-      useMetamaskExtension: false
-    } |
+        useMetamaskExtension: false
+      } |
 
 **Returns:** Promise\<[InitializeData](../globals.md#initializedata)>
 
@@ -734,21 +736,19 @@ ___
 
 ### updateDidDocument
 
-▸ **updateDidDocument**(`__namedParameters`: { data: IUpdateData ; didAttribute: DIDAttribute ; validity: undefined \| number  }): Promise\<boolean>
-
-updateDidDocument
+▸ **updateDidDocument**(`options`: { data: IUpdateData ; didAttribute: DIDAttribute ; validity?: undefined \| number  }): Promise\<boolean>
 
 **`description`** updates did document based on data provided
 
 #### Parameters:
 
-Name | Type |
------- | ------ |
-`__namedParameters` | { data: IUpdateData ; didAttribute: DIDAttribute ; validity: undefined \| number  } |
+Name | Type | Description |
+------ | ------ | ------ |
+`options` | { data: IUpdateData ; didAttribute: DIDAttribute ; validity?: undefined \| number  } | Options to connect with blockchain  |
 
 **Returns:** Promise\<boolean>
 
-info if did document was updated
+true if document is updated successfuly
 
 ___
 

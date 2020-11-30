@@ -3,13 +3,13 @@
 Llibrary entry point is [IAM](../api/classes/iam.md) class. To establish 
 connection with blockchain its 
 [initializeConnection](../api/classes/iam.md#initializeconnection) method must 
-be called after class is instantiated. To free resources connection should be close by 
-[closeConnection](../api/classes/iam.md#closeconnection). Connection status 
-can be checked by [isConnected](../api/classes/iam.md#isconnected)
+be called after class is instantiated. To free resources connection should be 
+closed by [closeConnection](../api/classes/iam.md#closeconnection). 
+Connection status can be checked by [isConnected](../api/classes/iam.md#isconnected)
 
 A decentralized identity is represented by a decentralized document that also 
 describes how to interact with the entity. Document is read by 
-[getDocument](../api/classes/iam.md#getdocument) and can be upadated by owner 
+[getDidDocument](../api/classes/iam.md#getdiddocument) and can be upadated by owner 
 with [updateDidDocument](../api/classes/iam.md#updatediddocument). Identity is 
 invalidated with [revokeDidDocument](../api/classes/iam.md#revokediddocument).
 

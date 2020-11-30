@@ -1,5 +1,7 @@
 **[iam-client-lib](../README.md)**
 
+> [Globals](../globals.md) / ENSResolverNotInitializedError
+
 # Class: ENSResolverNotInitializedError
 
 ## Hierarchy

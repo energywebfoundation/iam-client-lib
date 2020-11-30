@@ -1,5 +1,7 @@
 **[iam-client-lib](../README.md)**
 
+> [Globals](../globals.md) / MethodNotAvailableInNodeEnvError
+
 # Class: MethodNotAvailableInNodeEnvError
 
 ## Hierarchy
