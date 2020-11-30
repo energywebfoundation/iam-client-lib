@@ -13,7 +13,7 @@
     "prebuild": "rimraf dist docs",
     "build": "npm run build:contracts && npm run build:ts && copyfiles -u 1 \"ethers/**/*.d.ts\" dist/ethers",
     "build:ts": "bili",
-    "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build:api_docs": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true",
     "build:contracts": "npm run build:typechain:registry && npm run build:typechain:resolver",
     "build:typechain:registry": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json'",
     "build:typechain:resolver": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/resolver/build/contracts/PublicResolver.json'",
@@ -102,7 +102,8 @@
     "rollup-plugin-typescript2": "^0.27.2",
     "ts-jest": "^26.3.0",
     "typechain": "^2.0.0",
-    "typedoc": "^0.19.1",
+    "typedoc": "^0.19.2",
+    "typedoc-plugin-markdown": "^3.0.11",
     "typescript": "^4.0.2"
   }
 }

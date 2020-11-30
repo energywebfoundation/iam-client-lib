@@ -1,3 +1,7 @@
+**[iam-client-lib](README.md)**
+
+> [Globals](globals.md)
+
 # Identity and Access Management (IAM) Client Library
 TypeScript library to be used within decentralised applications for authentication and authorisation using DIDs (Decentralised Identifiers) and VCs (Verifiable Credentials)
 
@@ -43,14 +47,12 @@ You can add this library as a dependency
 $ npm i https://github.com/energywebfoundation/iam-client-lib.git#branch_name
 ```
 
-
 ### Sample Import (TypeScript)
 ```sh
 import { IAM, CacheServerClient } from 'iam-client-lib';
 
 export class Sample {
     private _iam: IAM;
-
 
     constructor() {
       // create default cache server client (optional)
@@ -73,7 +75,5 @@ export class Sample {
     }
 
 ```
-
-
 
 ## License

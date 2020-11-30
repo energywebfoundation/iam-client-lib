@@ -1,0 +1,10 @@
+{
+  "inputFiles": ["src/"],
+  "out": ["docs/api"],
+  "mode": "file",
+  "disableSources": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "excludeNotExported": true
+}

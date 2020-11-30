@@ -110,8 +110,8 @@ export class IAM extends IAMBase {
       useMetamaskExtension,
       reinitializeMetamask
     }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
-      useMetamaskExtension: false
-    }
+        useMetamaskExtension: false
+      }
   ): Promise<InitializeData> {
     try {
       await this.init({
@@ -197,21 +197,27 @@ export class IAM extends IAMBase {
   }
 
   /**
-   * updateDidDocument
+   * @param options Options to connect with blockchain
+   * 
+   * @param options.didAttribute Type of document to be updated
+   * 
+   * @param options.data New attribute value
+   * @param options.validity Time (s) for the attribute to expire
    *
    * @description updates did document based on data provided
-   * @returns info if did document was updated
+   * @returns true if document is updated successfuly
    *
    */
-  async updateDidDocument({
-    didAttribute,
-    data,
-    validity
-  }: {
+  async updateDidDocument(options: {
     didAttribute: DIDAttribute;
     data: IUpdateData;
     validity?: number;
   }): Promise<boolean> {
+    const {
+      didAttribute,
+        data,
+        validity
+    } = options;
     if (!this._runningInBrowser) {
       throw new MethodNotAvailableInNodeEnvError("updateDidDocument");
     }
