@@ -14,12 +14,14 @@
 
 ### Properties
 
+* [addDIDToWatchList](icacheserverclient.md#adddidtowatchlist)
 * [getAppDefinition](icacheserverclient.md#getappdefinition)
 * [getApplicationRoles](icacheserverclient.md#getapplicationroles)
 * [getApplicationsByOrganization](icacheserverclient.md#getapplicationsbyorganization)
 * [getApplicationsByOwner](icacheserverclient.md#getapplicationsbyowner)
 * [getApplicationsBySearchPhrase](icacheserverclient.md#getapplicationsbysearchphrase)
 * [getDIDsForRole](icacheserverclient.md#getdidsforrole)
+* [getDidDocument](icacheserverclient.md#getdiddocument)
 * [getIssuedClaims](icacheserverclient.md#getissuedclaims)
 * [getOrgDefinition](icacheserverclient.md#getorgdefinition)
 * [getOrganizationRoles](icacheserverclient.md#getorganizationroles)
@@ -32,6 +34,12 @@
 * [requestClaim](icacheserverclient.md#requestclaim)
 
 ## Properties
+
+### addDIDToWatchList
+
+•  **addDIDToWatchList**: (\_\_namedParameters: { did: string  }) => Promise\<void>
+
+___
 
 ### getAppDefinition
 
@@ -66,6 +74,12 @@ ___
 ### getDIDsForRole
 
 •  **getDIDsForRole**: (\_\_namedParameters: { namespace: string  }) => Promise\<string[]>
+
+___
+
+### getDidDocument
+
+•  **getDidDocument**: (\_\_namedParameters: { did: string ; includeClaims: undefined \| false \| true  }) => Promise\<IDIDDocument>
 
 ___
 

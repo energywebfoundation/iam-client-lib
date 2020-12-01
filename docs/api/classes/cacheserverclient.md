@@ -18,12 +18,14 @@
 
 ### Methods
 
+* [addDIDToWatchList](cacheserverclient.md#adddidtowatchlist)
 * [getAppDefinition](cacheserverclient.md#getappdefinition)
 * [getApplicationRoles](cacheserverclient.md#getapplicationroles)
 * [getApplicationsByOrganization](cacheserverclient.md#getapplicationsbyorganization)
 * [getApplicationsByOwner](cacheserverclient.md#getapplicationsbyowner)
 * [getApplicationsBySearchPhrase](cacheserverclient.md#getapplicationsbysearchphrase)
 * [getDIDsForRole](cacheserverclient.md#getdidsforrole)
+* [getDidDocument](cacheserverclient.md#getdiddocument)
 * [getIssuedClaims](cacheserverclient.md#getissuedclaims)
 * [getOrgDefinition](cacheserverclient.md#getorgdefinition)
 * [getOrganizationRoles](cacheserverclient.md#getorganizationroles)
@@ -50,6 +52,20 @@ Name | Type |
 **Returns:** [CacheServerClient](cacheserverclient.md)
 
 ## Methods
+
+### addDIDToWatchList
+
+▸ **addDIDToWatchList**(`__namedParameters`: { did: string  }): Promise\<void>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { did: string  } |
+
+**Returns:** Promise\<void>
+
+___
 
 ### getAppDefinition
 
@@ -132,6 +148,20 @@ Name | Type |
 `__namedParameters` | { namespace: string  } |
 
 **Returns:** Promise\<string[]>
+
+___
+
+### getDidDocument
+
+▸ **getDidDocument**(`__namedParameters`: { did: string ; includeClaims: undefined \| false \| true  }): Promise\<IDIDDocument>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { did: string ; includeClaims: undefined \| false \| true  } |
+
+**Returns:** Promise\<IDIDDocument>
 
 ___
 
