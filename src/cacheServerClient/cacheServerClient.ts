@@ -10,6 +10,7 @@ import {
 } from "./cacheServerClient.types";
 
 import { IMessage } from "../iam";
+import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 
 export interface ICacheServerClient {
   getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
@@ -44,6 +45,8 @@ export interface ICacheServerClient {
   requestClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
   issueClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
   getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
+  getDidDocument: ({ did, includeClaims }: { did: string, includeClaims?: boolean}) => Promise<IDIDDocument>;
+  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -157,5 +160,14 @@ export class CacheServerClient implements ICacheServerClient {
   async getDIDsForRole({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<string[]>(`/claim/did/${namespace}?accepted=true`);
     return data;
+  }
+
+  async getDidDocument({ did, includeClaims}: { did: string, includeClaims?: boolean}) {
+    const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
+    return data;
+  }
+
+  async addDIDToWatchList({ did }: { did: string }) {
+    await this.httpClient.post(`/DID/${did}`);
   }
 }

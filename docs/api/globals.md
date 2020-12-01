@@ -84,7 +84,7 @@ ___
 
 ### InitializeData
 
-Ƭ  **InitializeData**: { connected: boolean ; did: string \| undefined ; userClosedModal: boolean  }
+Ƭ  **InitializeData**: { connected: boolean ; did: string \| undefined ; didDocument: IDIDDocument \| null ; userClosedModal: boolean  }
 
 #### Type declaration:
 
@@ -92,6 +92,7 @@ Name | Type |
 ------ | ------ |
 `connected` | boolean |
 `did` | string \| undefined |
+`didDocument` | IDIDDocument \| null |
 `userClosedModal` | boolean |
 
 ## Variables

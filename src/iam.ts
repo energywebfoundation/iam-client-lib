@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import { providers, Signer, utils } from "ethers";
+import { providers, Signer } from "ethers";
 import {
   DIDAttribute,
   IDIDDocument,
@@ -46,6 +46,7 @@ type InitializeData = {
   did: string | undefined;
   connected: boolean;
   userClosedModal: boolean;
+  didDocument: IDIDDocument | null;
 };
 
 export interface IMessage {
@@ -123,23 +124,28 @@ export class IAM extends IAMBase {
         return {
           did: undefined,
           connected: false,
-          userClosedModal: true
+          userClosedModal: true,
+          didDocument: null
         };
       }
       throw new Error(err);
     }
+    const didDocument = await this.getDidDocument();
+
     if (!this._runningInBrowser) {
       return {
         did: this.getDid(),
         connected: true,
-        userClosedModal: false
+        userClosedModal: false,
+        didDocument
       };
     }
 
     return {
       did: this.getDid(),
       connected: this.isConnected() || false,
-      userClosedModal: false
+      userClosedModal: false,
+      didDocument
     };
   }
 
@@ -183,14 +189,38 @@ export class IAM extends IAMBase {
    *
    */
   async getDidDocument({
-    did = this._did
-  }: { did?: string } | undefined = {}): Promise<IDIDDocument | null> {
+    did = this._did,
+    includeClaims = true
+  }: { did?: string; includeClaims?: boolean } | undefined = {}): Promise<IDIDDocument | null> {
+    if (this._cacheClient && did) {
+      try {
+        const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
+        return didDoc;
+      } catch (err) {
+        if (err.message === "Request failed with status code 404") {
+          this._cacheClient.addDIDToWatchList({ did });
+          if (this._resolver) {
+            const document = await this._resolver.read(did);
+            if (includeClaims) {
+              const services = await this.downloadClaims({
+                services: document.service && document.service.length > 0 ? document.service : []
+              });
+              document.service = (services as unknown) as IServiceEndpoint[];
+            }
+            return document;
+          }
+        }
+        throw err;
+      }
+    }
     if (did && this._resolver) {
       const document = await this._resolver.read(did);
-      const services = await this.downloadClaims({
-        services: document.service && document.service.length > 0 ? document.service : []
-      });
-      document.service = (services as unknown) as IServiceEndpoint[];
+      if (includeClaims) {
+        const services = await this.downloadClaims({
+          services: document.service && document.service.length > 0 ? document.service : []
+        });
+        document.service = (services as unknown) as IServiceEndpoint[];
+      }
       return document;
     }
     return null;
@@ -372,14 +402,8 @@ export class IAM extends IAMBase {
    *
    */
   async getUserClaims({ did = this._did }: { did?: string } | undefined = {}) {
-    if (this._resolver && did) {
-      const document = await this._resolver.read(did);
-      const services = await this.downloadClaims({
-        services: document.service && document.service.length > 0 ? document.service : []
-      });
-      return services;
-    }
-    return [];
+    const { service } = (await this.getDidDocument({ did })) || {};
+    return service;
   }
 
   async decodeJWTToken({ token }: { token: string }) {

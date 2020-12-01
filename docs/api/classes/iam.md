@@ -425,7 +425,7 @@ ___
 
 ### getDidDocument
 
-▸ **getDidDocument**(`__namedParameters?`: { did: undefined \| string = this.\_did }): Promise\<IDIDDocument \| null>
+▸ **getDidDocument**(`__namedParameters?`: { did: undefined \| string = this.\_did; includeClaims: boolean = true }): Promise\<IDIDDocument \| null>
 
 getDidDocument
 
@@ -433,7 +433,7 @@ getDidDocument
 
 Name | Type | Default value |
 ------ | ------ | ------ |
-`__namedParameters` | { did: undefined \| string = this.\_did } | {} |
+`__namedParameters` | { did: undefined \| string = this.\_did; includeClaims: boolean = true } | {} |
 
 **Returns:** Promise\<IDIDDocument \| null>
 
@@ -575,7 +575,7 @@ ___
 
 ### getUserClaims
 
-▸ **getUserClaims**(`__namedParameters?`: { did: undefined \| string = this.\_did }): Promise\<{ serviceEndpoint: string  }[]>
+▸ **getUserClaims**(`__namedParameters?`: { did: undefined \| string = this.\_did }): Promise\<undefined \| IServiceEndpoint[]>
 
 getUserClaims
 
@@ -587,7 +587,7 @@ Name | Type | Default value |
 ------ | ------ | ------ |
 `__namedParameters` | { did: undefined \| string = this.\_did } | {} |
 
-**Returns:** Promise\<{ serviceEndpoint: string  }[]>
+**Returns:** Promise\<undefined \| IServiceEndpoint[]>
 
 ___
 
