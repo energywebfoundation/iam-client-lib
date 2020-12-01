@@ -1,7 +1,5 @@
 **[iam-client-lib](README.md)**
 
-> [Globals](globals.md)
-
 # Identity and Access Management (IAM) Client Library
 TypeScript library to be used within decentralised applications for authentication and authorisation using DIDs (Decentralised Identifiers) and VCs (Verifiable Credentials)
 

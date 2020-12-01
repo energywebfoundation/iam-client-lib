@@ -1,7 +1,5 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / IAM
-
 # Class: IAM
 
 Decentralized Identity and Access Management (IAM) Type
@@ -44,6 +42,7 @@ Decentralized Identity and Access Management (IAM) Type
 * [getENSTypesBySearchPhrase](iam.md#getenstypesbysearchphrase)
 * [getIssuedClaims](iam.md#getissuedclaims)
 * [getRequestedClaims](iam.md#getrequestedclaims)
+* [getRoleDIDs](iam.md#getroledids)
 * [getRolesByNamespace](iam.md#getrolesbynamespace)
 * [getSigner](iam.md#getsigner)
 * [getSubdomains](iam.md#getsubdomains)
@@ -502,6 +501,26 @@ Name | Type |
 
 ___
 
+### getRoleDIDs
+
+▸ **getRoleDIDs**(`__namedParameters`: { namespace: string  }): Promise\<string[]>
+
+getRoleDIDs
+
+**`description`** get all users did which have certain role
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { namespace: string  } |
+
+**Returns:** Promise\<string[]>
+
+array of did's
+
+___
+
 ### getRolesByNamespace
 
 ▸ **getRolesByNamespace**(`__namedParameters`: { namespace: string ; parentType: [Application](../enums/ensnamespacetypes.md#application) \| [Organization](../enums/ensnamespacetypes.md#organization)  }): Promise\<[IRole](../interfaces/irole.md)[]>
@@ -589,8 +608,8 @@ Initialize connection to wallet
 Name | Type | Default value |
 ------ | ------ | ------ |
 `__namedParameters` | { reinitializeMetamask: undefined \| false \| true ; useMetamaskExtension: boolean  } | {
-        useMetamaskExtension: false
-      } |
+      useMetamaskExtension: false
+    } |
 
 **Returns:** Promise\<[InitializeData](../globals.md#initializedata)>
 

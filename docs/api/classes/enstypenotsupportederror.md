@@ -1,7 +1,5 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / ENSTypeNotSupportedError
-
 # Class: ENSTypeNotSupportedError
 
 ## Hierarchy

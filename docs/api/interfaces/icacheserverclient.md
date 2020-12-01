@@ -1,7 +1,5 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / ICacheServerClient
-
 # Interface: ICacheServerClient
 
 ## Hierarchy
@@ -21,6 +19,7 @@
 * [getApplicationsByOrganization](icacheserverclient.md#getapplicationsbyorganization)
 * [getApplicationsByOwner](icacheserverclient.md#getapplicationsbyowner)
 * [getApplicationsBySearchPhrase](icacheserverclient.md#getapplicationsbysearchphrase)
+* [getDIDsForRole](icacheserverclient.md#getdidsforrole)
 * [getIssuedClaims](icacheserverclient.md#getissuedclaims)
 * [getOrgDefinition](icacheserverclient.md#getorgdefinition)
 * [getOrganizationRoles](icacheserverclient.md#getorganizationroles)
@@ -61,6 +60,12 @@ ___
 ### getApplicationsBySearchPhrase
 
 •  **getApplicationsBySearchPhrase**: (\_\_namedParameters: { search: string  }) => Promise\<[IApp](iapp.md)[]>
+
+___
+
+### getDIDsForRole
+
+•  **getDIDsForRole**: (\_\_namedParameters: { namespace: string  }) => Promise\<string[]>
 
 ___
 
