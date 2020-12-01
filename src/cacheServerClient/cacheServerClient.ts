@@ -43,6 +43,7 @@ export interface ICacheServerClient {
   }) => Promise<Claim[]>;
   requestClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
   issueClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
+  getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -151,5 +152,10 @@ export class CacheServerClient implements ICacheServerClient {
 
   async issueClaim({ message, did }: { message: IMessage; did: string }) {
     await this.httpClient.post<void>(`/claim/issue/${did}`, message);
+  }
+
+  async getDIDsForRole({ namespace }: { namespace: string }) {
+    const { data } = await this.httpClient.get<string[]>(`/claim/did/${namespace}?accepted=true`);
+    return data;
   }
 }

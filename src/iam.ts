@@ -110,8 +110,8 @@ export class IAM extends IAMBase {
       useMetamaskExtension,
       reinitializeMetamask
     }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
-        useMetamaskExtension: false
-      }
+      useMetamaskExtension: false
+    }
   ): Promise<InitializeData> {
     try {
       await this.init({
@@ -198,9 +198,9 @@ export class IAM extends IAMBase {
 
   /**
    * @param options Options to connect with blockchain
-   * 
+   *
    * @param options.didAttribute Type of document to be updated
-   * 
+   *
    * @param options.data New attribute value
    * @param options.validity Time (s) for the attribute to expire
    *
@@ -213,11 +213,7 @@ export class IAM extends IAMBase {
     data: IUpdateData;
     validity?: number;
   }): Promise<boolean> {
-    const {
-      didAttribute,
-        data,
-        validity
-    } = options;
+    const { didAttribute, data, validity } = options;
     if (!this._runningInBrowser) {
       throw new MethodNotAvailableInNodeEnvError("updateDidDocument");
     }
@@ -964,6 +960,20 @@ export class IAM extends IAMBase {
       throw new CacheClientNotProvidedError();
     }
     return this._cacheClient.getApplicationsByOrganization({ namespace });
+  }
+
+  /**
+   * getRoleDIDs
+   *
+   * @description get all users did which have certain role
+   * @returns array of did's
+   *
+   */
+  getRoleDIDs({ namespace }: { namespace: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getDIDsForRole({ namespace });
   }
 
   /**

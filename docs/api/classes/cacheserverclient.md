@@ -1,7 +1,5 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / CacheServerClient
-
 # Class: CacheServerClient
 
 ## Hierarchy
@@ -25,6 +23,7 @@
 * [getApplicationsByOrganization](cacheserverclient.md#getapplicationsbyorganization)
 * [getApplicationsByOwner](cacheserverclient.md#getapplicationsbyowner)
 * [getApplicationsBySearchPhrase](cacheserverclient.md#getapplicationsbysearchphrase)
+* [getDIDsForRole](cacheserverclient.md#getdidsforrole)
 * [getIssuedClaims](cacheserverclient.md#getissuedclaims)
 * [getOrgDefinition](cacheserverclient.md#getorgdefinition)
 * [getOrganizationRoles](cacheserverclient.md#getorganizationroles)
@@ -119,6 +118,20 @@ Name | Type |
 `__namedParameters` | { search: string  } |
 
 **Returns:** Promise\<[IApp](../interfaces/iapp.md)[]>
+
+___
+
+### getDIDsForRole
+
+▸ **getDIDsForRole**(`__namedParameters`: { namespace: string  }): Promise\<string[]>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { namespace: string  } |
+
+**Returns:** Promise\<string[]>
 
 ___
 

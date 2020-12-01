@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
-    "prebuild": "rimraf dist docs",
+    "prebuild": "rimraf dist",
     "build": "npm run build:contracts && npm run build:ts && copyfiles -u 1 \"ethers/**/*.d.ts\" dist/ethers",
     "build:ts": "bili",
     "build:api_docs": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true",

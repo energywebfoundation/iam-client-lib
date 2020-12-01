@@ -1,7 +1,5 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / IOrganization
-
 # Interface: IOrganization
 
 ## Hierarchy

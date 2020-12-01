@@ -1,7 +1,5 @@
 **[iam-client-lib](../README.md)**
 
-> [Globals](../globals.md) / ENSNamespaceTypes
-
 # Enumeration: ENSNamespaceTypes
 
 ## Index
