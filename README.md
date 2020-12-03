@@ -1,9 +1,9 @@
 # Identity and Access Management (IAM) Client Library
-TypeScript library to be used within decentralised applications for authentication and authorisation using DIDs (Decentralised Identifiers) and VCs (Verifiable Credentials)
+TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
 
 ## Maintainers
- - [Kim Honoridez](https://github.com/kim-energyweb>)
- - [Daniel Wojno](https://github.com/dwojno>)
+ - [Kim Honoridez](https://github.com/kim-energyweb)
+ - [Daniel Wojno](https://github.com/dwojno)
  - [Dmitry Fesenko](https://github.com/JGiter)
 
 ## Getting Started
