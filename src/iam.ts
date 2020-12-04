@@ -285,7 +285,7 @@ export class IAM extends IAMBase {
       }
       return this._userClaims.createPublicClaim(data);
     }
-    return null;
+    throw new Error("User claims not initialized");
   }
 
   /**
@@ -411,6 +411,18 @@ export class IAM extends IAMBase {
       throw new Error("JWT was not initialized");
     }
     return this._jwt.decode(token);
+  }
+
+  async createIdentityProof() {
+    if (this._provider) {
+      const blockNumber = await this._provider.getBlockNumber();
+      return this.createPublicClaim({
+        data: {
+          blockNumber
+        }
+      });
+    }
+    throw new Error("Provider not initialized");
   }
 
   /// ROLES
