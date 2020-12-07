@@ -6,12 +6,17 @@ const config: Config = {
       tsconfigOverride: {
         include: ['src', 'ethers']
       }
-    }
+    },
   },
-
+  extendConfig: (config) => ({
+    ...config,
+    externals: []
+  }),
+  bundleNodeModules: ["nats.ws"],
   input: 'src/iam-client-lib.ts',
   output: {
-    format: ['cjs', 'esm']
+    format: ['cjs', 'esm'],
+    minify: true
   }
 };
 
