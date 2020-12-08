@@ -26,7 +26,7 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase } from "./iam/iam-base";
+import { IAMBase, emptyAddress } from "./iam/iam-base";
 import {
   ENSTypeNotSupportedError,
   CacheClientNotProvidedError,
@@ -1044,7 +1044,14 @@ export class IAM extends IAMBase {
   async checkExistenceOfDomain({ domain }: { domain: string }) {
     if (this._ensRegistry) {
       const domainHash = namehash(domain);
-      return this._ensRegistry.recordExists(domainHash);
+      const [exists, isOwned] = await Promise.all([
+        this._ensRegistry.recordExists(domainHash),
+        (async () => {
+          const owner = await this._ensRegistry?.owner(domainHash);
+          return owner !== emptyAddress;
+        })()
+      ]);
+      return exists && isOwned;
     }
     throw new ENSRegistryNotInitializedError();
   }
