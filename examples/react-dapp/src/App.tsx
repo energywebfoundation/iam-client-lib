@@ -27,11 +27,7 @@ function App() {
   const [isLoading, setIsLoading] = useState<Boolean>(false)
 
   const verifyIdentity = async function () {
-    const signer = iam.getSigner();
-    const latestBlock = await signer?.provider?.getBlockNumber();
-    const claim = await iam.createPublicClaim({
-      data: { blockNumber: latestBlock }
-    });
+    const claim = await iam.createIdentityProof();
     const { data } = await axios.post<{ token: string }>(
       "https://did-auth-demo.energyweb.org/login",
       {
@@ -82,10 +78,8 @@ function App() {
     setDID('');
   }
 
-  let loginJsx
-  if (isLoading) {
-    loginJsx =
-     (
+  const renderLoading = () => {
+    return (
       <div>
         <Spinner />
         <span>
@@ -94,12 +88,13 @@ function App() {
       </div>
     )
   }
-  else if (did) {
-    loginJsx = (
+
+  const renderLoginResults = () => {
+    return (
       <div>
         <p>Hello user!</p>
         <p>
-          Your decentralised identifier: <br/> 
+          Your decentralised identifier: <br />
           <strong>{did}</strong>
         </p>
         {roles && roles.length > 0 ? (
@@ -124,8 +119,9 @@ function App() {
       </div >
     )
   }
-  else {
-    loginJsx = (
+
+  const renderLoginOptions = () => {
+    return (
       <div className="container">
         <button className="button" onClick={async () => await loginWithWalletConnect()}>
           <img alt="walletconnect logo" className="walletconnect" src={walletconnectIcon} />
@@ -138,11 +134,24 @@ function App() {
       </div>
     )
   }
+
+  const loginJsx = () => {
+    if (isLoading) {
+      return renderLoading()
+    }
+    else if (did) {
+      return renderLoginResults();
+    }
+    else {
+      return renderLoginOptions();
+    }
+  };
+
   return (
     <div className="App">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h2>IAM showcase app</h2>
-        {loginJsx}
+      <img src={logo} className="App-logo" alt="logo" />
+      <h2>IAM showcase app</h2>
+      { loginJsx() }
     </div >
   )
 }
