@@ -4,6 +4,8 @@ import { MethodNotAvailableInNodeEnvError } from "./MethodNotAvailableInNodeErro
 import { NATSConnectionNotEstablishedError } from "./NatsConnectionNotEstablishedError";
 import { ENSRegistryNotInitializedError } from "./ENSRegistryNotInitializedError";
 import { ENSResolverNotInitializedError } from "./ENSResolverNotInitializedError";
+import { ChangeOwnershipNotPossibleError } from "./ChangeOwnershipNotPossibleError";
+import { DeletingNamespaceNotPossibleError } from "./DeletingNamespaceNotPossibleError";
 
 export {
   CacheClientNotProvidedError,
@@ -11,5 +13,7 @@ export {
   MethodNotAvailableInNodeEnvError,
   NATSConnectionNotEstablishedError,
   ENSRegistryNotInitializedError,
-  ENSResolverNotInitializedError
+  ENSResolverNotInitializedError,
+  ChangeOwnershipNotPossibleError,
+  DeletingNamespaceNotPossibleError
 };

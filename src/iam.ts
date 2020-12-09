@@ -33,7 +33,9 @@ import {
   MethodNotAvailableInNodeEnvError,
   NATSConnectionNotEstablishedError,
   ENSResolverNotInitializedError,
-  ENSRegistryNotInitializedError
+  ENSRegistryNotInitializedError,
+  ChangeOwnershipNotPossibleError,
+  DeletingNamespaceNotPossibleError
 } from "./errors";
 import {
   IAppDefinition,
@@ -638,13 +640,23 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
-    const changeOwnershipPossible = this.validateOwnership({
+    const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Organization
     });
-    if (!changeOwnershipPossible) {
-      throw new Error(`Change ownership of ${namespace} not possible`);
+    if (notOwnedNamespaces.length > 0) {
+      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
+
+    const apps = this._cacheClient
+      ? await this.getAppsByOrgNamespace({ namespace })
+      : await this.getSubdomains({
+          domain: `${ENSNamespaceTypes.Application}.${namespace}`
+        });
+    if (apps && apps.length > 0) {
+      throw new Error("You are not able to change ownership of organization with registered apps");
+    }
+
     const [label, ...rest] = namespace.split(".");
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
@@ -702,12 +714,12 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
-    const changeOwnershipPossible = this.validateOwnership({
+    const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Application
     });
-    if (!changeOwnershipPossible) {
-      throw new Error(`Change ownership of ${namespace} not possible`);
+    if (notOwnedNamespaces.length > 0) {
+      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
     const [label, ...rest] = namespace.split(".");
     const steps: { next: () => Promise<void>; info: string }[] = [
@@ -752,12 +764,12 @@ export class IAM extends IAMBase {
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
-    const changeOwnershipPossible = this.validateOwnership({
+    const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Roles
     });
-    if (!changeOwnershipPossible) {
-      throw new Error(`Change ownership of ${namespace} not possible`);
+    if (notOwnedNamespaces.length > 0) {
+      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
     const [label, ...rest] = namespace.split(".");
     await this.changeSubdomainOwner({ label, namespace: rest.join("."), newOwner });
@@ -776,18 +788,21 @@ export class IAM extends IAMBase {
     namespace: string;
     returnSteps?: boolean;
   }) {
-    const apps = await this.getSubdomains({
-      domain: `${ENSNamespaceTypes.Application}.${namespace}`
-    });
-    if (apps && apps.length > 0) {
-      throw new Error("You are not able to remove organization with registered apps");
-    }
-    const deletePossible = await this.validateOwnership({
+    const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Organization
     });
-    if (!deletePossible) {
-      throw new Error(`Deleting ${namespace} not possible`);
+    if (notOwnedNamespaces.length > 0) {
+      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
+    }
+
+    const apps = this._cacheClient
+      ? await this.getAppsByOrgNamespace({ namespace })
+      : await this.getSubdomains({
+          domain: `${ENSNamespaceTypes.Application}.${namespace}`
+        });
+    if (apps && apps.length > 0) {
+      throw new Error("You are not able to remove organization with registered apps");
     }
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
@@ -839,12 +854,12 @@ export class IAM extends IAMBase {
     namespace: string;
     returnSteps?: boolean;
   }) {
-    const deletePossible = await this.validateOwnership({
+    const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Application
     });
-    if (!deletePossible) {
-      throw new Error(`Deleting ${namespace} not possible`);
+    if (notOwnedNamespaces.length > 0) {
+      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
@@ -885,12 +900,12 @@ export class IAM extends IAMBase {
    *
    */
   async deleteRole({ namespace }: { namespace: string }) {
-    const deletePossible = await this.validateOwnership({
+    const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Roles
     });
-    if (!deletePossible) {
-      throw new Error(`Deleting ${namespace} not possible`);
+    if (notOwnedNamespaces.length > 0) {
+      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
     await this.deleteSubdomain({ namespace });
   }
@@ -1085,29 +1100,40 @@ export class IAM extends IAMBase {
       if (type === ENSNamespaceTypes.Roles) {
         const [, ...parentDomain] = namespace.split(".");
         const owner = await this.getOwner({ namespace: parentDomain.join(".") });
-        return owner === this._address;
+        return owner === this._address ? [] : [parentDomain.join(".")];
       }
       if (type === ENSNamespaceTypes.Application) {
         const [, ...appsNamespace] = namespace.split(".");
         const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
-        const owners = await Promise.all([
-          this.getOwner({ namespace: appsNamespace.join(".") }),
-          this.getOwner({ namespace: appRolesNamespace }),
-          this.getOwner({ namespace })
-        ]);
-        return owners.every(owner => owner === this._address);
+        const namespaces = [namespace, appsNamespace.join("."), appRolesNamespace];
+        const notOwnedNamespaces = await Promise.all(
+          namespaces
+            .map(async namespace => {
+              const owner = await this.getOwner({ namespace });
+              if (owner !== this._address) {
+                return namespace;
+              }
+              return null;
+            })
+        );
+        return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
       if (type === ENSNamespaceTypes.Organization) {
         const [, ...iamNamespace] = namespace.split(".");
         const rolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
         const appsNamespace = `${ENSNamespaceTypes.Application}.${namespace}`;
-        const owners = await Promise.all([
-          this.getOwner({ namespace: iamNamespace.join(".") }),
-          this.getOwner({ namespace: rolesNamespace }),
-          this.getOwner({ namespace: appsNamespace }),
-          this.getOwner({ namespace })
-        ]);
-        return owners.every(owner => owner === this._address);
+        const namespaces = [iamNamespace.join("."), rolesNamespace, appsNamespace, namespace];
+        const notOwnedNamespaces = await Promise.all(
+          namespaces
+            .map(async namespace => {
+              const owner = await this.getOwner({ namespace });
+              if (owner !== this._address) {
+                return namespace;
+              }
+              return null;
+            })
+        );
+        return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
       throw new Error("ENS type not supported");
     }
