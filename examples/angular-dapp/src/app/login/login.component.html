@@ -30,6 +30,16 @@
       </div>
     </div>
     <ng-template #noDID>
+      <div *ngIf="errored">
+        <p>
+          Error occured with login.<br />
+          If you rejected the signing requests, please try again and accept.<br />
+          If this is your first time logging in, your account needs a small amount of Volta token to
+          create a DID Document.<br />
+          A Volta token can be obtained from the
+          <a href="https://voltafaucet.energyweb.org/">Volta Faucet</a>.
+        </p>
+      </div>
       <div class="container">
         <button (click)="login({ useMetamaskExtension: false })" class="button">
           <img class="walletconnect"

@@ -14,6 +14,7 @@ export class LoginComponent {
   ) { }
 
   isLoading = false
+  errored = false
   did: string = undefined
   roles: Role[] = []
 
@@ -34,20 +35,18 @@ export class LoginComponent {
     this.roles = roles;
   }
 
-  test() {
-    console.log('test')
-  }
-
   async login({ useMetamaskExtension }: { useMetamaskExtension: boolean }) {
     this.isLoading = true;
-    const { did } = await this.iamService.iam.initializeConnection({ useMetamaskExtension });
-    if (did) {
-      this.did = did;
-      try {
+    this.errored = false;
+    try {
+      const { did } = await this.iamService.iam.initializeConnection({ useMetamaskExtension });
+      if (did) {
+        this.did = did;
         await this.verifyIdentity();
-      } catch (err) {
-        this.isLoading = false;
       }
+    } catch (err) {
+      this.did = undefined;
+      this.errored = true;
     }
     this.isLoading = false;
   }
