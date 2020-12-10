@@ -1,0 +1,46 @@
+<div>
+  <div *ngIf="isLoading; else notLoading">
+    <app-spinner></app-spinner>
+    <span>
+      Loading... (Please sign messages using your connected wallet)
+    </span>
+  </div>
+  <ng-template #notLoading>
+    <div *ngIf="did; else noDID">
+      <p>Hello user!</p>
+      <p>
+        Your decentralised identifier: <strong>{{ did }}</strong>
+      </p>
+      <div *ngIf="roles.length > 0; else noRoles" class="rolesContainer">
+        <p>These are your validated roles:</p>
+        <p *ngFor="let role of roles">
+          <strong>{{ role.name }}</strong> at {{ role.namespace }}
+        </p>
+      </div>
+      <ng-template #noRoles>
+        <div>
+          You do not have any issued role at the moment, please login into switchboard and search for
+          apps, orgs to enrol.
+        </div>
+      </ng-template>
+      <div class="logoutContainer">
+        <button (click)="logout()" class="button">
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+    <ng-template #noDID>
+      <div class="container">
+        <button (click)="login({ useMetamaskExtension: false })" class="button">
+          <img class="walletconnect"
+            src="../assets/wallet-connect-icon.svg" />
+          <span>Login with Wallet Connect</span>
+        </button>
+        <button (click)="login({ useMetamaskExtension: true })" class="button">
+          <img class="metamask" src="../assets/metamask-logo.svg" />
+          <span>Login with Metamask</span>
+        </button>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

@@ -1,21 +1,21 @@
 import { Component } from '@angular/core';
 import axios from 'axios'
-import { IamService } from './iam.service';
+import { IamService } from '../iam.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class AppComponent {
+export class LoginComponent {
 
   constructor(
     private readonly iamService: IamService
   ) { }
 
-  isLoading: boolean = false
-  did = undefined
-  roles: Role[]
+  isLoading = false
+  did: string = undefined
+  roles: Role[] = []
 
   async verifyIdentity() {
     const claim = await this.iamService.iam.createIdentityProof();
@@ -32,6 +32,10 @@ export class AppComponent {
       config
     );
     this.roles = roles;
+  }
+
+  test() {
+    console.log('test')
   }
 
   async login({ useMetamaskExtension }: { useMetamaskExtension: boolean }) {
