@@ -1,0 +1,32 @@
+.button {
+  background-color: #61DBFB;
+  padding: 20px 24px;
+  margin: 8px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+button:hover {
+  background-color: #05b3e1;
+}
+
+.button img {
+  margin-right: 16px;
+}
+
+.button .metamask {
+  height: 36px;
+  width: 36px;
+}
+
+.button .walletconnect {
+  height: 48px;
+  width: 48px;
+}
