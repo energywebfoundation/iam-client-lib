@@ -1,0 +1,47 @@
+.container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.rolesContainer {
+  margin-top: 24px;
+}
+
+.logoutContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  background-color: #dd1b16;
+  padding: 20px 24px;
+  margin: 8px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.button:hover {
+  background-color: #a6120d;
+}
+
+.button img {
+  margin-right: 16px;
+}
+
+.button .metamask {
+  height: 36px;
+  width: 36px;
+}
+
+.button .walletconnect {
+  height: 48px;
+  width: 48px;
+}
