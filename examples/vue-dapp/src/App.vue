@@ -3,17 +3,20 @@
     <img alt="Vue logo" src="./assets/logo.png" />
     <h2>IAM showcase app</h2>
     <Main />
+    <SourceCode />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Main from "./components/Main.vue";
+import SourceCode from "./components/SourceCode.vue";
 
 export default Vue.extend({
   name: "App",
   components: {
-    Main
+    Main,
+    SourceCode
   }
 });
 </script>

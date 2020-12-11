@@ -7,6 +7,7 @@ import logo from './assets/logo.svg'
 import metamaskLogo from './assets/metamask-logo.svg'
 import walletconnectIcon from './assets/wallet-connect-icon.svg'
 import Spinner from './components/Spinner'
+import SourceCode from './components/SourceCode'
 
 const cacheClient = new CacheServerClient({ url: 'https://volta-iam-cacheserver.energyweb.org/' })
 
@@ -126,7 +127,7 @@ function App() {
         If this is your first time logging in, your account needs a small amount of Volta token to create a DID Document.<br />
         A Volta token can be obtained from the <a href="https://voltafaucet.energyweb.org/">Volta Faucet</a>.
       </p>
-      { loginOptions }
+      { loginOptions}
     </div>
   )
 
@@ -149,7 +150,8 @@ function App() {
     <div className="App">
       <img src={logo} className="App-logo" alt="logo" />
       <h2>IAM showcase app</h2>
-      { loginJsx() }
+      { loginJsx()}
+      <SourceCode/>
     </div >
   )
 }
