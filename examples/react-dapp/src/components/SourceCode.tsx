@@ -1,6 +1,6 @@
 import React from 'react'
 import './SourceCode.css'
-import githubLogo from '../assets/GitHub-Mark-Light-32px.png'
+import githubLogo from '../assets/GitHub-Mark-32px.png'
 
 function SourceCode() {
     return (
