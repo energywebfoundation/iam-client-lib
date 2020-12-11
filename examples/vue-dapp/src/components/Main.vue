@@ -27,15 +27,27 @@
         </button>
       </div>
     </div>
-    <div v-else class="container">
-      <button @click="login({ useMetamaskExtension: false })" class="button">
-        <img class="walletconnect" src="../assets/wallet-connect-icon.svg" />
-        <span>Login with Wallet Connect</span>
-      </button>
-      <button @click="login({ useMetamaskExtension: true })" class="button">
-        <img class="metamask" src="../assets/metamask-logo.svg" />
-        <span>Login with Metamask</span>
-      </button>
+    <div v-else>
+      <div v-if="errored">
+        <p>
+          Error occured with login.<br />
+          If you rejected the signing requests, please try again and accept.<br />
+          If this is your first time logging in, your account needs a small amount of Volta token to
+          create a DID Document.<br />
+          A Volta token can be obtained from the
+          <a href="https://voltafaucet.energyweb.org/">Volta Faucet</a>.
+        </p>
+      </div>
+      <div class="container">
+        <button @click="login({ useMetamaskExtension: false })" class="button">
+          <img class="walletconnect" src="../assets/wallet-connect-icon.svg" />
+          <span>Login with Wallet Connect</span>
+        </button>
+        <button @click="login({ useMetamaskExtension: true })" class="button">
+          <img class="metamask" src="../assets/metamask-logo.svg" />
+          <span>Login with Metamask</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -55,9 +67,15 @@ export default Vue.extend({
   components: {
     Spinner
   },
-  data: function(): { isLoading: boolean; did?: string; roles: Role[] } {
+  data: function(): {
+    isLoading: boolean;
+    errored: boolean;
+    did?: string;
+    roles: Role[];
+  } {
     return {
       isLoading: false,
+      errored: false,
       did: "",
       roles: []
     };
@@ -81,14 +99,18 @@ export default Vue.extend({
     },
     login: async function({ useMetamaskExtension }: { useMetamaskExtension: boolean }) {
       this.isLoading = true;
-      const { did } = await this.$IAM.initializeConnection({ useMetamaskExtension });
-      if (did) {
-        this.did = did;
-        try {
+      this.errored = false;
+      try {
+        const { did } = await this.$IAM.initializeConnection({
+          useMetamaskExtension
+        });
+        if (did) {
+          this.did = did;
           await this.verifyIdentity();
-        } catch (err) {
-          this.isLoading = false;
         }
+      } catch (err) {
+        this.did = undefined;
+        this.errored = true;
       }
       this.isLoading = false;
     },
@@ -143,5 +165,9 @@ export default Vue.extend({
     height: 48px;
     width: 48px;
   }
+}
+
+a {
+  color: #42b883;
 }
 </style>

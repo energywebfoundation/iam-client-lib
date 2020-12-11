@@ -24,6 +24,7 @@ type Role = {
 function App() {
   const [roles, setRoles] = useState<Role[]>([])
   const [did, setDID] = useState<string>('')
+  const [errored, setErrored] = useState<Boolean>(false)
   const [isLoading, setIsLoading] = useState<Boolean>(false)
 
   const verifyIdentity = async function () {
@@ -48,28 +49,16 @@ function App() {
     useMetamaskExtension: boolean;
   }) {
     setIsLoading(true);
-    const { did } = await iam.initializeConnection(initOptions);
-    if (did) {
-      setDID(did)
-      try {
+    setErrored(false)
+    try {
+      const { did } = await iam.initializeConnection(initOptions);
+      if (did) {
+        setDID(did)
         await verifyIdentity();
-      } catch (err) {
-        console.error(err)
       }
     }
-    setIsLoading(false);
-  }
-
-  const loginWithWalletConnect = async function () {
-    setIsLoading(true);
-    const { did } = await iam.initializeConnection();
-    if (did) {
-      setDID(did)
-      try {
-        await verifyIdentity();
-      } catch (err) {
-        console.error(err)
-      }
+    catch (err) {
+      setErrored(true)
     }
     setIsLoading(false);
   }
@@ -78,72 +67,81 @@ function App() {
     setDID('');
   }
 
-  const renderLoading = () => {
-    return (
-      <div>
-        <Spinner />
-        <span>
-          Loading... (Please sign messages using your connected wallet)
+  const loadingMessage = (
+    <div>
+      <Spinner />
+      <span>
+        Loading... (Please sign messages using your connected wallet)
         </span>
-      </div>
-    )
-  }
+    </div>
+  )
 
-  const renderLoginResults = () => {
-    return (
-      <div>
-        <p>Hello user!</p>
-        <p>
-          Your decentralised identifier: <br />
-          <strong>{did}</strong>
-        </p>
-        {roles && roles.length > 0 ? (
-          <div className="rolesContainer">
-            <p>These are your validated roles:</p>
-            {roles.map(({ name, namespace }) => (
-              <p key={namespace}><strong>{`${name}`}</strong>{` at ${namespace}`}</p>
-            ))}
+  const loginResults = (
+    <div>
+      <p>Hello user!</p>
+      <p>
+        Your decentralised identifier: <br />
+        <strong>{did}</strong>
+      </p>
+      {roles && roles.length > 0 ? (
+        <div className="rolesContainer">
+          <p>These are your validated roles:</p>
+          {roles.map(({ name, namespace }) => (
+            <p key={namespace}><strong>{`${name}`}</strong>{` at ${namespace}`}</p>
+          ))}
+        </div>
+      )
+        : (
+          <div>
+            You do not have any issued role at the moment, please login into switchboard and search for
+            apps, orgs to enrol.
           </div>
-        )
-          : (
-            <div>
-              You do not have any issued role at the moment, please login into switchboard and search for
-              apps, orgs to enrol.
-            </div>
-          )}
-        <div className="logoutContainer">
-          <button onClick={logout} className="button">
-            <span>Logout</span>
-          </button>
-        </div >
+        )}
+      <div className="logoutContainer">
+        <button onClick={logout} className="button">
+          <span>Logout</span>
+        </button>
       </div >
-    )
-  }
+    </div >
+  )
 
-  const renderLoginOptions = () => {
-    return (
-      <div className="container">
-        <button className="button" onClick={async () => await loginWithWalletConnect()}>
-          <img alt="walletconnect logo" className="walletconnect" src={walletconnectIcon} />
-          <span>Login with Wallet Connect</span>
-        </button>
-        <button className="button" onClick={async () => await login({ useMetamaskExtension: true })}>
-          <img alt="metamask logo" className="metamask" src={metamaskLogo} />
-          <span>Login with Metamask</span>
-        </button>
-      </div>
-    )
-  }
+  const loginOptions = (
+    <div className="container">
+      <button className="button" onClick={async () => await login({ useMetamaskExtension: false })}>
+        <img alt="walletconnect logo" className="walletconnect" src={walletconnectIcon} />
+        <span>Login with Wallet Connect</span>
+      </button>
+      <button className="button" onClick={async () => await login({ useMetamaskExtension: true })}>
+        <img alt="metamask logo" className="metamask" src={metamaskLogo} />
+        <span>Login with Metamask</span>
+      </button>
+    </div>
+  )
+
+  const errorMessage = (
+    <div>
+      <p>
+        Error occured with login.<br />
+        If you rejected the signing requests, please try again and accept.<br />
+        If this is your first time logging in, your account needs a small amount of Volta token to create a DID Document.<br />
+        A Volta token can be obtained from the <a href="https://voltafaucet.energyweb.org/">Volta Faucet</a>.
+      </p>
+      { loginOptions }
+    </div>
+  )
 
   const loginJsx = () => {
     if (isLoading) {
-      return renderLoading()
+      return loadingMessage
+    }
+    else if (errored) {
+      return errorMessage
     }
     else if (did) {
-      return renderLoginResults();
+      return loginResults;
     }
     else {
-      return renderLoginOptions();
+      return loginOptions;
     }
   };
 
