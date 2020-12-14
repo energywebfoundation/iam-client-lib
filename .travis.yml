@@ -31,5 +31,5 @@ deploy:
       edge: true
       script: 'npx semantic-release'
       on:
-          node: '10
+          node: '10'
           branch: master
