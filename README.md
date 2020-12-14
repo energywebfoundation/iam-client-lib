@@ -1,6 +1,11 @@
 # Identity and Access Management (IAM) Client Library
 TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
 
+
+## Examples
+[![react logo](examples/react-dapp/src/assets/react-icon.png) React Demo](https://did-auth-demo.energyweb.org/react-example/) / [![angular logo](examples/angular-dapp/src/assets/angular-icon.png) Angular Demo](https://did-auth-demo.energyweb.org/angular-example/) / [![vue logo](examples/vue-dapp/src/assets/vue-icon.png) Vue Demo](https://did-auth-demo.energyweb.org/vue-example/)
+
+
 ## Maintainers
  - [Kim Honoridez](https://github.com/kim-energyweb)
  - [Daniel Wojno](https://github.com/dwojno)
@@ -73,7 +78,3 @@ export class Sample {
     }
 
 ```
-
-
-
-## License
