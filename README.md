@@ -7,11 +7,8 @@ TypeScript library to be used within decentralized applications for authenticati
 ## Live Demos
 [![react logo](examples/react-dapp/src/assets/react-icon.png) React Demo](https://did-auth-demo.energyweb.org/react-example/) / [![angular logo](examples/angular-dapp/src/assets/angular-icon.png) Angular Demo](https://did-auth-demo.energyweb.org/angular-example/) / [![vue logo](examples/vue-dapp/src/assets/vue-icon.png) Vue Demo](https://did-auth-demo.energyweb.org/vue-example/)
 
-
-## Maintainers
- - [Kim Honoridez](https://github.com/kim-energyweb)
- - [Daniel Wojno](https://github.com/dwojno)
- - [Dmitry Fesenko](https://github.com/JGiter)
+## Documentation
+[Read the Docs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/_/sharing/ojw5kxd0al7k1llbcp78i6oiv)
 
 ## Getting Started
 For development purposes, please follow below steps to integrate the library with your dApps.
@@ -80,3 +77,20 @@ export class Sample {
     }
 
 ```
+
+## Active Maintainers
+ - [Kim Honoridez](https://github.com/kim-energyweb)
+ - [Daniel Wojno](https://github.com/dwojno)
+ - [Dmitry Fesenko](https://github.com/JGiter)
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 or later - see the [LICENSE](LICENSE) file for details
+
+## FAQ
+
+Frequently asked questions and their answers will be collected here.
