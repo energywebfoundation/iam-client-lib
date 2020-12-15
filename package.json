@@ -33,7 +33,7 @@
   ],
   "author": "Kim Honoridez <kim.energyweb@gmail.com> (https://github.com/kim-energyweb)",
   "license": "GPL-3.0-or-later",
-  "private": true,
+  "private": false,
   "engines": {
     "node": ">= 10.0.0",
     "npm": ">= 6.0.0"
