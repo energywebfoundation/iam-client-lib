@@ -1,11 +1,14 @@
 {
   "branches": [
-    "master",
-     {
-       "name": "develop",
-        "prerelease": "alpha",
-        "channel": "canary"
-      }
+    {
+      "name": "master",
+      "channel": "latest"
+    },
+    {
+      "name": "develop",
+      "prerelease": "alpha",
+      "channel": "canary"
+    }
   ],
   "repositoryUrl": "git@github.com:energywebfoundation/iam-client-lib.git"
 }
