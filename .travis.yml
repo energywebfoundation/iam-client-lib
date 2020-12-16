@@ -27,5 +27,6 @@ deploy:
           branch: develop
     - provider: script
       script: 'npx semantic-release'
+      skip_cleanup: true
       on:
           branch: master

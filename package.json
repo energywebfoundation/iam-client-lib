@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
     "prebuild": "rimraf dist",
-    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" \"examples/**/*\" \"screenshots/**/*\" dist",
+    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist",
     "build:ts": "bili",
     "build:api_docs": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true",
     "build:contracts": "npm run build:typechain:registry && npm run build:typechain:resolver",
@@ -32,6 +32,11 @@
     "switchboard"
   ],
   "author": "Kim Honoridez <kim.energyweb@gmail.com> (https://github.com/kim-energyweb)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/energywebfoundation/iam-client-lib.git"
+  },
+  "homepage": "https://github.com/energywebfoundation/iam-client-lib.git#readme",
   "license": "GPL-3.0-or-later",
   "private": false,
   "engines": {
