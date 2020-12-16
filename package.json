@@ -1,0 +1,110 @@
+{
+  "name": "iam-client-lib",
+  "version": "1.0.6",
+  "description": "Library for Decentralized Identity and Access Management",
+  "main": "dist/iam-client-lib.js",
+  "module": "dist/iam-client-lib.esm.js",
+  "types": "dist/src/iam-client-lib.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
+    "prebuild": "rimraf dist",
+    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" \"examples/**/*\" \"screenshots/**/*\" dist",
+    "build:ts": "bili",
+    "build:api_docs": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true",
+    "build:contracts": "npm run build:typechain:registry && npm run build:typechain:resolver",
+    "build:typechain:registry": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json'",
+    "build:typechain:resolver": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/resolver/build/contracts/PublicResolver.json'",
+    "prepare": "npm run build",
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watch",
+    "test:prod": "npm run lint && npm run test -- --no-cache"
+  },
+  "keywords": [
+    "decentralized",
+    "identity",
+    "access",
+    "library",
+    "energy web",
+    "iam",
+    "switchboard"
+  ],
+  "author": "Kim Honoridez <kim.energyweb@gmail.com> (https://github.com/kim-energyweb)",
+  "license": "GPL-3.0-or-later",
+  "private": false,
+  "engines": {
+    "node": ">= 10.0.0",
+    "npm": ">= 6.0.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    },
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ]
+  },
+  "dependencies": {
+    "@ensdomains/ens": "^0.4.5",
+    "@ensdomains/resolver": "^0.2.4",
+    "@ew-did-registry/claims": "0.0.1-alpha.776.0",
+    "@ew-did-registry/did": "0.0.1-alpha.632.0",
+    "@ew-did-registry/did-document": "0.0.1-alpha.776.0",
+    "@ew-did-registry/did-ethr-resolver": "0.0.1-alpha.776.0",
+    "@ew-did-registry/did-resolver-interface": "0.0.1-alpha.776.0",
+    "@ew-did-registry/jwt": "0.0.1-alpha.676.0",
+    "@ew-did-registry/keys": "0.0.1-alpha.632.0",
+    "@metamask/detect-provider": "^1.2.0",
+    "@walletconnect/web3-provider": "1.0.0-rc.4",
+    "axios": "^0.20.0",
+    "eth-ens-namehash": "^2.0.8",
+    "ethers": "4.0.45",
+    "js-sha3": "^0.8.0",
+    "lodash.difference": "^4.5.0",
+    "nats.ws": "^1.0.0-111",
+    "uuid": "^7.0.3"
+  },
+  "devDependencies": {
+    "@typechain/ethers-v4": "^1.0.1",
+    "@types/jest": "^26.0.13",
+    "@types/lodash.difference": "^4.5.6",
+    "@types/uuid": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "bili": "^5.0.5",
+    "copyfiles": "^2.4.0",
+    "coveralls": "^3.1.0",
+    "eslint": "^7.8.1",
+    "jest": "^26.4.2",
+    "jest-config": "^26.4.2",
+    "rimraf": "^3.0.2",
+    "rollup-plugin-typescript2": "^0.27.2",
+    "semantic-release": "^17.3.0",
+    "ts-jest": "^26.3.0",
+    "typechain": "^2.0.0",
+    "typedoc": "^0.19.2",
+    "typedoc-plugin-markdown": "^3.0.11",
+    "typescript": "^4.0.2"
+  }
+}

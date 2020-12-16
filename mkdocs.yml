@@ -1,0 +1,14 @@
+site_name: IAM client library
+nav:
+  - Home: index.md
+  - "Introduction":
+      - "Overview": intro/overview.md
+      - "Roles": intro/roles.md
+  - "Guides":
+      - "Authentication": guides/authentication.md
+      - "Authorization": guides/authorization.md
+  - API: api/globals.md
+theme: readthedocs
+
+docs_dir: docs
+site_dir: site

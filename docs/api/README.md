@@ -1,14 +1,12 @@
+**[iam-client-lib](README.md)**
+
 # Identity and Access Management (IAM) Client Library
-TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
+TypeScript library to be used within decentralised applications for authentication and authorisation using DIDs (Decentralised Identifiers) and VCs (Verifiable Credentials)
 
-##
-![IAM-client-lib demos](screenshots/react-angular-vue_demos.png)
-
-## Live Demos
-[![react logo](examples/react-dapp/src/assets/react-icon.png) React Demo](https://did-auth-demo.energyweb.org/react-example/) / [![angular logo](examples/angular-dapp/src/assets/angular-icon.png) Angular Demo](https://did-auth-demo.energyweb.org/angular-example/) / [![vue logo](examples/vue-dapp/src/assets/vue-icon.png) Vue Demo](https://did-auth-demo.energyweb.org/vue-example/)
-
-## Documentation
-[Read the Docs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/_/sharing/ojw5kxd0al7k1llbcp78i6oiv)
+## Maintainers
+ - [Kim Honoridez](https://github.com/kim-energyweb>)
+ - [Daniel Wojno](https://github.com/dwojno>)
+ - [Dmitry Fesenko](https://github.com/JGiter)
 
 ## Getting Started
 For development purposes, please follow below steps to integrate the library with your dApps.
@@ -47,14 +45,12 @@ You can add this library as a dependency
 $ npm i https://github.com/energywebfoundation/iam-client-lib.git#branch_name
 ```
 
-
 ### Sample Import (TypeScript)
 ```sh
 import { IAM, CacheServerClient } from 'iam-client-lib';
 
 export class Sample {
     private _iam: IAM;
-
 
     constructor() {
       // create default cache server client (optional)
@@ -78,19 +74,4 @@ export class Sample {
 
 ```
 
-## Active Maintainers
- - [Kim Honoridez](https://github.com/kim-energyweb)
- - [Daniel Wojno](https://github.com/dwojno)
- - [Dmitry Fesenko](https://github.com/JGiter)
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
 ## License
-
-This project is licensed under the GNU General Public License v3.0 or later - see the [LICENSE](LICENSE) file for details
-
-## FAQ
-
-Frequently asked questions and their answers will be collected here.
