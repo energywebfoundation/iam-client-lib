@@ -23,6 +23,7 @@ export interface ICacheServerClient {
   getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
   getOrganizationsBySearchPhrase: ({ search }: { search: string }) => Promise<IOrganization[]>;
   getApplicationsBySearchPhrase: ({ search }: { search: string }) => Promise<IApp[]>;
+  getRolesBySearchPhrase: ({ search }: { search: string }) => Promise<IRole[]>;
   getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
   getIssuedClaims: ({
     did,
@@ -45,8 +46,14 @@ export interface ICacheServerClient {
   requestClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
   issueClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
   getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
-  getDidDocument: ({ did, includeClaims }: { did: string, includeClaims?: boolean}) => Promise<IDIDDocument>;
-  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>
+  getDidDocument: ({
+    did,
+    includeClaims
+  }: {
+    did: string;
+    includeClaims?: boolean;
+  }) => Promise<IDIDDocument>;
+  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>;
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -89,13 +96,20 @@ export class CacheServerClient implements ICacheServerClient {
   }
 
   async getOrganizationsBySearchPhrase({ search }: { search: string }) {
-    const { data } = await this.httpClient.get<{ Data: IOrganization[] }>(`/org?${search}`);
-    return data.Data;
+    const { data } = await this.httpClient.get<IOrganization[]>(
+      `/namespace/search/${search}?type=Org`
+    );
+    return data;
   }
 
   async getApplicationsBySearchPhrase({ search }: { search: string }) {
-    const { data } = await this.httpClient.get<{ Data: IApp[] }>(`/app?${search}`);
-    return data.Data;
+    const { data } = await this.httpClient.get<IApp[]>(`/namespace/search/${search}?type=App`);
+    return data;
+  }
+
+  async getRolesBySearchPhrase({ search }: { search: string }) {
+    const { data } = await this.httpClient.get<IRole[]>(`/namespace/search/${search}?type=Role`);
+    return data;
   }
 
   async getApplicationsByOwner({ owner }: { owner: string }) {
@@ -162,8 +176,10 @@ export class CacheServerClient implements ICacheServerClient {
     return data;
   }
 
-  async getDidDocument({ did, includeClaims}: { did: string, includeClaims?: boolean}) {
-    const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
+  async getDidDocument({ did, includeClaims }: { did: string; includeClaims?: boolean }) {
+    const { data } = await this.httpClient.get<IDIDDocument>(
+      `/DID/${did}?includeClaims=${includeClaims || false}`
+    );
     return data;
   }
 
