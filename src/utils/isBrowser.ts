@@ -1,2 +1,8 @@
-export const isBrowser = () =>
-  typeof process !== "undefined" && process.release?.name.search(/node|io.js/) !== -1;
+export const isBrowser = (processObj: processProps = process) =>
+  typeof processObj === "undefined" || processObj.release?.name.search(/node|io.js/) === -1;
+
+interface processProps {
+    release?: {
+        name: string
+    }
+}
