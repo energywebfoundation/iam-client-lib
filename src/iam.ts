@@ -251,7 +251,7 @@ export class IAM extends IAMBase {
     }
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
-      return updated;
+      return Boolean(updated);
     }
     return false;
   }
@@ -268,7 +268,8 @@ export class IAM extends IAMBase {
       throw new MethodNotAvailableInNodeEnvError("revokeDidDocument");
     }
     if (this._document) {
-      return this._document.deactivate();
+      await this._document.deactivate();
+      return true;
     }
     return false;
   }
