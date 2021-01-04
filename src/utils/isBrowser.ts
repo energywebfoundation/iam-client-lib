@@ -1,8 +1,8 @@
 /**
- * isBrowser creates a new function using a new Function() constructor.
- * This is so the execution scope of this is binded to the global scope.
- * We can compare the global scope directly to the expected value of "window".
- * An alternative approach of checking a javascript variable (e.g. window or process)
- * is fallible because javascript variables can be redefined by inner scopes.
+ * Though the process variable can be redefined, this approach is suitable for now.
+ * 
+ * Another option is to use new Function() constructor so the execution scope of this is binded to the global scope.
+ * However, this fails if Content-Security-Policy (CSP) script-src does not allow 'unsafe-eval'.
  */
-export const isBrowser = new Function("try {return this===window;} catch(e) {return false;}");
+export const isBrowser = () =>
+  typeof process === "undefined" || process.release?.name.search(/node|io.js/) === -1;
