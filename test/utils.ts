@@ -1,30 +1,28 @@
 import Web3 from 'web3';
-import { ContractFactory, Wallet, ethers } from 'ethers';
+import { ContractFactory, Wallet, ethers, Contract } from 'ethers';
 import { AsyncSendable } from 'ethers/providers';
-import { abi as ensRegistryAbi, bytecode as ensRegistryBytecode } from '@ensdomains/ens/build/contracts/ENSRegistry.json';
-import { abi as ensResolverAbi, bytecode as ensResolverBytecode } from '@ensdomains/resolver/build/contracts/PublicResolver.json';
 import { ethrReg } from '@ew-did-registry/did-ethr-resolver';
+import { EnsRegistry } from '../ethers/EnsRegistry';
+import { PublicResolver } from '../ethers/PublicResolver';
+import { PublicResolverFactory } from '../ethers/PublicResolverFactory';
+import { EnsRegistryFactory } from '../ethers/EnsRegistryFactory';
 
 const { abi: didContractAbi, bytecode: didContractBytecode } = ethrReg;
 
 const GANACHE_PORT = 8544;
 const web3 = new Web3(`http://localhost:${GANACHE_PORT}`);
 export const provider = new ethers.providers.Web3Provider(web3.currentProvider as AsyncSendable);
+export let ensRegistry: EnsRegistry;
+export let ensResolver: PublicResolver;
+export let didContract: Contract;
 
-export const deployContracts = async (rootOwner: string): Promise<{
-  ensRegistryAddress: string;
-  ensResolverAddress: string;
-  didContractAddress: string;
-}> => {
-  const wallet = new Wallet(rootOwner, provider);
+export const deployContracts = async (privateKey: string): Promise<void> => {
+  const wallet = new Wallet(privateKey, provider);
   await replenish(wallet.address);
-  const ensRegistryFactory = new ContractFactory(ensRegistryAbi, ensRegistryBytecode, wallet);
-  const ensRegistryAddress = (await ensRegistryFactory.deploy()).address;
-  const ensResolverFactory = new ContractFactory(ensResolverAbi, ensResolverBytecode, wallet);
-  const ensResolverAddress = (await ensResolverFactory.deploy(ensRegistryAddress)).address;
   const didContractFactory = new ContractFactory(didContractAbi, didContractBytecode, wallet);
-  const didContractAddress = (await didContractFactory.deploy()).address;
-  return { ensRegistryAddress, ensResolverAddress, didContractAddress };
+  ensRegistry = await (new EnsRegistryFactory(wallet).deploy());
+  ensResolver = await (new PublicResolverFactory(wallet).deploy(ensRegistry.address));
+  didContract = await didContractFactory.deploy();
 };
 
 export const replenish = async (acc: string) => {

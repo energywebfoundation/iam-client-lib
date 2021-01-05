@@ -1,38 +1,27 @@
-import { Wallet } from 'ethers';
 import { namehash, bigNumberify } from 'ethers/utils';
-import chai, { should } from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { Keys } from '@ew-did-registry/keys';
-import { IAM } from '../src/iam';
-import { deployContracts, provider } from './utils';
-import { EnsRegistryFactory } from '../ethers/EnsRegistryFactory';
-import { PublicResolverFactory } from '../ethers/PublicResolverFactory';
-import { EnsRegistry } from '../ethers/EnsRegistry';
-import { PublicResolver } from '../ethers/PublicResolver';
+import { IAM, ENSNamespaceTypes } from '../src/iam';
+import { deployContracts, ensRegistry, ensResolver, didContract } from './utils';
 import { labelhash } from '../src/utils/ENS_hash';
-import { orgTests } from './create-organization.testSuite';
+import { orgTests } from './organization.testSuite';
+import { appsTests } from './application.testSuite';
 
-chai.use(should);
-chai.use(chaiAsPromised);
+export const rootOwner = new Keys();
+const { privateKey } = rootOwner;
 
-let ensRegistry: EnsRegistry;
-let ensResolver: PublicResolver;
-const ownerKeys = new Keys();
-const { privateKey } = ownerKeys;
-const signer = new Wallet(privateKey, provider);
+export const root = 'root';
+export let iam: IAM;
 
 describe('IAM tests', function () {
-  // const context: { iam: IAM | null, root: string, ensResolver: PublicResolver | null } = { iam: null, root: '', ensResolver: null };
-  const context: any = {};
-
   beforeAll(async function () {
-    const { ensRegistryAddress, ensResolverAddress, didContractAddress } = await deployContracts(privateKey);
-    const iam = new IAM({
+    await deployContracts(privateKey);
+
+    iam = new IAM({
       rpcUrl: 'http://localhost:8544/',
       chainId: 9,
-      ensRegistryAddress,
-      ensResolverAddress,
-      didContractAddress,
+      ensRegistryAddress: ensRegistry.address,
+      ensResolverAddress: ensResolver.address,
+      didContractAddress: didContract.address,
       privateKey
     });
     try {
@@ -43,19 +32,18 @@ describe('IAM tests', function () {
     } catch (e) {
       console.error('>>> Error initializing connection:', e);
     }
-    ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, signer);
-    ensResolver = PublicResolverFactory.connect(ensResolverAddress, signer);
-    Object.assign(context, { iam, ensResolver, root: 'root' });
   });
 
-  test('root node should be created', async () => {
-    const { iam, root } = context;
-
-    const tx = await ensRegistry.setSubnodeRecord(namehash(''), labelhash(root), signer.address, ensResolver.address, bigNumberify(0));
+  test('can create root node', async () => {
+    const tx = await ensRegistry.setSubnodeRecord(namehash(''), labelhash(root), rootOwner.getAddress(), ensResolver.address, bigNumberify(0));
     await tx.wait();
 
     expect(await iam.checkExistenceOfDomain({ domain: root })).toBe(true);
+    expect(await iam.isOwner({ domain: root, user: rootOwner.getAddress() }));
+    expect(await iam.isOwner({ domain: `${ENSNamespaceTypes.Application}.${root}`, user: rootOwner.getAddress() }));
+    expect(await iam.isOwner({ domain: `${ENSNamespaceTypes.Roles}.${root}`, user: rootOwner.getAddress() }));
   });
 
-  describe('Organization creation tests', () => orgTests(context));
+  describe('Organization tests', () => orgTests());
+  describe('Apllication tests', () => appsTests());
 });

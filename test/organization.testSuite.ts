@@ -1,0 +1,36 @@
+import { ENSNamespaceTypes } from "../src/iam";
+import { iam, root, rootOwner } from './iam.test';
+import { Keys } from "@ew-did-registry/keys";
+import { ensRegistry,  replenish, provider } from "./utils";
+import { namehash } from "ethers/utils";
+import { Wallet } from "ethers";
+
+export const org1 = 'org1';
+
+export const orgTests = () => {
+  const orgName = 'Organization 1';
+
+  test('can create organization', async () => {
+    await iam.createOrganization({ orgName: org1, namespace: root, data: { orgName } });
+
+    expect(await iam.checkExistenceOfDomain({ domain: `${org1}.${root}` })).toBe(true);
+    expect(await iam.checkExistenceOfDomain({ domain: `${ENSNamespaceTypes.Application}.${org1}.${root}` })).toBe(true);
+    expect(await iam.checkExistenceOfDomain({ domain: `${ENSNamespaceTypes.Roles}.${org1}.${root}` })).toBe(true);
+    expect(await iam.getSubdomains({ domain: root })).toContain(org1);
+    expect(await iam.isOwner({ domain: `${org1}.${root}`, user: rootOwner.getAddress() }));
+  });
+
+  test('suborganization can be created', async () => {
+    const org1_1 = 'org1-1';
+    await iam.createOrganization({
+      orgName: org1_1,
+      data: {
+        orgName: 'Organization 1_1'
+      },
+      namespace: `${org1}.${root}`,
+    });
+
+    expect(await iam.checkExistenceOfDomain({ domain: `${org1_1}.${org1}.${root}` })).toBe(true);
+    expect(await iam.getSubdomains({ domain: `${org1}.${root}` })).toContain(org1_1);
+  });
+};
