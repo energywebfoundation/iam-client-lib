@@ -1042,7 +1042,7 @@ export class IAM extends IAMBase {
       const subdomains: Record<string, null> = {};
       for (const name of domains) {
         const nameArray = name.split(".").reverse();
-        if (nameArray.length <= role.length) return;
+        if (nameArray.length <= role.length) continue;
         subdomains[nameArray[role.length]] = null;
       }
       return Object.keys(subdomains);
