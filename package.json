@@ -88,6 +88,7 @@
     "js-sha3": "^0.8.0",
     "lodash.difference": "^4.5.0",
     "nats.ws": "^1.0.0-111",
+    "tslib": "^2.0.3",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
