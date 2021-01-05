@@ -56,7 +56,6 @@ export const orgTests = () => {
       namespace: `${roleName}.${namespace}`,
       type: ENSNamespaceTypes.Roles
     });
-    console.log('role:', roleDef);
 
     expect(roleDef).toMatchObject<IRoleDefinition>(data);
   });
