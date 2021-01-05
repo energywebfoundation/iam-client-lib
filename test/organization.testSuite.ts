@@ -1,9 +1,7 @@
 import { ENSNamespaceTypes } from "../src/iam";
 import { iam, root, rootOwner } from './iam.test';
-import { Keys } from "@ew-did-registry/keys";
-import { ensRegistry,  replenish, provider } from "./utils";
-import { namehash } from "ethers/utils";
-import { Wallet } from "ethers";
+import { Methods } from "@ew-did-registry/did";
+import { IRoleDefinition } from "../src/cacheServerClient/cacheServerClient.types";
 
 export const org1 = 'org1';
 
@@ -32,5 +30,34 @@ export const orgTests = () => {
 
     expect(await iam.checkExistenceOfDomain({ domain: `${org1_1}.${org1}.${root}` })).toBe(true);
     expect(await iam.getSubdomains({ domain: `${org1}.${root}` })).toContain(org1_1);
+  });
+
+  test('org role can be created', async () => {
+    const namespace = `${org1}.${root}`;
+    const roleName = `${org1}-role1`;
+    const data = {
+      fields: [],
+      issuer: {
+        did: [`did:${Methods.Erc1056}:${rootOwner.getAddress()}`]
+      },
+      metadata: [],
+      roleName,
+      roleType: 'test',
+      version: '1.0.0'
+    };
+
+    await iam.createRole({
+      roleName,
+      namespace,
+      data
+    });
+
+    const roleDef = await iam.getDefinition({
+      namespace: `${roleName}.${namespace}`,
+      type: ENSNamespaceTypes.Roles
+    });
+    console.log('role:', roleDef);
+
+    expect(roleDef).toMatchObject<IRoleDefinition>(data);
   });
 };
