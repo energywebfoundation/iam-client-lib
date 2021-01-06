@@ -2,6 +2,9 @@ const Environment = require('jest-environment-jsdom');
 const nodeCrypto = require('crypto');
 
 module.exports = class extends Environment {
+  /**
+   * @summary adds TextEncoder and TextDecoder needed by `nats` dependency into Node test environment
+   */
     async setup() {
         await super.setup();
         if (typeof this.global.TextEncoder === 'undefined') {
