@@ -82,7 +82,7 @@
     "@ew-did-registry/keys": "0.0.1-alpha.632.0",
     "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/web3-provider": "1.0.0-rc.4",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "4.0.45",
     "js-sha3": "^0.8.0",
