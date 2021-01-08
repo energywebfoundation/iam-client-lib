@@ -1,7 +1,7 @@
 import { namehash, bigNumberify } from 'ethers/utils';
 import { Keys } from '@ew-did-registry/keys';
 import { IAM, ENSNamespaceTypes } from '../src/iam';
-import { deployContracts, ensRegistry, ensResolver, didContract } from './utils';
+import { deployContracts, ensRegistry, ensResolver, didContract } from './setup_contracts';
 import { labelhash } from '../src/utils/ENS_hash';
 import { orgTests } from './organization.testSuite';
 import { appsTests } from './application.testSuite';

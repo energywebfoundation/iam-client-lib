@@ -1,7 +1,7 @@
 import { ENSNamespaceTypes } from "../src/iam";
 import { iam, root } from './iam.test';
 import { org1 } from './organization.testSuite';
-import { ensResolver } from "./utils";
+import { ensResolver } from "./setup_contracts";
 import { namehash } from "ethers/utils";
 
 export const appsTests = () => {
