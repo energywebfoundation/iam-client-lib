@@ -53,11 +53,21 @@ type InitializeData = {
 
 export interface IMessage {
   id: string;
-  token: string;
-  issuedToken?: string;
   requester: string;
   claimIssuer: string[];
-  acceptedBy?: string;
+}
+
+export interface IClaimRequest extends IMessage {
+  token: string;
+}
+
+export interface IClaimIssuance extends IMessage {
+  issuedToken: string;
+  acceptedBy: string;
+}
+
+export interface IClaimRejection extends IMessage {
+  isRejected: boolean;
 }
 
 export enum ENSNamespaceTypes {
@@ -251,7 +261,7 @@ export class IAM extends IAMBase {
     }
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
-      return updated;
+      return Boolean(updated);
     }
     return false;
   }
@@ -268,7 +278,8 @@ export class IAM extends IAMBase {
       throw new MethodNotAvailableInNodeEnvError("revokeDidDocument");
     }
     if (this._document) {
-      return this._document.deactivate();
+      await this._document.deactivate();
+      return true;
     }
     return false;
   }
@@ -1041,7 +1052,7 @@ export class IAM extends IAMBase {
       const subdomains: Record<string, null> = {};
       for (const name of domains) {
         const nameArray = name.split(".").reverse();
-        if (nameArray.length <= role.length) return;
+        if (nameArray.length <= role.length) continue;
         subdomains[nameArray[role.length]] = null;
       }
       return Object.keys(subdomains);
@@ -1107,14 +1118,13 @@ export class IAM extends IAMBase {
         const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
         const namespaces = [namespace, appsNamespace.join("."), appRolesNamespace];
         const notOwnedNamespaces = await Promise.all(
-          namespaces
-            .map(async namespace => {
-              const owner = await this.getOwner({ namespace });
-              if (owner !== this._address) {
-                return namespace;
-              }
-              return null;
-            })
+          namespaces.map(async namespace => {
+            const owner = await this.getOwner({ namespace });
+            if (owner !== this._address) {
+              return namespace;
+            }
+            return null;
+          })
         );
         return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
@@ -1124,14 +1134,13 @@ export class IAM extends IAMBase {
         const appsNamespace = `${ENSNamespaceTypes.Application}.${namespace}`;
         const namespaces = [iamNamespace.join("."), rolesNamespace, appsNamespace, namespace];
         const notOwnedNamespaces = await Promise.all(
-          namespaces
-            .map(async namespace => {
-              const owner = await this.getOwner({ namespace });
-              if (owner !== this._address) {
-                return namespace;
-              }
-              return null;
-            })
+          namespaces.map(async namespace => {
+            const owner = await this.getOwner({ namespace });
+            if (owner !== this._address) {
+              return namespace;
+            }
+            return null;
+          })
         );
         return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
@@ -1156,7 +1165,7 @@ export class IAM extends IAMBase {
     if (!token) {
       throw new Error("Token was not generated");
     }
-    const message: IMessage = {
+    const message: IClaimRequest = {
       id: uuid(),
       token,
       claimIssuer: issuer,
@@ -1194,18 +1203,40 @@ export class IAM extends IAMBase {
     if (!issuedToken) {
       throw new Error("Token was not generated");
     }
-    const preparedData: IMessage = {
+    const preparedData: IClaimIssuance = {
       id,
       issuedToken,
       requester: requesterDID,
       claimIssuer: [this._did],
-      token,
       acceptedBy: this._did
     };
 
     if (!this._natsConnection) {
       if (this._cacheClient) {
         return this._cacheClient.issueClaim({ did: this._did, message: preparedData });
+      }
+      throw new NATSConnectionNotEstablishedError();
+    }
+
+    const dataToSend = this._jsonCodec?.encode(preparedData);
+    this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+  }
+
+  async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
+    if (!this._did) {
+      throw new Error("User not logged in");
+    }
+
+    const preparedData: IClaimRejection = {
+      id,
+      requester: requesterDID,
+      claimIssuer: [this._did],
+      isRejected: true
+    };
+
+    if (!this._natsConnection) {
+      if (this._cacheClient) {
+        return this._cacheClient.rejectClaim({ did: this._did, message: preparedData });
       }
       throw new NATSConnectionNotEstablishedError();
     }

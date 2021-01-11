@@ -69,6 +69,8 @@ export class Sample {
 
 ## Development
 
+For testing use ```npm run test:watch```
+
 ### Installing Dependencies
 
 Using `npm` to install dependencies:
