@@ -414,6 +414,23 @@ export class IAMBase {
     await tx.wait();
   }
 
+  protected async changeDomainOwner({ newOwner, namespace }: { newOwner: string, namespace: string }) {
+    if (!this._ensRegistry) {
+      throw new ENSRegistryNotInitializedError();
+    }
+    if (!this._signer) {
+      throw new Error("Signer not initialized");
+    }
+    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
+    const namespaceHash = namehash(namespace);
+    const tx = await ensRegistryWithSigner.setOwner(
+      namespaceHash,
+      newOwner,
+      this._transactionOverrides
+    );
+    await tx.wait();
+  }
+
   protected async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
     if (this._ensResolver && this._provider) {
       const ensInterface = new Interface(ensResolverContract);
