@@ -9,7 +9,7 @@ import {
   Claim
 } from "./cacheServerClient.types";
 
-import { IMessage } from "../iam";
+import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 
 export interface ICacheServerClient {
@@ -42,11 +42,18 @@ export interface ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
-  requestClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
-  issueClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
+  requestClaim: ({ message, did }: { message: IClaimRequest; did: string }) => Promise<void>;
+  issueClaim: ({ message, did }: { message: IClaimIssuance; did: string }) => Promise<void>;
+  rejectClaim: ({ message, did }: { message: IClaimRejection; did: string }) => Promise<void>;
   getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
-  getDidDocument: ({ did, includeClaims }: { did: string, includeClaims?: boolean}) => Promise<IDIDDocument>;
-  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>
+  getDidDocument: ({
+    did,
+    includeClaims
+  }: {
+    did: string;
+    includeClaims?: boolean;
+  }) => Promise<IDIDDocument>;
+  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>;
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -149,12 +156,16 @@ export class CacheServerClient implements ICacheServerClient {
     return data.claim;
   }
 
-  async requestClaim({ message, did }: { message: IMessage; did: string }) {
+  async requestClaim({ message, did }: { message: IClaimRequest; did: string }) {
     await this.httpClient.post<void>(`/claim/request/${did}`, message);
   }
 
-  async issueClaim({ message, did }: { message: IMessage; did: string }) {
+  async issueClaim({ message, did }: { message: IClaimIssuance; did: string }) {
     await this.httpClient.post<void>(`/claim/issue/${did}`, message);
+  }
+
+  async rejectClaim({ message, did }: { message: IClaimRejection; did: string }) {
+    await this.httpClient.post<void>(`/claim/reject/${did}`, message);
   }
 
   async getDIDsForRole({ namespace }: { namespace: string }) {
@@ -162,8 +173,10 @@ export class CacheServerClient implements ICacheServerClient {
     return data;
   }
 
-  async getDidDocument({ did, includeClaims}: { did: string, includeClaims?: boolean}) {
-    const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
+  async getDidDocument({ did, includeClaims }: { did: string; includeClaims?: boolean }) {
+    const { data } = await this.httpClient.get<IDIDDocument>(
+      `/DID/${did}?includeClaims=${includeClaims || false}`
+    );
     return data;
   }
 
