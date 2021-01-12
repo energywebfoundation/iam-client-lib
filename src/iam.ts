@@ -144,15 +144,6 @@ export class IAM extends IAMBase {
     }
     const didDocument = await this.getDidDocument();
 
-    if (!this._runningInBrowser) {
-      return {
-        did: this.getDid(),
-        connected: true,
-        userClosedModal: false,
-        didDocument
-      };
-    }
-
     return {
       did: this.getDid(),
       connected: this.isConnected() || false,
@@ -256,9 +247,6 @@ export class IAM extends IAMBase {
     validity?: number;
   }): Promise<boolean> {
     const { didAttribute, data, validity } = options;
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("updateDidDocument");
-    }
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
       return Boolean(updated);
@@ -274,9 +262,6 @@ export class IAM extends IAMBase {
    *
    */
   async revokeDidDocument(): Promise<boolean> {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("revokeDidDocument");
-    }
     if (this._document) {
       await this._document.deactivate();
       return true;
@@ -399,9 +384,6 @@ export class IAM extends IAMBase {
    *
    */
   async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createSelfSignedClaim");
-    }
     if (this._userClaims) {
       const claim = await this._userClaims.createPublicClaim(data);
       await this._userClaims.publishPublicClaim(claim, data);
@@ -454,9 +436,6 @@ export class IAM extends IAMBase {
     domain: string;
     data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("setRoleDefinition");
-    }
     if (this._signer && this._ensResolver) {
       const ensResolverWithSigner = this._ensResolver.connect(this._signer);
       const stringifiedData = JSON.stringify(data);
@@ -490,9 +469,6 @@ export class IAM extends IAMBase {
     namespace: string;
     returnSteps?: boolean;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createOrganization");
-    }
     const newDomain = `${orgName}.${namespace}`;
     const rolesDomain = `${ENSNamespaceTypes.Roles}.${newDomain}`;
     const appsDomain = `${ENSNamespaceTypes.Application}.${newDomain}`;
@@ -554,9 +530,6 @@ export class IAM extends IAMBase {
     data: IAppDefinition;
     returnSteps?: boolean;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createApplication");
-    }
     const newDomain = `${appName}.${namespace}`;
     const rolesNamespace = `${ENSNamespaceTypes.Roles}.${newDomain}`;
     const steps = [
@@ -608,9 +581,6 @@ export class IAM extends IAMBase {
     data: IRoleDefinition;
     returnSteps?: boolean;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createRole");
-    }
     const newDomain = `${roleName}.${namespace}`;
     const steps = [
       {
