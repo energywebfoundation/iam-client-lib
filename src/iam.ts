@@ -123,8 +123,8 @@ export class IAM extends IAMBase {
       useMetamaskExtension,
       reinitializeMetamask
     }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
-        useMetamaskExtension: false
-      }
+      useMetamaskExtension: false
+    }
   ): Promise<InitializeData> {
     try {
       await this.init({
@@ -662,8 +662,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-        domain: `${ENSNamespaceTypes.Application}.${namespace}`
-      });
+          domain: `${ENSNamespaceTypes.Application}.${namespace}`
+        });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
@@ -739,7 +739,10 @@ export class IAM extends IAMBase {
       },
       {
         next: () =>
-          this.changeDomainOwner({ newOwner, namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
+          this.changeDomainOwner({
+            newOwner,
+            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`
+          }),
         info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
       }
     ];
@@ -808,8 +811,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-        domain: `${ENSNamespaceTypes.Application}.${namespace}`
-      });
+          domain: `${ENSNamespaceTypes.Application}.${namespace}`
+        });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to remove organization with registered apps");
     }
@@ -995,17 +998,18 @@ export class IAM extends IAMBase {
   /**
    * getENSTypesBySearchPhrase
    */
-  getENSTypesBySearchPhrase({ type, search }: { type: ENSNamespaceTypes; search: string }) {
+  getENSTypesBySearchPhrase({
+    types,
+    search
+  }: {
+    types?: ("App" | "Org" | "Role")[];
+    search: string;
+  }) {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
-    if (type === ENSNamespaceTypes.Organization) {
-      return this._cacheClient.getOrganizationsBySearchPhrase({ search });
-    }
-    if (type === ENSNamespaceTypes.Application) {
-      return this._cacheClient.getApplicationsBySearchPhrase({ search });
-    }
-    throw new ENSTypeNotSupportedError();
+
+    return this._cacheClient.getNamespaceBySearchPhrase({ search, types });
   }
 
   /**
