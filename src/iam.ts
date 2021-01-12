@@ -123,8 +123,8 @@ export class IAM extends IAMBase {
       useMetamaskExtension,
       reinitializeMetamask
     }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
-      useMetamaskExtension: false
-    }
+        useMetamaskExtension: false
+      }
   ): Promise<InitializeData> {
     try {
       await this.init({
@@ -662,8 +662,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
@@ -732,15 +732,14 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    const [label, ...rest] = namespace.split(".");
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
-        next: () => this.changeSubdomainOwner({ newOwner, namespace: rest.join("."), label }),
+        next: () => this.changeDomainOwner({ newOwner, namespace }),
         info: `Changing ownership of ${namespace}`
       },
       {
         next: () =>
-          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Roles }),
+          this.changeDomainOwner({ newOwner, namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
         info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
       }
     ];
@@ -749,9 +748,8 @@ export class IAM extends IAMBase {
     for (const role of roles) {
       steps.push({
         next: () =>
-          this.changeSubdomainOwner({
-            label: role,
-            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`,
+          this.changeDomainOwner({
+            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`,
             newOwner
           }),
         info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
@@ -810,8 +808,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to remove organization with registered apps");
     }
@@ -1114,9 +1112,8 @@ export class IAM extends IAMBase {
         return owner === this._address ? [] : [parentDomain.join(".")];
       }
       if (type === ENSNamespaceTypes.Application) {
-        const [, ...appsNamespace] = namespace.split(".");
         const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
-        const namespaces = [namespace, appsNamespace.join("."), appRolesNamespace];
+        const namespaces = [namespace, appRolesNamespace];
         const notOwnedNamespaces = await Promise.all(
           namespaces.map(async namespace => {
             const owner = await this.getOwner({ namespace });
