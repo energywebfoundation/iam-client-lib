@@ -163,18 +163,20 @@ export class IAMBase {
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
-    this.setupUniversalEnv();
+    await this.setupUniversalEnv();
   }
 
   private async setupBrowserEnv() {
-    await this.setAddress();
-    this.setDid();
-    await this.setDocument();
-    this.setClaims();
     await this.setupNATS();
   }
 
-  private setupUniversalEnv() {
+  private async setupUniversalEnv() {
+    if (this._signer && this._didSigner) {
+      await this.setAddress();
+      this.setDid();
+      await this.setDocument();
+      this.setClaims();
+    }
     this.setResolver();
     this.setJWT();
     this.setupENS();
