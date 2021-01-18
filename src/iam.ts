@@ -53,11 +53,21 @@ type InitializeData = {
 
 export interface IMessage {
   id: string;
-  token: string;
-  issuedToken?: string;
   requester: string;
   claimIssuer: string[];
-  acceptedBy?: string;
+}
+
+export interface IClaimRequest extends IMessage {
+  token: string;
+}
+
+export interface IClaimIssuance extends IMessage {
+  issuedToken: string;
+  acceptedBy: string;
+}
+
+export interface IClaimRejection extends IMessage {
+  isRejected: boolean;
 }
 
 export enum ENSNamespaceTypes {
@@ -133,15 +143,6 @@ export class IAM extends IAMBase {
       throw new Error(err);
     }
     const didDocument = await this.getDidDocument();
-
-    if (!this._runningInBrowser) {
-      return {
-        did: this.getDid(),
-        connected: true,
-        userClosedModal: false,
-        didDocument
-      };
-    }
 
     return {
       did: this.getDid(),
@@ -246,12 +247,9 @@ export class IAM extends IAMBase {
     validity?: number;
   }): Promise<boolean> {
     const { didAttribute, data, validity } = options;
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("updateDidDocument");
-    }
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
-      return updated;
+      return Boolean(updated);
     }
     return false;
   }
@@ -264,11 +262,9 @@ export class IAM extends IAMBase {
    *
    */
   async revokeDidDocument(): Promise<boolean> {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("revokeDidDocument");
-    }
     if (this._document) {
-      return this._document.deactivate();
+      await this._document.deactivate();
+      return true;
     }
     return false;
   }
@@ -388,9 +384,6 @@ export class IAM extends IAMBase {
    *
    */
   async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createSelfSignedClaim");
-    }
     if (this._userClaims) {
       const claim = await this._userClaims.createPublicClaim(data);
       await this._userClaims.publishPublicClaim(claim, data);
@@ -443,9 +436,6 @@ export class IAM extends IAMBase {
     domain: string;
     data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("setRoleDefinition");
-    }
     if (this._signer && this._ensResolver) {
       const ensResolverWithSigner = this._ensResolver.connect(this._signer);
       const stringifiedData = JSON.stringify(data);
@@ -479,9 +469,6 @@ export class IAM extends IAMBase {
     namespace: string;
     returnSteps?: boolean;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createOrganization");
-    }
     const newDomain = `${orgName}.${namespace}`;
     const rolesDomain = `${ENSNamespaceTypes.Roles}.${newDomain}`;
     const appsDomain = `${ENSNamespaceTypes.Application}.${newDomain}`;
@@ -543,9 +530,6 @@ export class IAM extends IAMBase {
     data: IAppDefinition;
     returnSteps?: boolean;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createApplication");
-    }
     const newDomain = `${appName}.${namespace}`;
     const rolesNamespace = `${ENSNamespaceTypes.Roles}.${newDomain}`;
     const steps = [
@@ -597,9 +581,6 @@ export class IAM extends IAMBase {
     data: IRoleDefinition;
     returnSteps?: boolean;
   }) {
-    if (!this._runningInBrowser) {
-      throw new MethodNotAvailableInNodeEnvError("createRole");
-    }
     const newDomain = `${roleName}.${namespace}`;
     const steps = [
       {
@@ -721,15 +702,17 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    const [label, ...rest] = namespace.split(".");
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
-        next: () => this.changeSubdomainOwner({ newOwner, namespace: rest.join("."), label }),
+        next: () => this.changeDomainOwner({ newOwner, namespace }),
         info: `Changing ownership of ${namespace}`
       },
       {
         next: () =>
-          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Roles }),
+          this.changeDomainOwner({
+            newOwner,
+            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`
+          }),
         info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
       }
     ];
@@ -738,9 +721,8 @@ export class IAM extends IAMBase {
     for (const role of roles) {
       steps.push({
         next: () =>
-          this.changeSubdomainOwner({
-            label: role,
-            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`,
+          this.changeDomainOwner({
+            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`,
             newOwner
           }),
         info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
@@ -986,17 +968,18 @@ export class IAM extends IAMBase {
   /**
    * getENSTypesBySearchPhrase
    */
-  getENSTypesBySearchPhrase({ type, search }: { type: ENSNamespaceTypes; search: string }) {
+  getENSTypesBySearchPhrase({
+    types,
+    search
+  }: {
+    types?: ("App" | "Org" | "Role")[];
+    search: string;
+  }) {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
-    if (type === ENSNamespaceTypes.Organization) {
-      return this._cacheClient.getOrganizationsBySearchPhrase({ search });
-    }
-    if (type === ENSNamespaceTypes.Application) {
-      return this._cacheClient.getApplicationsBySearchPhrase({ search });
-    }
-    throw new ENSTypeNotSupportedError();
+
+    return this._cacheClient.getNamespaceBySearchPhrase({ search, types });
   }
 
   /**
@@ -1041,7 +1024,7 @@ export class IAM extends IAMBase {
       const subdomains: Record<string, null> = {};
       for (const name of domains) {
         const nameArray = name.split(".").reverse();
-        if (nameArray.length <= role.length) return;
+        if (nameArray.length <= role.length) continue;
         subdomains[nameArray[role.length]] = null;
       }
       return Object.keys(subdomains);
@@ -1103,18 +1086,16 @@ export class IAM extends IAMBase {
         return owner === this._address ? [] : [parentDomain.join(".")];
       }
       if (type === ENSNamespaceTypes.Application) {
-        const [, ...appsNamespace] = namespace.split(".");
         const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
-        const namespaces = [namespace, appsNamespace.join("."), appRolesNamespace];
+        const namespaces = [namespace, appRolesNamespace];
         const notOwnedNamespaces = await Promise.all(
-          namespaces
-            .map(async namespace => {
-              const owner = await this.getOwner({ namespace });
-              if (owner !== this._address) {
-                return namespace;
-              }
-              return null;
-            })
+          namespaces.map(async namespace => {
+            const owner = await this.getOwner({ namespace });
+            if (owner !== this._address) {
+              return namespace;
+            }
+            return null;
+          })
         );
         return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
@@ -1124,14 +1105,13 @@ export class IAM extends IAMBase {
         const appsNamespace = `${ENSNamespaceTypes.Application}.${namespace}`;
         const namespaces = [iamNamespace.join("."), rolesNamespace, appsNamespace, namespace];
         const notOwnedNamespaces = await Promise.all(
-          namespaces
-            .map(async namespace => {
-              const owner = await this.getOwner({ namespace });
-              if (owner !== this._address) {
-                return namespace;
-              }
-              return null;
-            })
+          namespaces.map(async namespace => {
+            const owner = await this.getOwner({ namespace });
+            if (owner !== this._address) {
+              return namespace;
+            }
+            return null;
+          })
         );
         return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
@@ -1156,7 +1136,7 @@ export class IAM extends IAMBase {
     if (!token) {
       throw new Error("Token was not generated");
     }
-    const message: IMessage = {
+    const message: IClaimRequest = {
       id: uuid(),
       token,
       claimIssuer: issuer,
@@ -1194,18 +1174,40 @@ export class IAM extends IAMBase {
     if (!issuedToken) {
       throw new Error("Token was not generated");
     }
-    const preparedData: IMessage = {
+    const preparedData: IClaimIssuance = {
       id,
       issuedToken,
       requester: requesterDID,
       claimIssuer: [this._did],
-      token,
       acceptedBy: this._did
     };
 
     if (!this._natsConnection) {
       if (this._cacheClient) {
         return this._cacheClient.issueClaim({ did: this._did, message: preparedData });
+      }
+      throw new NATSConnectionNotEstablishedError();
+    }
+
+    const dataToSend = this._jsonCodec?.encode(preparedData);
+    this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+  }
+
+  async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
+    if (!this._did) {
+      throw new Error("User not logged in");
+    }
+
+    const preparedData: IClaimRejection = {
+      id,
+      requester: requesterDID,
+      claimIssuer: [this._did],
+      isRejected: true
+    };
+
+    if (!this._natsConnection) {
+      if (this._cacheClient) {
+        return this._cacheClient.rejectClaim({ did: this._did, message: preparedData });
       }
       throw new NATSConnectionNotEstablishedError();
     }

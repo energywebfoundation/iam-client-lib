@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { stringify } from "qs";
 import {
   IApp,
   IAppDefinition,
@@ -9,9 +10,8 @@ import {
   Claim
 } from "./cacheServerClient.types";
 
-import { IMessage } from "../iam";
+import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-
 export interface ICacheServerClient {
   getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
   getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
@@ -21,8 +21,13 @@ export interface ICacheServerClient {
   getOrganizationsByOwner: ({ owner }: { owner: string }) => Promise<IOrganization[]>;
   getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
   getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
-  getOrganizationsBySearchPhrase: ({ search }: { search: string }) => Promise<IOrganization[]>;
-  getApplicationsBySearchPhrase: ({ search }: { search: string }) => Promise<IApp[]>;
+  getNamespaceBySearchPhrase: ({
+    types,
+    search
+  }: {
+    types?: ("App" | "Org" | "Role")[];
+    search: string;
+  }) => Promise<IOrganization[] | IApp[] | IRole[]>;
   getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
   getIssuedClaims: ({
     did,
@@ -42,11 +47,18 @@ export interface ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
-  requestClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
-  issueClaim: ({ message, did }: { message: IMessage; did: string }) => Promise<void>;
+  requestClaim: ({ message, did }: { message: IClaimRequest; did: string }) => Promise<void>;
+  issueClaim: ({ message, did }: { message: IClaimIssuance; did: string }) => Promise<void>;
+  rejectClaim: ({ message, did }: { message: IClaimRejection; did: string }) => Promise<void>;
   getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
-  getDidDocument: ({ did, includeClaims }: { did: string, includeClaims?: boolean}) => Promise<IDIDDocument>;
-  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>
+  getDidDocument: ({
+    did,
+    includeClaims
+  }: {
+    did: string;
+    includeClaims?: boolean;
+  }) => Promise<IDIDDocument>;
+  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>;
 }
 
 export class CacheServerClient implements ICacheServerClient {
@@ -88,14 +100,31 @@ export class CacheServerClient implements ICacheServerClient {
     return data.orgs;
   }
 
-  async getOrganizationsBySearchPhrase({ search }: { search: string }) {
-    const { data } = await this.httpClient.get<{ Data: IOrganization[] }>(`/org?${search}`);
-    return data.Data;
-  }
-
-  async getApplicationsBySearchPhrase({ search }: { search: string }) {
-    const { data } = await this.httpClient.get<{ Data: IApp[] }>(`/app?${search}`);
-    return data.Data;
+  async getNamespaceBySearchPhrase({
+    types,
+    search
+  }: {
+    types?: ("App" | "Org" | "Role")[];
+    search: string;
+  }) {
+    if (types && types.length > 0) {
+      const { data } = await this.httpClient.get<IOrganization[] | IApp[] | IRole[]>(
+        `/namespace/search/${search}`,
+        {
+          params: {
+            types
+          },
+          paramsSerializer: params => {
+            return stringify(params, { arrayFormat: "brackets" });
+          }
+        }
+      );
+      return data;
+    }
+    const { data } = await this.httpClient.get<IOrganization[] | IApp[] | IRole[]>(
+      `/namespace/search/${search}`
+    );
+    return data;
   }
 
   async getApplicationsByOwner({ owner }: { owner: string }) {
@@ -149,12 +178,16 @@ export class CacheServerClient implements ICacheServerClient {
     return data.claim;
   }
 
-  async requestClaim({ message, did }: { message: IMessage; did: string }) {
+  async requestClaim({ message, did }: { message: IClaimRequest; did: string }) {
     await this.httpClient.post<void>(`/claim/request/${did}`, message);
   }
 
-  async issueClaim({ message, did }: { message: IMessage; did: string }) {
+  async issueClaim({ message, did }: { message: IClaimIssuance; did: string }) {
     await this.httpClient.post<void>(`/claim/issue/${did}`, message);
+  }
+
+  async rejectClaim({ message, did }: { message: IClaimRejection; did: string }) {
+    await this.httpClient.post<void>(`/claim/reject/${did}`, message);
   }
 
   async getDIDsForRole({ namespace }: { namespace: string }) {
@@ -162,8 +195,10 @@ export class CacheServerClient implements ICacheServerClient {
     return data;
   }
 
-  async getDidDocument({ did, includeClaims}: { did: string, includeClaims?: boolean}) {
-    const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
+  async getDidDocument({ did, includeClaims }: { did: string; includeClaims?: boolean }) {
+    const { data } = await this.httpClient.get<IDIDDocument>(
+      `/DID/${did}?includeClaims=${includeClaims || false}`
+    );
     return data;
   }
 

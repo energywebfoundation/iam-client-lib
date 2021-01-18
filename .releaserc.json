@@ -10,5 +10,23 @@
       "channel": "canary"
     }
   ],
-  "repositoryUrl": "git@github.com:energywebfoundation/iam-client-lib.git"
+  "repositoryUrl": "git@github.com:energywebfoundation/iam-client-lib.git",
+  "plugins": [
+    ["@semantic-release/commit-analyzer", {
+      "preset": "angular",
+      "releaseRules": [
+        {"type": "docs", "release": "patch"},
+        {"type": "refactor", "release": "patch"},
+        {"type": "style", "release": "patch"},
+        {"type": "test", "release": "patch"},
+        {"type": "ci", "release": "patch"},
+        {"type": "build", "release": "patch"}
+      ],
+      "parserOpts": {
+        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+      }
+    }],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/npm"
+  ]
 }

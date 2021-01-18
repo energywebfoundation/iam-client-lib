@@ -18,9 +18,9 @@
     "build:typechain:registry": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json'",
     "build:typechain:resolver": "typechain --target ethers-v4 --outDir ethers './node_modules/@ensdomains/resolver/build/contracts/PublicResolver.json'",
     "prepare": "npm run build",
-    "test": "jest --coverage",
-    "test:watch": "jest --coverage --watch",
-    "test:prod": "npm run lint && npm run test -- --no-cache"
+    "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --accounts 20 --networkId=9 --gasLimit=10000000",
+    "test:watch": "npm run start-rpc -- \"jest --coverage --env=./test/env.js --watchAll\"",
+    "test:prod": "npm run start-rpc -- \"jest --no-cache --env=./test/env.js\""
   },
   "keywords": [
     "decentralized",
@@ -43,70 +43,53 @@
     "node": ">= 10.0.0",
     "npm": ">= 6.0.0"
   },
-  "jest": {
-    "transform": {
-      ".(ts|tsx)": "ts-jest"
-    },
-    "testEnvironment": "node",
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test/"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 0,
-        "functions": 0,
-        "lines": 0,
-        "statements": 0
-      }
-    },
-    "collectCoverageFrom": [
-      "src/*.{js,ts}"
-    ]
-  },
   "dependencies": {
+    "@babel/runtime": "^7.12.5",
     "@ensdomains/ens": "^0.4.5",
     "@ensdomains/resolver": "^0.2.4",
-    "@ew-did-registry/claims": "0.0.1-alpha.776.0",
+    "@ew-did-registry/claims": "0.0.1-alpha.827.0",
     "@ew-did-registry/did": "0.0.1-alpha.632.0",
-    "@ew-did-registry/did-document": "0.0.1-alpha.776.0",
-    "@ew-did-registry/did-ethr-resolver": "0.0.1-alpha.776.0",
-    "@ew-did-registry/did-resolver-interface": "0.0.1-alpha.776.0",
+    "@ew-did-registry/did-document": "0.0.1-alpha.827.0",
+    "@ew-did-registry/did-ethr-resolver": "0.0.1-alpha.827.0",
+    "@ew-did-registry/did-resolver-interface": "0.0.1-alpha.827.0",
     "@ew-did-registry/jwt": "0.0.1-alpha.676.0",
     "@ew-did-registry/keys": "0.0.1-alpha.632.0",
     "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/web3-provider": "1.0.0-rc.4",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "4.0.45",
     "js-sha3": "^0.8.0",
     "lodash.difference": "^4.5.0",
-    "nats.ws": "^1.0.0-111",
+    "nats.ws": "1.0.0-111",
+    "tslib": "^2.0.3",
+    "qs": "^6.9.4",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
+    "@babel/core": "7.12.10",
+    "@babel/plugin-transform-regenerator": "7.12.1",
+    "@babel/preset-env": "7.12.11",
     "@typechain/ethers-v4": "^1.0.1",
     "@types/jest": "^26.0.13",
     "@types/lodash.difference": "^4.5.6",
+    "@types/qs": "^6.9.5",
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
+    "babel-jest": "26.6.3",
     "bili": "^5.0.5",
     "copyfiles": "^2.4.0",
     "coveralls": "^3.1.0",
     "eslint": "^7.8.1",
     "jest": "^26.4.2",
     "jest-config": "^26.4.2",
+    "jest-environment-jsdom": "^26.6.2",
     "rimraf": "^3.0.2",
     "rollup-plugin-typescript2": "^0.27.2",
-    "semantic-release": "^17.3.0",
-    "ts-jest": "^26.3.0",
+    "run-with-testrpc": "0.3.1",
+    "semantic-release": "17.3.0",
+    "ts-jest": "26.3.0",
     "typechain": "^2.0.0",
     "typedoc": "^0.19.2",
     "typedoc-plugin-markdown": "^3.0.11",

@@ -163,18 +163,20 @@ export class IAMBase {
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
-    this.setupUniversalEnv();
+    await this.setupUniversalEnv();
   }
 
   private async setupBrowserEnv() {
-    await this.setAddress();
-    this.setDid();
-    await this.setDocument();
-    this.setClaims();
     await this.setupNATS();
   }
 
-  private setupUniversalEnv() {
+  private async setupUniversalEnv() {
+    if (this._signer && this._didSigner) {
+      await this.setAddress();
+      this.setDid();
+      await this.setDocument();
+      this.setClaims();
+    }
     this.setResolver();
     this.setJWT();
     this.setupENS();
@@ -408,6 +410,23 @@ export class IAMBase {
     const tx = await ensRegistryWithSigner.setSubnodeOwner(
       namespaceHash,
       labelHash,
+      newOwner,
+      this._transactionOverrides
+    );
+    await tx.wait();
+  }
+
+  protected async changeDomainOwner({ newOwner, namespace }: { newOwner: string, namespace: string }) {
+    if (!this._ensRegistry) {
+      throw new ENSRegistryNotInitializedError();
+    }
+    if (!this._signer) {
+      throw new Error("Signer not initialized");
+    }
+    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
+    const namespaceHash = namehash(namespace);
+    const tx = await ensRegistryWithSigner.setOwner(
+      namespaceHash,
       newOwner,
       this._transactionOverrides
     );

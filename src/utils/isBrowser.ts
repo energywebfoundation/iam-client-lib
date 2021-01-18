@@ -1,2 +1,2 @@
 export const isBrowser = () =>
-  typeof process !== "undefined" && process.release?.name.search(/node|io.js/) !== -1;
+  typeof process?.release?.name === "undefined" || process.release.name.search(/node|io.js/) === -1;
