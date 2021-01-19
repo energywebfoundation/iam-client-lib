@@ -32,6 +32,19 @@ import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } 
 const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
 
+export const VOLTA_CHAIN_ID = 73799;
+
+export enum ERROR_MESSAGES {
+  SIGNER_NOT_INITIALIZED = "Signer not initialized",
+  NOT_CONNECTED_TO_VOLTA = "Not connected to volta network",
+  CLAIMS_NOT_INITIALIZED = "User claims not initialized",
+  JWT_NOT_INITIALIZED = "JWT was not initialized",
+  PROVIDER_NOT_INITIALIZED = "Provider not initialized",
+  DID_DOCUMENT_NOT_INITIALIZED = "DID document not initialized",
+  ENS_TYPE_NOT_SUPPORTED = "ENS type not supported",
+  USER_NOT_LOGGED_IN = "User not logged in"
+}
+
 export enum MessagingMethod {
   CacheServer = "cacheServer",
   WebRTC = "webRTC",
@@ -107,7 +120,7 @@ export class IAMBase {
    */
   public constructor({
     rpcUrl,
-    chainId = 1,
+    chainId = VOLTA_CHAIN_ID,
     infuraId,
     ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
     ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
@@ -160,6 +173,10 @@ export class IAMBase {
     initializeMetamask?: boolean;
   }) {
     await this.setupProvider({ useMetamask, initializeMetamask });
+    const signerChainId = (await this._signer?.provider?.getNetwork())?.chainId;
+    if (signerChainId !== VOLTA_CHAIN_ID) {
+      throw new Error(ERROR_MESSAGES.NOT_CONNECTED_TO_VOLTA);
+    }
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
@@ -271,7 +288,7 @@ export class IAMBase {
       const sig = await this._signer.signMessage(arrayify(hash));
       return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
     }
-    throw new Error("Signer not initialized");
+    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
   private async setAddress() {
@@ -321,7 +338,7 @@ export class IAMBase {
       this._jwt = new JWT(this._didSigner);
       return;
     }
-    throw new Error("Signer not available");
+    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
   private async setupNATS() {
@@ -370,7 +387,7 @@ export class IAMBase {
       console.log(`Subdomain ${subdomain + "." + domain} created`);
       return;
     }
-    throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
+    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
   protected async setDomainName({ domain }: { domain: string }) {
@@ -386,7 +403,7 @@ export class IAMBase {
       console.log(`Set the name of the domain to ${domain}`);
       return;
     }
-    throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
+    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
   protected async changeSubdomainOwner({
@@ -402,7 +419,7 @@ export class IAMBase {
       throw new ENSRegistryNotInitializedError();
     }
     if (!this._signer) {
-      throw new Error("Signer not initialized");
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
     const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
     const namespaceHash = namehash(namespace);
@@ -416,12 +433,18 @@ export class IAMBase {
     await tx.wait();
   }
 
-  protected async changeDomainOwner({ newOwner, namespace }: { newOwner: string, namespace: string }) {
+  protected async changeDomainOwner({
+    newOwner,
+    namespace
+  }: {
+    newOwner: string;
+    namespace: string;
+  }) {
     if (!this._ensRegistry) {
       throw new ENSRegistryNotInitializedError();
     }
     if (!this._signer) {
-      throw new Error("Signer not initialized");
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
     const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
     const namespaceHash = namehash(namespace);
