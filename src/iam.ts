@@ -26,11 +26,10 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, emptyAddress } from "./iam/iam-base";
+import { IAMBase, emptyAddress, VOLTA_CHAIN_ID, ERROR_MESSAGES } from "./iam/iam-base";
 import {
   ENSTypeNotSupportedError,
   CacheClientNotProvidedError,
-  MethodNotAvailableInNodeEnvError,
   NATSConnectionNotEstablishedError,
   ENSResolverNotInitializedError,
   ENSRegistryNotInitializedError,
@@ -83,8 +82,13 @@ export const NATS_EXCHANGE_TOPIC = "claim.exchange";
  */
 export class IAM extends IAMBase {
   static async isMetamaskExtensionPresent() {
-    const provider = await detectEthereumProvider({ mustBeMetaMask: true });
-    return !!provider;
+    const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
+      | {
+          chainId?: string;
+        }
+      | undefined;
+    const metamaskChainId = parseInt(provider?.chainId || "", 16);
+    return metamaskChainId === VOLTA_CHAIN_ID;
   }
   // GETTERS
 
@@ -251,7 +255,7 @@ export class IAM extends IAMBase {
       const updated = await this._document.update(didAttribute, data, validity);
       return Boolean(updated);
     }
-    return false;
+    throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
   }
 
   /**
@@ -266,7 +270,7 @@ export class IAM extends IAMBase {
       await this._document.deactivate();
       return true;
     }
-    return false;
+    throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
   }
 
   /**
@@ -283,7 +287,7 @@ export class IAM extends IAMBase {
       }
       return this._userClaims.createPublicClaim(data);
     }
-    throw new Error("User claims not initialized");
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -310,7 +314,7 @@ export class IAM extends IAMBase {
       });
       return url;
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -346,7 +350,7 @@ export class IAM extends IAMBase {
       });
       return this._userClaims?.createProofClaim(claimUrl, encryptedSaltedFields);
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -360,7 +364,7 @@ export class IAM extends IAMBase {
     if (this._issuerClaims) {
       return this._issuerClaims.issuePublicClaim(token);
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -374,7 +378,7 @@ export class IAM extends IAMBase {
     if (this._verifierClaims) {
       return this._verifierClaims.verifyPublicProof(issuedToken);
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -388,6 +392,7 @@ export class IAM extends IAMBase {
       const claim = await this._userClaims.createPublicClaim(data);
       await this._userClaims.publishPublicClaim(claim, data);
     }
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -403,7 +408,7 @@ export class IAM extends IAMBase {
 
   async decodeJWTToken({ token }: { token: string }) {
     if (!this._jwt) {
-      throw new Error("JWT was not initialized");
+      throw new Error(ERROR_MESSAGES.JWT_NOT_INITIALIZED);
     }
     return this._jwt.decode(token);
   }
@@ -417,7 +422,7 @@ export class IAM extends IAMBase {
         }
       });
     }
-    throw new Error("Provider not initialized");
+    throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
   }
 
   /// ROLES
@@ -1115,9 +1120,9 @@ export class IAM extends IAMBase {
         );
         return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
-      throw new Error("ENS type not supported");
+      throw new Error(ERROR_MESSAGES.ENS_TYPE_NOT_SUPPORTED);
     }
-    throw new Error("User not logged in");
+    throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
   }
 
   // NATS
@@ -1130,12 +1135,9 @@ export class IAM extends IAMBase {
     claim: { claimType: string; fields: { key: string; value: string | number }[] };
   }) {
     if (!this._did) {
-      throw new Error("User not logged in");
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
     const token = await this.createPublicClaim({ data: claim, subject: claim.claimType });
-    if (!token) {
-      throw new Error("Token was not generated");
-    }
     const message: IClaimRequest = {
       id: uuid(),
       token,
@@ -1167,13 +1169,10 @@ export class IAM extends IAMBase {
     id: string;
   }) {
     if (!this._did) {
-      throw new Error("User not logged in");
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
 
     const issuedToken = await this.issuePublicClaim({ token });
-    if (!issuedToken) {
-      throw new Error("Token was not generated");
-    }
     const preparedData: IClaimIssuance = {
       id,
       issuedToken,
@@ -1195,7 +1194,7 @@ export class IAM extends IAMBase {
 
   async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
     if (!this._did) {
-      throw new Error("User not logged in");
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
 
     const preparedData: IClaimRejection = {
