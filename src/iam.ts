@@ -43,6 +43,7 @@ import {
   IRoleDefinition
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
+import { WalletProvider } from "./types/WalletProvider";
 
 type InitializeData = {
   did: string | undefined;
@@ -122,8 +123,8 @@ export class IAM extends IAMBase {
     {
       useMetamaskExtension,
       reinitializeMetamask,
-      useEwKeyManager
-    }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean, useEwKeyManager?: boolean } = {
+      walletProvider
+    }: { useMetamaskExtension?: boolean; reinitializeMetamask?: boolean, walletProvider?: WalletProvider } = {
       useMetamaskExtension: false
     }
   ): Promise<InitializeData> {
@@ -131,7 +132,7 @@ export class IAM extends IAMBase {
       await this.init({
         useMetamask: useMetamaskExtension,
         initializeMetamask: reinitializeMetamask,
-        useEwKeyManager
+        walletProvider
       });
     } catch (err) {
       if (err.message === "User closed modal") {

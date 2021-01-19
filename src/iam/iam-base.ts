@@ -28,6 +28,7 @@ import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
 import { Owner as IdentityOwner } from "../signer/Signer";
 import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
+import { WalletProvider } from "../types/WalletProvider";
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
@@ -155,13 +156,13 @@ export class IAMBase {
   protected async init({
     useMetamask,
     initializeMetamask,
-    useEwKeyManager
+    walletProvider: walletProvider
   }: {
-    useMetamask: boolean;
+    useMetamask?: boolean;
     initializeMetamask?: boolean;
-    useEwKeyManager?: boolean
+    walletProvider?: WalletProvider;
   }) {
-    await this.setupProvider({ useMetamask, initializeMetamask, useEwKeyManager });
+    await this.setupProvider({ useMetamask, initializeMetamask, walletProvider });
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
@@ -187,11 +188,11 @@ export class IAMBase {
   private async setupProvider({
     useMetamask,
     initializeMetamask,
-    useEwKeyManager
+    walletProvider
   }: {
-    useMetamask: boolean;
+    useMetamask?: boolean;
     initializeMetamask?: boolean;
-    useEwKeyManager?: boolean;
+    walletProvider?: WalletProvider;
   }) {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
@@ -209,7 +210,7 @@ export class IAMBase {
       const metamaskProvider = (await detectMetamask({
         mustBeMetaMask: true
       })) as any;
-      if (metamaskProvider && useMetamask) {
+      if (metamaskProvider && (walletProvider === WalletProvider.MetaMask || useMetamask)) {
         if (initializeMetamask) {
           await metamaskProvider.request({
             method: "wallet_requestPermissions",
@@ -251,7 +252,7 @@ export class IAMBase {
       };
 
       // Don't show QR code if using KeyManager because we send user directly to app instead
-      const showQRCode = !useEwKeyManager;
+      const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
 
       this._walletConnectProvider = new WalletConnectProvider({
         rpc: {
@@ -262,7 +263,7 @@ export class IAMBase {
         qrcode: showQRCode
       });
 
-      if (useEwKeyManager) {
+      if (walletProvider === WalletProvider.EwKeyManager) {
         this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
           // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
           const wcUri = payload.params[0];
