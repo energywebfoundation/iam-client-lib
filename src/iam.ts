@@ -121,15 +121,17 @@ export class IAM extends IAMBase {
   async initializeConnection(
     {
       useMetamaskExtension,
-      reinitializeMetamask
-    }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
+      reinitializeMetamask,
+      useEwKeyManager
+    }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean, useEwKeyManager?: boolean } = {
       useMetamaskExtension: false
     }
   ): Promise<InitializeData> {
     try {
       await this.init({
         useMetamask: useMetamaskExtension,
-        initializeMetamask: reinitializeMetamask
+        initializeMetamask: reinitializeMetamask,
+        useEwKeyManager
       });
     } catch (err) {
       if (err.message === "User closed modal") {

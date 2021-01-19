@@ -154,12 +154,14 @@ export class IAMBase {
 
   protected async init({
     useMetamask,
-    initializeMetamask
+    initializeMetamask,
+    useEwKeyManager
   }: {
     useMetamask: boolean;
     initializeMetamask?: boolean;
+    useEwKeyManager?: boolean
   }) {
-    await this.setupProvider({ useMetamask, initializeMetamask });
+    await this.setupProvider({ useMetamask, initializeMetamask, useEwKeyManager });
     if (this._runningInBrowser) {
       await this.setupBrowserEnv();
     }
@@ -184,10 +186,12 @@ export class IAMBase {
 
   private async setupProvider({
     useMetamask,
-    initializeMetamask
+    initializeMetamask,
+    useEwKeyManager
   }: {
     useMetamask: boolean;
     initializeMetamask?: boolean;
+    useEwKeyManager?: boolean;
   }) {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
@@ -245,13 +249,31 @@ export class IAMBase {
         gasLimit: hexlify(4900000),
         gasPrice: hexlify(0.1)
       };
+
+      // Don't show QR code if using KeyManager because we send user directly to app instead
+      const showQRCode = !useEwKeyManager;
+
       this._walletConnectProvider = new WalletConnectProvider({
         rpc: {
           [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
         },
         infuraId: this._connectionOptions.infuraId,
-        bridge: this._connectionOptions.bridgeUrl
+        bridge: this._connectionOptions.bridgeUrl,
+        qrcode: showQRCode
       });
+
+      if (useEwKeyManager) {
+        this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
+          // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
+          const wcUri = payload.params[0];
+          console.log(wcUri);
+          
+          const encoded = encodeURI(wcUri);
+          const url = `https://km.aws.energyweb.org/connect/new?uri=${encoded}`
+          window.open(url, '_blank');
+        });
+      }
+
       await this._walletConnectProvider.enable();
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
       const publicKey = await this.getPublicKey();
