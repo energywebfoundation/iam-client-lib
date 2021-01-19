@@ -30,7 +30,6 @@ import { IAMBase, emptyAddress } from "./iam/iam-base";
 import {
   ENSTypeNotSupportedError,
   CacheClientNotProvidedError,
-  MethodNotAvailableInNodeEnvError,
   NATSConnectionNotEstablishedError,
   ENSResolverNotInitializedError,
   ENSRegistryNotInitializedError,
@@ -994,6 +993,20 @@ export class IAM extends IAMBase {
       throw new CacheClientNotProvidedError();
     }
     return this._cacheClient.getApplicationsByOrganization({ namespace });
+  }
+
+  /**
+   * getSubOrgsByOrgNamespace
+   *
+   * @description get all sub organizations for organization namespace
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getSubOrgsByOrgNamespace({ namespace }: { namespace: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getSubOrganizationsByOrganization({ namespace });
   }
 
   /**

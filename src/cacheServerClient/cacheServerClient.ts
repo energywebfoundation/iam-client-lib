@@ -21,6 +21,12 @@ export interface ICacheServerClient {
   getOrganizationsByOwner: ({ owner }: { owner: string }) => Promise<IOrganization[]>;
   getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
   getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
+  getSubOrganizationsByOrganization: ({
+    namespace
+  }: {
+    namespace: string;
+  }) => Promise<IOrganization[]>;
+
   getNamespaceBySearchPhrase: ({
     types,
     search
@@ -98,6 +104,11 @@ export class CacheServerClient implements ICacheServerClient {
   async getOrganizationsByOwner({ owner }: { owner: string }) {
     const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(`/owner/${owner}/orgs`);
     return data.orgs;
+  }
+
+  async getSubOrganizationsByOrganization({ namespace }: { namespace: string }) {
+    const { data } = await this.httpClient.get<IOrganization[]>(`/org/${namespace}/suborgs`);
+    return data;
   }
 
   async getNamespaceBySearchPhrase({
