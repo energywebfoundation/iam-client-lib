@@ -269,7 +269,7 @@ export class IAMBase {
           const wcUri = payload.params[0];
           console.log(wcUri);
           
-          const encoded = encodeURI(wcUri);
+          const encoded = encodeURIComponent(wcUri);
           const url = `https://km.aws.energyweb.org/connect/new?uri=${encoded}`
           window.open(url, '_blank');
         });
