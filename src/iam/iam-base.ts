@@ -26,6 +26,7 @@ import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
+import base64url from "base64url";
 import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
@@ -87,7 +88,7 @@ export class IAMBase {
   };
 
   protected _did: string | undefined;
-  protected _provider: providers.JsonRpcProvider | undefined;
+  protected _provider: providers.JsonRpcProvider;
   protected _walletConnectProvider: WalletConnectProvider | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
@@ -182,24 +183,18 @@ export class IAMBase {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
   }) {
-    
-    await this.setupProvider({ initializeMetamask, walletProvider });
+    await this.initSigner({ walletProvider, initializeMetamask });
     const signerChainId = (await this._signer?.provider?.getNetwork())?.chainId;
     if (signerChainId !== VOLTA_CHAIN_ID) {
       throw new Error(ERROR_MESSAGES.NOT_CONNECTED_TO_VOLTA);
     }
     if (this._runningInBrowser) {
-      await this.setupBrowserEnv();
+      await this.setupNATS();
     }
-    await this.setupUniversalEnv();
-  }
+    if (this._signer) {
+      this._didSigner = await SignerFactory.create(this._signer, this._provider);
+      await this.loginToCacheServer(this._didSigner.identityToken);
 
-  private async setupBrowserEnv() {
-    await this.setupNATS();
-  }
-
-  private async setupUniversalEnv() {
-    if (this._signer && this._didSigner) {
       await this.setAddress();
       this.setDid();
       await this.setDocument();
@@ -210,7 +205,7 @@ export class IAMBase {
     this.setupENS();
   }
 
-  private async setupProvider({
+  private async initSigner({
     initializeMetamask,
     walletProvider
   }: {
@@ -218,83 +213,115 @@ export class IAMBase {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
   }) {
-    this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
+    if (!this._provider) {
+      throw new Error("Initialization of singer failed due to no provider");
+    }
     if (this._connectionOptions.privateKey) {
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
-      this._didSigner = await SignerFactory.create(this._signer, this._provider, this._connectionOptions.privateKey);
+      this._didSigner = await SignerFactory.create(
+        this._signer,
+        this._provider,
+        this._connectionOptions.privateKey
+      );
       return;
     }
-    if (this._runningInBrowser) {
-      const metamaskProvider = (await detectMetamask({
-        mustBeMetaMask: true
-      })) as any;
-      if (metamaskProvider && walletProvider === WalletProvider.MetaMask) {
-        if (initializeMetamask) {
-          await metamaskProvider.request({
+    if (!this._runningInBrowser) {
+      throw new Error("Initialization of signer not possible in nodejs env without private key ");
+    }
+
+    const metamaskProvider: any = await detectMetamask({
+      mustBeMetaMask: true
+    });
+    if (metamaskProvider && walletProvider === WalletProvider.MetaMask) {
+      const requestObject = initializeMetamask
+        ? {
             method: "wallet_requestPermissions",
             params: [
               {
                 eth_accounts: {}
               }
             ]
-          });
-        } else {
-          const accounts: string[] = await metamaskProvider.request({
+          }
+        : {
             method: "eth_accounts",
             params: [
               {
                 eth_accounts: {}
               }
             ]
-          });
-          if (accounts.length < 1) {
-            await metamaskProvider.request({
-              method: "wallet_requestPermissions",
-              params: [
-                {
-                  eth_accounts: {}
-                }
-              ]
-            });
-          }
-        }
-        const provider = new providers.Web3Provider(metamaskProvider);
-        this._signer = provider.getSigner();
-        this._didSigner = await SignerFactory.create(this._signer, this._provider)
-        return;
-      }
-      this._transactionOverrides = {
-        gasLimit: hexlify(4900000),
-        gasPrice: hexlify(0.1)
-      };
+          };
+      const accounts: string[] = await metamaskProvider.request(requestObject);
 
-      // Don't show QR code if using KeyManager because we send user directly to app instead
-      const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
-
-      this._walletConnectProvider = new WalletConnectProvider({
-        rpc: {
-          [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
-        },
-        infuraId: this._connectionOptions.infuraId,
-        bridge: this._connectionOptions.bridgeUrl,
-        qrcode: showQRCode
-      });
-
-      if (walletProvider === WalletProvider.EwKeyManager) {
-        this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
-          // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
-          const wcUri = payload.params[0];
-          
-          const encoded = encodeURIComponent(wcUri);
-          const hasQueryString = this._ewKeyManagerUrl.includes("?");
-          const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
-          window.open(url, '_blank');
+      if (!initializeMetamask && accounts.length < 1) {
+        await metamaskProvider.request({
+          method: "wallet_requestPermissions",
+          params: [
+            {
+              eth_accounts: {}
+            }
+          ]
         });
       }
+      const provider = new providers.Web3Provider(metamaskProvider);
+      this._signer = provider.getSigner();
+      return;
+    }
+    this._transactionOverrides = {
+      gasLimit: hexlify(4900000),
+      gasPrice: hexlify(0.1)
+    };
 
-      await this._walletConnectProvider.enable();
-      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-      this._didSigner = await SignerFactory.create(this._signer, this._provider)
+    const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
+
+    this._walletConnectProvider = new WalletConnectProvider({
+      rpc: {
+        [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
+      },
+      infuraId: this._connectionOptions.infuraId,
+      bridge: this._connectionOptions.bridgeUrl,
+      qrcode: showQRCode
+    });
+
+    if (walletProvider === WalletProvider.EwKeyManager) {
+      this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
+        // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
+        const wcUri = payload.params[0];
+
+        const encoded = encodeURIComponent(wcUri);
+        const hasQueryString = this._ewKeyManagerUrl.includes("?");
+        const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
+        window.open(url, "_blank");
+      });
+    }
+
+    await this._walletConnectProvider.enable();
+    this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+  }
+
+  private async generateIdentityProof() {
+    if (this._signer) {
+      const header = {
+        alg: "ES256",
+        typ: "JWT"
+      };
+      const encodedHeader = base64url(JSON.stringify(header));
+      const address = await this._signer.getAddress();
+      const payload = {
+        iss: `did:ethr:${address}`,
+        claimData: {
+          blockNumber: await this._provider?.getBlockNumber()
+        }
+      };
+
+      const encodedPayload = base64url(JSON.stringify(payload));
+      return { encodedHeader, encodedPayload };
+    }
+    throw Error("Signer not initialized");
+  }
+
+  private async loginToCacheServer(token: string) {
+    if (this._cacheClient) {
+      await this._cacheClient.login(token);
     }
   }
 
