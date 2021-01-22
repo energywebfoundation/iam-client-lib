@@ -8,6 +8,7 @@ export class Owner extends Signer implements IdentityOwner {
     private signer: Signer,
     public provider: Provider,
     public publicKey: string,
+    public identityToken: string,
     public privateKey?: string
   ) {
     super();

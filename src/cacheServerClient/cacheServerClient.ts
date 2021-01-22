@@ -13,6 +13,7 @@ import {
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 export interface ICacheServerClient {
+  login: (claim: string) => Promise<void>;
   getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
   getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
   getAppDefinition: ({ namespace }: { namespace: string }) => Promise<IAppDefinition>;
@@ -74,6 +75,11 @@ export class CacheServerClient implements ICacheServerClient {
     this.httpClient = axios.create({
       baseURL: url
     });
+  }
+
+  async login(claim: string) {
+    const { data } = await this.httpClient.post<{ token: string }>("/login", { claim });
+    this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
   }
 
   async getRoleDefinition({ namespace }: { namespace: string }) {

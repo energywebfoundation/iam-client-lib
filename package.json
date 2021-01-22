@@ -57,6 +57,7 @@
     "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/web3-provider": "1.0.0-rc.4",
     "axios": "^0.21.1",
+    "base64url": "^3.0.1",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "4.0.45",
     "js-sha3": "^0.8.0",
