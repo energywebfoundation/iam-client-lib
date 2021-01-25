@@ -71,4 +71,5 @@ export interface Claim {
   createdAt: string;
   parentNamespace: string;
   acceptedBy?: string;
+  isRejected?: boolean;
 }
