@@ -1,5 +1,5 @@
 export enum WalletProvider {
-  MetaMask = "MetaMask",
   WalletConnect = "WalletConnect",
+  MetaMask = "MetaMask",
   EwKeyManager = "EwKeyManager"
 }

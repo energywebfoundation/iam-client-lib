@@ -129,10 +129,17 @@ export class IAM extends IAMBase {
       reinitializeMetamask,
       walletProvider
     }: { useMetamaskExtension?: boolean; reinitializeMetamask?: boolean, walletProvider?: WalletProvider } = {
-      useMetamaskExtension: false
     }
   ): Promise<InitializeData> {
     try {
+      // Deprecated warning below can be removed after param is removed
+      if (useMetamaskExtension !== undefined) {
+        console.warn("Use of useMetamaskExtension parameter is deprecated. Use walletProvider enumeration instead.")
+      } else {
+        // if useMetamaskExtenion is undefined, set to false so that it has a "default" value
+        useMetamaskExtension = false;
+      }
+
       await this.init({
         useMetamask: useMetamaskExtension,
         initializeMetamask: reinitializeMetamask,
