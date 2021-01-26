@@ -65,6 +65,7 @@ type ConnectionOptions = {
   natsServerUrl?: string;
   cacheClient?: ICacheServerClient;
   privateKey?: string;
+  ewKeyManagerUrl?: string;
 };
 
 export const emptyAddress = "0x0000000000000000000000000000000000000000";
@@ -110,6 +111,8 @@ export class IAMBase {
   protected _natsConnection: NatsConnection | undefined;
   protected _jsonCodec: Codec<any> | undefined;
 
+  private readonly _ewKeyManagerUrl: string;
+
   /**
    * IAM Constructor
    *
@@ -131,7 +134,8 @@ export class IAMBase {
     natsServerUrl,
     bridgeUrl = "https://walletconnect.energyweb.org",
     privateKey,
-    didContractAddress = VoltaAddress1056
+    didContractAddress = VoltaAddress1056,
+    ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new"
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
     this._ensRegistryAddress = ensRegistryAddress;
@@ -162,6 +166,8 @@ export class IAMBase {
       this._natsServerUrl = natsServerUrl;
       this._jsonCodec = JSONCodec();
     }
+
+    this._ewKeyManagerUrl = ewKeyManagerUrl;
   }
 
   // INITIAL
@@ -288,7 +294,8 @@ export class IAMBase {
           console.log(wcUri);
           
           const encoded = encodeURIComponent(wcUri);
-          const url = `https://km.aws.energyweb.org/connect/new?uri=${encoded}`
+          const hasQueryString = this._ewKeyManagerUrl.includes("?");
+          const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
           window.open(url, '_blank');
         });
       }
