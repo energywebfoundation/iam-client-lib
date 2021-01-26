@@ -26,15 +26,15 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, emptyAddress, VOLTA_CHAIN_ID, ERROR_MESSAGES } from "./iam/iam-base";
+import { emptyAddress, ERROR_MESSAGES, IAMBase, VOLTA_CHAIN_ID } from "./iam/iam-base";
 import {
-  ENSTypeNotSupportedError,
   CacheClientNotProvidedError,
-  NATSConnectionNotEstablishedError,
-  ENSResolverNotInitializedError,
-  ENSRegistryNotInitializedError,
   ChangeOwnershipNotPossibleError,
-  DeletingNamespaceNotPossibleError
+  DeletingNamespaceNotPossibleError,
+  ENSRegistryNotInitializedError,
+  ENSResolverNotInitializedError,
+  ENSTypeNotSupportedError,
+  NATSConnectionNotEstablishedError
 } from "./errors";
 import {
   IAppDefinition,
@@ -183,10 +183,7 @@ export class IAM extends IAMBase {
     if (this._walletConnectProvider) {
       return this._walletConnectProvider.connected;
     }
-    if (this._address) {
-      return true;
-    }
-    return false;
+    return !!this._address;
   }
 
   // DID DOCUMENT
@@ -203,11 +200,10 @@ export class IAM extends IAMBase {
   }: { did?: string; includeClaims?: boolean } | undefined = {}): Promise<IDIDDocument | null> {
     if (this._cacheClient && did) {
       try {
-        const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
-        return didDoc;
+        return this._cacheClient.getDidDocument({ did, includeClaims });
       } catch (err) {
         if (err.message === "Request failed with status code 404") {
-          this._cacheClient.addDIDToWatchList({ did });
+          await this._cacheClient.addDIDToWatchList({ did });
           if (this._resolver) {
             const document = await this._resolver.read(did);
             if (includeClaims) {
@@ -636,45 +632,29 @@ export class IAM extends IAMBase {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
 
-    const apps = this._cacheClient
-      ? await this.getAppsByOrgNamespace({ namespace })
-      : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
-    if (apps && apps.length > 0) {
-      throw new Error("You are not able to change ownership of organization with registered apps");
-    }
-
-    const [label, ...rest] = namespace.split(".");
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
-        next: () => this.changeSubdomainOwner({ newOwner, namespace: rest.join("."), label }),
+        next: () => this.changeDomainOwner({ newOwner, namespace }),
         info: `Changing ownership of ${namespace}`
       },
       {
         next: () =>
-          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Application }),
+          this.changeDomainOwner({
+            newOwner,
+            namespace: `${ENSNamespaceTypes.Application}.${namespace}`
+          }),
         info: `Changing ownership of ${ENSNamespaceTypes.Application}.${namespace}`
       },
       {
         next: () =>
-          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Roles }),
+          this.changeDomainOwner({
+            newOwner,
+            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`
+          }),
         info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
       }
     ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.changeSubdomainOwner({
-            label: role,
-            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`,
-            newOwner
-          }),
-        info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
-    }
+
     const reversedSteps = steps.reverse();
     if (returnSteps) {
       return reversedSteps;
@@ -709,6 +689,7 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
+
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
         next: () => this.changeDomainOwner({ newOwner, namespace }),
@@ -723,18 +704,7 @@ export class IAM extends IAMBase {
         info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
       }
     ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.changeDomainOwner({
-            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`,
-            newOwner
-          }),
-        info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
-    }
+
     const reversedSteps = steps.reverse();
     if (returnSteps) {
       return reversedSteps;
@@ -760,8 +730,7 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    const [label, ...rest] = namespace.split(".");
-    await this.changeSubdomainOwner({ label, namespace: rest.join("."), newOwner });
+    await this.changeDomainOwner({ namespace, newOwner });
   }
 
   /**
@@ -781,6 +750,7 @@ export class IAM extends IAMBase {
       namespace,
       type: ENSNamespaceTypes.Organization
     });
+
     if (notOwnedNamespaces.length > 0) {
       throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
@@ -793,32 +763,31 @@ export class IAM extends IAMBase {
     if (apps && apps.length > 0) {
       throw new Error("You are not able to remove organization with registered apps");
     }
+
+    const roles = this._cacheClient
+      ? await this._cacheClient.getOrganizationRoles({ namespace })
+      : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
+
+    if (roles && roles.length > 0) {
+      throw new Error("You are not able to remove organization with registered roles");
+    }
+
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
-        next: () => this.deleteSubdomain({ namespace }),
+        next: () => this.deleteDomain({ namespace }),
         info: `Deleting ${namespace}`
       },
       {
         next: () =>
-          this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Application}.${namespace}` }),
+          this.deleteDomain({ namespace: `${ENSNamespaceTypes.Application}.${namespace}` }),
         info: `Deleting ${ENSNamespaceTypes.Application}.${namespace}`
       },
       {
-        next: () => this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
+        next: () => this.deleteDomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
         info: `Deleting ${ENSNamespaceTypes.Roles}.${namespace}`
       }
     ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.deleteSubdomain({
-            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-          }),
-        info: `Deleting ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
-    }
+
     const reversedSteps = steps.reverse();
     if (returnSteps) {
       return reversedSteps;
@@ -850,27 +819,26 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
+
+    const roles = this._cacheClient
+      ? await this._cacheClient.getApplicationRoles({ namespace })
+      : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
+
+    if (roles && roles.length > 0) {
+      throw new Error("You are not able to remove organization with registered roles");
+    }
+
     const steps: { next: () => Promise<void>; info: string }[] = [
       {
-        next: () => this.deleteSubdomain({ namespace }),
+        next: () => this.deleteDomain({ namespace }),
         info: `Deleting ${namespace}`
       },
       {
-        next: () => this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
+        next: () => this.deleteDomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
         info: `Deleting ${ENSNamespaceTypes.Roles}.${namespace}`
       }
     ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.deleteSubdomain({
-            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-          }),
-        info: `Deleting ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
-    }
+
     const reversedSteps = steps.reverse();
     if (returnSteps) {
       return reversedSteps;
@@ -896,7 +864,7 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    await this.deleteSubdomain({ namespace });
+    await this.deleteDomain({ namespace });
   }
 
   /**
@@ -1102,9 +1070,8 @@ export class IAM extends IAMBase {
   async validateOwnership({ namespace, type }: { namespace: string; type: ENSNamespaceTypes }) {
     if (this._address) {
       if (type === ENSNamespaceTypes.Roles) {
-        const [, ...parentDomain] = namespace.split(".");
-        const owner = await this.getOwner({ namespace: parentDomain.join(".") });
-        return owner === this._address ? [] : [parentDomain.join(".")];
+        const owner = await this.getOwner({ namespace });
+        return owner === this._address || owner === emptyAddress ? [] : [namespace];
       }
       if (type === ENSNamespaceTypes.Application) {
         const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
@@ -1112,7 +1079,7 @@ export class IAM extends IAMBase {
         const notOwnedNamespaces = await Promise.all(
           namespaces.map(async namespace => {
             const owner = await this.getOwner({ namespace });
-            if (owner !== this._address) {
+            if (owner !== this._address && owner !== emptyAddress) {
               return namespace;
             }
             return null;
@@ -1121,14 +1088,13 @@ export class IAM extends IAMBase {
         return (notOwnedNamespaces.filter(Boolean) as any) as string[];
       }
       if (type === ENSNamespaceTypes.Organization) {
-        const [, ...iamNamespace] = namespace.split(".");
         const rolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
         const appsNamespace = `${ENSNamespaceTypes.Application}.${namespace}`;
-        const namespaces = [iamNamespace.join("."), rolesNamespace, appsNamespace, namespace];
+        const namespaces = [rolesNamespace, appsNamespace, namespace];
         const notOwnedNamespaces = await Promise.all(
           namespaces.map(async namespace => {
             const owner = await this.getOwner({ namespace });
-            if (owner !== this._address) {
+            if (owner !== this._address && owner !== emptyAddress) {
               return namespace;
             }
             return null;
