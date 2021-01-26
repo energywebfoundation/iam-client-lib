@@ -16,8 +16,9 @@
 
 import { IAM, ENSNamespaceTypes, NATS_EXCHANGE_TOPIC } from "./iam";
 import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
-import { MessagingMethod } from './iam/iam-base';
+import { MessagingMethod, ERROR_MESSAGES } from './iam/iam-base';
 import { WalletProvider } from "./types/WalletProvider";
+
 import {
   IApp,
   IAppDefinition,
@@ -37,13 +38,21 @@ import {
 // MAIN
 export { IAM };
 
-
 // CONSTANTS
 
 export { NATS_EXCHANGE_TOPIC };
 
 // ENUMS
-export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSNamespaceTypes, MessagingMethod, WalletProvider };
+export {
+  DIDAttribute,
+  Encoding,
+  Algorithms,
+  PubKeyType,
+  ENSNamespaceTypes,
+  MessagingMethod,
+  ERROR_MESSAGES,
+  WalletProvider
+};
 
 // CACHE CLIENT
 export {

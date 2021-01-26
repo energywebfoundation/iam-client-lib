@@ -45,6 +45,9 @@ export interface IOrganization {
   namespace: string;
   owner: string;
   definition: IOrganizationDefinition;
+  apps?: IApp[];
+  roles?: IRole[];
+  subOrgs?: IOrganization[];
 }
 
 export interface IApp {
@@ -53,6 +56,7 @@ export interface IApp {
   namespace: string;
   owner: string;
   definition: IAppDefinition;
+  roles?: IRole[];
 }
 
 export interface Claim {
@@ -67,4 +71,5 @@ export interface Claim {
   createdAt: string;
   parentNamespace: string;
   acceptedBy?: string;
+  isRejected?: boolean;
 }
