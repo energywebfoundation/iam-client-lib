@@ -84,11 +84,13 @@ export class IAM extends IAMBase {
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
-          chainId?: string;
-        }
+        request: any;
+      }
       | undefined;
-    const metamaskChainId = parseInt(provider?.chainId || "", 16);
-    return metamaskChainId === VOLTA_CHAIN_ID;
+    const chainId = await provider?.request({
+      method: 'eth_chainId'
+    });
+    return parseInt(chainId, 16) === VOLTA_CHAIN_ID;
   }
   // GETTERS
 
