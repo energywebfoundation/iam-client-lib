@@ -27,7 +27,7 @@ import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
 import { Owner as IdentityOwner } from "../signer/Signer";
-import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
+import { arrayify, computeAddress, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
 import { WalletProvider } from "../types/WalletProvider";
 
 const { hexlify, bigNumberify, Interface } = utils;
@@ -306,17 +306,25 @@ export class IAMBase {
     }
   }
 
-  private async getPublicKey() {
+  private async getPublicKey(): Promise<string> {
     if (this._signer) {
       const address = await this._signer.getAddress();
       const hash = keccak256(address);
-      const digest = hashMessage(arrayify(hash));
-      if (((this._signer?.provider as any)?.provider as WalletConnectProvider)?.isWalletConnect) {
-        const sig = await this._signer.signMessage(arrayify(digest));
-        return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
-      }
       const sig = await this._signer.signMessage(arrayify(hash));
-      return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+
+      // Computation of the digest in order to recover the public key under the
+      // assumption that signer was made as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
+      const digest = hashMessage(arrayify(hash));
+      const publicKey_digest = recoverPublicKey(digest, sig);
+      if (address === computeAddress(publicKey_digest)) {
+        return computePublicKey(publicKey_digest, true).slice(2);
+      }
+
+      // In the event that the wallet isn't hashing message as per spec, attempt recovery without digest
+      const publicKey_hash = recoverPublicKey(hash, sig);
+      if (address === computeAddress(publicKey_hash)) {
+        return computePublicKey(publicKey_hash, true).slice(2);
+      }
     }
     throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
