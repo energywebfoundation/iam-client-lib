@@ -35,7 +35,6 @@ export const appsTests = () => {
       privateKey: newOwner.privateKey
     });
     await newOwnerIam.initializeConnection({
-      useMetamaskExtension: false,
       reinitializeMetamask: false
     });
 

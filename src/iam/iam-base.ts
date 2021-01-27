@@ -43,7 +43,9 @@ export enum ERROR_MESSAGES {
   PROVIDER_NOT_INITIALIZED = "Provider not initialized",
   DID_DOCUMENT_NOT_INITIALIZED = "DID document not initialized",
   ENS_TYPE_NOT_SUPPORTED = "ENS type not supported",
-  USER_NOT_LOGGED_IN = "User not logged in"
+  USER_NOT_LOGGED_IN = "User not logged in",
+  WALLET_PROVIDER_NOT_SUPPORTED = "Wallet provider must be a supported value",
+  WALLET_TYPE_NOT_PROVIDED = "A wallet provider type or a private key must be provided"
 }
 
 export enum MessagingMethod {
@@ -173,16 +175,14 @@ export class IAMBase {
   // INITIAL
 
   protected async init({
-    useMetamask,
     initializeMetamask,
     walletProvider: walletProvider
   }: {
-    useMetamask?: boolean;
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
   }) {
     
-    await this.setupProvider({ useMetamask, initializeMetamask, walletProvider });
+    await this.setupProvider({ initializeMetamask, walletProvider });
     const signerChainId = (await this._signer?.provider?.getNetwork())?.chainId;
     if (signerChainId !== VOLTA_CHAIN_ID) {
       throw new Error(ERROR_MESSAGES.NOT_CONNECTED_TO_VOLTA);
@@ -210,7 +210,6 @@ export class IAMBase {
   }
 
   private async setupProvider({
-    useMetamask,
     initializeMetamask,
     walletProvider
   }: {
@@ -234,7 +233,7 @@ export class IAMBase {
       const metamaskProvider = (await detectMetamask({
         mustBeMetaMask: true
       })) as any;
-      if (metamaskProvider && (walletProvider === WalletProvider.MetaMask || useMetamask)) {
+      if (metamaskProvider && walletProvider === WalletProvider.MetaMask) {
         if (initializeMetamask) {
           await metamaskProvider.request({
             method: "wallet_requestPermissions",

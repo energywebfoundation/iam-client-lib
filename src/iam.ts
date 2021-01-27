@@ -125,23 +125,19 @@ export class IAM extends IAMBase {
    */
   async initializeConnection(
     {
-      useMetamaskExtension,
-      reinitializeMetamask,
-      walletProvider
-    }: { useMetamaskExtension?: boolean; reinitializeMetamask?: boolean, walletProvider?: WalletProvider } = {
+      walletProvider,
+      reinitializeMetamask
+    }: { walletProvider?: WalletProvider, reinitializeMetamask?: boolean } = {
     }
   ): Promise<InitializeData> {
+    if (!walletProvider && !this._connectionOptions.privateKey) {
+      throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED)
+    }
+    if (walletProvider && !Object.values(WalletProvider).includes(walletProvider)) {
+      throw new Error(ERROR_MESSAGES.WALLET_PROVIDER_NOT_SUPPORTED)
+    }
     try {
-      // Deprecated warning below can be removed after param is removed
-      if (useMetamaskExtension !== undefined) {
-        console.warn("Use of useMetamaskExtension parameter is deprecated. Use walletProvider enumeration instead.")
-      } else {
-        // if useMetamaskExtenion is undefined, set to false so that it has a "default" value
-        useMetamaskExtension = false;
-      }
-
       await this.init({
-        useMetamask: useMetamaskExtension,
         initializeMetamask: reinitializeMetamask,
         walletProvider
       });
