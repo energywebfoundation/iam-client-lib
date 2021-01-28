@@ -27,8 +27,8 @@ import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
 import { Owner as IdentityOwner } from "../signer/Signer";
-import { computeAddress, computePublicKey, getAddress, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
 import { WalletProvider } from "../types/WalletProvider";
+import { SignerFactory } from "../signer/SignerFactory";
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
@@ -221,13 +221,7 @@ export class IAMBase {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
-      const publicKey = await this.getPublicKey();
-      this._didSigner = new IdentityOwner(
-        this._signer,
-        this._provider,
-        publicKey,
-        this._connectionOptions.privateKey
-      );
+      this._didSigner = await SignerFactory.create(this._signer, this._provider, this._connectionOptions.privateKey);
       return;
     }
     if (this._runningInBrowser) {
@@ -266,8 +260,7 @@ export class IAMBase {
         }
         const provider = new providers.Web3Provider(metamaskProvider);
         this._signer = provider.getSigner();
-        const publicKey = await this.getPublicKey();
-        this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
+        this._didSigner = await SignerFactory.create(this._signer, this._provider)
         return;
       }
       this._transactionOverrides = {
@@ -301,32 +294,8 @@ export class IAMBase {
 
       await this._walletConnectProvider.enable();
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-      const publicKey = await this.getPublicKey();
-      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
+      this._didSigner = await SignerFactory.create(this._signer, this._provider)
     }
-  }
-
-  private async getPublicKey(): Promise<string> {
-    if (this._signer) {
-      const address = await this._signer.getAddress();
-      const message = address;
-      const sig = await this._signer.signMessage(message);
-      const recoverValidatedPublicKey = (signedMessage: string): string|undefined => {
-        const publicKey = recoverPublicKey(signedMessage, sig);
-        if (getAddress(address) === getAddress(computeAddress(publicKey))) {
-          return computePublicKey(publicKey, true).slice(2);
-        }
-        return undefined;
-      }
-
-      // Computation of the digest in order to recover the public key under the assumption
-      // that signature was performed as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
-      // In the event that the wallet isn't prefixing & hashing message as per spec, attempt recovery without digest
-      const digest = hashMessage(message);
-      const publicKey = recoverValidatedPublicKey(digest) ?? recoverValidatedPublicKey(message);
-      if (publicKey) return publicKey;
-    }
-    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
   private async setAddress() {
