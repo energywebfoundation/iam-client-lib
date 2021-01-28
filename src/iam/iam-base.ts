@@ -27,7 +27,7 @@ import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
 import { Owner as IdentityOwner } from "../signer/Signer";
-import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
+import { computeAddress, computePublicKey, getAddress, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
 import { WalletProvider } from "../types/WalletProvider";
 
 const { hexlify, bigNumberify, Interface } = utils;
@@ -306,17 +306,25 @@ export class IAMBase {
     }
   }
 
-  private async getPublicKey() {
+  private async getPublicKey(): Promise<string> {
     if (this._signer) {
       const address = await this._signer.getAddress();
-      const hash = keccak256(address);
-      const digest = hashMessage(arrayify(hash));
-      if (((this._signer?.provider as any)?.provider as WalletConnectProvider)?.isWalletConnect) {
-        const sig = await this._signer.signMessage(arrayify(digest));
-        return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+      const message = address;
+      const sig = await this._signer.signMessage(message);
+      const recoverValidatedPublicKey = (signedMessage: string): string|undefined => {
+        const publicKey = recoverPublicKey(signedMessage, sig);
+        if (getAddress(address) === getAddress(computeAddress(publicKey))) {
+          return computePublicKey(publicKey, true).slice(2);
+        }
+        return undefined;
       }
-      const sig = await this._signer.signMessage(arrayify(hash));
-      return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+
+      // Computation of the digest in order to recover the public key under the assumption
+      // that signature was performed as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
+      // In the event that the wallet isn't prefixing & hashing message as per spec, attempt recovery without digest
+      const digest = hashMessage(message);
+      const publicKey = recoverValidatedPublicKey(digest) ?? recoverValidatedPublicKey(message);
+      if (publicKey) return publicKey;
     }
     throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
