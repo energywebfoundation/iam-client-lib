@@ -5,7 +5,7 @@ import { ERROR_MESSAGES } from "../iam/iam-base";
 import { Owner } from "./Signer";
 
 export class SignerFactory {
-  static async create(signer: Signer, provider: Provider, privateKey?: string) {
+  static async create(signer: Signer, provider: Provider, privateKey?: string): Promise<Owner> {
     const publicKey = await this.getPublicKey(signer);
     return new Owner(
       signer,
