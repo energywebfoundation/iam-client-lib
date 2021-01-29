@@ -27,7 +27,8 @@ import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
 import { Owner as IdentityOwner } from "../signer/Signer";
-import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
+import { WalletProvider } from "../types/WalletProvider";
+import { SignerFactory } from "../signer/SignerFactory";
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
@@ -43,6 +44,8 @@ export enum ERROR_MESSAGES {
   DID_DOCUMENT_NOT_INITIALIZED = "DID document not initialized",
   ENS_TYPE_NOT_SUPPORTED = "ENS type not supported",
   USER_NOT_LOGGED_IN = "User not logged in",
+  WALLET_PROVIDER_NOT_SUPPORTED = "Wallet provider must be a supported value",
+  WALLET_TYPE_NOT_PROVIDED = "A wallet provider type or a private key must be provided",
   ENS_REGISTRY_CONTRACT_NOT_INITIALIZED = "ENS Registry contract not initialized"
 }
 
@@ -65,6 +68,7 @@ type ConnectionOptions = {
   natsServerUrl?: string;
   cacheClient?: ICacheServerClient;
   privateKey?: string;
+  ewKeyManagerUrl?: string;
 };
 
 export const emptyAddress = "0x0000000000000000000000000000000000000000";
@@ -110,6 +114,8 @@ export class IAMBase {
   protected _natsConnection: NatsConnection | undefined;
   protected _jsonCodec: Codec<any> | undefined;
 
+  private readonly _ewKeyManagerUrl: string;
+
   /**
    * IAM Constructor
    *
@@ -131,7 +137,8 @@ export class IAMBase {
     natsServerUrl,
     bridgeUrl = "https://walletconnect.energyweb.org",
     privateKey,
-    didContractAddress = VoltaAddress1056
+    didContractAddress = VoltaAddress1056,
+    ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new"
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
     this._ensRegistryAddress = ensRegistryAddress;
@@ -162,18 +169,21 @@ export class IAMBase {
       this._natsServerUrl = natsServerUrl;
       this._jsonCodec = JSONCodec();
     }
+
+    this._ewKeyManagerUrl = ewKeyManagerUrl;
   }
 
   // INITIAL
 
   protected async init({
-    useMetamask,
-    initializeMetamask
+    initializeMetamask,
+    walletProvider: walletProvider
   }: {
-    useMetamask: boolean;
     initializeMetamask?: boolean;
+    walletProvider?: WalletProvider;
   }) {
-    await this.setupProvider({ useMetamask, initializeMetamask });
+    
+    await this.setupProvider({ initializeMetamask, walletProvider });
     const signerChainId = (await this._signer?.provider?.getNetwork())?.chainId;
     if (signerChainId !== VOLTA_CHAIN_ID) {
       throw new Error(ERROR_MESSAGES.NOT_CONNECTED_TO_VOLTA);
@@ -201,29 +211,24 @@ export class IAMBase {
   }
 
   private async setupProvider({
-    useMetamask,
-    initializeMetamask
+    initializeMetamask,
+    walletProvider
   }: {
-    useMetamask: boolean;
+    useMetamask?: boolean;
     initializeMetamask?: boolean;
+    walletProvider?: WalletProvider;
   }) {
     this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
     if (this._connectionOptions.privateKey) {
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
-      const publicKey = await this.getPublicKey();
-      this._didSigner = new IdentityOwner(
-        this._signer,
-        this._provider,
-        publicKey,
-        this._connectionOptions.privateKey
-      );
+      this._didSigner = await SignerFactory.create(this._signer, this._provider, this._connectionOptions.privateKey);
       return;
     }
     if (this._runningInBrowser) {
       const metamaskProvider = (await detectMetamask({
         mustBeMetaMask: true
       })) as any;
-      if (metamaskProvider && useMetamask) {
+      if (metamaskProvider && walletProvider === WalletProvider.MetaMask) {
         if (initializeMetamask) {
           await metamaskProvider.request({
             method: "wallet_requestPermissions",
@@ -255,41 +260,42 @@ export class IAMBase {
         }
         const provider = new providers.Web3Provider(metamaskProvider);
         this._signer = provider.getSigner();
-        const publicKey = await this.getPublicKey();
-        this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
+        this._didSigner = await SignerFactory.create(this._signer, this._provider)
         return;
       }
       this._transactionOverrides = {
         gasLimit: hexlify(4900000),
         gasPrice: hexlify(0.1)
       };
+
+      // Don't show QR code if using KeyManager because we send user directly to app instead
+      const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
+
       this._walletConnectProvider = new WalletConnectProvider({
         rpc: {
           [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
         },
         infuraId: this._connectionOptions.infuraId,
-        bridge: this._connectionOptions.bridgeUrl
+        bridge: this._connectionOptions.bridgeUrl,
+        qrcode: showQRCode
       });
+
+      if (walletProvider === WalletProvider.EwKeyManager) {
+        this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
+          // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
+          const wcUri = payload.params[0];
+          
+          const encoded = encodeURIComponent(wcUri);
+          const hasQueryString = this._ewKeyManagerUrl.includes("?");
+          const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
+          window.open(url, '_blank');
+        });
+      }
+
       await this._walletConnectProvider.enable();
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-      const publicKey = await this.getPublicKey();
-      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
+      this._didSigner = await SignerFactory.create(this._signer, this._provider)
     }
-  }
-
-  private async getPublicKey() {
-    if (this._signer) {
-      const address = await this._signer.getAddress();
-      const hash = keccak256(address);
-      const digest = hashMessage(arrayify(hash));
-      if (((this._signer?.provider as any)?.provider as WalletConnectProvider)?.isWalletConnect) {
-        const sig = await this._signer.signMessage(arrayify(digest));
-        return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
-      }
-      const sig = await this._signer.signMessage(arrayify(hash));
-      return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
-    }
-    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
   private async setAddress() {

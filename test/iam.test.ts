@@ -5,6 +5,7 @@ import { deployContracts, ensRegistry, ensResolver, didContract } from "./setup_
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
+import { initializeConnectionTests } from "./initializeConnection.testSuite";
 
 export const rootOwner = new Keys();
 const { privateKey } = rootOwner;
@@ -12,12 +13,14 @@ const { privateKey } = rootOwner;
 export const root = "root";
 export let iam: IAM;
 
+export const rpcUrl = "http://localhost:8544/";
+
 describe("IAM tests", function() {
   beforeAll(async function() {
     await deployContracts(privateKey);
 
     iam = new IAM({
-      rpcUrl: "http://localhost:8544/",
+      rpcUrl,
       chainId: 73799,
       ensRegistryAddress: ensRegistry.address,
       ensResolverAddress: ensResolver.address,
@@ -26,7 +29,6 @@ describe("IAM tests", function() {
     });
     try {
       await iam.initializeConnection({
-        useMetamaskExtension: false,
         reinitializeMetamask: false
       });
     } catch (e) {
@@ -62,4 +64,5 @@ describe("IAM tests", function() {
 
   describe("Organization tests", () => orgTests());
   describe("Apllication tests", () => appsTests());
+  describe("InitializeConnection tests", () => initializeConnectionTests());
 });

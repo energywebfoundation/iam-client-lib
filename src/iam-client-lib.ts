@@ -16,7 +16,9 @@
 
 import { IAM, ENSNamespaceTypes, NATS_EXCHANGE_TOPIC } from "./iam";
 import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
-import { MessagingMethod, ERROR_MESSAGES } from "./iam/iam-base";
+import { MessagingMethod, ERROR_MESSAGES } from './iam/iam-base';
+import { WalletProvider } from "./types/WalletProvider";
+
 import {
   IApp,
   IAppDefinition,
@@ -48,7 +50,8 @@ export {
   PubKeyType,
   ENSNamespaceTypes,
   MessagingMethod,
-  ERROR_MESSAGES
+  ERROR_MESSAGES,
+  WalletProvider
 };
 
 // CACHE CLIENT

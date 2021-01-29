@@ -42,6 +42,7 @@ import {
   IRoleDefinition
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
+import { WalletProvider } from "./types/WalletProvider";
 
 type InitializeData = {
   did: string | undefined;
@@ -126,16 +127,21 @@ export class IAM extends IAMBase {
    */
   async initializeConnection(
     {
-      useMetamaskExtension,
+      walletProvider,
       reinitializeMetamask
-    }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
-      useMetamaskExtension: false
+    }: { walletProvider?: WalletProvider, reinitializeMetamask?: boolean } = {
     }
   ): Promise<InitializeData> {
+    if (!walletProvider && !this._connectionOptions.privateKey) {
+      throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED)
+    }
+    if (walletProvider && !Object.values(WalletProvider).includes(walletProvider)) {
+      throw new Error(ERROR_MESSAGES.WALLET_PROVIDER_NOT_SUPPORTED)
+    }
     try {
       await this.init({
-        useMetamask: useMetamaskExtension,
-        initializeMetamask: reinitializeMetamask
+        initializeMetamask: reinitializeMetamask,
+        walletProvider
       });
     } catch (err) {
       if (err.message === "User closed modal") {
