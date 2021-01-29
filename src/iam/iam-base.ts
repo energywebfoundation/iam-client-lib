@@ -45,7 +45,8 @@ export enum ERROR_MESSAGES {
   ENS_TYPE_NOT_SUPPORTED = "ENS type not supported",
   USER_NOT_LOGGED_IN = "User not logged in",
   WALLET_PROVIDER_NOT_SUPPORTED = "Wallet provider must be a supported value",
-  WALLET_TYPE_NOT_PROVIDED = "A wallet provider type or a private key must be provided"
+  WALLET_TYPE_NOT_PROVIDED = "A wallet provider type or a private key must be provided",
+  ENS_REGISTRY_CONTRACT_NOT_INITIALIZED = "ENS Registry contract not initialized"
 }
 
 export enum MessagingMethod {
@@ -502,7 +503,7 @@ export class IAMBase {
         fromBlock: 0,
         toBlock: "latest",
         address: Event.address,
-        topics: [...(Event.topics as string[])]
+        topics: Event.topics || []
       };
       const logs = await this._provider.getLogs(filter);
       const rawLogs = logs.map(log => {
@@ -559,6 +560,30 @@ export class IAMBase {
       return;
     }
     throw new MethodNotAvailableInNodeEnvError("deleteSubdomain");
+  }
+
+  protected async deleteDomain({ namespace }: { namespace: string }) {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+    if (!this._ensRegistry) {
+      throw new Error(ERROR_MESSAGES.ENS_REGISTRY_CONTRACT_NOT_INITIALIZED);
+    }
+    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
+    const hash = namehash(namespace);
+    const ttl = bigNumberify(0);
+
+    const tx = await ensRegistryWithSigner.setRecord(
+      hash,
+      emptyAddress,
+      emptyAddress,
+      ttl,
+      this._transactionOverrides
+    );
+
+    await tx.wait();
+
+    return;
   }
 
   protected async getOwner({ namespace }: { namespace: string }) {
