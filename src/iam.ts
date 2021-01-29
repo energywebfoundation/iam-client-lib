@@ -26,7 +26,7 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { emptyAddress, ERROR_MESSAGES, IAMBase, VOLTA_CHAIN_ID } from "./iam/iam-base";
+import { IAMBase, emptyAddress, VOLTA_CHAIN_ID } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
@@ -34,7 +34,8 @@ import {
   ENSRegistryNotInitializedError,
   ENSResolverNotInitializedError,
   ENSTypeNotSupportedError,
-  NATSConnectionNotEstablishedError
+  NATSConnectionNotEstablishedError,
+  ERROR_MESSAGES
 } from "./errors";
 import {
   IAppDefinition,
@@ -85,11 +86,11 @@ export class IAM extends IAMBase {
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
-        request: any;
-      }
+          request: any;
+        }
       | undefined;
     const chainId = await provider?.request({
-      method: 'eth_chainId'
+      method: "eth_chainId"
     });
     return parseInt(chainId, 16) === VOLTA_CHAIN_ID;
   }
@@ -125,18 +126,17 @@ export class IAM extends IAMBase {
    *
    * @returns did string, status of connection and info if the user closed the wallet selection modal
    */
-  async initializeConnection(
-    {
-      walletProvider,
-      reinitializeMetamask
-    }: { walletProvider?: WalletProvider, reinitializeMetamask?: boolean } = {
-    }
-  ): Promise<InitializeData> {
+  async initializeConnection({
+    walletProvider,
+    reinitializeMetamask
+  }: { walletProvider?: WalletProvider; reinitializeMetamask?: boolean } = {}): Promise<
+    InitializeData
+  > {
     if (!walletProvider && !this._connectionOptions.privateKey) {
-      throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED)
+      throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
     }
     if (walletProvider && !Object.values(WalletProvider).includes(walletProvider)) {
-      throw new Error(ERROR_MESSAGES.WALLET_PROVIDER_NOT_SUPPORTED)
+      throw new Error(ERROR_MESSAGES.WALLET_PROVIDER_NOT_SUPPORTED);
     }
     try {
       await this.init({
@@ -725,7 +725,7 @@ export class IAM extends IAMBase {
   /**
    * changeRoleOwnership
    *
-   * @description change owner ship of role subdomain
+   * @description change ownership of role subdomain
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {

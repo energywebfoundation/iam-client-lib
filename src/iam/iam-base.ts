@@ -19,14 +19,13 @@ import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import {
   ENSRegistryNotInitializedError,
   ENSResolverNotInitializedError,
-  MethodNotAvailableInNodeEnvError
+  ERROR_MESSAGES
 } from "../errors";
 import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { Provider } from "ethers/providers";
-import base64url from "base64url";
 import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
@@ -35,20 +34,6 @@ const { hexlify, bigNumberify, Interface } = utils;
 const { abi: abi1056 } = ethrReg;
 
 export const VOLTA_CHAIN_ID = 73799;
-
-export enum ERROR_MESSAGES {
-  SIGNER_NOT_INITIALIZED = "Signer not initialized",
-  NOT_CONNECTED_TO_VOLTA = "Not connected to volta network",
-  CLAIMS_NOT_INITIALIZED = "User claims not initialized",
-  JWT_NOT_INITIALIZED = "JWT was not initialized",
-  PROVIDER_NOT_INITIALIZED = "Provider not initialized",
-  DID_DOCUMENT_NOT_INITIALIZED = "DID document not initialized",
-  ENS_TYPE_NOT_SUPPORTED = "ENS type not supported",
-  USER_NOT_LOGGED_IN = "User not logged in",
-  WALLET_PROVIDER_NOT_SUPPORTED = "Wallet provider must be a supported value",
-  WALLET_TYPE_NOT_PROVIDED = "A wallet provider type or a private key must be provided",
-  ENS_REGISTRY_CONTRACT_NOT_INITIALIZED = "ENS Registry contract not initialized"
-}
 
 export enum MessagingMethod {
   CacheServer = "cacheServer",
@@ -214,19 +199,16 @@ export class IAMBase {
     walletProvider?: WalletProvider;
   }) {
     if (!this._provider) {
-      throw new Error("Initialization of singer failed due to no provider");
+      throw new Error(ERROR_MESSAGES.NO_PROVIDER);
     }
+
+    if (!this._runningInBrowser && !this._connectionOptions.privateKey) {
+      throw new Error(ERROR_MESSAGES.NO_PRIVATE_KEY);
+    }
+
     if (this._connectionOptions.privateKey) {
       this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
-      this._didSigner = await SignerFactory.create(
-        this._signer,
-        this._provider,
-        this._connectionOptions.privateKey
-      );
       return;
-    }
-    if (!this._runningInBrowser) {
-      throw new Error("Initialization of signer not possible in nodejs env without private key ");
     }
 
     const metamaskProvider: any = await detectMetamask({
@@ -262,8 +244,7 @@ export class IAMBase {
           ]
         });
       }
-      const provider = new providers.Web3Provider(metamaskProvider);
-      this._signer = provider.getSigner();
+      this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
       return;
     }
     this._transactionOverrides = {
@@ -296,27 +277,6 @@ export class IAMBase {
 
     await this._walletConnectProvider.enable();
     this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-  }
-
-  private async generateIdentityProof() {
-    if (this._signer) {
-      const header = {
-        alg: "ES256",
-        typ: "JWT"
-      };
-      const encodedHeader = base64url(JSON.stringify(header));
-      const address = await this._signer.getAddress();
-      const payload = {
-        iss: `did:ethr:${address}`,
-        claimData: {
-          blockNumber: await this._provider?.getBlockNumber()
-        }
-      };
-
-      const encodedPayload = base64url(JSON.stringify(payload));
-      return { encodedHeader, encodedPayload };
-    }
-    throw Error("Signer not initialized");
   }
 
   private async loginToCacheServer(token: string) {
@@ -535,26 +495,29 @@ export class IAMBase {
   }
 
   protected async deleteSubdomain({ namespace }: { namespace: string }) {
-    if (this._signer && this._ensRegistry) {
-      const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-      const namespaceArray = namespace.split(".");
-      const label = namespaceArray[0];
-      const node = namespaceArray.slice(1).join(".");
-      const labelHash = labelhash(label);
-      const nodeHash = namehash(node);
-      const ttl = bigNumberify(0);
-      const tx = await ensRegistryWithSigner.setSubnodeRecord(
-        nodeHash,
-        labelHash,
-        emptyAddress,
-        emptyAddress,
-        ttl,
-        this._transactionOverrides
-      );
-      await tx.wait();
-      return;
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    throw new MethodNotAvailableInNodeEnvError("deleteSubdomain");
+    if (!this._ensRegistry) {
+      throw new ENSRegistryNotInitializedError();
+    }
+    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
+    const namespaceArray = namespace.split(".");
+    const label = namespaceArray[0];
+    const node = namespaceArray.slice(1).join(".");
+    const labelHash = labelhash(label);
+    const nodeHash = namehash(node);
+    const ttl = bigNumberify(0);
+    const tx = await ensRegistryWithSigner.setSubnodeRecord(
+      nodeHash,
+      labelHash,
+      emptyAddress,
+      emptyAddress,
+      ttl,
+      this._transactionOverrides
+    );
+    await tx.wait();
+    return;
   }
 
   protected async deleteDomain({ namespace }: { namespace: string }) {

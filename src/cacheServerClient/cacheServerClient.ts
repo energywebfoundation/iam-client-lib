@@ -77,8 +77,8 @@ export class CacheServerClient implements ICacheServerClient {
     });
   }
 
-  async login(claim: string) {
-    const { data } = await this.httpClient.post<{ token: string }>("/login", { claim });
+  async login(identityToken: string) {
+    const { data } = await this.httpClient.post<{ token: string }>("/login", { identityToken });
     this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
   }
 
