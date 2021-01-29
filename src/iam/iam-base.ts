@@ -291,7 +291,6 @@ export class IAMBase {
         this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
           // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
           const wcUri = payload.params[0];
-          console.log(wcUri);
           
           const encoded = encodeURIComponent(wcUri);
           const hasQueryString = this._ewKeyManagerUrl.includes("?");
