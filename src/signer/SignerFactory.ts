@@ -36,6 +36,8 @@ export class SignerFactory {
 
       const encodedPayload = base64url(JSON.stringify(payload));
       const token = `0x${Buffer.from(`${encodedHeader}.${encodedPayload}`).toString("hex")}`;
+      // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
+      // keccak256 hash is applied for Metamask to display a coherent hex value when signing
       const message = arrayify(keccak256(token));
       const sig = await signer.signMessage(message);
       const recoverValidatedPublicKey = (signedMessage: Uint8Array): string | undefined => {
