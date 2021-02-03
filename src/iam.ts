@@ -50,6 +50,7 @@ type InitializeData = {
   connected: boolean;
   userClosedModal: boolean;
   didDocument: IDIDDocument | null;
+  identityToken?: string;
 };
 
 export interface IMessage {
@@ -154,13 +155,13 @@ export class IAM extends IAMBase {
       }
       throw new Error(err);
     }
-    const didDocument = await this.getDidDocument();
 
     return {
       did: this.getDid(),
       connected: this.isConnected() || false,
       userClosedModal: false,
-      didDocument
+      didDocument: await this.getDidDocument(),
+      identityToken: this._didSigner?.identityToken
     };
   }
 
