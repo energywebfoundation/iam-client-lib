@@ -337,12 +337,26 @@ export class IAMBase {
 
   private async setupNATS() {
     if (this._natsServerUrl) {
-      let protocol = "ws";
-      if (this._natsServerUrl.indexOf("https://") === 0) {
-        protocol = "wss";
+      try {
+        let protocol = "ws";
+        if (this._natsServerUrl.indexOf("https://") === 0) {
+          protocol = "wss";
+        }
+        const timeout = 3000;
+        // this race condition duplicate timeout is there because unable to catch the error that occurs when NATS.ws timeouts
+        const connection = await Promise.race<NatsConnection | undefined>([
+          connect({
+            servers: `${protocol}://${this._natsServerUrl}`,
+            timeout
+          }),
+          new Promise<undefined>(resolve => setTimeout(resolve, timeout))
+        ]);
+
+        if (!connection) return;
+        this._natsConnection = connection;
+      } catch (err) {
+        console.log(err);
       }
-      this._natsConnection = await connect({ servers: `${protocol}://${this._natsServerUrl}` });
-      console.log(`Nats server connected at ${this._natsConnection.getServer()}`);
     }
   }
 
