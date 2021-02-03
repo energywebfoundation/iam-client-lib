@@ -51,6 +51,7 @@ type InitializeData = {
   userClosedModal: boolean;
   didDocument: IDIDDocument | null;
   identityToken?: string;
+  realtimeExchangeConnected: boolean;
 };
 
 export interface IMessage {
@@ -152,7 +153,8 @@ export class IAM extends IAMBase {
           did: undefined,
           connected: false,
           userClosedModal: true,
-          didDocument: null
+          didDocument: null,
+          realtimeExchangeConnected: false
         };
       }
       throw new Error(err);
@@ -163,7 +165,8 @@ export class IAM extends IAMBase {
       connected: this.isConnected() || false,
       userClosedModal: false,
       didDocument: await this.getDidDocument(),
-      identityToken: this._didSigner?.identityToken
+      identityToken: this._didSigner?.identityToken,
+      realtimeExchangeConnected: Boolean(this._natsConnection)
     };
   }
 
@@ -1221,7 +1224,7 @@ export class IAM extends IAMBase {
     messageHandler: (data: IMessage) => void;
   }) {
     if (!this._natsConnection) {
-      throw new NATSConnectionNotEstablishedError();
+      return;
     }
     const subscription = this._natsConnection.subscribe(topic);
     for await (const msg of subscription) {
