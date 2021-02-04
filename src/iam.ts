@@ -1204,6 +1204,13 @@ export class IAM extends IAMBase {
     this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
   }
 
+  async deleteClaim({ id }: { id: string }) {
+    if (this._cacheClient) {
+      await this._cacheClient.deleteClaim({ claimId: id });
+    }
+    throw new CacheClientNotProvidedError();
+  }
+
   async subscribeToMessages({
     topic = `${this._did}.${NATS_EXCHANGE_TOPIC}`,
     messageHandler
