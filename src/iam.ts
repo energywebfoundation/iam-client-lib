@@ -90,10 +90,12 @@ export class IAM extends IAMBase {
           request: any;
         }
       | undefined;
-    const chainId = await provider?.request({
+
+    const chainId = (await provider?.request({
       method: "eth_chainId"
-    });
-    return parseInt(chainId, 16) === VOLTA_CHAIN_ID;
+    })) as number | undefined;
+
+    return { isMetamaskPresent: !!provider, chainId };
   }
   // GETTERS
 
