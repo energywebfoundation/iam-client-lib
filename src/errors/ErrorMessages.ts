@@ -16,5 +16,8 @@ export enum ERROR_MESSAGES {
   WALLET_PROVIDER_NOT_SUPPORTED = "Wallet provider must be a supported value",
   WALLET_TYPE_NOT_PROVIDED = "A wallet provider type or a private key must be provided",
   ENS_REGISTRY_CONTRACT_NOT_INITIALIZED = "ENS Registry contract not initialized",
-  PUBLIC_KEY_NOT_RECOVERED = "Public key not recovered"
+  PUBLIC_KEY_NOT_RECOVERED = "Public key not recovered",
+  ORG_WITH_APPS = "You are not able to remove organization with registered apps",
+  ORG_WITH_ROLES = "You are not able to remove organization with registered roles",
+  APP_WITH_ROLES = "You are not able to remove application with registered roles"
 }
