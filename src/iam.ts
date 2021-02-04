@@ -395,7 +395,7 @@ export class IAM extends IAMBase {
   async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
     if (this._userClaims) {
       const claim = await this._userClaims.createPublicClaim(data);
-      await this._userClaims.publishPublicClaim(claim, data);
+      return this._userClaims.publishPublicClaim(claim, data);
     }
     throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
