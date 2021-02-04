@@ -57,6 +57,7 @@ export interface ICacheServerClient {
   requestClaim: ({ message, did }: { message: IClaimRequest; did: string }) => Promise<void>;
   issueClaim: ({ message, did }: { message: IClaimIssuance; did: string }) => Promise<void>;
   rejectClaim: ({ message, did }: { message: IClaimRejection; did: string }) => Promise<void>;
+  deleteClaim: ({ claimId }: { claimId: string }) => Promise<void>;
   getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
   getDidDocument: ({
     did,
@@ -205,6 +206,10 @@ export class CacheServerClient implements ICacheServerClient {
 
   async rejectClaim({ message, did }: { message: IClaimRejection; did: string }) {
     await this.httpClient.post<void>(`/claim/reject/${did}`, message);
+  }
+
+  async deleteClaim({ claimId }: { claimId: string }) {
+    await this.httpClient.delete<void>(`/claim/${claimId}`);
   }
 
   async getDIDsForRole({ namespace }: { namespace: string }) {
