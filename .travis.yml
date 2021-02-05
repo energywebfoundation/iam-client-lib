@@ -12,7 +12,7 @@ before_deploy:
     - git fetch origin develop:develop
 
 install:
-  - npm install
+  - npm ci
   - npm run build --prod
 
 script:

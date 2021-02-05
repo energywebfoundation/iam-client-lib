@@ -71,6 +71,8 @@
     "@babel/core": "7.12.10",
     "@babel/plugin-transform-regenerator": "7.12.1",
     "@babel/preset-env": "7.12.11",
+    "@energyweb/km-crypto": "file:energyweb-km-crypto-v1.0.0.tgz",
+    "@energyweb/km-utils": "file:energyweb-km-utils-v1.0.0.tgz",
     "@typechain/ethers-v4": "^1.0.1",
     "@types/jest": "^26.0.13",
     "@types/lodash.difference": "^4.5.6",
