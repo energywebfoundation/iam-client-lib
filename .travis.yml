@@ -29,4 +29,9 @@ deploy:
       script: 'npx semantic-release'
       skip_cleanup: true
       on:
+          branch: fix/npm-publishing
+    - provider: script
+      script: 'npx semantic-release'
+      skip_cleanup: true
+      on:
           branch: master
