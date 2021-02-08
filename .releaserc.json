@@ -5,7 +5,7 @@
       "channel": "latest"
     },
     {
-      "name": "fix/npm-publishing",
+      "name": "develop",
       "prerelease": "alpha",
       "channel": "canary"
     }
