@@ -5,7 +5,14 @@ export interface IRoleDefinition {
   fields: {
     fieldType: string;
     label: string;
-    validation: string;
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    pattern?: string;
+    minValue?: number;
+    maxValue?: number;
+    minDate?: Date;
+    maxDate?: Date;
   }[];
   metadata: Record<string, unknown> | Record<string, unknown>[];
   issuer: {
