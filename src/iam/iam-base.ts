@@ -16,12 +16,12 @@ import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/cacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+import { ERROR_MESSAGES } from "../errors";
 import {
-  ENSRegistryNotInitializedError,
-  ENSResolverNotInitializedError,
-  ERROR_MESSAGES
-} from "../errors";
-import { IAppDefinition, IOrganizationDefinition, IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
+  IAppDefinition,
+  IOrganizationDefinition,
+  IRoleDefinition
+} from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
@@ -64,11 +64,14 @@ export type EncodedCall = {
 };
 
 export type Transaction = {
-  calls: EncodedCall[],
+  calls: EncodedCall[];
   from: string;
-}
+};
 
 export const emptyAddress = "0x0000000000000000000000000000000000000000";
+
+export const WALLET_PROVIDER = "WalletProvider";
+export const PUBLIC_KEY = "PublicKey";
 
 /**
  * @class
@@ -91,6 +94,8 @@ export class IAMBase {
   protected _safeAddress: string | undefined;
   protected _didSigner: IdentityOwner | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
+  protected _providerType: WalletProvider | undefined;
+  protected _publicKey: string | undefined;
 
   protected _registrySetting: RegistrySettings;
   protected _resolver: Resolver | undefined;
@@ -165,6 +170,10 @@ export class IAMBase {
     this._provider = new providers.JsonRpcProvider(rpcUrl);
     this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._provider);
     this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._provider);
+    if (window && window.sessionStorage) {
+      this._providerType = (sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider) || undefined;
+      this._publicKey = sessionStorage.getItem(PUBLIC_KEY) || undefined;
+    }
 
     if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
       this._natsServerUrl = natsServerUrl;
@@ -192,8 +201,13 @@ export class IAMBase {
       await this.setupNATS();
     }
     if (this._signer) {
-      this._didSigner = await SignerFactory.create(this._signer, this._provider);
-      await this.loginToCacheServer(this._didSigner.identityToken);
+      this._didSigner = await SignerFactory.create({
+        provider: this._provider,
+        signer: this._signer,
+        publicKey: this._publicKey
+      });
+      this._didSigner.identityToken &&
+        (await this.loginToCacheServer(this._didSigner.identityToken));
 
       await this.setAddress();
       this.setDid();
@@ -202,6 +216,7 @@ export class IAMBase {
     }
     this.setResolver();
     this.setJWT();
+    this.storeSession();
   }
 
   private async initSigner({
@@ -225,27 +240,21 @@ export class IAMBase {
       return;
     }
 
-    const metamaskProvider: any = await detectMetamask({
-      mustBeMetaMask: true
-    });
-    if (metamaskProvider && walletProvider === WalletProvider.MetaMask) {
-      const requestObject = initializeMetamask
-        ? {
-          method: "wallet_requestPermissions",
-          params: [
-            {
-              eth_accounts: {}
-            }
-          ]
-        }
-        : {
-          method: "eth_accounts",
-          params: [
-            {
-              eth_accounts: {}
-            }
-          ]
-        };
+    if (walletProvider === WalletProvider.MetaMask) {
+      const metamaskProvider: any = await detectMetamask({
+        mustBeMetaMask: true
+      });
+      if (!metamaskProvider) {
+        throw new Error(ERROR_MESSAGES.METAMASK_EXTENSION_NOT_AVAILABLE);
+      }
+      const requestObject = {
+        method: initializeMetamask ? "wallet_requestPermissions" : "eth_accounts",
+        params: [
+          {
+            eth_accounts: {}
+          }
+        ]
+      };
       const accounts: string[] = await metamaskProvider.request(requestObject);
 
       if (!initializeMetamask && accounts.length < 1) {
@@ -259,38 +268,61 @@ export class IAMBase {
         });
       }
       this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
+      this._providerType = walletProvider;
       return;
     }
-    this._transactionOverrides = {
-      gasLimit: hexlify(4900000),
-      gasPrice: hexlify(0.1)
-    };
+    if (
+      walletProvider === WalletProvider.EwKeyManager ||
+      walletProvider === WalletProvider.WalletConnect
+    ) {
+      this._transactionOverrides = {
+        gasLimit: hexlify(4900000),
+        gasPrice: hexlify(0.1)
+      };
 
-    const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
+      const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
 
-    this._walletConnectProvider = new WalletConnectProvider({
-      rpc: {
-        [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
-      },
-      infuraId: this._connectionOptions.infuraId,
-      bridge: this._connectionOptions.bridgeUrl,
-      qrcode: showQRCode
-    });
-
-    if (walletProvider === WalletProvider.EwKeyManager) {
-      this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
-        // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
-        const wcUri = payload.params[0];
-
-        const encoded = encodeURIComponent(wcUri);
-        const hasQueryString = this._ewKeyManagerUrl.includes("?");
-        const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
-        window.open(url, "ew_key_manager");
+      this._walletConnectProvider = new WalletConnectProvider({
+        rpc: {
+          [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
+        },
+        infuraId: this._connectionOptions.infuraId,
+        bridge: this._connectionOptions.bridgeUrl,
+        qrcode: showQRCode
       });
-    }
 
-    await this._walletConnectProvider.enable();
-    this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+      if (walletProvider === WalletProvider.EwKeyManager) {
+        this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
+          // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
+          const wcUri = payload.params[0];
+
+          const encoded = encodeURIComponent(wcUri);
+          const hasQueryString = this._ewKeyManagerUrl.includes("?");
+          const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
+          window.open(url, "_blank");
+        });
+      }
+
+      await this._walletConnectProvider.enable();
+      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+      this._providerType = walletProvider;
+      return;
+    }
+    throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
+  }
+
+  private storeSession() {
+    if (this._runningInBrowser && window && this._didSigner) {
+      sessionStorage.setItem(WALLET_PROVIDER, this._providerType as string);
+      sessionStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
+    }
+  }
+
+  protected clearSession() {
+    if (this._runningInBrowser && window) {
+      sessionStorage.removeItem(WALLET_PROVIDER);
+      sessionStorage.removeItem(PUBLIC_KEY);
+    }
   }
 
   private async loginToCacheServer(token: string) {
@@ -388,9 +420,15 @@ export class IAMBase {
     );
   }
 
-  protected createSubdomainTx(
-    { domain, nodeName, owner = this._address as string }: { domain: string, nodeName: string, owner?: string }
-  ): EncodedCall {
+  protected createSubdomainTx({
+    domain,
+    nodeName,
+    owner = this._address as string
+  }: {
+    domain: string;
+    nodeName: string;
+    owner?: string;
+  }): EncodedCall {
     return {
       to: this._ensRegistryAddress,
       data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
@@ -407,10 +445,7 @@ export class IAMBase {
     const namespaceHash = namehash(domain) as string;
     return {
       to: this._ensResolverAddress,
-      data: this._ensResolver?.interface.functions.setName.encode([
-        namespaceHash,
-        domain
-      ])
+      data: this._ensResolver?.interface.functions.setName.encode([namespaceHash, domain])
     };
   }
 
@@ -433,15 +468,16 @@ export class IAMBase {
     };
   }
 
-  protected changeDomainOwnerTx(
-    { newOwner, namespace }: { newOwner: string, namespace: string }
-  ): EncodedCall {
+  protected changeDomainOwnerTx({
+    newOwner,
+    namespace
+  }: {
+    newOwner: string;
+    namespace: string;
+  }): EncodedCall {
     return {
       to: this._ensRegistryAddress,
-      data: this._ensRegistry.interface.functions.setOwner.encode([
-        namehash(namespace),
-        newOwner
-      ])
+      data: this._ensRegistry.interface.functions.setOwner.encode([namehash(namespace), newOwner])
     };
   }
 
@@ -477,9 +513,6 @@ export class IAMBase {
   }
 
   protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
-    if (!this._ensResolver) {
-      throw new ENSResolverNotInitializedError();
-    }
     const roleHash = namehash(namespace);
     const metadata = await this._ensResolver.text(roleHash, "metadata");
     const definition = JSON.parse(metadata) as IRoleDefinition;
@@ -564,7 +597,12 @@ export class IAMBase {
     }
     await this.send({
       calls: [this.deleteSubdomainTx({ namespace })],
-      from: await this.getOwner({ namespace: namespace.split('.').slice(1).join('') })
+      from: await this.getOwner({
+        namespace: namespace
+          .split(".")
+          .slice(1)
+          .join("")
+      })
     });
   }
 }

@@ -74,13 +74,13 @@ export class CacheServerClient implements ICacheServerClient {
 
   constructor({ url }: { url: string }) {
     this.httpClient = axios.create({
-      baseURL: url
+      baseURL: url,
+      withCredentials: true
     });
   }
 
   async login(identityToken: string) {
-    const { data } = await this.httpClient.post<{ token: string }>("/login", { identityToken });
-    this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    await this.httpClient.post<{ token: string }>("/login", { identityToken });
   }
 
   async getRoleDefinition({ namespace }: { namespace: string }) {

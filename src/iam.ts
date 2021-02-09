@@ -27,7 +27,7 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, emptyAddress } from "./iam/iam-base";
+import { IAMBase, emptyAddress, WALLET_PROVIDER, PUBLIC_KEY } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
@@ -99,6 +99,21 @@ export class IAM extends IAMBase {
 
     return { isMetamaskPresent: !!provider, chainId };
   }
+
+  static isSessionActive() {
+    if (window && window.sessionStorage) {
+      return Boolean(sessionStorage.getItem(PUBLIC_KEY));
+    }
+    return false;
+  }
+
+  static getProviderType() {
+    if (window && window.sessionStorage) {
+      const providerType = sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider | null;
+      return providerType;
+    }
+    return null;
+  }
   // GETTERS
 
   /**
@@ -132,7 +147,7 @@ export class IAM extends IAMBase {
    * @returns did string, status of connection and info if the user closed the wallet selection modal
    */
   async initializeConnection({
-    walletProvider,
+    walletProvider = this._providerType,
     reinitializeMetamask
   }: { walletProvider?: WalletProvider; reinitializeMetamask?: boolean } = {}): Promise<
     InitializeData
@@ -180,9 +195,13 @@ export class IAM extends IAMBase {
   async closeConnection() {
     if (this._walletConnectProvider) {
       await this._walletConnectProvider.close();
-      this._did = undefined;
-      this._address = undefined;
-      this._signer = undefined;
+    }
+    this.clearSession();
+    this._did = undefined;
+    this._address = undefined;
+    this._signer = undefined;
+    if (this._runningInBrowser) {
+      location.reload();
     }
   }
 
@@ -856,7 +875,6 @@ export class IAM extends IAMBase {
     if (returnSteps) {
       return steps;
     }
-
     await this.send({ calls: steps.map(s => s.tx), from });
     return [];
   }

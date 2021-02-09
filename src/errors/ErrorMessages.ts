@@ -19,5 +19,6 @@ export enum ERROR_MESSAGES {
   PUBLIC_KEY_NOT_RECOVERED = "Public key not recovered",
   ORG_WITH_APPS = "You are not able to remove organization with registered apps",
   ORG_WITH_ROLES = "You are not able to remove organization with registered roles",
-  APP_WITH_ROLES = "You are not able to remove application with registered roles"
+  APP_WITH_ROLES = "You are not able to remove application with registered roles",
+  METAMASK_EXTENSION_NOT_AVAILABLE = "Selected Metamask provider but Metamask not available"
 }

@@ -14,8 +14,20 @@ import { ERROR_MESSAGES } from "../errors";
 import { Owner } from "./Signer";
 
 export class SignerFactory {
-  static async create(signer: Signer, provider: Provider, privateKey?: string): Promise<Owner> {
-    const { publicKey, identityToken } = await this.getPublicKeyAndIdentityToken(signer);
+  static async create({
+    signer,
+    provider,
+    privateKey,
+    publicKey: savedPublicKey
+  }: {
+    signer: Signer;
+    provider: Provider;
+    privateKey?: string;
+    publicKey?: string;
+  }): Promise<Owner> {
+    const { publicKey, identityToken } = savedPublicKey
+      ? { publicKey: savedPublicKey, identityToken: undefined }
+      : await this.getPublicKeyAndIdentityToken(signer);
     return new Owner(signer, provider, publicKey, identityToken, privateKey);
   }
 
