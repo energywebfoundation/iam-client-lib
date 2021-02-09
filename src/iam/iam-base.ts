@@ -170,7 +170,7 @@ export class IAMBase {
     this._provider = new providers.JsonRpcProvider(rpcUrl);
     this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._provider);
     this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._provider);
-    if (window && window.sessionStorage) {
+    if (this._runningInBrowser && process.env.NODE_ENV !== "test") {
       this._providerType = (sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider) || undefined;
       this._publicKey = sessionStorage.getItem(PUBLIC_KEY) || undefined;
     }
@@ -268,6 +268,14 @@ export class IAMBase {
         });
       }
       this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
+
+      metamaskProvider.on("networkChanged", () => {
+        this.closeConnection();
+      });
+      metamaskProvider.on("accountsChanged", () => {
+        this.closeConnection();
+      });
+
       this._providerType = walletProvider;
       return;
     }
@@ -304,6 +312,15 @@ export class IAMBase {
       }
 
       await this._walletConnectProvider.enable();
+
+      this._walletConnectProvider.wc.on("session_update", () => {
+        this.closeConnection();
+      });
+
+      this._walletConnectProvider.wc.on("disconnect", () => {
+        this.closeConnection();
+      });
+
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
       this._providerType = walletProvider;
       return;
@@ -312,17 +329,33 @@ export class IAMBase {
   }
 
   private storeSession() {
-    if (this._runningInBrowser && window && this._didSigner) {
+    if (this._runningInBrowser && this._didSigner) {
       sessionStorage.setItem(WALLET_PROVIDER, this._providerType as string);
       sessionStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
     }
   }
 
   protected clearSession() {
-    if (this._runningInBrowser && window) {
+    if (this._runningInBrowser) {
       sessionStorage.removeItem(WALLET_PROVIDER);
       sessionStorage.removeItem(PUBLIC_KEY);
     }
+  }
+
+  /**
+   * Close connection to wallet
+   * @description closes the connection between dApp and the wallet
+   *
+   */
+
+  async closeConnection() {
+    if (this._walletConnectProvider) {
+      await this._walletConnectProvider.close();
+    }
+    this.clearSession();
+    this._did = undefined;
+    this._address = undefined;
+    this._signer = undefined;
   }
 
   private async loginToCacheServer(token: string) {

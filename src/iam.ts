@@ -100,20 +100,6 @@ export class IAM extends IAMBase {
     return { isMetamaskPresent: !!provider, chainId };
   }
 
-  static isSessionActive() {
-    if (window && window.sessionStorage) {
-      return Boolean(sessionStorage.getItem(PUBLIC_KEY));
-    }
-    return false;
-  }
-
-  static getProviderType() {
-    if (window && window.sessionStorage) {
-      const providerType = sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider | null;
-      return providerType;
-    }
-    return null;
-  }
   // GETTERS
 
   /**
@@ -137,6 +123,24 @@ export class IAM extends IAMBase {
   }
 
   // CONNECTION
+
+  /**
+   * Check if session is active
+   *
+   * @returns boolean that indicates the session state
+   */
+  isSessionActive() {
+    return Boolean(this._publicKey) && Boolean(this._providerType);
+  }
+
+  /**
+   * Get the current initialized provider type
+   *
+   * @returns provider type if the session is active if not undefined
+   */
+  getProviderType() {
+    return this._providerType;
+  }
 
   /**
    * Initialize connection to wallet
@@ -184,25 +188,6 @@ export class IAM extends IAMBase {
       identityToken: this._didSigner?.identityToken,
       realtimeExchangeConnected: Boolean(this._natsConnection)
     };
-  }
-
-  /**
-   * Close connection to wallet
-   * @description closes the connection between dApp and the wallet
-   *
-   */
-
-  async closeConnection() {
-    if (this._walletConnectProvider) {
-      await this._walletConnectProvider.close();
-    }
-    this.clearSession();
-    this._did = undefined;
-    this._address = undefined;
-    this._signer = undefined;
-    if (this._runningInBrowser) {
-      location.reload();
-    }
   }
 
   /**
