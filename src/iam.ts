@@ -311,6 +311,7 @@ export class IAM extends IAMBase {
   async publishPublicClaim({ token }: { token: string }) {
     if (this._userClaims) {
       const claim = (await this.decodeJWTToken({ token })) as { iss: string };
+      const id = uuid();
       const issuer = claim.iss;
       if (!(await this._userClaims.verifySignature(token, issuer))) {
         throw new Error("Incorrect signature");
@@ -320,7 +321,7 @@ export class IAM extends IAMBase {
         didAttribute: DIDAttribute.ServicePoint,
         data: {
           type: PubKeyType.VerificationKey2018,
-          value: { id: uuid(), serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: "SHA256" }
+          value: { id, serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: "SHA256" }
         }
       });
       return url;
@@ -398,10 +399,16 @@ export class IAM extends IAMBase {
    * @description creates self signed claim and upload the data to ipfs
    *
    */
-  async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
+  async createSelfSignedClaim({
+    data,
+    subject
+  }: {
+    data: Record<string, unknown>;
+    subject?: string;
+  }) {
     if (this._userClaims) {
-      const claim = await this._userClaims.createPublicClaim(data);
-      return this._userClaims.publishPublicClaim(claim, data);
+      const token = await this.createPublicClaim({ data, subject });
+      return this.publishPublicClaim({ token });
     }
     throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
