@@ -21,7 +21,7 @@ import {
   ENSResolverNotInitializedError,
   ERROR_MESSAGES
 } from "../errors";
-import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
+import { IAppDefinition, IOrganizationDefinition, IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
@@ -41,7 +41,7 @@ export enum MessagingMethod {
   SmartContractStorage = "smartContractStorage"
 }
 
-type ConnectionOptions = {
+export type ConnectionOptions = {
   rpcUrl: string;
   chainId?: number;
   infuraId?: string;
@@ -56,6 +56,17 @@ type ConnectionOptions = {
   privateKey?: string;
   ewKeyManagerUrl?: string;
 };
+
+export type EncodedCall = {
+  to: string;
+  data: string;
+  value?: string;
+};
+
+export type Transaction = {
+  calls: EncodedCall[],
+  from: string;
+}
 
 export const emptyAddress = "0x0000000000000000000000000000000000000000";
 
@@ -77,6 +88,7 @@ export class IAMBase {
   protected _walletConnectProvider: WalletConnectProvider | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
+  protected _safeAddress: string | undefined;
   protected _didSigner: IdentityOwner | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
 
@@ -89,8 +101,8 @@ export class IAMBase {
   protected _ipfsStore: DidStore;
   protected _jwt: JWT | undefined;
 
-  protected _ensRegistry: EnsRegistry | undefined;
-  protected _ensResolver: PublicResolver | undefined;
+  protected _ensRegistry: EnsRegistry;
+  protected _ensResolver: PublicResolver;
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
 
@@ -101,6 +113,7 @@ export class IAMBase {
   protected _jsonCodec: Codec<any> | undefined;
 
   private readonly _ewKeyManagerUrl: string;
+  private ttl = bigNumberify(0);
 
   /**
    * IAM Constructor
@@ -150,6 +163,8 @@ export class IAMBase {
 
     this._ipfsStore = new DidStore(ipfsUrl);
     this._provider = new providers.JsonRpcProvider(rpcUrl);
+    this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._provider);
+    this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._provider);
 
     if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
       this._natsServerUrl = natsServerUrl;
@@ -187,7 +202,6 @@ export class IAMBase {
     }
     this.setResolver();
     this.setJWT();
-    this.setupENS();
   }
 
   private async initSigner({
@@ -217,21 +231,21 @@ export class IAMBase {
     if (metamaskProvider && walletProvider === WalletProvider.MetaMask) {
       const requestObject = initializeMetamask
         ? {
-            method: "wallet_requestPermissions",
-            params: [
-              {
-                eth_accounts: {}
-              }
-            ]
-          }
+          method: "wallet_requestPermissions",
+          params: [
+            {
+              eth_accounts: {}
+            }
+          ]
+        }
         : {
-            method: "eth_accounts",
-            params: [
-              {
-                eth_accounts: {}
-              }
-            ]
-          };
+          method: "eth_accounts",
+          params: [
+            {
+              eth_accounts: {}
+            }
+          ]
+        };
       const accounts: string[] = await metamaskProvider.request(requestObject);
 
       if (!initializeMetamask && accounts.length < 1) {
@@ -285,10 +299,14 @@ export class IAMBase {
     }
   }
 
-  private async setAddress() {
+  protected async setAddress() {
     if (this._signer) {
       this._address = await this._signer.getAddress();
     }
+  }
+
+  get address() {
+    return this._address;
   }
 
   private setResolver() {
@@ -299,13 +317,6 @@ export class IAMBase {
 
   private setDid() {
     this._did = `did:${Methods.Erc1056}:${this._address}`;
-  }
-
-  private setupENS() {
-    if (this._provider) {
-      this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._provider);
-      this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._provider);
-    }
   }
 
   private async setDocument() {
@@ -377,44 +388,33 @@ export class IAMBase {
     );
   }
 
-  protected async createSubdomain({ subdomain, domain }: { subdomain: string; domain: string }) {
-    if (this._signer && this._ensRegistry && this._address) {
-      const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-      const roleHash = labelhash(subdomain) as string;
-      const namespaceHash = namehash(domain) as string;
-      const ttl = bigNumberify(0);
-      const setDomainTx = await ensRegistryWithSigner.setSubnodeRecord(
-        namespaceHash,
-        roleHash,
-        this._address,
+  protected createSubdomainTx(
+    { domain, nodeName, owner = this._address as string }: { domain: string, nodeName: string, owner?: string }
+  ): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+        namehash(domain),
+        labelhash(nodeName),
+        owner,
         this._ensResolverAddress,
-        ttl,
-        this._transactionOverrides
-      );
-      await setDomainTx.wait();
-      console.log(`Subdomain ${subdomain + "." + domain} created`);
-      return;
-    }
-    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+        this.ttl
+      ])
+    };
   }
 
-  protected async setDomainName({ domain }: { domain: string }) {
-    if (this._signer && this._ensResolver) {
-      const ensResolverWithSigner = this._ensResolver.connect(this._signer);
-      const namespaceHash = namehash(domain) as string;
-      const setDomainNameTx = await ensResolverWithSigner.setName(
+  protected setDomainNameTx({ domain }: { domain: string }): EncodedCall {
+    const namespaceHash = namehash(domain) as string;
+    return {
+      to: this._ensResolverAddress,
+      data: this._ensResolver?.interface.functions.setName.encode([
         namespaceHash,
-        domain,
-        this._transactionOverrides
-      );
-      await setDomainNameTx.wait();
-      console.log(`Set the name of the domain to ${domain}`);
-      return;
-    }
-    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+        domain
+      ])
+    };
   }
 
-  protected async changeSubdomainOwner({
+  protected changeSubdomainOwnerTx({
     newOwner,
     label,
     namespace
@@ -422,46 +422,27 @@ export class IAMBase {
     newOwner: string;
     namespace: string;
     label: string;
-  }) {
-    if (!this._ensRegistry) {
-      throw new ENSRegistryNotInitializedError();
-    }
-    if (!this._signer) {
-      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-    }
-    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-    const namespaceHash = namehash(namespace);
-    const labelHash = labelhash(label);
-    const tx = await ensRegistryWithSigner.setSubnodeOwner(
-      namespaceHash,
-      labelHash,
-      newOwner,
-      this._transactionOverrides
-    );
-    await tx.wait();
+  }): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setSubnodeOwner.encode([
+        namehash(namespace),
+        labelhash(label),
+        newOwner
+      ])
+    };
   }
 
-  protected async changeDomainOwner({
-    newOwner,
-    namespace
-  }: {
-    newOwner: string;
-    namespace: string;
-  }) {
-    if (!this._ensRegistry) {
-      throw new ENSRegistryNotInitializedError();
-    }
-    if (!this._signer) {
-      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-    }
-    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-    const namespaceHash = namehash(namespace);
-    const tx = await ensRegistryWithSigner.setOwner(
-      namespaceHash,
-      newOwner,
-      this._transactionOverrides
-    );
-    await tx.wait();
+  protected changeDomainOwnerTx(
+    { newOwner, namespace }: { newOwner: string, namespace: string }
+  ): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setOwner.encode([
+        namehash(namespace),
+        newOwner
+      ])
+    };
   }
 
   protected async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
@@ -508,61 +489,82 @@ export class IAMBase {
     }
   }
 
-  protected async deleteSubdomain({ namespace }: { namespace: string }) {
-    if (!this._signer) {
-      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-    }
-    if (!this._ensRegistry) {
-      throw new ENSRegistryNotInitializedError();
-    }
-    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
+  protected deleteSubdomainTx({ namespace }: { namespace: string }): EncodedCall {
     const namespaceArray = namespace.split(".");
-    const label = namespaceArray[0];
     const node = namespaceArray.slice(1).join(".");
-    const labelHash = labelhash(label);
-    const nodeHash = namehash(node);
-    const ttl = bigNumberify(0);
-    const tx = await ensRegistryWithSigner.setSubnodeRecord(
-      nodeHash,
-      labelHash,
-      emptyAddress,
-      emptyAddress,
-      ttl,
-      this._transactionOverrides
-    );
-    await tx.wait();
-    return;
+    const label = namespaceArray[0];
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+        namehash(node),
+        labelhash(label),
+        emptyAddress,
+        emptyAddress,
+        this.ttl
+      ])
+    };
   }
 
   protected async deleteDomain({ namespace }: { namespace: string }) {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    if (!this._ensRegistry) {
-      throw new Error(ERROR_MESSAGES.ENS_REGISTRY_CONTRACT_NOT_INITIALIZED);
-    }
-    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-    const hash = namehash(namespace);
-    const ttl = bigNumberify(0);
-
-    const tx = await ensRegistryWithSigner.setRecord(
-      hash,
-      emptyAddress,
-      emptyAddress,
-      ttl,
-      this._transactionOverrides
-    );
-
-    await tx.wait();
-
-    return;
+    await this.send({
+      calls: [this.deleteDomainTx({ namespace })],
+      from: await this.getOwner({ namespace })
+    });
   }
 
   protected async getOwner({ namespace }: { namespace: string }) {
-    if (this._ensRegistry) {
-      const node = namehash(namespace);
-      return this._ensRegistry.owner(node);
+    const node = namehash(namespace);
+    return this._ensRegistry.owner(node);
+  }
+
+  protected async send(tx: Transaction) {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    throw new ENSRegistryNotInitializedError();
+    for await (const call of tx.calls) {
+      await (await this._signer.sendTransaction({ ...call, ...this._transactionOverrides })).wait();
+    }
+  }
+
+  protected deleteDomainTx({ namespace }: { namespace: string }): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setRecord.encode([
+        namehash(namespace),
+        emptyAddress,
+        emptyAddress,
+        this.ttl
+      ])
+    };
+  }
+
+  protected setDomainDefinitionTx({
+    domain,
+    data
+  }: {
+    domain: string;
+    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
+  }): EncodedCall {
+    return {
+      to: this._ensResolverAddress,
+      data: this._ensResolver.interface.functions.setText.encode([
+        namehash(domain),
+        "metadata",
+        JSON.stringify(data)
+      ])
+    };
+  }
+
+  protected async deleteSubdomain({ namespace }: { namespace: string }) {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+    await this.send({
+      calls: [this.deleteSubdomainTx({ namespace })],
+      from: await this.getOwner({ namespace: namespace.split('.').slice(1).join('') })
+    });
   }
 }
