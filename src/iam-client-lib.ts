@@ -65,3 +65,5 @@ export {
   IRole,
   IRoleDefinition
 };
+
+export { GnosisIam as SafeIam } from './GnosisIam';

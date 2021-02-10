@@ -10,7 +10,6 @@ export const appsTests = () => {
   const appNode = `${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`;
 
   test('application can be created', async () => {
-    console.log('application to create:', appNode);
     await iam.createApplication({
       appName: app,
       data: { appName: 'Application 1' },
@@ -46,7 +45,6 @@ export const appsTests = () => {
     });
 
     expect(await iam.isOwner({ domain: appNode, user: newOwner.getAddress() }));
-    console.log('app owner changed to new owner');
 
     await newOwnerIam.changeAppOwnership({
       namespace: appNode,
