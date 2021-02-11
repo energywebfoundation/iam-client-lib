@@ -999,12 +999,20 @@ export class IAM extends IAMBase {
   /**
    * getENSTypesByOwner
    */
-  getENSTypesByOwner({ type, owner }: { type: ENSNamespaceTypes; owner: string }) {
+  getENSTypesByOwner({
+    type,
+    owner,
+    excludeSubOrgs = false
+  }: {
+    type: ENSNamespaceTypes;
+    owner: string;
+    excludeSubOrgs?: boolean;
+  }) {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
     if (type === ENSNamespaceTypes.Organization) {
-      return this._cacheClient.getOrganizationsByOwner({ owner });
+      return this._cacheClient.getOrganizationsByOwner({ owner, excludeSubOrgs });
     }
     if (type === ENSNamespaceTypes.Application) {
       return this._cacheClient.getApplicationsByOwner({ owner });
@@ -1058,6 +1066,20 @@ export class IAM extends IAMBase {
       throw new CacheClientNotProvidedError();
     }
     return this._cacheClient.getSubOrganizationsByOrganization({ namespace });
+  }
+
+  /**
+   * getOrgHierarchy
+   *
+   * @description get all hierarchy of an organization (20 levels deep)
+   * @returns organization with all nested subOrgs
+   *
+   */
+  getOrgHierarchy({ namespace }: { namespace: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getOrgHierarchy({ namespace });
   }
 
   /**
