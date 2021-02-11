@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-this-alias */
 // Copyright 2020 Energy Web Foundation
 // This file is part of IAM Client Library brought to you by the Energy Web Foundation,
 // a global non-profit organization focused on accelerating blockchain technology across the energy sector,
@@ -27,7 +26,7 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, emptyAddress, WALLET_PROVIDER, PUBLIC_KEY } from "./iam/iam-base";
+import { IAMBase, emptyAddress, ClaimData, WALLET_PROVIDER, PUBLIC_KEY } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
@@ -214,38 +213,27 @@ export class IAM extends IAMBase {
   async getDidDocument({
     did = this._did,
     includeClaims = true
-  }: { did?: string; includeClaims?: boolean } | undefined = {}): Promise<IDIDDocument | null> {
+  }: { did?: string; includeClaims?: boolean } | undefined = {}) {
     if (this._cacheClient && did) {
-      try {
-        return this._cacheClient.getDidDocument({ did, includeClaims });
-      } catch (err) {
-        if (err.message === "Request failed with status code 404") {
-          await this._cacheClient.addDIDToWatchList({ did });
-          if (this._resolver) {
-            const document = await this._resolver.read(did);
-            if (includeClaims) {
-              const services = await this.downloadClaims({
-                services: document.service && document.service.length > 0 ? document.service : []
-              });
-              document.service = (services as unknown) as IServiceEndpoint[];
-            }
-            return document;
-          }
-        }
-        throw err;
-      }
+      const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
+      return {
+        ...didDoc,
+        service: didDoc.service as (IServiceEndpoint & ClaimData)[]
+      };
     }
+
     if (did && this._resolver) {
       const document = await this._resolver.read(did);
-      if (includeClaims) {
-        const services = await this.downloadClaims({
-          services: document.service && document.service.length > 0 ? document.service : []
-        });
-        document.service = (services as unknown) as IServiceEndpoint[];
-      }
-      return document;
+      return {
+        ...document,
+        service: includeClaims
+          ? await this.downloadClaims({
+              services: document.service && document.service.length > 0 ? document.service : []
+            })
+          : []
+      };
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
   }
 
   /**
@@ -295,7 +283,7 @@ export class IAM extends IAMBase {
    * @returns JWT token of created claim
    *
    */
-  async createPublicClaim({ data, subject }: { data: Record<string, unknown>; subject?: string }) {
+  async createPublicClaim({ data, subject }: { data: ClaimData; subject?: string }) {
     if (this._userClaims) {
       if (subject) {
         return this._userClaims.createPublicClaim(data, { subject, issuer: "" });
@@ -303,6 +291,25 @@ export class IAM extends IAMBase {
       return this._userClaims.createPublicClaim(data);
     }
     throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+  }
+
+  private async getClaimId({ claimData }: { claimData: ClaimData }) {
+    const { service = [] } = await this.getDidDocument();
+    const { id, claimTypeVersion } =
+      service.find(
+        ({ profile, claimType, claimTypeVersion }) =>
+          Boolean(profile) ||
+          (claimType === claimData.claimType && claimTypeVersion === claimData.claimTypeVersion)
+      ) || {};
+
+    if (claimData.profile && id) {
+      return id;
+    }
+
+    if (claimData.claimType && id && claimData.claimTypeVersion === claimTypeVersion) {
+      return id;
+    }
+    return uuid();
   }
 
   /**
@@ -314,18 +321,27 @@ export class IAM extends IAMBase {
    */
   async publishPublicClaim({ token }: { token: string }) {
     if (this._userClaims) {
-      const claim = (await this.decodeJWTToken({ token })) as { iss: string };
-      const id = uuid();
-      const issuer = claim.iss;
-      if (!(await this._userClaims.verifySignature(token, issuer))) {
+      const { claimData, iss } = (await this.decodeJWTToken({ token })) as {
+        iss: string;
+        claimData: ClaimData;
+      };
+
+      const claimId = await this.getClaimId({ claimData });
+
+      if (!(await this._userClaims.verifySignature(token, iss))) {
         throw new Error("Incorrect signature");
       }
       const url = await this._ipfsStore.save(token);
       await this.updateDidDocument({
         didAttribute: DIDAttribute.ServicePoint,
         data: {
-          type: PubKeyType.VerificationKey2018,
-          value: { id, serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: "SHA256" }
+          type: DIDAttribute.ServicePoint,
+          value: {
+            id: claimId,
+            serviceEndpoint: url,
+            hash: hashes.SHA256(token),
+            hashAlg: "SHA256"
+          }
         }
       });
       return url;
@@ -403,13 +419,7 @@ export class IAM extends IAMBase {
    * @description creates self signed claim and upload the data to ipfs
    *
    */
-  async createSelfSignedClaim({
-    data,
-    subject
-  }: {
-    data: Record<string, unknown>;
-    subject?: string;
-  }) {
+  async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
     if (this._userClaims) {
       const token = await this.createPublicClaim({ data, subject });
       return this.publishPublicClaim({ token });
@@ -491,7 +501,6 @@ export class IAM extends IAMBase {
     const rolesDomain = `${ENSNamespaceTypes.Roles}.${orgDomain}`;
     const appsDomain = `${ENSNamespaceTypes.Application}.${orgDomain}`;
     const from = await this.getOwner({ namespace });
-    const self = this;
     const steps = [
       {
         tx: this.createSubdomainTx({ domain: namespace, nodeName: orgName, owner: from }),
@@ -529,16 +538,16 @@ export class IAM extends IAMBase {
         tx: this.setDomainNameTx({ domain: appsDomain }),
         info: "Register reverse name for app subdomain"
       }
-    ].map(s => ({
-      ...s,
-      next: async function() {
-        await self.send({ calls: [s.tx], from });
+    ].map(step => ({
+      ...step,
+      next: async () => {
+        await this.send({ calls: [step.tx], from });
       }
     }));
     if (returnSteps) {
       return steps;
     }
-    await this.send({ calls: steps.map(s => s.tx), from });
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -562,7 +571,6 @@ export class IAM extends IAMBase {
   }) {
     const appDomain = `${appName}.${domain}`;
     const from = await this.getOwner({ namespace: domain });
-    const self = this;
     const steps = [
       {
         tx: this.createSubdomainTx({ domain, nodeName: appName, owner: from }),
@@ -588,16 +596,16 @@ export class IAM extends IAMBase {
         tx: this.setDomainNameTx({ domain: `${ENSNamespaceTypes.Roles}.${appDomain}` }),
         info: "Set name for roles subdomain for application"
       }
-    ].map(s => ({
-      ...s,
-      next: async function() {
-        await self.send({ calls: [s.tx], from });
+    ].map(step => ({
+      ...step,
+      next: async () => {
+        await this.send({ calls: [step.tx], from });
       }
     }));
     if (returnSteps) {
       return steps;
     }
-    await this.send({ calls: steps.map(s => s.tx), from });
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -621,7 +629,6 @@ export class IAM extends IAMBase {
   }) {
     const newDomain = `${roleName}.${namespace}`;
     const from = await this.getOwner({ namespace });
-    const self = this;
     const steps = [
       {
         tx: this.createSubdomainTx({ domain: namespace, nodeName: roleName, owner: from }),
@@ -635,16 +642,16 @@ export class IAM extends IAMBase {
         tx: this.setDomainDefinitionTx({ data, domain: newDomain }),
         info: "Set role definition for role"
       }
-    ].map(s => ({
-      ...s,
-      next: async function() {
-        await self.send({ calls: [s.tx], from });
+    ].map(step => ({
+      ...step,
+      next: async () => {
+        await this.send({ calls: [step.tx], from });
       }
     }));
     if (returnSteps) {
       return steps;
     }
-    await this.send({ calls: steps.map(s => s.tx), from });
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -711,7 +718,7 @@ export class IAM extends IAMBase {
     if (returnSteps) {
       return steps;
     }
-    await this.send({ calls: steps.map(s => s.tx), from });
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -766,7 +773,7 @@ export class IAM extends IAMBase {
     if (returnSteps) {
       return steps;
     }
-    await this.send({ calls: steps.map(s => s.tx), from });
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -860,7 +867,7 @@ export class IAM extends IAMBase {
     if (returnSteps) {
       return steps;
     }
-    await this.send({ calls: steps.map(s => s.tx), from });
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -921,7 +928,7 @@ export class IAM extends IAMBase {
     if (returnSteps) {
       return steps;
     }
-    await this.send({ calls: steps.map(s => s.tx), from });
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
