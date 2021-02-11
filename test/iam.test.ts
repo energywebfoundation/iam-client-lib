@@ -6,6 +6,7 @@ import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
+import { claimsTests } from "./claims.testSuite";
 
 export const rootOwner = new Keys();
 const { privateKey } = rootOwner;
@@ -15,8 +16,11 @@ export let iam: IAM;
 
 export const rpcUrl = "http://localhost:8544/";
 
-describe("IAM tests", function() {
-  beforeAll(async function() {
+describe("IAM tests", () => {
+  // sometimes the transaction are taking more then default 5000 ms jest timeout
+  jest.setTimeout(30000);
+
+  beforeAll(async () => {
     await deployContracts(privateKey);
 
     iam = new IAM({
@@ -62,7 +66,8 @@ describe("IAM tests", function() {
     );
   });
 
-  describe("Organization tests", () => orgTests());
-  describe("Apllication tests", () => appsTests());
-  describe("InitializeConnection tests", () => initializeConnectionTests());
+  describe("Organization tests", orgTests);
+  describe("Application tests", appsTests);
+  describe("InitializeConnection tests", initializeConnectionTests);
+  describe("Claim tests", claimsTests);
 });

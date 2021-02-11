@@ -68,6 +68,12 @@ export type Transaction = {
   from: string;
 };
 
+export interface ClaimData extends Record<string, unknown> {
+  profile?: any;
+  claimType?: string;
+  claimTypeVersion?: string;
+}
+
 export const emptyAddress = "0x0000000000000000000000000000000000000000";
 
 export const WALLET_PROVIDER = "WalletProvider";
@@ -441,14 +447,14 @@ export class IAMBase {
       services.map(async ({ serviceEndpoint, ...rest }) => {
         const data = await this._ipfsStore.get(serviceEndpoint);
         const { claimData, ...claimRest } = this._jwt?.decode(data) as {
-          claimData: Record<string, string>;
+          claimData: ClaimData;
         };
         return {
           serviceEndpoint,
           ...rest,
           ...claimData,
           ...claimRest
-        };
+        } as IServiceEndpoint & ClaimData;
       })
     );
   }
