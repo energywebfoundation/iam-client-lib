@@ -19,7 +19,13 @@ export interface ICacheServerClient {
   getAppDefinition: ({ namespace }: { namespace: string }) => Promise<IAppDefinition>;
   getApplicationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
   getOrganizationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
-  getOrganizationsByOwner: ({ owner }: { owner: string }) => Promise<IOrganization[]>;
+  getOrganizationsByOwner: ({
+    owner,
+    excludeSubOrgs
+  }: {
+    owner: string;
+    excludeSubOrgs: boolean;
+  }) => Promise<IOrganization[]>;
   getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
   getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
   getSubOrganizationsByOrganization: ({
@@ -27,7 +33,7 @@ export interface ICacheServerClient {
   }: {
     namespace: string;
   }) => Promise<IOrganization[]>;
-
+  getOrgHierarchy: ({ namespace }: { namespace: string }) => Promise<IOrganization>;
   getNamespaceBySearchPhrase: ({
     types,
     search
@@ -108,13 +114,26 @@ export class CacheServerClient implements ICacheServerClient {
     return data.Data;
   }
 
-  async getOrganizationsByOwner({ owner }: { owner: string }) {
-    const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(`/owner/${owner}/orgs`);
+  async getOrganizationsByOwner({
+    owner,
+    excludeSubOrgs
+  }: {
+    owner: string;
+    excludeSubOrgs: boolean;
+  }) {
+    const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(
+      `/owner/${owner}/orgs?excludeSubOrgs=${excludeSubOrgs}`
+    );
     return data.orgs;
   }
 
   async getSubOrganizationsByOrganization({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IOrganization[]>(`/org/${namespace}/suborgs`);
+    return data;
+  }
+
+  async getOrgHierarchy({ namespace }: { namespace: string }) {
+    const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}/hierarchy`);
     return data;
   }
 
