@@ -457,7 +457,8 @@ export class IAMBase {
         const connection = await Promise.race<NatsConnection | undefined>([
           connect({
             servers: `${protocol}://${this._natsServerUrl}`,
-            timeout
+            timeout,
+            pingInterval: 50 * 1000
           }),
           new Promise<undefined>(resolve => setTimeout(resolve, timeout))
         ]);

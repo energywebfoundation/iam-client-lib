@@ -20,13 +20,12 @@ import {
   DIDAttribute,
   IDIDDocument,
   IServiceEndpoint,
-  IUpdateData,
-  PubKeyType
+  IUpdateData
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, emptyAddress, ClaimData, WALLET_PROVIDER, PUBLIC_KEY } from "./iam/iam-base";
+import { IAMBase, emptyAddress, ClaimData } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
