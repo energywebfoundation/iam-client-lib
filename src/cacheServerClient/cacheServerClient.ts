@@ -1,92 +1,66 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { stringify } from "qs";
-import {
-  IApp,
-  IAppDefinition,
-  IOrganization,
-  IRole,
-  IOrganizationDefinition,
-  IRoleDefinition,
-  Claim
-} from "./cacheServerClient.types";
+import { IApp, IOrganization, IRole, Claim } from "./cacheServerClient.types";
 
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-export interface ICacheServerClient {
-  login: (claim: string) => Promise<void>;
-  getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
-  getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
-  getAppDefinition: ({ namespace }: { namespace: string }) => Promise<IAppDefinition>;
-  getApplicationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
-  getOrganizationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
-  getOrganizationsByOwner: ({
-    owner,
-    excludeSubOrgs
-  }: {
-    owner: string;
-    excludeSubOrgs: boolean;
-  }) => Promise<IOrganization[]>;
-  getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
-  getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
-  getSubOrganizationsByOrganization: ({
-    namespace
-  }: {
-    namespace: string;
-  }) => Promise<IOrganization[]>;
-  getOrgHierarchy: ({ namespace }: { namespace: string }) => Promise<IOrganization>;
-  getNamespaceBySearchPhrase: ({
-    types,
-    search
-  }: {
-    types?: ("App" | "Org" | "Role")[];
-    search: string;
-  }) => Promise<IOrganization[] | IApp[] | IRole[]>;
-  getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
-  getIssuedClaims: ({
-    did,
-    isAccepted,
-    parentNamespace
-  }: {
-    did: string;
-    isAccepted?: boolean;
-    parentNamespace?: string;
-  }) => Promise<Claim[]>;
-  getRequestedClaims: ({
-    did,
-    isAccepted,
-    parentNamespace
-  }: {
-    did: string;
-    isAccepted?: boolean;
-    parentNamespace?: string;
-  }) => Promise<Claim[]>;
-  requestClaim: ({ message, did }: { message: IClaimRequest; did: string }) => Promise<void>;
-  issueClaim: ({ message, did }: { message: IClaimIssuance; did: string }) => Promise<void>;
-  rejectClaim: ({ message, did }: { message: IClaimRejection; did: string }) => Promise<void>;
-  deleteClaim: ({ claimId }: { claimId: string }) => Promise<void>;
-  getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
-  getDidDocument: ({
-    did,
-    includeClaims
-  }: {
-    did: string;
-    includeClaims?: boolean;
-  }) => Promise<IDIDDocument>;
-  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>;
-}
 
+import { ICacheServerClient } from "./ICacheServerClient";
 export class CacheServerClient implements ICacheServerClient {
   private httpClient: AxiosInstance;
+  private isAlreadyFetchingAccessToken = false;
+  private failedRequests: Array<() => void> = [];
 
   constructor({ url }: { url: string }) {
     this.httpClient = axios.create({
       baseURL: url,
       withCredentials: true
     });
+    this.httpClient.interceptors.response.use(function(response: AxiosResponse) {
+      return response;
+    }, this.handleUnauthorized);
   }
+
+  handleSuccessfulReLogin() {
+    this.failedRequests = this.failedRequests.filter(callback => callback());
+  }
+
+  addFailedRequest(callback: () => void) {
+    this.failedRequests.push(callback);
+  }
+
+  handleUnauthorized = async (error: AxiosError) => {
+    const { config, response } = error;
+    const originalRequest = config;
+    if (
+      response &&
+      response.status === 401 &&
+      config &&
+      config.url?.indexOf("/login") === -1 &&
+      config.url?.indexOf("/refresh_token") === -1
+    ) {
+      const retryOriginalRequest = new Promise(resolve => {
+        this.addFailedRequest(() => {
+          resolve(axios(originalRequest));
+        });
+      });
+      if (!this.isAlreadyFetchingAccessToken) {
+        this.isAlreadyFetchingAccessToken = true;
+        await this.refreshToken();
+        this.handleSuccessfulReLogin();
+        this.isAlreadyFetchingAccessToken = false;
+      }
+      return retryOriginalRequest;
+    }
+    return Promise.reject(error);
+  };
 
   async login(identityToken: string) {
     await this.httpClient.post<{ token: string }>("/login", { identityToken });
+  }
+
+  async refreshToken() {
+    await this.httpClient.get("/refresh_token");
   }
 
   async getRoleDefinition({ namespace }: { namespace: string }) {

@@ -15,7 +15,8 @@
 // @authors: Kim Honoridez
 
 import { IAM, ENSNamespaceTypes, NATS_EXCHANGE_TOPIC } from "./iam";
-import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
+import { CacheServerClient } from "./cacheServerClient/cacheServerClient";
+import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { MessagingMethod } from "./iam/iam-base";
 import { ERROR_MESSAGES } from "./errors";
 import { WalletProvider } from "./types/WalletProvider";
@@ -66,4 +67,4 @@ export {
   IRoleDefinition
 };
 
-export { GnosisIam as SafeIam } from './GnosisIam';
+export { GnosisIam as SafeIam } from "./GnosisIam";

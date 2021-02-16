@@ -13,7 +13,7 @@ import { PublicResolverFactory } from "../../ethers/PublicResolverFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { PublicResolver } from "../../ethers/PublicResolver";
 import { JWT } from "@ew-did-registry/jwt";
-import { ICacheServerClient } from "../cacheServerClient/cacheServerClient";
+import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
