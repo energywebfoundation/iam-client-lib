@@ -95,6 +95,7 @@ export class IAMBase {
   protected _did: string | undefined;
   protected _provider: providers.JsonRpcProvider;
   protected _walletConnectProvider: WalletConnectProvider | undefined;
+  protected _metamaskProvider: { on: any; request: any } | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
   protected _safeAddress: string | undefined;
@@ -199,6 +200,7 @@ export class IAMBase {
     walletProvider?: WalletProvider;
   }) {
     await this.initSigner({ walletProvider, initializeMetamask });
+    this.initEventHandlers();
     const signerChainId = (await this._signer?.provider?.getNetwork())?.chainId;
     if (signerChainId !== VOLTA_CHAIN_ID) {
       throw new Error(ERROR_MESSAGES.NOT_CONNECTED_TO_VOLTA);
@@ -253,6 +255,7 @@ export class IAMBase {
       if (!metamaskProvider) {
         throw new Error(ERROR_MESSAGES.METAMASK_EXTENSION_NOT_AVAILABLE);
       }
+      this._metamaskProvider = metamaskProvider;
       const requestObject = {
         method: initializeMetamask ? "wallet_requestPermissions" : "eth_accounts",
         params: [
@@ -274,13 +277,6 @@ export class IAMBase {
         });
       }
       this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
-
-      metamaskProvider.on("networkChanged", () => {
-        this.closeConnection();
-      });
-      metamaskProvider.on("accountsChanged", () => {
-        this.closeConnection();
-      });
 
       this._providerType = walletProvider;
       return;
@@ -319,14 +315,6 @@ export class IAMBase {
 
       await this._walletConnectProvider.enable();
 
-      this._walletConnectProvider.wc.on("session_update", () => {
-        this.closeConnection();
-      });
-
-      this._walletConnectProvider.wc.on("disconnect", () => {
-        this.closeConnection();
-      });
-
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
       this._providerType = walletProvider;
       return;
@@ -346,6 +334,46 @@ export class IAMBase {
       sessionStorage.removeItem(WALLET_PROVIDER);
       sessionStorage.removeItem(PUBLIC_KEY);
     }
+  }
+
+  /**
+   * Add event handler for certain events
+   * @requires to be called after the connection to wallet was initialized
+   *
+   */
+
+  on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
+    if (!this._providerType) return;
+    switch (event) {
+      case "accountChanged": {
+        this._walletConnectProvider?.wc.on("session_update", eventHandler);
+        this._metamaskProvider?.on("accountsChanged", eventHandler);
+        break;
+      }
+      case "disconnected": {
+        this._walletConnectProvider?.wc.on("disconnect", eventHandler);
+        break;
+      }
+      case "networkChanged": {
+        this._walletConnectProvider?.wc.on("session_update", eventHandler);
+        this._metamaskProvider?.on("networkChanged", eventHandler);
+        break;
+      }
+      default:
+        throw new Error("Event not supported");
+    }
+  }
+
+  private initEventHandlers() {
+    this.on("accountChanged", () => {
+      this.closeConnection();
+    });
+    this.on("disconnected", () => {
+      this.closeConnection();
+    });
+    this.on("networkChanged", () => {
+      this.closeConnection();
+    });
   }
 
   /**
