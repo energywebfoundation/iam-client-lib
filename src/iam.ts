@@ -88,8 +88,8 @@ export class IAM extends IAMBase {
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
-          request: any;
-        }
+        request: any;
+      }
       | undefined;
 
     const chainId = (await provider?.request({
@@ -228,8 +228,8 @@ export class IAM extends IAMBase {
         ...document,
         service: includeClaims
           ? await this.downloadClaims({
-              services: document.service && document.service.length > 0 ? document.service : []
-            })
+            services: document.service && document.service.length > 0 ? document.service : []
+          })
           : []
       };
     }
@@ -690,8 +690,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
@@ -814,8 +814,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
     }
@@ -1178,22 +1178,14 @@ export class IAM extends IAMBase {
     return this.nonOwnedNodesOf({ namespace, type, owner: this._address as string });
   }
 
-  private async validateChangeOwnership({
+  protected async validateChangeOwnership({
     namespaces,
     newOwner
   }: {
     namespaces: string[];
     newOwner: string;
   }) {
-    const namespacesOwners = await Promise.all(
-      namespaces.map(async namespace => {
-        const owner = await this.getOwner({ namespace });
-        return {
-          namespace,
-          owner
-        };
-      })
-    );
+    const namespacesOwners = await this.namespacesWithRelations(namespaces);
     return namespacesOwners.reduce(
       (acc, { namespace, owner }) => {
         if (owner === newOwner) {
@@ -1219,16 +1211,8 @@ export class IAM extends IAMBase {
     );
   }
 
-  private async validateDeletePossibility({ namespaces }: { namespaces: string[] }) {
-    const namespacesOwners = await Promise.all(
-      namespaces.map(async namespace => {
-        const owner = await this.getOwner({ namespace });
-        return {
-          namespace,
-          owner
-        };
-      })
-    );
+  protected async validateDeletePossibility({ namespaces }: { namespaces: string[] }) {
+    const namespacesOwners = await this.namespacesWithRelations(namespaces);
     return namespacesOwners.reduce(
       (acc, { namespace, owner }) => {
         if (owner === emptyAddress) {
@@ -1423,12 +1407,28 @@ export class IAM extends IAMBase {
         type === ENSNamespaceTypes.Roles
           ? [namespace]
           : type === ENSNamespaceTypes.Application
-          ? [namespace, ENSNamespaceTypes.Application]
-          : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
+            ? [namespace, ENSNamespaceTypes.Application]
+            : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
       return Promise.all(
         namespacesToCheck.map(ns => this.getOwner({ namespace: ns }))
       ).then(owners => owners.filter(o => ![owner, emptyAddress].includes(o)));
     }
     throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+  }
+
+  /**
+   * @description Collects all namespaces related data. Currently its includes only owner
+   * @param namespaces 
+   */
+  async namespacesWithRelations(namespaces: string[]) {
+    return Promise.all(
+      namespaces.map(async namespace => {
+        const owner = await this.getOwner({ namespace });
+        return {
+          namespace,
+          owner
+        };
+      })
+    );
   }
 }

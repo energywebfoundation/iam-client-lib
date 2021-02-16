@@ -3,7 +3,7 @@ import { bigNumberify } from 'ethers/utils';
 import { IApp, IOrganization, IRole } from './cacheServerClient/cacheServerClient.types';
 import { CacheClientNotProvidedError, ERROR_MESSAGES } from './errors';
 import { ENSNamespaceTypes, IAM } from './iam';
-import { ConnectionOptions, Transaction } from './iam/iam-base';
+import { ConnectionOptions, emptyAddress, Transaction } from './iam/iam-base';
 
 /**
  * @class GnosisIam
@@ -93,5 +93,51 @@ export class GnosisIam extends IAM {
   async isOwner({ domain, user = this._address }: { domain: string; user?: string }) {
     return await super.isOwner({ domain, user }) ||
       user === this._address && await super.isOwner({ domain, user: this._safeAddress });
+  }
+
+  protected async validateChangeOwnership({
+    namespaces,
+    newOwner
+  }: {
+    namespaces: string[];
+    newOwner: string;
+  }) {
+    const namespacesWithRelations = await this.namespacesWithRelations(namespaces);
+    return namespacesWithRelations.reduce(
+      (acc, { namespace, owner }) => {
+        if (owner === newOwner) {
+          acc.alreadyFinished.push(namespace);
+        } else if (owner === this._address || owner === this.safeAddress) {
+          acc.changeOwnerNamespaces.push(namespace);
+        } else {
+          acc.notOwnedNamespaces.push(namespace);
+        }
+        return acc;
+      },
+      {
+        notOwnedNamespaces: new Array<string>(),
+        alreadyFinished: new Array<string>(),
+        changeOwnerNamespaces: new Array<string>()
+      });
+  }
+
+  protected async validateDeletePossibility({ namespaces }: { namespaces: string[] }) {
+    const namespacesWithRelations = await this.namespacesWithRelations(namespaces);
+    return namespacesWithRelations.reduce(
+      (acc, { namespace, owner }) => {
+        if (owner === emptyAddress) {
+          acc.alreadyFinished.push(namespace);
+        } else if (owner === this._address || owner === this.safeAddress) {
+          acc.namespacesToDelete.push(namespace);
+        } else {
+          acc.notOwnedNamespaces.push(namespace);
+        }
+        return acc;
+      },
+      {
+        alreadyFinished: new Array<string>(),
+        namespacesToDelete: new Array<string>(),
+        notOwnedNamespaces: new Array<string>()
+      });
   }
 }
