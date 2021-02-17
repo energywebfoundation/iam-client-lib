@@ -25,7 +25,6 @@ import {
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
-import { Provider } from "ethers/providers";
 import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
@@ -410,7 +409,7 @@ export class IAMBase {
 
   private setResolver() {
     if (this._registrySetting) {
-      this._resolver = new Resolver(this._provider as Provider, this._registrySetting);
+      this._resolver = new Resolver(this._provider as providers.Provider, this._registrySetting);
     }
   }
 

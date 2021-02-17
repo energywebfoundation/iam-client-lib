@@ -1,26 +1,25 @@
-import { Signer } from "ethers";
-import { Arrayish, computeAddress } from "ethers/utils";
+import { Signer, utils, providers } from "ethers";
 import { sign } from "@energyweb/km-crypto";
-import { TransactionRequest, TransactionResponse } from "ethers/providers";
 
+const { computeAddress } = utils;
 
 /**
  * Implementation of ethers Signer in order to test km-crypto
  */
 export class KmsSignerMock extends Signer {
   constructor(private readonly privateKey:string) {
-    super()
+    super();
   }
 
-  async signMessage(message: Arrayish) {
-    return await sign.sign(message, this.privateKey) as string;
+  async signMessage(message: utils.Arrayish) {
+    return sign.sign(message, this.privateKey) as string;
   }
 
   async getAddress() {
-    return await computeAddress(this.privateKey);
+    return computeAddress(this.privateKey);
   }
 
-  async sendTransaction(tr: TransactionRequest): Promise<TransactionResponse> {
+  async sendTransaction(tr: providers.TransactionRequest): Promise<providers.TransactionResponse> {
     throw new Error("sendTransaction is not implemented");
   }
 }

@@ -1,4 +1,4 @@
-import { namehash, bigNumberify } from "ethers/utils";
+import { utils } from "ethers";
 import { Keys } from "@ew-did-registry/keys";
 import { IAM, ENSNamespaceTypes } from "../src/iam";
 import { deployContracts, ensRegistry, ensResolver, didContract } from "./setup_contracts";
@@ -7,6 +7,8 @@ import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
+
+const { namehash, bigNumberify } = utils;
 
 export const rootOwner = new Keys();
 const { privateKey } = rootOwner;

@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { ContractFactory, Wallet, ethers, Contract } from 'ethers';
+import { ContractFactory, Wallet, Contract, providers } from 'ethers';
 import { AsyncSendable } from 'ethers/providers';
 import { ethrReg } from '@ew-did-registry/did-ethr-resolver';
 import { EnsRegistry } from '../ethers/EnsRegistry';
@@ -7,11 +7,13 @@ import { PublicResolver } from '../ethers/PublicResolver';
 import { PublicResolverFactory } from '../ethers/PublicResolverFactory';
 import { EnsRegistryFactory } from '../ethers/EnsRegistryFactory';
 
+const { Web3Provider } = providers;
+
 const { abi: didContractAbi, bytecode: didContractBytecode } = ethrReg;
 
 const GANACHE_PORT = 8544;
 const web3 = new Web3(`http://localhost:${GANACHE_PORT}`);
-export const provider = new ethers.providers.Web3Provider(web3.currentProvider as AsyncSendable);
+export const provider = new Web3Provider(web3.currentProvider as AsyncSendable);
 export let ensRegistry: EnsRegistry;
 export let ensResolver: PublicResolver;
 export let didContract: Contract;
