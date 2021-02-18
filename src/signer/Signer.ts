@@ -1,12 +1,11 @@
 import { IdentityOwner } from "@ew-did-registry/did-resolver-interface";
-import { Signer } from "ethers";
-import { Provider, TransactionRequest } from "ethers/providers";
-import { Arrayish } from "ethers/utils";
+import { Signer, providers, utils } from "ethers";
+
 
 export class Owner extends Signer implements IdentityOwner {
   constructor(
     private signer: Signer,
-    public provider: Provider,
+    public provider: providers.Provider,
     public publicKey: string,
     public identityToken?: string,
     public privateKey?: string
@@ -17,10 +16,10 @@ export class Owner extends Signer implements IdentityOwner {
   getAddress() {
     return this.signer.getAddress();
   }
-  sendTransaction(transaction: TransactionRequest) {
+  sendTransaction(transaction: providers.TransactionRequest) {
     return this.signer.sendTransaction(transaction);
   }
-  signMessage(message: Arrayish) {
+  signMessage(message: utils.Arrayish) {
     return this.signer.signMessage(message);
   }
 }

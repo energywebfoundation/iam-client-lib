@@ -1,7 +1,9 @@
 import base64url from "base64url";
-import { Signer } from "ethers";
-import { Provider } from "ethers/providers";
-import {
+import { Signer, providers, utils } from "ethers";
+import { ERROR_MESSAGES } from "../errors";
+import { Owner } from "./Signer";
+
+const {
   arrayify,
   computeAddress,
   computePublicKey,
@@ -9,9 +11,7 @@ import {
   hashMessage,
   keccak256,
   recoverPublicKey
-} from "ethers/utils";
-import { ERROR_MESSAGES } from "../errors";
-import { Owner } from "./Signer";
+} = utils;
 
 export class SignerFactory {
   static async create({
@@ -21,7 +21,7 @@ export class SignerFactory {
     publicKey: savedPublicKey
   }: {
     signer: Signer;
-    provider: Provider;
+    provider: providers.Provider;
     privateKey?: string;
     publicKey?: string;
   }): Promise<Owner> {

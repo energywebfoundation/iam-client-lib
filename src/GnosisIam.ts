@@ -1,9 +1,11 @@
 import SafeAppSdk from '@gnosis.pm/safe-apps-sdk';
-import { bigNumberify } from 'ethers/utils';
+import {utils} from 'ethers';
 import { IApp, IOrganization, IRole } from './cacheServerClient/cacheServerClient.types';
 import { CacheClientNotProvidedError, ERROR_MESSAGES } from './errors';
 import { ENSNamespaceTypes, IAM } from './iam';
 import { ConnectionOptions, emptyAddress, Transaction } from './iam/iam-base';
+
+const { bigNumberify } = utils;
 
 /**
  * @class GnosisIam
