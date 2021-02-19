@@ -38,6 +38,7 @@ import {
 } from "./errors";
 import {
   IAppDefinition,
+  IOrganization,
   IOrganizationDefinition,
   IRoleDefinition
 } from "./cacheServerClient/cacheServerClient.types";
@@ -1084,11 +1085,14 @@ export class IAM extends IAMBase {
    * @returns organization with all nested subOrgs
    *
    */
-  getOrgHierarchy({ namespace }: { namespace: string }) {
+  async getOrgHierarchy({ namespace }: { namespace: string }): Promise<IOrganization> {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
-    return this._cacheClient.getOrgHierarchy({ namespace });
+    const org = await this._cacheClient.getOrgHierarchy({ namespace });
+    [org, ...org.subOrgs || [], ...org.apps || [], ...org.roles || []]
+      .forEach((domain) => domain.isOwned = domain.owner === this.address);
+    return org;
   }
 
   /**
