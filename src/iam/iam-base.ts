@@ -213,6 +213,7 @@ export class IAMBase {
         signer: this._signer,
         publicKey: this._publicKey
       });
+      this._publicKey = this._didSigner.publicKey;
       this._didSigner.identityToken &&
         (await this.loginToCacheServer(this._didSigner.identityToken));
 
