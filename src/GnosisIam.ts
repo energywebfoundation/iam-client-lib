@@ -142,4 +142,14 @@ export class GnosisIam extends IAM {
         notOwnedNamespaces: new Array<string>()
       });
   }
+
+  async getOrgHierarchy({ namespace }: { namespace: string }): Promise<IOrganization> {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    const org = await this._cacheClient.getOrgHierarchy({ namespace });
+    [org, ...org.subOrgs || [], ...org.apps || [], ...org.roles || []]
+      .forEach((domain) => domain.isOwnedByCurrentUser = [this._address, this.safeAddress].includes(domain.owner));
+    return org;
+  }
 }
