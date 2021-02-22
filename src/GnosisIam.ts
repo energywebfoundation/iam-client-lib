@@ -147,7 +147,7 @@ export class GnosisIam extends IAM {
     }
     const org = await this._cacheClient.getOrgHierarchy({ namespace });
     [org, ...org.subOrgs || [], ...org.apps || [], ...org.roles || []]
-      .forEach((domain) => domain.isOwned = [this._address, this.safeAddress].includes(domain.owner));
+      .forEach((domain) => domain.isOwnedByCurrentUser = [this._address, this.safeAddress].includes(domain.owner));
     return org;
   }
 }

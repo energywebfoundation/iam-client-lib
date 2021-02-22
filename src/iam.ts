@@ -1091,7 +1091,7 @@ export class IAM extends IAMBase {
     }
     const org = await this._cacheClient.getOrgHierarchy({ namespace });
     [org, ...org.subOrgs || [], ...org.apps || [], ...org.roles || []]
-      .forEach((domain) => domain.isOwned = domain.owner === this.address);
+      .forEach((domain) => domain.isOwnedByCurrentUser = domain.owner === this.address);
     return org;
   }
 

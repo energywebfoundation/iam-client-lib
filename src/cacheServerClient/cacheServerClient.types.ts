@@ -44,7 +44,7 @@ export interface IRole {
   namespace: string;
   owner: string;
   definition: IRoleDefinition;
-  isOwned?: boolean;
+  isOwnedByCurrentUser?: boolean;
 }
 
 export interface IOrganization {
@@ -56,7 +56,7 @@ export interface IOrganization {
   apps?: IApp[];
   roles?: IRole[];
   subOrgs?: IOrganization[];
-  isOwned?: boolean;
+  isOwnedByCurrentUser?: boolean;
 }
 
 export interface IApp {
@@ -66,7 +66,7 @@ export interface IApp {
   owner: string;
   definition: IAppDefinition;
   roles?: IRole[];
-  isOwned?: boolean;
+  isOwnedByCurrentUser?: boolean;
 }
 
 export interface Claim {
