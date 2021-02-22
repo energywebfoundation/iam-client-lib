@@ -141,7 +141,7 @@ export class GnosisIam extends IAM {
       });
   }
 
-  async getOrgHierarchy({ namespace }: { namespace: string }) {
+  async getOrgHierarchy({ namespace }: { namespace: string }): Promise<IOrganization> {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
