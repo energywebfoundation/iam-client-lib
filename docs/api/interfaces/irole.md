@@ -11,6 +11,7 @@
 ### Properties
 
 * [definition](irole.md#definition)
+* [isOwnedByCurrentUser](irole.md#isownedbycurrentuser)
 * [name](irole.md#name)
 * [namespace](irole.md#namespace)
 * [owner](irole.md#owner)
@@ -21,6 +22,12 @@
 ### definition
 
 •  **definition**: [IRoleDefinition](iroledefinition.md)
+
+___
+
+### isOwnedByCurrentUser
+
+• `Optional` **isOwnedByCurrentUser**: undefined \| false \| true
 
 ___
 
