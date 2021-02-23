@@ -1,98 +1,99 @@
 **[iam-client-lib](../README.md)**
 
-# Class: IAM
+# Class: GnosisIam
 
-Decentralized Identity and Access Management (IAM) Type
+**`description`** Intended for use in Volta Gnosis web interface(https://volta.gnosis-safe.io/).
+Dapp should provide this class with SafeAppSdk injected by Gnosis interface. This class intoduces
+notion of controlled domain as that which is owned by gnosis wallet controlled by Iam signer.
+The domain ownership functionality has been redefined accordingly.
 
 ## Hierarchy
 
-* [IAMBase](iambase.md)
+* [IAM](iam.md)
 
-  ↳ **IAM**
-
-  ↳↳ [GnosisIam](gnosisiam.md)
+  ↳ **GnosisIam**
 
 ## Index
 
 ### Constructors
 
-* [constructor](iam.md#constructor)
+* [constructor](gnosisiam.md#constructor)
 
 ### Accessors
 
-* [address](iam.md#address)
+* [address](gnosisiam.md#address)
+* [safeAddress](gnosisiam.md#safeaddress)
 
 ### Methods
 
-* [changeAppOwnership](iam.md#changeappownership)
-* [changeOrgOwnership](iam.md#changeorgownership)
-* [changeRoleOwnership](iam.md#changeroleownership)
-* [checkExistenceOfDomain](iam.md#checkexistenceofdomain)
-* [closeConnection](iam.md#closeconnection)
-* [createApplication](iam.md#createapplication)
-* [createClaimRequest](iam.md#createclaimrequest)
-* [createIdentityProof](iam.md#createidentityproof)
-* [createOrganization](iam.md#createorganization)
-* [createProofClaim](iam.md#createproofclaim)
-* [createPublicClaim](iam.md#createpublicclaim)
-* [createRole](iam.md#createrole)
-* [createSelfSignedClaim](iam.md#createselfsignedclaim)
-* [decodeJWTToken](iam.md#decodejwttoken)
-* [deleteApplication](iam.md#deleteapplication)
-* [deleteClaim](iam.md#deleteclaim)
-* [deleteOrganization](iam.md#deleteorganization)
-* [deleteRole](iam.md#deleterole)
-* [getAppsByOrgNamespace](iam.md#getappsbyorgnamespace)
-* [getDefinition](iam.md#getdefinition)
-* [getDid](iam.md#getdid)
-* [getDidDocument](iam.md#getdiddocument)
-* [getENSTypesByOwner](iam.md#getenstypesbyowner)
-* [getENSTypesBySearchPhrase](iam.md#getenstypesbysearchphrase)
-* [getIssuedClaims](iam.md#getissuedclaims)
-* [getOrgHierarchy](iam.md#getorghierarchy)
-* [getProviderType](iam.md#getprovidertype)
-* [getRequestedClaims](iam.md#getrequestedclaims)
-* [getRoleDIDs](iam.md#getroledids)
-* [getRolesByNamespace](iam.md#getrolesbynamespace)
-* [getSigner](iam.md#getsigner)
-* [getSubOrgsByOrgNamespace](iam.md#getsuborgsbyorgnamespace)
-* [getSubdomains](iam.md#getsubdomains)
-* [getUserClaims](iam.md#getuserclaims)
-* [initializeConnection](iam.md#initializeconnection)
-* [isConnected](iam.md#isconnected)
-* [isOwner](iam.md#isowner)
-* [isSessionActive](iam.md#issessionactive)
-* [issueClaimRequest](iam.md#issueclaimrequest)
-* [issuePublicClaim](iam.md#issuepublicclaim)
-* [namespacesWithRelations](iam.md#namespaceswithrelations)
-* [on](iam.md#on)
-* [publishPublicClaim](iam.md#publishpublicclaim)
-* [rejectClaimRequest](iam.md#rejectclaimrequest)
-* [revokeDidDocument](iam.md#revokediddocument)
-* [setRoleDefinition](iam.md#setroledefinition)
-* [subscribeToMessages](iam.md#subscribetomessages)
-* [updateDidDocument](iam.md#updatediddocument)
-* [validateOwnership](iam.md#validateownership)
-* [verifyPublicClaim](iam.md#verifypublicclaim)
-* [isMetamaskExtensionPresent](iam.md#ismetamaskextensionpresent)
+* [changeAppOwnership](gnosisiam.md#changeappownership)
+* [changeOrgOwnership](gnosisiam.md#changeorgownership)
+* [changeRoleOwnership](gnosisiam.md#changeroleownership)
+* [checkExistenceOfDomain](gnosisiam.md#checkexistenceofdomain)
+* [closeConnection](gnosisiam.md#closeconnection)
+* [createApplication](gnosisiam.md#createapplication)
+* [createClaimRequest](gnosisiam.md#createclaimrequest)
+* [createIdentityProof](gnosisiam.md#createidentityproof)
+* [createOrganization](gnosisiam.md#createorganization)
+* [createProofClaim](gnosisiam.md#createproofclaim)
+* [createPublicClaim](gnosisiam.md#createpublicclaim)
+* [createRole](gnosisiam.md#createrole)
+* [createSelfSignedClaim](gnosisiam.md#createselfsignedclaim)
+* [decodeJWTToken](gnosisiam.md#decodejwttoken)
+* [deleteApplication](gnosisiam.md#deleteapplication)
+* [deleteClaim](gnosisiam.md#deleteclaim)
+* [deleteOrganization](gnosisiam.md#deleteorganization)
+* [deleteRole](gnosisiam.md#deleterole)
+* [getAppsByOrgNamespace](gnosisiam.md#getappsbyorgnamespace)
+* [getDefinition](gnosisiam.md#getdefinition)
+* [getDid](gnosisiam.md#getdid)
+* [getDidDocument](gnosisiam.md#getdiddocument)
+* [getENSTypesByOwner](gnosisiam.md#getenstypesbyowner)
+* [getENSTypesBySearchPhrase](gnosisiam.md#getenstypesbysearchphrase)
+* [getIssuedClaims](gnosisiam.md#getissuedclaims)
+* [getOrgHierarchy](gnosisiam.md#getorghierarchy)
+* [getProviderType](gnosisiam.md#getprovidertype)
+* [getRequestedClaims](gnosisiam.md#getrequestedclaims)
+* [getRoleDIDs](gnosisiam.md#getroledids)
+* [getRolesByNamespace](gnosisiam.md#getrolesbynamespace)
+* [getSigner](gnosisiam.md#getsigner)
+* [getSubOrgsByOrgNamespace](gnosisiam.md#getsuborgsbyorgnamespace)
+* [getSubdomains](gnosisiam.md#getsubdomains)
+* [getUserClaims](gnosisiam.md#getuserclaims)
+* [initializeConnection](gnosisiam.md#initializeconnection)
+* [isConnected](gnosisiam.md#isconnected)
+* [isOwner](gnosisiam.md#isowner)
+* [isSessionActive](gnosisiam.md#issessionactive)
+* [issueClaimRequest](gnosisiam.md#issueclaimrequest)
+* [issuePublicClaim](gnosisiam.md#issuepublicclaim)
+* [namespacesWithRelations](gnosisiam.md#namespaceswithrelations)
+* [on](gnosisiam.md#on)
+* [publishPublicClaim](gnosisiam.md#publishpublicclaim)
+* [rejectClaimRequest](gnosisiam.md#rejectclaimrequest)
+* [revokeDidDocument](gnosisiam.md#revokediddocument)
+* [setRoleDefinition](gnosisiam.md#setroledefinition)
+* [subscribeToMessages](gnosisiam.md#subscribetomessages)
+* [updateDidDocument](gnosisiam.md#updatediddocument)
+* [validateOwnership](gnosisiam.md#validateownership)
+* [verifyPublicClaim](gnosisiam.md#verifypublicclaim)
+* [isMetamaskExtensionPresent](gnosisiam.md#ismetamaskextensionpresent)
 
 ## Constructors
 
 ### constructor
 
-\+ **new IAM**(`__namedParameters`: { bridgeUrl: string = "https://walletconnect.energyweb.org"; cacheClient: undefined \| [ICacheServerClient](../interfaces/icacheserverclient.md) ; chainId: number = VOLTA\_CHAIN\_ID; didContractAddress: string = VoltaAddress1056; ensRegistryAddress: string = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac"; ensResolverAddress: string = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680"; ewKeyManagerUrl: string = "https://km.aws.energyweb.org/connect/new"; infuraId: undefined \| string ; ipfsUrl: string = "https://ipfs.infura.io:5001/api/v0/"; messagingMethod: undefined \| [CacheServer](../enums/messagingmethod.md#cacheserver) \| [WebRTC](../enums/messagingmethod.md#webrtc) \| [SmartContractStorage](../enums/messagingmethod.md#smartcontractstorage) ; natsServerUrl: undefined \| string ; privateKey: undefined \| string ; rpcUrl: string  }): [IAM](iam.md)
+\+ **new GnosisIam**(`safeAppSdk`: SafeAppSdk, `iamOpts`: [ConnectionOptions](../globals.md#connectionoptions)): [GnosisIam](gnosisiam.md)
 
-*Inherited from [IAMBase](iambase.md).[constructor](iambase.md#constructor)*
-
-IAM Constructor
+*Overrides [IAMBase](iambase.md).[constructor](iambase.md#constructor)*
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { bridgeUrl: string = "https://walletconnect.energyweb.org"; cacheClient: undefined \| [ICacheServerClient](../interfaces/icacheserverclient.md) ; chainId: number = VOLTA\_CHAIN\_ID; didContractAddress: string = VoltaAddress1056; ensRegistryAddress: string = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac"; ensResolverAddress: string = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680"; ewKeyManagerUrl: string = "https://km.aws.energyweb.org/connect/new"; infuraId: undefined \| string ; ipfsUrl: string = "https://ipfs.infura.io:5001/api/v0/"; messagingMethod: undefined \| [CacheServer](../enums/messagingmethod.md#cacheserver) \| [WebRTC](../enums/messagingmethod.md#webrtc) \| [SmartContractStorage](../enums/messagingmethod.md#smartcontractstorage) ; natsServerUrl: undefined \| string ; privateKey: undefined \| string ; rpcUrl: string  } |
+`safeAppSdk` | SafeAppSdk |
+`iamOpts` | [ConnectionOptions](../globals.md#connectionoptions) |
 
-**Returns:** [IAM](iam.md)
+**Returns:** [GnosisIam](gnosisiam.md)
 
 ## Accessors
 
@@ -104,11 +105,21 @@ Name | Type |
 
 **Returns:** undefined \| string
 
+___
+
+### safeAddress
+
+• get **safeAddress**(): string
+
+**Returns:** string
+
 ## Methods
 
 ### changeAppOwnership
 
 ▸ **changeAppOwnership**(`__namedParameters`: { namespace: string ; newOwner: string ; returnSteps: undefined \| false \| true  }): Promise\<{ info: string = \`Changing ownership of ${namespace}\`; tx: [EncodedCall](../globals.md#encodedcall) ; next: (\_\_namedParameters: { retryCheck: undefined \| false \| true  }) => Promise\<void>  }[]>
+
+*Inherited from [IAM](iam.md).[changeAppOwnership](iam.md#changeappownership)*
 
 changeAppOwnership
 
@@ -130,6 +141,8 @@ ___
 
 ▸ **changeOrgOwnership**(`__namedParameters`: { namespace: string ; newOwner: string ; returnSteps: boolean = false }): Promise\<{ info: string = \`Changing ownership of ${namespace}\`; tx: [EncodedCall](../globals.md#encodedcall) ; next: (\_\_namedParameters: { retryCheck: undefined \| false \| true  }) => Promise\<void>  }[]>
 
+*Inherited from [IAM](iam.md).[changeOrgOwnership](iam.md#changeorgownership)*
+
 changeOrgOwnership
 
 **`description`** change owner ship of org subdomain and all org owned roles subdomains
@@ -150,6 +163,8 @@ ___
 
 ▸ **changeRoleOwnership**(`__namedParameters`: { namespace: string ; newOwner: string  }): Promise\<void>
 
+*Inherited from [IAM](iam.md).[changeRoleOwnership](iam.md#changeroleownership)*
+
 changeRoleOwnership
 
 **`description`** change ownership of role subdomain
@@ -167,6 +182,8 @@ ___
 ### checkExistenceOfDomain
 
 ▸ **checkExistenceOfDomain**(`__namedParameters`: { domain: string  }): Promise\<boolean>
+
+*Inherited from [IAM](iam.md).[checkExistenceOfDomain](iam.md#checkexistenceofdomain)*
 
 checkExistenceOfDomain
 
@@ -202,6 +219,8 @@ ___
 
 ▸ **createApplication**(`__namedParameters`: { appName: string ; data: [IAppDefinition](../interfaces/iappdefinition.md) ; domain: string ; returnSteps: undefined \| false \| true  }): Promise\<{ next: () => Promise\<void>  }[]>
 
+*Inherited from [IAM](iam.md).[createApplication](iam.md#createapplication)*
+
 createApp
 
 **`description`** creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
@@ -222,6 +241,8 @@ ___
 
 ▸ **createClaimRequest**(`__namedParameters`: { claim: { claimType: string ; fields: { key: string ; value: string \| number  }[]  } ; issuer: string[]  }): Promise\<void>
 
+*Inherited from [IAM](iam.md).[createClaimRequest](iam.md#createclaimrequest)*
+
 #### Parameters:
 
 Name | Type |
@@ -236,6 +257,8 @@ ___
 
 ▸ **createIdentityProof**(): Promise\<string>
 
+*Inherited from [IAM](iam.md).[createIdentityProof](iam.md#createidentityproof)*
+
 **Returns:** Promise\<string>
 
 ___
@@ -243,6 +266,8 @@ ___
 ### createOrganization
 
 ▸ **createOrganization**(`__namedParameters`: { data: [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) ; namespace: string ; orgName: string ; returnSteps: undefined \| false \| true  }): Promise\<{ next: () => Promise\<void>  }[]>
+
+*Inherited from [IAM](iam.md).[createOrganization](iam.md#createorganization)*
 
 createOrganization
 
@@ -264,6 +289,8 @@ ___
 
 ▸ **createProofClaim**(`__namedParameters`: { claimUrl: string ; saltedFields: ISaltedFields  }): Promise\<string>
 
+*Inherited from [IAM](iam.md).[createProofClaim](iam.md#createproofclaim)*
+
 createProofClaim
 
 **`description`** creates a proof of a claim
@@ -283,6 +310,8 @@ ___
 ### createPublicClaim
 
 ▸ **createPublicClaim**(`__namedParameters`: { data: [ClaimData](../interfaces/claimdata.md) ; subject: undefined \| string  }): Promise\<string>
+
+*Inherited from [IAM](iam.md).[createPublicClaim](iam.md#createpublicclaim)*
 
 createPublicClaim
 
@@ -304,6 +333,8 @@ ___
 
 ▸ **createRole**(`__namedParameters`: { data: [IRoleDefinition](../interfaces/iroledefinition.md) ; namespace: string ; returnSteps: undefined \| false \| true ; roleName: string  }): Promise\<{ next: () => Promise\<void>  }[]>
 
+*Inherited from [IAM](iam.md).[createRole](iam.md#createrole)*
+
 createRole
 
 **`description`** creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
@@ -324,6 +355,8 @@ ___
 
 ▸ **createSelfSignedClaim**(`__namedParameters`: { data: [ClaimData](../interfaces/claimdata.md) ; subject: undefined \| string  }): Promise\<string>
 
+*Inherited from [IAM](iam.md).[createSelfSignedClaim](iam.md#createselfsignedclaim)*
+
 createSelfSignedClaim
 
 **`description`** creates self signed claim and upload the data to ipfs
@@ -342,6 +375,8 @@ ___
 
 ▸ **decodeJWTToken**(`__namedParameters`: { token: string  }): Promise\<string \| { [key:string]: string \| object;  }>
 
+*Inherited from [IAM](iam.md).[decodeJWTToken](iam.md#decodejwttoken)*
+
 #### Parameters:
 
 Name | Type |
@@ -355,6 +390,8 @@ ___
 ### deleteApplication
 
 ▸ **deleteApplication**(`__namedParameters`: { namespace: string ; returnSteps: undefined \| false \| true  }): Promise\<{ info: string = \`Deleting ${namespace}\`; tx: [EncodedCall](../globals.md#encodedcall) ; next: (\_\_namedParameters: { retryCheck: undefined \| false \| true  }) => Promise\<void>  }[]>
+
+*Inherited from [IAM](iam.md).[deleteApplication](iam.md#deleteapplication)*
 
 deleteApplication
 
@@ -374,6 +411,8 @@ ___
 
 ▸ **deleteClaim**(`__namedParameters`: { id: string  }): Promise\<void>
 
+*Inherited from [IAM](iam.md).[deleteClaim](iam.md#deleteclaim)*
+
 #### Parameters:
 
 Name | Type |
@@ -387,6 +426,8 @@ ___
 ### deleteOrganization
 
 ▸ **deleteOrganization**(`__namedParameters`: { namespace: string ; returnSteps: undefined \| false \| true  }): Promise\<{ info: string = \`Deleting ${namespace}\`; tx: [EncodedCall](../globals.md#encodedcall) ; next: (\_\_namedParameters: { retryCheck: undefined \| false \| true  }) => Promise\<void>  }[]>
+
+*Inherited from [IAM](iam.md).[deleteOrganization](iam.md#deleteorganization)*
 
 deleteOrganization
 
@@ -406,6 +447,8 @@ ___
 
 ▸ **deleteRole**(`__namedParameters`: { namespace: string  }): Promise\<void>
 
+*Inherited from [IAM](iam.md).[deleteRole](iam.md#deleterole)*
+
 deleteRole
 
 **`description`** delete role
@@ -423,6 +466,8 @@ ___
 ### getAppsByOrgNamespace
 
 ▸ **getAppsByOrgNamespace**(`__namedParameters`: { namespace: string  }): Promise\<[IApp](../interfaces/iapp.md)[]>
+
+*Inherited from [IAM](iam.md).[getAppsByOrgNamespace](iam.md#getappsbyorgnamespace)*
 
 getENSTypesByOwner
 
@@ -444,6 +489,8 @@ ___
 
 ▸ **getDefinition**(`__namedParameters`: { namespace: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  }): Promise\<[IRoleDefinition](../interfaces/iroledefinition.md) \| [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) \| [IAppDefinition](../interfaces/iappdefinition.md)>
 
+*Inherited from [IAM](iam.md).[getDefinition](iam.md#getdefinition)*
+
 getRoleDefinition
 
 **`description`** get role definition form ens domain metadata record
@@ -464,6 +511,8 @@ ___
 
 ▸ **getDid**(): string \| undefined
 
+*Inherited from [IAM](iam.md).[getDid](iam.md#getdid)*
+
 Get DID
 
 **Returns:** string \| undefined
@@ -475,6 +524,8 @@ ___
 ### getDidDocument
 
 ▸ **getDidDocument**(`__namedParameters?`: { did: undefined \| string = this.\_did; includeClaims: boolean = true }): Promise\<{ service: IServiceEndpoint & [ClaimData](../interfaces/claimdata.md)[] = didDoc.service as (IServiceEndpoint & ClaimData)[] }>
+
+*Inherited from [IAM](iam.md).[getDidDocument](iam.md#getdiddocument)*
 
 getDidDocument
 
@@ -492,15 +543,15 @@ ___
 
 ### getENSTypesByOwner
 
-▸ **getENSTypesByOwner**(`__namedParameters`: { excludeSubOrgs: boolean = false; owner: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  }): Promise\<[IRole](../interfaces/irole.md)[]> \| Promise\<[IOrganization](../interfaces/iorganization.md)[]> \| Promise\<[IApp](../interfaces/iapp.md)[]>
+▸ **getENSTypesByOwner**(`__namedParameters`: { owner: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  }): Promise\<[IRole](../interfaces/irole.md)[]> \| Promise\<[IOrganization](../interfaces/iorganization.md)[]> \| Promise\<[IApp](../interfaces/iapp.md)[]>
 
-getENSTypesByOwner
+*Overrides [IAM](iam.md).[getENSTypesByOwner](iam.md#getenstypesbyowner)*
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { excludeSubOrgs: boolean = false; owner: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  } |
+`__namedParameters` | { owner: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  } |
 
 **Returns:** Promise\<[IRole](../interfaces/irole.md)[]> \| Promise\<[IOrganization](../interfaces/iorganization.md)[]> \| Promise\<[IApp](../interfaces/iapp.md)[]>
 
@@ -509,6 +560,8 @@ ___
 ### getENSTypesBySearchPhrase
 
 ▸ **getENSTypesBySearchPhrase**(`__namedParameters`: { search: string ; types: undefined \| (\"App\" \| \"Org\" \| \"Role\")[]  }): Promise\<[IApp](../interfaces/iapp.md)[] \| [IRole](../interfaces/irole.md)[] \| [IOrganization](../interfaces/iorganization.md)[]>
+
+*Inherited from [IAM](iam.md).[getENSTypesBySearchPhrase](iam.md#getenstypesbysearchphrase)*
 
 getENSTypesBySearchPhrase
 
@@ -526,6 +579,8 @@ ___
 
 ▸ **getIssuedClaims**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
 
+*Inherited from [IAM](iam.md).[getIssuedClaims](iam.md#getissuedclaims)*
+
 #### Parameters:
 
 Name | Type |
@@ -540,9 +595,7 @@ ___
 
 ▸ **getOrgHierarchy**(`__namedParameters`: { namespace: string  }): Promise\<[IOrganization](../interfaces/iorganization.md)>
 
-getOrgHierarchy
-
-**`description`** get all hierarchy of an organization (20 levels deep)
+*Overrides [IAM](iam.md).[getOrgHierarchy](iam.md#getorghierarchy)*
 
 #### Parameters:
 
@@ -552,13 +605,13 @@ Name | Type |
 
 **Returns:** Promise\<[IOrganization](../interfaces/iorganization.md)>
 
-organization with all nested subOrgs
-
 ___
 
 ### getProviderType
 
 ▸ **getProviderType**(): undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager)
+
+*Inherited from [IAM](iam.md).[getProviderType](iam.md#getprovidertype)*
 
 Get the current initialized provider type
 
@@ -571,6 +624,8 @@ ___
 ### getRequestedClaims
 
 ▸ **getRequestedClaims**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
+
+*Inherited from [IAM](iam.md).[getRequestedClaims](iam.md#getrequestedclaims)*
 
 #### Parameters:
 
@@ -585,6 +640,8 @@ ___
 ### getRoleDIDs
 
 ▸ **getRoleDIDs**(`__namedParameters`: { namespace: string  }): Promise\<string[]>
+
+*Inherited from [IAM](iam.md).[getRoleDIDs](iam.md#getroledids)*
 
 getRoleDIDs
 
@@ -606,6 +663,8 @@ ___
 
 ▸ **getRolesByNamespace**(`__namedParameters`: { namespace: string ; parentType: [Application](../enums/ensnamespacetypes.md#application) \| [Organization](../enums/ensnamespacetypes.md#organization)  }): Promise\<[IRole](../interfaces/irole.md)[]>
 
+*Inherited from [IAM](iam.md).[getRolesByNamespace](iam.md#getrolesbynamespace)*
+
 getRolesByNamespace
 
 **`description`** get all subdomains for certain domain
@@ -626,6 +685,8 @@ ___
 
 ▸ **getSigner**(): JsonRpcSigner \| Signer \| undefined
 
+*Inherited from [IAM](iam.md).[getSigner](iam.md#getsigner)*
+
 Get signer
 
 **Returns:** JsonRpcSigner \| Signer \| undefined
@@ -637,6 +698,8 @@ ___
 ### getSubOrgsByOrgNamespace
 
 ▸ **getSubOrgsByOrgNamespace**(`__namedParameters`: { namespace: string  }): Promise\<[IOrganization](../interfaces/iorganization.md)[]>
+
+*Inherited from [IAM](iam.md).[getSubOrgsByOrgNamespace](iam.md#getsuborgsbyorgnamespace)*
 
 getSubOrgsByOrgNamespace
 
@@ -658,6 +721,8 @@ ___
 
 ▸ **getSubdomains**(`__namedParameters`: { domain: string  }): Promise\<string[]>
 
+*Inherited from [IAM](iam.md).[getSubdomains](iam.md#getsubdomains)*
+
 getSubdomains
 
 **`description`** get all subdomains for certain domain
@@ -678,6 +743,8 @@ ___
 
 ▸ **getUserClaims**(`__namedParameters?`: { did: undefined \| string = this.\_did }): Promise\<IServiceEndpoint & [ClaimData](../interfaces/claimdata.md)[]>
 
+*Inherited from [IAM](iam.md).[getUserClaims](iam.md#getuserclaims)*
+
 getUserClaims
 
 **`description`** get user claims
@@ -695,6 +762,8 @@ ___
 ### initializeConnection
 
 ▸ **initializeConnection**(`__namedParameters?`: { reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) = this.\_providerType }): Promise\<[InitializeData](../globals.md#initializedata)>
+
+*Inherited from [IAM](iam.md).[initializeConnection](iam.md#initializeconnection)*
 
 Initialize connection to wallet
 
@@ -720,6 +789,8 @@ ___
 
 ▸ **isConnected**(): boolean
 
+*Inherited from [IAM](iam.md).[isConnected](iam.md#isconnected)*
+
 isConnected
 
 **Returns:** boolean
@@ -732,11 +803,10 @@ ___
 
 ▸ **isOwner**(`__namedParameters`: { domain: string ; user: undefined \| string = this.\_address }): Promise\<boolean>
 
-isOwner
+*Overrides [IAM](iam.md).[isOwner](iam.md#isowner)*
 
-**`description`** check ownership of the domain
-
-**`default`** if user is not specified it will check the current logged user
+**`description`** Checks whether the `domain` is owned by `user` or by
+gnosis wallet controlled by `user`
 
 #### Parameters:
 
@@ -746,13 +816,13 @@ Name | Type |
 
 **Returns:** Promise\<boolean>
 
-true or false whatever the passed is user is a owner of domain
-
 ___
 
 ### isSessionActive
 
 ▸ **isSessionActive**(): boolean
+
+*Inherited from [IAM](iam.md).[isSessionActive](iam.md#issessionactive)*
 
 Check if session is active
 
@@ -765,6 +835,8 @@ ___
 ### issueClaimRequest
 
 ▸ **issueClaimRequest**(`__namedParameters`: { id: string ; requesterDID: string ; token: string  }): Promise\<void>
+
+*Inherited from [IAM](iam.md).[issueClaimRequest](iam.md#issueclaimrequest)*
 
 #### Parameters:
 
@@ -779,6 +851,8 @@ ___
 ### issuePublicClaim
 
 ▸ **issuePublicClaim**(`__namedParameters`: { token: string  }): Promise\<string>
+
+*Inherited from [IAM](iam.md).[issuePublicClaim](iam.md#issuepublicclaim)*
 
 issuePublicClaim
 
@@ -799,6 +873,8 @@ ___
 ### namespacesWithRelations
 
 ▸ **namespacesWithRelations**(`namespaces`: string[]): Promise\<{ namespace: string ; owner: string  }[]>
+
+*Inherited from [IAM](iam.md).[namespacesWithRelations](iam.md#namespaceswithrelations)*
 
 **`description`** Collects all namespaces related data. Currently its includes only owner
 
@@ -837,6 +913,8 @@ ___
 
 ▸ **publishPublicClaim**(`__namedParameters`: { token: string  }): Promise\<string>
 
+*Inherited from [IAM](iam.md).[publishPublicClaim](iam.md#publishpublicclaim)*
+
 publishPublicClaim
 
 **`description`** store claim data in ipfs and save url to DID document services
@@ -857,6 +935,8 @@ ___
 
 ▸ **rejectClaimRequest**(`__namedParameters`: { id: string ; requesterDID: string  }): Promise\<void>
 
+*Inherited from [IAM](iam.md).[rejectClaimRequest](iam.md#rejectclaimrequest)*
+
 #### Parameters:
 
 Name | Type |
@@ -871,6 +951,8 @@ ___
 
 ▸ **revokeDidDocument**(): Promise\<boolean>
 
+*Inherited from [IAM](iam.md).[revokeDidDocument](iam.md#revokediddocument)*
+
 revokeDidDocument
 
 **`description`** revokes did document
@@ -884,6 +966,8 @@ ___
 ### setRoleDefinition
 
 ▸ **setRoleDefinition**(`__namedParameters`: { data: [IRoleDefinition](../interfaces/iroledefinition.md) \| [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) \| [IAppDefinition](../interfaces/iappdefinition.md) ; domain: string  }): Promise\<void>
+
+*Inherited from [IAM](iam.md).[setRoleDefinition](iam.md#setroledefinition)*
 
 setRoleDefinition
 
@@ -905,6 +989,8 @@ ___
 
 ▸ **subscribeToMessages**(`__namedParameters`: { messageHandler: (data: [IMessage](../interfaces/imessage.md)) => void ; topic: string = \`${this.\_did}.${NATS\_EXCHANGE\_TOPIC}\` }): Promise\<void>
 
+*Inherited from [IAM](iam.md).[subscribeToMessages](iam.md#subscribetomessages)*
+
 #### Parameters:
 
 Name | Type |
@@ -918,6 +1004,8 @@ ___
 ### updateDidDocument
 
 ▸ **updateDidDocument**(`options`: { data: IUpdateData ; didAttribute: DIDAttribute ; validity?: undefined \| number  }): Promise\<boolean>
+
+*Inherited from [IAM](iam.md).[updateDidDocument](iam.md#updatediddocument)*
 
 **`description`** updates did document based on data provided
 
@@ -937,9 +1025,7 @@ ___
 
 ▸ **validateOwnership**(`__namedParameters`: { namespace: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  }): Promise\<string[]>
 
-validateOwnership
-
-**`description`** check ownership of the domain and subdomains of org, app or role
+*Overrides [IAM](iam.md).[validateOwnership](iam.md#validateownership)*
 
 #### Parameters:
 
@@ -949,13 +1035,13 @@ Name | Type |
 
 **Returns:** Promise\<string[]>
 
-true or false whatever the passed is user is a owner of org, app or role
-
 ___
 
 ### verifyPublicClaim
 
 ▸ **verifyPublicClaim**(`__namedParameters`: { issuedToken: string  }): Promise\<IPublicClaim>
+
+*Inherited from [IAM](iam.md).[verifyPublicClaim](iam.md#verifypublicclaim)*
 
 verifyPublicClaim
 
@@ -976,5 +1062,7 @@ ___
 ### isMetamaskExtensionPresent
 
 ▸ `Static`**isMetamaskExtensionPresent**(): Promise\<{ chainId: undefined \| number ; isMetamaskPresent: boolean = !!provider }>
+
+*Inherited from [IAM](iam.md).[isMetamaskExtensionPresent](iam.md#ismetamaskextensionpresent)*
 
 **Returns:** Promise\<{ chainId: undefined \| number ; isMetamaskPresent: boolean = !!provider }>

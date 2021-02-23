@@ -21,7 +21,7 @@
 
 ### fields
 
-•  **fields**: { fieldType: string ; label: string ; validation: string  }[]
+•  **fields**: { fieldType: string ; label: string ; maxDate?: Date ; maxLength?: undefined \| number ; maxValue?: undefined \| number ; minDate?: Date ; minLength?: undefined \| number ; minValue?: undefined \| number ; pattern?: undefined \| string ; required?: undefined \| false \| true  }[]
 
 ___
 
