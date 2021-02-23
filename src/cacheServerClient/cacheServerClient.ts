@@ -10,8 +10,15 @@ export class CacheServerClient implements ICacheServerClient {
   private httpClient: AxiosInstance;
   private isAlreadyFetchingAccessToken = false;
   private failedRequests: Array<() => void> = [];
+  private authEnabled: boolean;
 
-  constructor({ url }: { url: string }) {
+  constructor({
+    url,
+    cacheServerSupportsAuth = true
+  }: {
+    url: string;
+    cacheServerSupportsAuth?: boolean;
+  }) {
     this.httpClient = axios.create({
       baseURL: url,
       withCredentials: true
@@ -19,6 +26,7 @@ export class CacheServerClient implements ICacheServerClient {
     this.httpClient.interceptors.response.use(function(response: AxiosResponse) {
       return response;
     }, this.handleUnauthorized);
+    this.authEnabled = cacheServerSupportsAuth;
   }
 
   handleSuccessfulReLogin() {
@@ -33,6 +41,7 @@ export class CacheServerClient implements ICacheServerClient {
     const { config, response } = error;
     const originalRequest = config;
     if (
+      this.authEnabled &&
       response &&
       response.status === 401 &&
       config &&
@@ -56,7 +65,8 @@ export class CacheServerClient implements ICacheServerClient {
   };
 
   async login(identityToken: string) {
-    await this.httpClient.post<{ token: string }>("/login", { identityToken });
+    this.authEnabled &&
+      (await this.httpClient.post<{ token: string }>("/login", { identityToken }));
   }
 
   async refreshToken() {
