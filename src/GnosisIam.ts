@@ -1,9 +1,9 @@
 import SafeAppSdk from '@gnosis.pm/safe-apps-sdk';
-import {utils} from 'ethers';
+import { utils } from 'ethers';
 import { IApp, IOrganization, IRole } from './cacheServerClient/cacheServerClient.types';
-import { CacheClientNotProvidedError, ERROR_MESSAGES } from './errors';
+import { CacheClientNotProvidedError } from './errors';
 import { ENSNamespaceTypes, IAM } from './iam';
-import { ConnectionOptions, emptyAddress, Transaction } from './iam/iam-base';
+import { ConnectionOptions, Transaction } from './iam/iam-base';
 
 const { bigNumberify } = utils;
 
@@ -72,22 +72,6 @@ export class GnosisIam extends IAM {
     }
   }
 
-  async validateOwnership(
-    { namespace, type }: { namespace: string; type: ENSNamespaceTypes }
-  ) {
-    if (this._address && this._safeAddress) {
-      const notOwnedByOwner = await super.nonOwnedNodesOf({ namespace, type, owner: this._address });
-      const notOwnedBySafe = await super.nonOwnedNodesOf({ namespace, type, owner: this._safeAddress });
-      if (notOwnedByOwner.length < notOwnedBySafe.length) {
-        return notOwnedByOwner;
-      } else {
-        return notOwnedBySafe;
-      }
-    } else {
-      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
-    }
-  }
-
   /**
    * @description Checks whether the `domain` is owned by `user` or by 
    * gnosis wallet controlled by `user`
@@ -95,52 +79,6 @@ export class GnosisIam extends IAM {
   async isOwner({ domain, user = this._address }: { domain: string; user?: string }) {
     return await super.isOwner({ domain, user }) ||
       user === this._address && await super.isOwner({ domain, user: this._safeAddress });
-  }
-
-  protected async validateChangeOwnership({
-    namespaces,
-    newOwner
-  }: {
-    namespaces: string[];
-    newOwner: string;
-  }) {
-    const namespacesWithRelations = await this.namespacesWithRelations(namespaces);
-    return namespacesWithRelations.reduce(
-      (acc, { namespace, owner }) => {
-        if (owner === newOwner) {
-          acc.alreadyFinished.push(namespace);
-        } else if (owner === this._address || owner === this.safeAddress) {
-          acc.changeOwnerNamespaces.push(namespace);
-        } else {
-          acc.notOwnedNamespaces.push(namespace);
-        }
-        return acc;
-      },
-      {
-        notOwnedNamespaces: new Array<string>(),
-        alreadyFinished: new Array<string>(),
-        changeOwnerNamespaces: new Array<string>()
-      });
-  }
-
-  protected async validateDeletePossibility({ namespaces }: { namespaces: string[] }) {
-    const namespacesWithRelations = await this.namespacesWithRelations(namespaces);
-    return namespacesWithRelations.reduce(
-      (acc, { namespace, owner }) => {
-        if (owner === emptyAddress) {
-          acc.alreadyFinished.push(namespace);
-        } else if (owner === this._address || owner === this.safeAddress) {
-          acc.namespacesToDelete.push(namespace);
-        } else {
-          acc.notOwnedNamespaces.push(namespace);
-        }
-        return acc;
-      },
-      {
-        alreadyFinished: new Array<string>(),
-        namespacesToDelete: new Array<string>(),
-        notOwnedNamespaces: new Array<string>()
-      });
   }
 
   async getOrgHierarchy({ namespace }: { namespace: string }): Promise<IOrganization> {
@@ -151,5 +89,9 @@ export class GnosisIam extends IAM {
     [org, ...org.subOrgs || [], ...org.apps || [], ...org.roles || []]
       .forEach((domain) => domain.isOwnedByCurrentUser = [this._address, this.safeAddress].includes(domain.owner));
     return org;
+  }
+
+  async isOperatorOf(owner: string): Promise<boolean> {
+    return await super.isOperatorOf(owner) || owner === this._safeAddress;
   }
 }

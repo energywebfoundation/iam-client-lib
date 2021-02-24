@@ -7,6 +7,7 @@ import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
+import { approvalTests } from "./approval.testSuite";
 
 const { namehash, bigNumberify } = utils;
 
@@ -72,4 +73,5 @@ describe("IAM tests", () => {
   describe("Application tests", appsTests);
   describe("InitializeConnection tests", initializeConnectionTests);
   describe("Claim tests", claimsTests);
+  describe("Approval tests", approvalTests);
 });
