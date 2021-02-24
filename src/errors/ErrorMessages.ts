@@ -9,6 +9,7 @@ export enum ERROR_MESSAGES {
   USER_NOT_LOGGED_IN = "User not logged in",
   NO_PROVIDER = "Initialization of singer failed due to no provider",
   NO_PRIVATE_KEY = "Initialization of signer not possible in nodejs env without private key",
+  NO_RPC_URL = "Rpc url needed to initialize provider in node js enviroment",
   CACHE_CLIENT_NOT_PROVIDED = "Cache client not provided",
   ENS_REGISTRY_NOT_INITIALIZED = "ENS registry not initialized",
   ENS_RESOLVER_NOT_INITIALIZED = "ENS resolver not initialized",
