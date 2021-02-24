@@ -33,10 +33,6 @@ export const appsTests = () => {
     await replenish(newOwner.getAddress());
     const newOwnerIam = new IAM({
       rpcUrl: "http://localhost:8544/",
-      chainId: 9,
-      ensRegistryAddress: ensRegistry.address,
-      ensResolverAddress: ensResolver.address,
-      didContractAddress: didContract.address,
       privateKey: newOwner.privateKey
     });
     await newOwnerIam.initializeConnection({
