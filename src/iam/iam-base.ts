@@ -29,8 +29,7 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { ChainConfig } from "./models";
-import { setDefaults } from './defaults';
+import { chainConfigs } from './extras';
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { JsonRpcProvider } = providers;
@@ -87,7 +86,6 @@ export const PUBLIC_KEY = "PublicKey";
  * @class
  */
 export class IAMBase {
-  static chainConfigs: Record<number, ChainConfig> = {};
   protected _runningInBrowser: boolean;
   protected _connectionOptions: ConnectionOptions;
 
@@ -150,7 +148,6 @@ export class IAMBase {
     this._runningInBrowser = isBrowser();
 
     errors.setLogLevel("error");
-    setDefaults();
 
     this._connectionOptions = {
       privateKey,
@@ -161,7 +158,7 @@ export class IAMBase {
 
     this._ipfsStore = new DidStore(ipfsUrl);
 
-    if (this._runningInBrowser && process.env.NODE_ENV !== "test") {
+    if (this._runningInBrowser) {
       this._providerType = (sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider);
       const publicKey = sessionStorage.getItem(PUBLIC_KEY);
       if (publicKey) {
@@ -279,7 +276,7 @@ export class IAMBase {
 
       const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
 
-      const rpc = Object.entries(IAMBase.chainConfigs).reduce(
+      const rpc = Object.entries(chainConfigs).reduce(
         (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }), {}
       );
 
@@ -668,7 +665,7 @@ export class IAMBase {
     const { chainId } = await this._provider.getNetwork();
     const {
       ensRegistryAddress, ensResolverAddress, didContractAddress, cacheServerUrl
-    } = IAMBase.chainConfigs[chainId];
+    } = chainConfigs[chainId];
     this._registrySetting = {
       address: didContractAddress,
       abi: abi1056,

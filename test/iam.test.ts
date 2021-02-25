@@ -7,6 +7,7 @@ import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
+import { setChainConfig } from "../src/iam/extras";
 
 const { namehash, bigNumberify } = utils;
 
@@ -24,13 +25,13 @@ describe("IAM tests", () => {
 
   beforeAll(async () => {
     await deployContracts(privateKey);
-    IAM.chainConfigs[9] = {
+    setChainConfig(9, {
       rpcUrl,
       ensRegistryAddress: ensRegistry.address,
       ensResolverAddress: ensResolver.address,
       didContractAddress: didContract.address,
       cacheServerUrl: ""
-    };
+    });
 
     iam = new IAM({
       rpcUrl,
