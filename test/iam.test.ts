@@ -24,15 +24,13 @@ describe("IAM tests", () => {
 
   beforeAll(async () => {
     await deployContracts(privateKey);
-    IAM.setChainConfig(
-      9,
-      {
-        rpcUrl,
-        ensRegistryAddress: ensRegistry.address,
-        ensResolverAddress: ensResolver.address,
-        didContractAddress: didContract.address,
-        cacheServerUrl: ""
-      });
+    IAM.chainConfigs[9] = {
+      rpcUrl,
+      ensRegistryAddress: ensRegistry.address,
+      ensResolverAddress: ensResolver.address,
+      didContractAddress: didContract.address,
+      cacheServerUrl: ""
+    };
 
     iam = new IAM({
       rpcUrl,

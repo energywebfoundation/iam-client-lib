@@ -1,6 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
@@ -29,6 +29,8 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
+import { ChainConfig } from "./models";
+import { setDefaults } from './defaults';
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { JsonRpcProvider } = providers;
@@ -70,14 +72,6 @@ export type Transaction = {
   from: string;
 };
 
-export interface ChainConfig {
-  rpcUrl: string,
-  ensRegistryAddress: string,
-  ensResolverAddress: string,
-  didContractAddress: string,
-  cacheServerUrl: string;
-};
-
 export interface ClaimData extends Record<string, unknown> {
   profile?: any;
   claimType?: string;
@@ -93,6 +87,7 @@ export const PUBLIC_KEY = "PublicKey";
  * @class
  */
 export class IAMBase {
+  static chainConfigs: Record<number, ChainConfig> = {};
   protected _runningInBrowser: boolean;
   protected _connectionOptions: ConnectionOptions;
 
@@ -131,16 +126,6 @@ export class IAMBase {
   private readonly _ewKeyManagerUrl: string;
   private ttl = bigNumberify(0);
 
-  static chainConfigs: Record<string, ChainConfig>
-    = {
-      '73799': {
-        rpcUrl: "https://volta-rpc-vkn5r5zx4ke71f9hcu0c.energyweb.org/",
-        ensRegistryAddress: "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
-        ensResolverAddress: "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
-        didContractAddress: VoltaAddress1056,
-        cacheServerUrl: "https://identitycache-dev.energyweb.org/",
-      }
-    };
   private _chainId: number;
 
   /**
@@ -165,6 +150,7 @@ export class IAMBase {
     this._runningInBrowser = isBrowser();
 
     errors.setLogLevel("error");
+    setDefaults();
 
     this._connectionOptions = {
       privateKey,
@@ -693,15 +679,5 @@ export class IAMBase {
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
     this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
     cacheServerUrl && (this._cacheClient = new CacheServerClient({ url: cacheServerUrl }));
-  }
-
-  /**
-   * @description - should be invoked before iniitialization
-   * 
-   * @param chainId 
-   * @param config 
-   */
-  static setChainConfig(chainId: number, config: ChainConfig) {
-    this.chainConfigs[chainId] = config;
   }
 }
