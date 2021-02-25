@@ -43,7 +43,7 @@ export enum MessagingMethod {
 }
 
 export type ConnectionOptions = {
-  // only required in node env
+  /** only required in node env */
   rpcUrl?: string;
   chainId?: number;
   infuraId?: string;
@@ -70,7 +70,7 @@ export type Transaction = {
   from: string;
 };
 
-export type ChainConfig = {
+export interface ChainConfig {
   rpcUrl: string,
   ensRegistryAddress: string,
   ensResolverAddress: string,
