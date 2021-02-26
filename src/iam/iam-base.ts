@@ -29,13 +29,11 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { chainConfigs } from './extras';
+import { cacheServerClientOptions, chainConfigs } from './chainConfig';
 
 const { hexlify, bigNumberify, Interface } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
-
-export const VOLTA_CHAIN_ID = 73799;
 
 export enum MessagingMethod {
   CacheServer = "cacheServer",
@@ -184,7 +182,7 @@ export class IAMBase {
     walletProvider?: WalletProvider;
   }) {
     await this.initSigner({ walletProvider, initializeMetamask });
-    await this.initContracts();
+    await this.initChain();
     this.initEventHandlers();
 
     if (this._runningInBrowser) {
@@ -661,10 +659,10 @@ export class IAMBase {
     });
   }
 
-  private async initContracts() {
+  private async initChain() {
     const { chainId } = await this._provider.getNetwork();
     const {
-      ensRegistryAddress, ensResolverAddress, didContractAddress, cacheServerUrl
+      ensRegistryAddress, ensResolverAddress, didContractAddress
     } = chainConfigs[chainId];
     this._registrySetting = {
       address: didContractAddress,
@@ -675,6 +673,8 @@ export class IAMBase {
     this._ensResolverAddress = ensResolverAddress;
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
     this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
-    cacheServerUrl && (this._cacheClient = new CacheServerClient({ url: cacheServerUrl }));
+
+    const cacheOptions = cacheServerClientOptions[chainId];
+    cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
   }
 }

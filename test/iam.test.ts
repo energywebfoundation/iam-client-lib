@@ -7,7 +7,7 @@ import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
-import { setChainConfig } from "../src/iam/extras";
+import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
 
 const { namehash, bigNumberify } = utils;
 
@@ -30,8 +30,8 @@ describe("IAM tests", () => {
       ensRegistryAddress: ensRegistry.address,
       ensResolverAddress: ensResolver.address,
       didContractAddress: didContract.address,
-      cacheServerUrl: ""
     });
+    setCacheClientOptions(9, { url: "" });
 
     iam = new IAM({
       rpcUrl,

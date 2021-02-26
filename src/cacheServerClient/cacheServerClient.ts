@@ -6,6 +6,11 @@ import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 
 import { ICacheServerClient } from "./ICacheServerClient";
+
+export interface CacheServerClientOptions {
+  url: string;
+  cacheServerSupportsAuth?: boolean;
+}
 export class CacheServerClient implements ICacheServerClient {
   private httpClient: AxiosInstance;
   private isAlreadyFetchingAccessToken = false;
@@ -15,15 +20,13 @@ export class CacheServerClient implements ICacheServerClient {
   constructor({
     url,
     cacheServerSupportsAuth = true
-  }: {
-    url: string;
-    cacheServerSupportsAuth?: boolean;
-  }) {
+  }: CacheServerClientOptions
+  ) {
     this.httpClient = axios.create({
       baseURL: url,
       withCredentials: true
     });
-    this.httpClient.interceptors.response.use(function(response: AxiosResponse) {
+    this.httpClient.interceptors.response.use(function (response: AxiosResponse) {
       return response;
     }, this.handleUnauthorized);
     this.authEnabled = cacheServerSupportsAuth;
