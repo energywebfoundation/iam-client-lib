@@ -25,7 +25,7 @@ export const appsTests = () => {
     expect(await ensResolver.name(namehash(appNode))).toBe(appNode);
     expect(
       await iam.getSubdomains({ domain: `${ENSNamespaceTypes.Application}.${org1}.${root}` })
-    ).toContain(app);
+    ).toContain(`${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`);
   });
 
   test("application owner can be changed", async () => {

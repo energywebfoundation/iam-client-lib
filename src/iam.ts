@@ -25,7 +25,7 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, emptyAddress, ClaimData } from "./iam/iam-base";
+import { IAMBase, ClaimData } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
@@ -44,6 +44,8 @@ import {
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
+import { getSubdomains } from "./utils/getSubDomains";
+import { emptyAddress, NATS_EXCHANGE_TOPIC } from "./utils/constants";
 
 export type InitializeData = {
   did: string | undefined;
@@ -79,8 +81,6 @@ export enum ENSNamespaceTypes {
   Organization = "org"
 }
 
-export const NATS_EXCHANGE_TOPIC = "claim.exchange";
-
 /**
  * Decentralized Identity and Access Management (IAM) Type
  */
@@ -88,8 +88,8 @@ export class IAM extends IAMBase {
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
-        request: any;
-      }
+          request: any;
+        }
       | undefined;
 
     const chainId = (await provider?.request({
@@ -228,8 +228,8 @@ export class IAM extends IAMBase {
         ...document,
         service: includeClaims
           ? await this.downloadClaims({
-            services: document.service && document.service.length > 0 ? document.service : []
-          })
+              services: document.service && document.service.length > 0 ? document.service : []
+            })
           : []
       };
     }
@@ -690,8 +690,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-        domain: `${ENSNamespaceTypes.Application}.${namespace}`
-      });
+          domain: `${ENSNamespaceTypes.Application}.${namespace}`
+        });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
@@ -814,8 +814,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-        domain: `${ENSNamespaceTypes.Application}.${namespace}`
-      });
+          domain: `${ENSNamespaceTypes.Application}.${namespace}`
+        });
     if (apps && apps.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
     }
@@ -1090,8 +1090,9 @@ export class IAM extends IAMBase {
       throw new CacheClientNotProvidedError();
     }
     const org = await this._cacheClient.getOrgHierarchy({ namespace });
-    [org, ...org.subOrgs || [], ...org.apps || [], ...org.roles || []]
-      .forEach((domain) => domain.isOwnedByCurrentUser = domain.owner === this.address);
+    [org, ...(org.subOrgs || []), ...(org.apps || []), ...(org.roles || [])].forEach(
+      domain => (domain.isOwnedByCurrentUser = domain.owner === this.address)
+    );
     return org;
   }
 
@@ -1116,19 +1117,19 @@ export class IAM extends IAMBase {
    * @returns array of subdomains or empty array when there is no subdomains
    *
    */
-  async getSubdomains({ domain }: { domain: string }) {
-    if (this._ensRegistry) {
-      const domains = await this.getFilteredDomainsFromEvent({ domain });
-      const role = domain.split(".");
-      const subdomains: Record<string, null> = {};
-      for (const name of domains) {
-        const nameArray = name.split(".").reverse();
-        if (nameArray.length <= role.length) continue;
-        subdomains[nameArray[role.length]] = null;
-      }
-      return Object.keys(subdomains);
-    }
-    throw new ENSRegistryNotInitializedError();
+  async getSubdomains({
+    domain,
+    mode = "FIRSTLEVEL"
+  }: {
+    domain: string;
+    mode?: "ALL" | "FIRSTLEVEL";
+  }): Promise<string[]> {
+    return getSubdomains({
+      domain,
+      ensRegistry: this._ensRegistry,
+      ensResolver: this._ensResolver,
+      mode
+    });
   }
 
   /**
@@ -1410,8 +1411,8 @@ export class IAM extends IAMBase {
         type === ENSNamespaceTypes.Roles
           ? [namespace]
           : type === ENSNamespaceTypes.Application
-            ? [namespace, ENSNamespaceTypes.Application]
-            : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
+          ? [namespace, ENSNamespaceTypes.Application]
+          : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
       return Promise.all(
         namespacesToCheck.map(ns => this.getOwner({ namespace: ns }))
       ).then(owners => owners.filter(o => ![owner, emptyAddress].includes(o)));
@@ -1421,7 +1422,7 @@ export class IAM extends IAMBase {
 
   /**
    * @description Collects all namespaces related data. Currently its includes only owner
-   * @param namespaces 
+   * @param namespaces
    */
   async namespacesWithRelations(namespaces: string[]) {
     return Promise.all(
