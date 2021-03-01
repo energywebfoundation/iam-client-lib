@@ -1,7 +1,7 @@
 import { ENSNamespaceTypes, IAM } from "../src/iam";
 import { iam, root, rootOwner } from "./iam.test";
 import { org1 } from "./organization.testSuite";
-import { ensResolver, ensRegistry, didContract, replenish } from "./setup_contracts";
+import { ensResolver, replenish } from "./setup_contracts";
 import { utils } from "ethers";
 import { Keys } from "@ew-did-registry/keys";
 

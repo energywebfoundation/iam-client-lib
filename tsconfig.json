@@ -18,7 +18,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noLib": false,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "noUnusedParameters": false,
     "preserveSymlinks": true,
     "removeComments": true,
@@ -30,11 +30,7 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es5",
+    "target": "es5"
   },
-  "include": [
-    "src/**/*",
-    "ethers/**/*"
-  ],
-  
+  "include": ["src/**/*", "ethers/**/*"]
 }

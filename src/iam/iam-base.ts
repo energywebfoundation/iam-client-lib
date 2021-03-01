@@ -1,6 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
@@ -111,8 +111,6 @@ export class IAMBase {
 
   private readonly _ewKeyManagerUrl: string;
   private ttl = bigNumberify(0);
-
-  private _chainId: number;
 
   /**
    * IAM Constructor

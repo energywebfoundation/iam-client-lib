@@ -18,7 +18,6 @@ export class CacheServerClient implements ICacheServerClient {
   private failedRequests: Array<(token?: string) => void> = [];
   private authEnabled: boolean;
   private isBrowser: boolean;
-  private token: string | undefined;
   private refresh_token: string | undefined;
 
   constructor({ url, cacheServerSupportsAuth = true }: CacheServerClientOptions) {
@@ -36,7 +35,6 @@ export class CacheServerClient implements ICacheServerClient {
   async handleRefreshToken() {
     const { refreshToken, token } = await this.refreshToken();
     this.refresh_token = refreshToken;
-    this.token = token;
     this.failedRequests = this.failedRequests.filter(callback =>
       callback(this.isBrowser ? undefined : token)
     );

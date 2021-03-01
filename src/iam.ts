@@ -215,11 +215,15 @@ export class IAM extends IAMBase {
     includeClaims = true
   }: { did?: string; includeClaims?: boolean } | undefined = {}) {
     if (this._cacheClient && did) {
-      const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
-      return {
-        ...didDoc,
-        service: didDoc.service as (IServiceEndpoint & ClaimData)[]
-      };
+      try {
+        const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
+        return {
+          ...didDoc,
+          service: didDoc.service as (IServiceEndpoint & ClaimData)[]
+        };
+      } catch (err) {
+        console.log(err);
+      }
     }
 
     if (did && this._resolver) {
