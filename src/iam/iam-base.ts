@@ -1,7 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
-import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
+import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
@@ -29,17 +28,13 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { cacheServerClientOptions, chainConfigs } from './chainConfig';
+import { cacheServerClientOptions, chainConfigs } from "./chainConfig";
 
-const { hexlify, bigNumberify, Interface } = utils;
+const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
-export enum MessagingMethod {
-  CacheServer = "cacheServer",
-  WebRTC = "webRTC",
-  SmartContractStorage = "smartContractStorage"
-}
+import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 
 export type ConnectionOptions = {
   /** only required in node env */
@@ -74,11 +69,6 @@ export interface ClaimData extends Record<string, unknown> {
   claimType?: string;
   claimTypeVersion?: string;
 }
-
-export const emptyAddress = "0x0000000000000000000000000000000000000000";
-
-export const WALLET_PROVIDER = "WalletProvider";
-export const PUBLIC_KEY = "PublicKey";
 
 /**
  * @class
@@ -157,7 +147,7 @@ export class IAMBase {
     this._ipfsStore = new DidStore(ipfsUrl);
 
     if (this._runningInBrowser) {
-      this._providerType = (sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider);
+      this._providerType = sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider;
       const publicKey = sessionStorage.getItem(PUBLIC_KEY);
       if (publicKey) {
         this._publicKey = publicKey;
@@ -261,11 +251,12 @@ export class IAMBase {
 
       this._providerType = walletProvider;
       this._provider = this._signer.provider as providers.Web3Provider;
-      console.log('metamask chain id:', (await this._provider.getNetwork()).chainId);
+      console.log("metamask chain id:", (await this._provider.getNetwork()).chainId);
       return;
     }
     if (
-      walletProvider && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)
+      walletProvider &&
+      [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)
     ) {
       this._transactionOverrides = {
         gasLimit: hexlify(4900000),
@@ -275,7 +266,8 @@ export class IAMBase {
       const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
 
       const rpc = Object.entries(chainConfigs).reduce(
-        (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }), {}
+        (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }),
+        {}
       );
 
       this._walletConnectProvider = new WalletConnectProvider({
@@ -405,10 +397,8 @@ export class IAMBase {
     if (this._did && this._didSigner) {
       const document = new DIDDocumentFull(
         this._did,
-        new Operator(
-          this._didSigner,
-          this._registrySetting
-        ));
+        new Operator(this._didSigner, this._registrySetting)
+      );
       await document.create();
       this._document = document;
     }
@@ -534,37 +524,6 @@ export class IAMBase {
     };
   }
 
-  protected async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
-    if (this._ensResolver && this._provider) {
-      const ensInterface = new Interface(ensResolverContract);
-      const Event = this._ensResolver.filters.TextChanged(null, "metadata", null);
-      const filter = {
-        fromBlock: 0,
-        toBlock: "latest",
-        address: Event.address,
-        topics: Event.topics || []
-      };
-      const logs = await this._provider.getLogs(filter);
-      const rawLogs = logs.map(log => {
-        const parsedLog = ensInterface.parseLog(log);
-        return parsedLog.values;
-      });
-      const domains = await Promise.all(
-        rawLogs.map(async ({ node }) => {
-          return this._ensResolver?.name(node);
-        })
-      );
-      const uniqDomains: Record<string, unknown> = {};
-      for (const item of domains) {
-        if (item && item.endsWith(domain) && !uniqDomains[item]) {
-          uniqDomains[item] = null;
-        }
-      }
-      return Object.keys(uniqDomains);
-    }
-    return [];
-  }
-
   protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
     const roleHash = namehash(namespace);
     const metadata = await this._ensResolver.text(roleHash, "metadata");
@@ -661,9 +620,7 @@ export class IAMBase {
 
   private async initChain() {
     const { chainId } = await this._provider.getNetwork();
-    const {
-      ensRegistryAddress, ensResolverAddress, didContractAddress
-    } = chainConfigs[chainId];
+    const { ensRegistryAddress, ensResolverAddress, didContractAddress } = chainConfigs[chainId];
     this._registrySetting = {
       address: didContractAddress,
       abi: abi1056,

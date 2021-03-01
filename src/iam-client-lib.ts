@@ -14,12 +14,12 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSNamespaceTypes, NATS_EXCHANGE_TOPIC } from "./iam";
+import { IAM, ENSNamespaceTypes } from "./iam";
 import { CacheServerClient } from "./cacheServerClient/cacheServerClient";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
-import { MessagingMethod } from "./iam/iam-base";
 import { ERROR_MESSAGES } from "./errors";
 import { WalletProvider } from "./types/WalletProvider";
+import { MessagingMethod, NATS_EXCHANGE_TOPIC } from "./utils/constants";
 import {
   IApp,
   IAppDefinition,
@@ -36,12 +36,18 @@ import {
   PubKeyType
 } from "@ew-did-registry/did-resolver-interface";
 
+import { getSubdomains } from "./utils/getSubDomains";
+
 // MAIN
 export { IAM };
 
 // CONSTANTS
 
 export { NATS_EXCHANGE_TOPIC };
+
+// UTILS
+
+export { getSubdomains };
 
 // ENUMS
 export {
