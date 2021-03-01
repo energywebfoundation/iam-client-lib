@@ -1,6 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
@@ -28,11 +28,12 @@ import detectMetamask from "@metamask/detect-provider";
 import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
+import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
+import { cacheServerClientOptions, chainConfigs } from './chainConfig';
 
 const { hexlify, bigNumberify, Interface } = utils;
+const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
-
-export const VOLTA_CHAIN_ID = 73799;
 
 export enum MessagingMethod {
   CacheServer = "cacheServer",
@@ -41,7 +42,8 @@ export enum MessagingMethod {
 }
 
 export type ConnectionOptions = {
-  rpcUrl: string;
+  /** only required in node env */
+  rpcUrl?: string;
   chainId?: number;
   infuraId?: string;
   ensResolverAddress?: string;
@@ -83,13 +85,7 @@ export const PUBLIC_KEY = "PublicKey";
  */
 export class IAMBase {
   protected _runningInBrowser: boolean;
-  protected _connectionOptions: {
-    rpcUrl: string;
-    chainId: number;
-    privateKey?: string;
-    bridgeUrl: string;
-    infuraId?: string;
-  };
+  protected _connectionOptions: ConnectionOptions;
 
   protected _did: string | undefined;
   protected _provider: providers.JsonRpcProvider;
@@ -104,7 +100,7 @@ export class IAMBase {
   protected _publicKey: string | undefined;
 
   protected _registrySetting: RegistrySettings;
-  protected _resolver: Resolver | undefined;
+  protected _resolver: Resolver;
   protected _document: DIDDocumentFull | undefined;
   protected _userClaims: ClaimsUser | undefined;
   protected _issuerClaims: ClaimsIssuer | undefined;
@@ -117,7 +113,7 @@ export class IAMBase {
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
 
-  protected _cacheClient: ICacheServerClient | undefined;
+  protected _cacheClient: ICacheServerClient;
 
   protected _natsServerUrl: string | undefined;
   protected _natsConnection: NatsConnection | undefined;
@@ -125,6 +121,8 @@ export class IAMBase {
 
   private readonly _ewKeyManagerUrl: string;
   private ttl = bigNumberify(0);
+
+  private _chainId: number;
 
   /**
    * IAM Constructor
@@ -137,48 +135,33 @@ export class IAMBase {
    */
   public constructor({
     rpcUrl,
-    chainId = VOLTA_CHAIN_ID,
     infuraId,
-    ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
-    ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
     ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
-    cacheClient,
     messagingMethod,
     natsServerUrl,
     bridgeUrl = "https://walletconnect.energyweb.org",
     privateKey,
-    didContractAddress = VoltaAddress1056,
     ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new"
   }: ConnectionOptions) {
     this._runningInBrowser = isBrowser();
-    this._ensRegistryAddress = ensRegistryAddress;
-    this._ensResolverAddress = ensResolverAddress;
 
     errors.setLogLevel("error");
 
     this._connectionOptions = {
-      chainId,
       privateKey,
       rpcUrl,
       bridgeUrl,
       infuraId
     };
 
-    this._cacheClient = cacheClient;
-
-    this._registrySetting = {
-      abi: abi1056,
-      address: didContractAddress,
-      method: Methods.Erc1056
-    };
-
     this._ipfsStore = new DidStore(ipfsUrl);
-    this._provider = new providers.JsonRpcProvider(rpcUrl);
-    this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._provider);
-    this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._provider);
-    if (this._runningInBrowser && process.env.NODE_ENV !== "test") {
-      this._providerType = (sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider) || undefined;
-      this._publicKey = sessionStorage.getItem(PUBLIC_KEY) || undefined;
+
+    if (this._runningInBrowser) {
+      this._providerType = (sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider);
+      const publicKey = sessionStorage.getItem(PUBLIC_KEY);
+      if (publicKey) {
+        this._publicKey = publicKey;
+      }
     }
 
     if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
@@ -199,11 +182,9 @@ export class IAMBase {
     walletProvider?: WalletProvider;
   }) {
     await this.initSigner({ walletProvider, initializeMetamask });
+    await this.initChain();
     this.initEventHandlers();
-    const signerChainId = (await this._signer?.provider?.getNetwork())?.chainId;
-    if (signerChainId !== VOLTA_CHAIN_ID) {
-      throw new Error(ERROR_MESSAGES.NOT_CONNECTED_TO_VOLTA);
-    }
+
     if (this._runningInBrowser) {
       await this.setupNATS();
     }
@@ -216,7 +197,6 @@ export class IAMBase {
       this._publicKey = this._didSigner.publicKey;
       this._didSigner.identityToken &&
         (await this.loginToCacheServer(this._didSigner.identityToken));
-
       await this.setAddress();
       this.setDid();
       await this.setDocument();
@@ -235,16 +215,17 @@ export class IAMBase {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
   }) {
-    if (!this._provider) {
-      throw new Error(ERROR_MESSAGES.NO_PROVIDER);
-    }
+    const { privateKey, rpcUrl, bridgeUrl, infuraId } = this._connectionOptions;
 
-    if (!this._runningInBrowser && !this._connectionOptions.privateKey) {
-      throw new Error(ERROR_MESSAGES.NO_PRIVATE_KEY);
-    }
-
-    if (this._connectionOptions.privateKey) {
-      this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
+    if (!this._runningInBrowser) {
+      if (!privateKey) {
+        throw new Error(ERROR_MESSAGES.NO_PRIVATE_KEY);
+      }
+      if (!rpcUrl) {
+        throw new Error(ERROR_MESSAGES.NO_RPC_URL);
+      }
+      this._provider = new JsonRpcProvider({ url: rpcUrl });
+      this._signer = new Wallet(privateKey, this._provider);
       return;
     }
 
@@ -279,11 +260,12 @@ export class IAMBase {
       this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
 
       this._providerType = walletProvider;
+      this._provider = this._signer.provider as providers.Web3Provider;
+      console.log('metamask chain id:', (await this._provider.getNetwork()).chainId);
       return;
     }
     if (
-      walletProvider === WalletProvider.EwKeyManager ||
-      walletProvider === WalletProvider.WalletConnect
+      walletProvider && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)
     ) {
       this._transactionOverrides = {
         gasLimit: hexlify(4900000),
@@ -292,12 +274,14 @@ export class IAMBase {
 
       const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
 
+      const rpc = Object.entries(chainConfigs).reduce(
+        (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }), {}
+      );
+
       this._walletConnectProvider = new WalletConnectProvider({
-        rpc: {
-          [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
-        },
-        infuraId: this._connectionOptions.infuraId,
-        bridge: this._connectionOptions.bridgeUrl,
+        rpc,
+        infuraId,
+        bridge: bridgeUrl,
         qrcode: showQRCode
       });
 
@@ -316,6 +300,7 @@ export class IAMBase {
       await this._walletConnectProvider.enable();
 
       this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+      this._provider = this._signer.provider as providers.Web3Provider;
       this._providerType = walletProvider;
       return;
     }
@@ -341,7 +326,6 @@ export class IAMBase {
    * @requires to be called after the connection to wallet was initialized
    *
    */
-
   on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
     if (!this._providerType) return;
     switch (event) {
@@ -381,7 +365,6 @@ export class IAMBase {
    * @description closes the connection between dApp and the wallet
    *
    */
-
   async closeConnection() {
     if (this._walletConnectProvider) {
       await this._walletConnectProvider.close();
@@ -422,8 +405,10 @@ export class IAMBase {
     if (this._did && this._didSigner) {
       const document = new DIDDocumentFull(
         this._did,
-        new Operator(this._didSigner, this._registrySetting)
-      );
+        new Operator(
+          this._didSigner,
+          this._registrySetting
+        ));
       await document.create();
       this._document = document;
     }
@@ -672,5 +657,24 @@ export class IAMBase {
           .join("")
       })
     });
+  }
+
+  private async initChain() {
+    const { chainId } = await this._provider.getNetwork();
+    const {
+      ensRegistryAddress, ensResolverAddress, didContractAddress
+    } = chainConfigs[chainId];
+    this._registrySetting = {
+      address: didContractAddress,
+      abi: abi1056,
+      method: Methods.Erc1056
+    };
+    this._ensRegistryAddress = ensRegistryAddress;
+    this._ensResolverAddress = ensResolverAddress;
+    this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
+    this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
+
+    const cacheOptions = cacheServerClientOptions[chainId];
+    cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
   }
 }

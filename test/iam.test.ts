@@ -1,12 +1,13 @@
 import { utils } from "ethers";
 import { Keys } from "@ew-did-registry/keys";
 import { IAM, ENSNamespaceTypes } from "../src/iam";
-import { deployContracts, ensRegistry, ensResolver, didContract } from "./setup_contracts";
+import { deployContracts, ensRegistry, ensResolver, didContract, GANACHE_PORT } from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
+import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
 
 const { namehash, bigNumberify } = utils;
 
@@ -16,7 +17,7 @@ const { privateKey } = rootOwner;
 export const root = "root";
 export let iam: IAM;
 
-export const rpcUrl = "http://localhost:8544/";
+export const rpcUrl = `http://localhost:${GANACHE_PORT}`;
 
 describe("IAM tests", () => {
   // sometimes the transaction are taking more then default 5000 ms jest timeout
@@ -24,13 +25,16 @@ describe("IAM tests", () => {
 
   beforeAll(async () => {
     await deployContracts(privateKey);
-
-    iam = new IAM({
+    setChainConfig(9, {
       rpcUrl,
-      chainId: 73799,
       ensRegistryAddress: ensRegistry.address,
       ensResolverAddress: ensResolver.address,
       didContractAddress: didContract.address,
+    });
+    setCacheClientOptions(9, { url: "" });
+
+    iam = new IAM({
+      rpcUrl,
       privateKey
     });
     try {

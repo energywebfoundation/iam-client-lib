@@ -10,7 +10,7 @@ const { parseEther } = utils;
 
 const { abi: didContractAbi, bytecode: didContractBytecode } = ethrReg;
 
-const GANACHE_PORT = 8544;
+export const GANACHE_PORT = 8544;
 export const provider = new JsonRpcProvider(`http://localhost:${GANACHE_PORT}`);
 export let ensRegistry: EnsRegistry;
 export let ensResolver: PublicResolver;
