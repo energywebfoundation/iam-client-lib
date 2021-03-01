@@ -6,6 +6,7 @@ import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 
 import { ICacheServerClient } from "./ICacheServerClient";
+import { isBrowser } from "../utils/isBrowser";
 
 export interface CacheServerClientOptions {
   url: string;
@@ -14,29 +15,38 @@ export interface CacheServerClientOptions {
 export class CacheServerClient implements ICacheServerClient {
   private httpClient: AxiosInstance;
   private isAlreadyFetchingAccessToken = false;
-  private failedRequests: Array<() => void> = [];
+  private failedRequests: Array<(token?: string) => void> = [];
   private authEnabled: boolean;
+  private isBrowser: boolean;
+  private token: string | undefined;
+  private refresh_token: string | undefined;
 
-  constructor({
-    url,
-    cacheServerSupportsAuth = true
-  }: CacheServerClientOptions
-  ) {
+  constructor({ url, cacheServerSupportsAuth = true }: CacheServerClientOptions) {
     this.httpClient = axios.create({
       baseURL: url,
       withCredentials: true
     });
-    this.httpClient.interceptors.response.use(function (response: AxiosResponse) {
+    this.httpClient.interceptors.response.use(function(response: AxiosResponse) {
       return response;
     }, this.handleUnauthorized);
     this.authEnabled = cacheServerSupportsAuth;
+    this.isBrowser = isBrowser();
   }
 
-  handleSuccessfulReLogin() {
-    this.failedRequests = this.failedRequests.filter(callback => callback());
+  async handleRefreshToken() {
+    const { refreshToken, token } = await this.refreshToken();
+    this.refresh_token = refreshToken;
+    this.token = token;
+    this.failedRequests = this.failedRequests.filter(callback =>
+      callback(this.isBrowser ? undefined : token)
+    );
+    if (!this.isBrowser) {
+      this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      this.refresh_token = refreshToken;
+    }
   }
 
-  addFailedRequest(callback: () => void) {
+  addFailedRequest(callback: (token?: string) => void) {
     this.failedRequests.push(callback);
   }
 
@@ -52,14 +62,16 @@ export class CacheServerClient implements ICacheServerClient {
       config.url?.indexOf("/refresh_token") === -1
     ) {
       const retryOriginalRequest = new Promise(resolve => {
-        this.addFailedRequest(() => {
+        this.addFailedRequest((token?: string) => {
+          if (token) {
+            originalRequest.headers.Authorization = "Bearer " + token;
+          }
           resolve(axios(originalRequest));
         });
       });
       if (!this.isAlreadyFetchingAccessToken) {
         this.isAlreadyFetchingAccessToken = true;
-        await this.refreshToken();
-        this.handleSuccessfulReLogin();
+        await this.handleRefreshToken();
         this.isAlreadyFetchingAccessToken = false;
       }
       return retryOriginalRequest;
@@ -68,12 +80,25 @@ export class CacheServerClient implements ICacheServerClient {
   };
 
   async login(identityToken: string) {
-    this.authEnabled &&
-      (await this.httpClient.post<{ token: string }>("/login", { identityToken }));
+    if (!this.authEnabled) return;
+
+    const {
+      data: { refreshToken, token }
+    } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
+      identityToken
+    });
+
+    if (!this.isBrowser) {
+      this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      this.refresh_token = refreshToken;
+    }
   }
 
   async refreshToken() {
-    await this.httpClient.get("/refresh_token");
+    const { data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
+      `/refresh_token${this.isBrowser ? "" : `?refresh_token=${this.refresh_token}`}`
+    );
+    return data;
   }
 
   async getRoleDefinition({ namespace }: { namespace: string }) {
