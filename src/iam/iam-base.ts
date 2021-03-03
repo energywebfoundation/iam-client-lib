@@ -626,6 +626,7 @@ export class IAMBase {
     this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
 
     const cacheOptions = cacheServerClientOptions[chainId];
+
     cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
 
     this._messagingOptions = messagingOptions[chainId];

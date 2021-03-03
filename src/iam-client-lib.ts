@@ -18,7 +18,12 @@ import { IAM, ENSNamespaceTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
 import { WalletProvider } from "./types/WalletProvider";
-import { MessagingMethod, NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID } from "./utils/constants";
+import {
+  MessagingMethod,
+  NATS_EXCHANGE_TOPIC,
+  PreconditionTypes,
+  VOLTA_CHAIN_ID
+} from "./utils/constants";
 import {
   IApp,
   IAppDefinition,
@@ -59,7 +64,8 @@ export {
   ENSNamespaceTypes,
   MessagingMethod,
   ERROR_MESSAGES,
-  WalletProvider
+  WalletProvider,
+  PreconditionTypes
 };
 
 // TYPES
