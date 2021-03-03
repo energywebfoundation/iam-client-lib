@@ -43,7 +43,7 @@ export const orgTests = () => {
   test("org role can be created", async () => {
     const namespace = `${org1}.${root}`;
     const roleName = `${org1}-role1`;
-    const data = {
+    const data: IRoleDefinition = {
       fields: [],
       issuer: {
         did: [`did:${Methods.Erc1056}:${rootOwner.getAddress()}`]
@@ -51,7 +51,8 @@ export const orgTests = () => {
       metadata: [],
       roleName,
       roleType: "test",
-      version: "1.0.0"
+      version: "1.0.0",
+      enrolmentPreconditions: []
     };
 
     await iam.createRole({

@@ -45,7 +45,7 @@ import {
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
 import { getSubdomains } from "./utils/getSubDomains";
-import { emptyAddress, NATS_EXCHANGE_TOPIC } from "./utils/constants";
+import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
 import { Subscription } from "nats.ws";
 
 export type InitializeData = {
@@ -1250,6 +1250,26 @@ export class IAM extends IAMBase {
 
   // NATS
 
+  private verifyEnrolmentPreconditions({
+    claims,
+    enrolmentPreconditions
+  }: {
+    claims: (IServiceEndpoint & ClaimData)[];
+    enrolmentPreconditions: IRoleDefinition["enrolmentPreconditions"];
+  }) {
+    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
+    for (const { type, conditions } of enrolmentPreconditions) {
+      if (type === PreconditionTypes.Role) {
+        const conditionMet = claims.some(
+          ({ claimType }) => claimType && conditions.includes(claimType)
+        );
+        if (!conditionMet) {
+          throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
+        }
+      }
+    }
+  }
+
   async createClaimRequest({
     issuer,
     claim
@@ -1260,6 +1280,23 @@ export class IAM extends IAMBase {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
+
+    const [roleDefinition, didDocument] = await Promise.all([
+      this.getDefinition({
+        type: ENSNamespaceTypes.Roles,
+        namespace: claim.claimType
+      }),
+      this.getDidDocument({ includeClaims: true })
+    ]);
+
+    if (!roleDefinition) {
+      throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
+    }
+
+    const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
+
+    this.verifyEnrolmentPreconditions({ claims: didDocument.service, enrolmentPreconditions });
+
     const token = await this.createPublicClaim({ data: claim, subject: claim.claimType });
     const message: IClaimRequest = {
       id: uuid(),

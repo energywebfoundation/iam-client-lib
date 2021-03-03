@@ -101,17 +101,17 @@ export class CacheServerClient implements ICacheServerClient {
 
   async getRoleDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getOrgDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getAppDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IApp>(`/app/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getApplicationRoles({ namespace }: { namespace: string }) {
