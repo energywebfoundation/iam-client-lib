@@ -8,6 +8,7 @@ import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
+import { utilsTests } from './utils.testSuite';
 
 const { namehash, bigNumberify } = utils;
 
@@ -76,4 +77,5 @@ describe("IAM tests", () => {
   describe("Application tests", appsTests);
   describe("InitializeConnection tests", initializeConnectionTests);
   describe("Claim tests", claimsTests);
+  describe("Utils tests", utilsTests);
 });
