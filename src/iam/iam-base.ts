@@ -28,7 +28,12 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { cacheServerClientOptions, chainConfigs } from "./chainConfig";
+import {
+  cacheServerClientOptions,
+  chainConfigs,
+  messagingOptions,
+  MessagingOptions
+} from "./chainConfig";
 
 const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
@@ -39,16 +44,9 @@ import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../u
 export type ConnectionOptions = {
   /** only required in node env */
   rpcUrl?: string;
-  chainId?: number;
   infuraId?: string;
-  ensResolverAddress?: string;
-  ensRegistryAddress?: string;
-  didContractAddress?: string;
   ipfsUrl?: string;
   bridgeUrl?: string;
-  messagingMethod?: MessagingMethod;
-  natsServerUrl?: string;
-  cacheClient?: ICacheServerClient;
   privateKey?: string;
   ewKeyManagerUrl?: string;
 };
@@ -105,7 +103,7 @@ export class IAMBase {
 
   protected _cacheClient: ICacheServerClient;
 
-  protected _natsServerUrl: string | undefined;
+  protected _messagingOptions: MessagingOptions;
   protected _natsConnection: NatsConnection | undefined;
   protected _jsonCodec: Codec<any> | undefined;
 
@@ -115,24 +113,16 @@ export class IAMBase {
   /**
    * IAM Constructor
    *
-   * @param {object} options connection options to connect with wallet connect
-   * @param {string} options.rpcUrl url to the ethereum network
-   * @param {number} options.chainID id of chain, default = 1
-   * @param {number} options.infuraId id of infura network, default = undefined
-   *
    */
   public constructor({
     rpcUrl,
     infuraId,
     ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
-    messagingMethod,
-    natsServerUrl,
     bridgeUrl = "https://walletconnect.energyweb.org",
     privateKey,
     ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new"
-  }: ConnectionOptions) {
+  }: ConnectionOptions = {}) {
     this._runningInBrowser = isBrowser();
-
     errors.setLogLevel("error");
 
     this._connectionOptions = {
@@ -152,11 +142,6 @@ export class IAMBase {
       }
     }
 
-    if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
-      this._natsServerUrl = natsServerUrl;
-      this._jsonCodec = JSONCodec();
-    }
-
     this._ewKeyManagerUrl = ewKeyManagerUrl;
   }
 
@@ -174,7 +159,7 @@ export class IAMBase {
     this.initEventHandlers();
 
     if (this._runningInBrowser) {
-      await this.setupNATS();
+      await this.setupMessaging();
     }
     if (this._signer) {
       this._didSigner = await SignerFactory.create({
@@ -418,18 +403,20 @@ export class IAMBase {
     throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
-  private async setupNATS() {
-    if (this._natsServerUrl) {
+  private async setupMessaging() {
+    const { messagingMethod, natsServerUrl } = this._messagingOptions || {};
+    if (natsServerUrl && messagingMethod === MessagingMethod.Nats) {
+      this._jsonCodec = JSONCodec();
       try {
         let protocol = "ws";
-        if (this._natsServerUrl.indexOf("https://") === 0) {
+        if (natsServerUrl.indexOf("https://") === 0) {
           protocol = "wss";
         }
         const timeout = 3000;
         // this race condition duplicate timeout is there because unable to catch the error that occurs when NATS.ws timeouts
         const connection = await Promise.race<NatsConnection | undefined>([
           connect({
-            servers: `${protocol}://${this._natsServerUrl}`,
+            servers: `${protocol}://${natsServerUrl}`,
             timeout,
             pingInterval: 50 * 1000
           }),
@@ -619,11 +606,20 @@ export class IAMBase {
   private async initChain() {
     const { chainId } = await this._provider.getNetwork();
     const { ensRegistryAddress, ensResolverAddress, didContractAddress } = chainConfigs[chainId];
+
+    if (!ensRegistryAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain ensRegistryAddress`);
+    if (!ensResolverAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain ensResolverAddress`);
+    if (!didContractAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain didContractAddress`);
+
     this._registrySetting = {
       address: didContractAddress,
       abi: abi1056,
       method: Methods.Erc1056
     };
+
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
@@ -631,5 +627,7 @@ export class IAMBase {
 
     const cacheOptions = cacheServerClientOptions[chainId];
     cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
+
+    this._messagingOptions = messagingOptions[chainId];
   }
 }

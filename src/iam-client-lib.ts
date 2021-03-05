@@ -15,11 +15,10 @@
 // @authors: Kim Honoridez
 
 import { IAM, ENSNamespaceTypes } from "./iam";
-import { CacheServerClient } from "./cacheServerClient/cacheServerClient";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
 import { WalletProvider } from "./types/WalletProvider";
-import { MessagingMethod, NATS_EXCHANGE_TOPIC } from "./utils/constants";
+import { MessagingMethod, NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID } from "./utils/constants";
 import {
   IApp,
   IAppDefinition,
@@ -36,6 +35,8 @@ import {
   PubKeyType
 } from "@ew-did-registry/did-resolver-interface";
 
+import { setCacheClientOptions, setChainConfig, setMessagingOptions } from "./iam/chainConfig";
+
 import { getSubdomains } from "./utils/getSubDomains";
 
 // MAIN
@@ -43,11 +44,11 @@ export { IAM };
 
 // CONSTANTS
 
-export { NATS_EXCHANGE_TOPIC };
+export { NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID };
 
 // UTILS
 
-export { getSubdomains };
+export { getSubdomains, setCacheClientOptions, setChainConfig, setMessagingOptions };
 
 // ENUMS
 export {
@@ -61,9 +62,8 @@ export {
   WalletProvider
 };
 
-// CACHE CLIENT
+// TYPES
 export {
-  CacheServerClient,
   ICacheServerClient,
   IApp,
   IAppDefinition,
