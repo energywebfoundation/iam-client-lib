@@ -46,6 +46,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
 import { getSubdomains } from "./utils/getSubDomains";
 import { emptyAddress, NATS_EXCHANGE_TOPIC } from "./utils/constants";
+import { Subscription } from "nats.ws";
 
 export type InitializeData = {
   did: string | undefined;
@@ -85,6 +86,7 @@ export enum ENSNamespaceTypes {
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM extends IAMBase {
+  private _exchangeSubscription: Subscription | undefined;
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
@@ -1353,10 +1355,16 @@ export class IAM extends IAMBase {
     if (!this._natsConnection) {
       return;
     }
-    const subscription = this._natsConnection.subscribe(topic);
-    for await (const msg of subscription) {
+    this._exchangeSubscription = this._natsConnection.subscribe(topic);
+    for await (const msg of this._exchangeSubscription) {
       const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
       messageHandler(decodedMessage);
+    }
+  }
+
+  async unsubscribeFromMessages() {
+    if (this._exchangeSubscription) {
+      this._exchangeSubscription.unsubscribe();
     }
   }
 
