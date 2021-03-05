@@ -4,7 +4,7 @@ export const PUBLIC_KEY = "PublicKey";
 export const VOLTA_CHAIN_ID = 73799;
 export const NATS_EXCHANGE_TOPIC = "claim.exchange";
 export enum MessagingMethod {
-  CacheServer = "cacheServer",
+  Nats = "nats",
   WebRTC = "webRTC",
   SmartContractStorage = "smartContractStorage"
 }
