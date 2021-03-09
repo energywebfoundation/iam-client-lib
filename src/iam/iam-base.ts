@@ -268,7 +268,7 @@ export class IAMBase {
           const encoded = encodeURIComponent(wcUri);
           const hasQueryString = this._ewKeyManagerUrl.includes("?");
           const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
-          window.open(url, "_blank");
+          window.open(url, "ew_key_manager");
         });
       }
 
