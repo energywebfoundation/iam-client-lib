@@ -9,6 +9,7 @@
 * [ENSNamespaceTypes](enums/ensnamespacetypes.md)
 * [ERROR\_MESSAGES](enums/error_messages.md)
 * [MessagingMethod](enums/messagingmethod.md)
+* [PreconditionTypes](enums/preconditiontypes.md)
 * [WalletProvider](enums/walletprovider.md)
 
 ### Classes
@@ -30,6 +31,8 @@
 
 ### Interfaces
 
+* [CacheServerClientOptions](interfaces/cacheserverclientoptions.md)
+* [ChainConfig](interfaces/chainconfig.md)
 * [Claim](interfaces/claim.md)
 * [ClaimData](interfaces/claimdata.md)
 * [IApp](interfaces/iapp.md)
@@ -43,6 +46,7 @@
 * [IOrganizationDefinition](interfaces/iorganizationdefinition.md)
 * [IRole](interfaces/irole.md)
 * [IRoleDefinition](interfaces/iroledefinition.md)
+* [MessagingOptions](interfaces/messagingoptions.md)
 
 ### Type aliases
 
@@ -53,7 +57,7 @@
 
 ### Variables
 
-* [Interface](globals.md#interface)
+* [JsonRpcProvider](globals.md#jsonrpcprovider)
 * [NATS\_EXCHANGE\_TOPIC](globals.md#nats_exchange_topic)
 * [PUBLIC\_KEY](globals.md#public_key)
 * [VOLTA\_CHAIN\_ID](globals.md#volta_chain_id)
@@ -74,34 +78,38 @@
 ### Functions
 
 * [decodeLabelhash](globals.md#decodelabelhash)
+* [getDomainsFromLogs](globals.md#getdomainsfromlogs)
+* [getSubdomains](globals.md#getsubdomains)
 * [isBrowser](globals.md#isbrowser)
 * [isEncodedLabelhash](globals.md#isencodedlabelhash)
 * [labelhash](globals.md#labelhash)
 * [namehash](globals.md#namehash)
+* [setCacheClientOptions](globals.md#setcacheclientoptions)
+* [setChainConfig](globals.md#setchainconfig)
+* [setMessagingOptions](globals.md#setmessagingoptions)
+
+### Object literals
+
+* [cacheServerClientOptions](globals.md#cacheserverclientoptions)
+* [chainConfigs](globals.md#chainconfigs)
+* [messagingOptions](globals.md#messagingoptions)
 
 ## Type aliases
 
 ### ConnectionOptions
 
-Ƭ  **ConnectionOptions**: { bridgeUrl?: undefined \| string ; cacheClient?: [ICacheServerClient](interfaces/icacheserverclient.md) ; chainId?: undefined \| number ; didContractAddress?: undefined \| string ; ensRegistryAddress?: undefined \| string ; ensResolverAddress?: undefined \| string ; ewKeyManagerUrl?: undefined \| string ; infuraId?: undefined \| string ; ipfsUrl?: undefined \| string ; messagingMethod?: [MessagingMethod](enums/messagingmethod.md) ; natsServerUrl?: undefined \| string ; privateKey?: undefined \| string ; rpcUrl: string  }
+Ƭ  **ConnectionOptions**: { bridgeUrl?: undefined \| string ; ewKeyManagerUrl?: undefined \| string ; infuraId?: undefined \| string ; ipfsUrl?: undefined \| string ; privateKey?: undefined \| string ; rpcUrl?: undefined \| string  }
 
 #### Type declaration:
 
-Name | Type |
------- | ------ |
-`bridgeUrl?` | undefined \| string |
-`cacheClient?` | [ICacheServerClient](interfaces/icacheserverclient.md) |
-`chainId?` | undefined \| number |
-`didContractAddress?` | undefined \| string |
-`ensRegistryAddress?` | undefined \| string |
-`ensResolverAddress?` | undefined \| string |
-`ewKeyManagerUrl?` | undefined \| string |
-`infuraId?` | undefined \| string |
-`ipfsUrl?` | undefined \| string |
-`messagingMethod?` | [MessagingMethod](enums/messagingmethod.md) |
-`natsServerUrl?` | undefined \| string |
-`privateKey?` | undefined \| string |
-`rpcUrl` | string |
+Name | Type | Description |
+------ | ------ | ------ |
+`bridgeUrl?` | undefined \| string | - |
+`ewKeyManagerUrl?` | undefined \| string | - |
+`infuraId?` | undefined \| string | - |
+`ipfsUrl?` | undefined \| string | - |
+`privateKey?` | undefined \| string | - |
+`rpcUrl?` | undefined \| string | only required in node env |
 
 ___
 
@@ -149,9 +157,9 @@ Name | Type |
 
 ## Variables
 
-### Interface
+### JsonRpcProvider
 
-•  **Interface**: Interface
+•  **JsonRpcProvider**: JsonRpcProvider
 
 ___
 
@@ -265,6 +273,34 @@ Name | Type |
 
 ___
 
+### getDomainsFromLogs
+
+▸ `Const`**getDomainsFromLogs**(`__namedParameters`: { contractInterface: Interface ; event: EventFilter ; parser: (log: { label: any ; node: any ; owner: any  }) => Promise\<string> ; provider: Provider  }): Promise\<string[]>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { contractInterface: Interface ; event: EventFilter ; parser: (log: { label: any ; node: any ; owner: any  }) => Promise\<string> ; provider: Provider  } |
+
+**Returns:** Promise\<string[]>
+
+___
+
+### getSubdomains
+
+▸ `Const`**getSubdomains**(`__namedParameters`: { domain: string ; ensRegistry: EnsRegistry ; ensResolver: PublicResolver ; mode: \"ALL\" \| \"FIRSTLEVEL\"  }): Promise\<string[]>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { domain: string ; ensRegistry: EnsRegistry ; ensResolver: PublicResolver ; mode: \"ALL\" \| \"FIRSTLEVEL\"  } |
+
+**Returns:** Promise\<string[]>
+
+___
+
 ### isBrowser
 
 ▸ `Const`**isBrowser**(): boolean
@@ -312,3 +348,96 @@ Name | Type |
 `inputName` | string |
 
 **Returns:** string
+
+___
+
+### setCacheClientOptions
+
+▸ `Const`**setCacheClientOptions**(`chainId`: number, `options`: Partial\<[CacheServerClientOptions](interfaces/cacheserverclientoptions.md)>): void
+
+Used to override existing cache server configuration or add a missing one
+Configuration must be set before constructing `IAM`
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`chainId` | number |
+`options` | Partial\<[CacheServerClientOptions](interfaces/cacheserverclientoptions.md)> |
+
+**Returns:** void
+
+___
+
+### setChainConfig
+
+▸ `Const`**setChainConfig**(`chainId`: number, `config`: Partial\<[ChainConfig](interfaces/chainconfig.md)>): void
+
+Used to override existing chain configuration or add a missing one
+Configuration must be set before constructing `IAM`
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`chainId` | number |
+`config` | Partial\<[ChainConfig](interfaces/chainconfig.md)> |
+
+**Returns:** void
+
+___
+
+### setMessagingOptions
+
+▸ `Const`**setMessagingOptions**(`chainId`: number, `options`: Partial\<[MessagingOptions](interfaces/messagingoptions.md)>): void
+
+Used to override existing messaging configuration or add a missing one
+Configuration must be set before constructing `IAM`
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`chainId` | number |
+`options` | Partial\<[MessagingOptions](interfaces/messagingoptions.md)> |
+
+**Returns:** void
+
+## Object literals
+
+### cacheServerClientOptions
+
+▪ `Const` **cacheServerClientOptions**: object
+
+#### Properties:
+
+Name | Type | Value |
+------ | ------ | ------ |
+`[VOLTA_CHAIN_ID]` | object | { cacheServerSupportsAuth: true = true; url: string = "https://volta-identitycache.energyweb.org/" } |
+
+___
+
+### chainConfigs
+
+▪ `Const` **chainConfigs**: object
+
+Set of parameters to configure connection to chain with id received from wallet.
+If configuration for some chain is missing or should be reconfigured use `setChainConfig` before class instantiation
+
+#### Properties:
+
+Name | Type | Value |
+------ | ------ | ------ |
+`[VOLTA_CHAIN_ID]` | object | { didContractAddress: string = VoltaAddress1056; ensRegistryAddress: string = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac"; ensResolverAddress: string = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680"; rpcUrl: string = "https://volta-rpc-vkn5r5zx4ke71f9hcu0c.energyweb.org/" } |
+
+___
+
+### messagingOptions
+
+▪ `Const` **messagingOptions**: object
+
+#### Properties:
+
+Name | Type | Value |
+------ | ------ | ------ |
+`[VOLTA_CHAIN_ID]` | object | { messagingMethod: [Nats](enums/messagingmethod.md#nats) = MessagingMethod.Nats; natsServerUrl: string = "https://volta-identityevents.energyweb.org/" } |

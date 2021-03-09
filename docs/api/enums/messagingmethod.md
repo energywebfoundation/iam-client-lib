@@ -6,15 +6,15 @@
 
 ### Enumeration members
 
-* [CacheServer](messagingmethod.md#cacheserver)
+* [Nats](messagingmethod.md#nats)
 * [SmartContractStorage](messagingmethod.md#smartcontractstorage)
 * [WebRTC](messagingmethod.md#webrtc)
 
 ## Enumeration members
 
-### CacheServer
+### Nats
 
-•  **CacheServer**:  = "cacheServer"
+•  **Nats**:  = "nats"
 
 ___
 

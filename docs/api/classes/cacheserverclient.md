@@ -37,7 +37,7 @@
 * [getRoleDefinition](cacheserverclient.md#getroledefinition)
 * [getRolesByOwner](cacheserverclient.md#getrolesbyowner)
 * [getSubOrganizationsByOrganization](cacheserverclient.md#getsuborganizationsbyorganization)
-* [handleSuccessfulReLogin](cacheserverclient.md#handlesuccessfulrelogin)
+* [handleRefreshToken](cacheserverclient.md#handlerefreshtoken)
 * [handleUnauthorized](cacheserverclient.md#handleunauthorized)
 * [issueClaim](cacheserverclient.md#issueclaim)
 * [login](cacheserverclient.md#login)
@@ -77,13 +77,13 @@ ___
 
 ### addFailedRequest
 
-▸ **addFailedRequest**(`callback`: () => void): void
+▸ **addFailedRequest**(`callback`: (token?: undefined \| string) => void): void
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`callback` | () => void |
+`callback` | (token?: undefined \| string) => void |
 
 **Returns:** void
 
@@ -327,11 +327,11 @@ Name | Type |
 
 ___
 
-### handleSuccessfulReLogin
+### handleRefreshToken
 
-▸ **handleSuccessfulReLogin**(): void
+▸ **handleRefreshToken**(): Promise\<void>
 
-**Returns:** void
+**Returns:** Promise\<void>
 
 ___
 
@@ -379,9 +379,9 @@ ___
 
 ### refreshToken
 
-▸ **refreshToken**(): Promise\<void>
+▸ **refreshToken**(): Promise\<{ refreshToken: string ; token: string  }>
 
-**Returns:** Promise\<void>
+**Returns:** Promise\<{ refreshToken: string ; token: string  }>
 
 ___
 
