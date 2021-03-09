@@ -135,8 +135,8 @@ export class IAMBase {
     this._ipfsStore = new DidStore(ipfsUrl);
 
     if (this._runningInBrowser) {
-      this._providerType = sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider;
-      const publicKey = sessionStorage.getItem(PUBLIC_KEY);
+      this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
+      const publicKey = localStorage.getItem(PUBLIC_KEY);
       if (publicKey) {
         this._publicKey = publicKey;
       }
@@ -284,15 +284,15 @@ export class IAMBase {
 
   private storeSession() {
     if (this._runningInBrowser && this._didSigner) {
-      sessionStorage.setItem(WALLET_PROVIDER, this._providerType as string);
-      sessionStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
+      localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
+      localStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
     }
   }
 
   protected clearSession() {
     if (this._runningInBrowser) {
-      sessionStorage.removeItem(WALLET_PROVIDER);
-      sessionStorage.removeItem(PUBLIC_KEY);
+      localStorage.removeItem(WALLET_PROVIDER);
+      localStorage.removeItem(PUBLIC_KEY);
     }
   }
 
