@@ -73,6 +73,7 @@ The domain ownership functionality has been redefined accordingly.
 * [revokeDidDocument](gnosisiam.md#revokediddocument)
 * [setRoleDefinition](gnosisiam.md#setroledefinition)
 * [subscribeToMessages](gnosisiam.md#subscribetomessages)
+* [unsubscribeFromMessages](gnosisiam.md#unsubscribefrommessages)
 * [updateDidDocument](gnosisiam.md#updatediddocument)
 * [validateOwnership](gnosisiam.md#validateownership)
 * [verifyPublicClaim](gnosisiam.md#verifypublicclaim)
@@ -719,7 +720,7 @@ ___
 
 ### getSubdomains
 
-▸ **getSubdomains**(`__namedParameters`: { domain: string  }): Promise\<string[]>
+▸ **getSubdomains**(`__namedParameters`: { domain: string ; mode: \"ALL\" \| \"FIRSTLEVEL\" = "FIRSTLEVEL" }): Promise\<string[]>
 
 *Inherited from [IAM](iam.md).[getSubdomains](iam.md#getsubdomains)*
 
@@ -731,7 +732,7 @@ getSubdomains
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { domain: string  } |
+`__namedParameters` | { domain: string ; mode: \"ALL\" \| \"FIRSTLEVEL\" = "FIRSTLEVEL" } |
 
 **Returns:** Promise\<string[]>
 
@@ -996,6 +997,16 @@ ___
 Name | Type |
 ------ | ------ |
 `__namedParameters` | { messageHandler: (data: [IMessage](../interfaces/imessage.md)) => void ; topic: string = \`${this.\_did}.${NATS\_EXCHANGE\_TOPIC}\` } |
+
+**Returns:** Promise\<void>
+
+___
+
+### unsubscribeFromMessages
+
+▸ **unsubscribeFromMessages**(): Promise\<void>
+
+*Inherited from [IAM](iam.md).[unsubscribeFromMessages](iam.md#unsubscribefrommessages)*
 
 **Returns:** Promise\<void>
 

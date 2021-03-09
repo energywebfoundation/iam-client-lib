@@ -20,10 +20,13 @@
 * [NOT\_CONNECTED\_TO\_VOLTA](error_messages.md#not_connected_to_volta)
 * [NO\_PRIVATE\_KEY](error_messages.md#no_private_key)
 * [NO\_PROVIDER](error_messages.md#no_provider)
+* [NO\_RPC\_URL](error_messages.md#no_rpc_url)
 * [ORG\_WITH\_APPS](error_messages.md#org_with_apps)
 * [ORG\_WITH\_ROLES](error_messages.md#org_with_roles)
 * [PROVIDER\_NOT\_INITIALIZED](error_messages.md#provider_not_initialized)
 * [PUBLIC\_KEY\_NOT\_RECOVERED](error_messages.md#public_key_not_recovered)
+* [ROLE\_NOT\_EXISTS](error_messages.md#role_not_exists)
+* [ROLE\_PRECONDITION\_NOT\_MET](error_messages.md#role_precondition_not_met)
 * [SIGNER\_NOT\_INITIALIZED](error_messages.md#signer_not_initialized)
 * [USER\_NOT\_LOGGED\_IN](error_messages.md#user_not_logged_in)
 * [WALLET\_PROVIDER\_NOT\_SUPPORTED](error_messages.md#wallet_provider_not_supported)
@@ -115,6 +118,12 @@ ___
 
 ___
 
+### NO\_RPC\_URL
+
+•  **NO\_RPC\_URL**:  = "Rpc url needed to initialize provider in node js environment"
+
+___
+
 ### ORG\_WITH\_APPS
 
 •  **ORG\_WITH\_APPS**:  = "You are not able to remove organization with registered apps"
@@ -136,6 +145,18 @@ ___
 ### PUBLIC\_KEY\_NOT\_RECOVERED
 
 •  **PUBLIC\_KEY\_NOT\_RECOVERED**:  = "Public key not recovered"
+
+___
+
+### ROLE\_NOT\_EXISTS
+
+•  **ROLE\_NOT\_EXISTS**:  = "Role you want to enroll to does not exists"
+
+___
+
+### ROLE\_PRECONDITION\_NOT\_MET
+
+•  **ROLE\_PRECONDITION\_NOT\_MET**:  = "Precondition not met, user not eligible to enrol for a role"
 
 ___
 

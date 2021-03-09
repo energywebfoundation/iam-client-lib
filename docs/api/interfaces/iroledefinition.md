@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [enrolmentPreconditions](iroledefinition.md#enrolmentpreconditions)
 * [fields](iroledefinition.md#fields)
 * [issuer](iroledefinition.md#issuer)
 * [metadata](iroledefinition.md#metadata)
@@ -18,6 +19,12 @@
 * [version](iroledefinition.md#version)
 
 ## Properties
+
+### enrolmentPreconditions
+
+• `Optional` **enrolmentPreconditions**: { conditions: string[] ; type: [PreconditionTypes](../enums/preconditiontypes.md)  }[]
+
+___
 
 ### fields
 
