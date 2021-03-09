@@ -30,7 +30,7 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es5"
+    "target": "es2017"
   },
   "include": ["src/**/*", "ethers/**/*"]
 }

@@ -1,4 +1,5 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import QRCodeModal from "@walletconnect/qrcode-modal";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
@@ -28,6 +29,8 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
+import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
+import { ControllableWalletConnect } from "../walletconnect/ControllableWalletConnect";
 import {
   cacheServerClientOptions,
   chainConfigs,
@@ -39,7 +42,6 @@ const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
-import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 
 export type ConnectionOptions = {
   /** only required in node env */
@@ -78,6 +80,7 @@ export class IAMBase {
   protected _did: string | undefined;
   protected _provider: providers.JsonRpcProvider;
   protected _walletConnectProvider: WalletConnectProvider | undefined;
+  protected _walletConnectClient: ControllableWalletConnect | undefined;
   protected _metamaskProvider: { on: any; request: any } | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
@@ -253,11 +256,15 @@ export class IAMBase {
         {}
       );
 
+      this._walletConnectClient = new ControllableWalletConnect({
+        bridge: bridgeUrl,
+        qrcodeModal: showQRCode ? QRCodeModal : undefined
+      });
+
       this._walletConnectProvider = new WalletConnectProvider({
         rpc,
         infuraId,
-        bridge: bridgeUrl,
-        qrcode: showQRCode
+        connector: this._walletConnectClient
       });
 
       if (walletProvider === WalletProvider.EwKeyManager) {
@@ -342,6 +349,9 @@ export class IAMBase {
    */
   async closeConnection() {
     if (this._walletConnectProvider) {
+      if (this._walletConnectClient) {
+        this._walletConnectClient.canCreateSession = false;
+      }
       await this._walletConnectProvider.close();
     }
     this.clearSession();
