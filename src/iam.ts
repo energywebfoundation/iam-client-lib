@@ -90,8 +90,8 @@ export class IAM extends IAMBase {
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
-          request: any;
-        }
+        request: any;
+      }
       | undefined;
 
     const chainId = (await provider?.request({
@@ -198,8 +198,8 @@ export class IAM extends IAMBase {
    *
    */
   isConnected(): boolean {
-    if (this._walletConnectProvider) {
-      return this._walletConnectProvider.connected;
+    if (this._providerType && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(this._providerType)) {
+      return this._walletConnectService.isConnected();
     }
     return !!this._address;
   }
@@ -234,8 +234,8 @@ export class IAM extends IAMBase {
         ...document,
         service: includeClaims
           ? await this.downloadClaims({
-              services: document.service && document.service.length > 0 ? document.service : []
-            })
+            services: document.service && document.service.length > 0 ? document.service : []
+          })
           : []
       };
     }
@@ -696,8 +696,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
@@ -820,8 +820,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
     }
@@ -1460,8 +1460,8 @@ export class IAM extends IAMBase {
         type === ENSNamespaceTypes.Roles
           ? [namespace]
           : type === ENSNamespaceTypes.Application
-          ? [namespace, ENSNamespaceTypes.Application]
-          : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
+            ? [namespace, ENSNamespaceTypes.Application]
+            : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
       return Promise.all(
         namespacesToCheck.map(ns => this.getOwner({ namespace: ns }))
       ).then(owners => owners.filter(o => ![owner, emptyAddress].includes(o)));
