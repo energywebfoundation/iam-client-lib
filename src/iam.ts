@@ -47,6 +47,7 @@ import { WalletProvider } from "./types/WalletProvider";
 import { getSubdomains } from "./utils/getSubDomains";
 import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
 import { Subscription } from "nats.ws";
+import { AxiosError } from "axios";
 
 export type InitializeData = {
   did: string | undefined;
@@ -224,6 +225,9 @@ export class IAM extends IAMBase {
           service: didDoc.service as (IServiceEndpoint & ClaimData)[]
         };
       } catch (err) {
+        if ((err as AxiosError).response?.status === 401) {
+          throw err;
+        }
         console.log(err);
       }
     }
