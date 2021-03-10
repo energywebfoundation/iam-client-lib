@@ -1259,7 +1259,7 @@ export class IAM extends IAMBase {
   }) {
     if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
     for (const { type, conditions } of enrolmentPreconditions) {
-      if (type === PreconditionTypes.Role) {
+      if (type === PreconditionTypes.Role && conditions) {
         const conditionMet = claims.some(
           ({ claimType }) => claimType && conditions.includes(claimType)
         );
