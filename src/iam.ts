@@ -20,35 +20,42 @@ import {
   DIDAttribute,
   IDIDDocument,
   IServiceEndpoint,
-  IUpdateData,
-  PubKeyType
+  IUpdateData
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, emptyAddress } from "./iam/iam-base";
+import { IAMBase, ClaimData } from "./iam/iam-base";
 import {
-  ENSTypeNotSupportedError,
   CacheClientNotProvidedError,
-  MethodNotAvailableInNodeEnvError,
-  NATSConnectionNotEstablishedError,
-  ENSResolverNotInitializedError,
-  ENSRegistryNotInitializedError,
   ChangeOwnershipNotPossibleError,
-  DeletingNamespaceNotPossibleError
+  DeletingNamespaceNotPossibleError,
+  ENSRegistryNotInitializedError,
+  ENSResolverNotInitializedError,
+  ENSTypeNotSupportedError,
+  NATSConnectionNotEstablishedError,
+  ERROR_MESSAGES
 } from "./errors";
 import {
   IAppDefinition,
+  IOrganization,
   IOrganizationDefinition,
   IRoleDefinition
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
+import { WalletProvider } from "./types/WalletProvider";
+import { getSubdomains } from "./utils/getSubDomains";
+import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
+import { Subscription } from "nats.ws";
+import { AxiosError } from "axios";
 
-type InitializeData = {
+export type InitializeData = {
   did: string | undefined;
   connected: boolean;
   userClosedModal: boolean;
   didDocument: IDIDDocument | null;
+  identityToken?: string;
+  realtimeExchangeConnected: boolean;
 };
 
 export interface IMessage {
@@ -76,16 +83,25 @@ export enum ENSNamespaceTypes {
   Organization = "org"
 }
 
-export const NATS_EXCHANGE_TOPIC = "claim.exchange";
-
 /**
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM extends IAMBase {
+  private _exchangeSubscription: Subscription | undefined;
   static async isMetamaskExtensionPresent() {
-    const provider = await detectEthereumProvider({ mustBeMetaMask: true });
-    return !!provider;
+    const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
+      | {
+          request: any;
+        }
+      | undefined;
+
+    const chainId = (await provider?.request({
+      method: "eth_chainId"
+    })) as number | undefined;
+
+    return { isMetamaskPresent: !!provider, chainId };
   }
+
   // GETTERS
 
   /**
@@ -111,6 +127,24 @@ export class IAM extends IAMBase {
   // CONNECTION
 
   /**
+   * Check if session is active
+   *
+   * @returns boolean that indicates the session state
+   */
+  isSessionActive() {
+    return Boolean(this._publicKey) && Boolean(this._providerType);
+  }
+
+  /**
+   * Get the current initialized provider type
+   *
+   * @returns provider type if the session is active if not undefined
+   */
+  getProviderType() {
+    return this._providerType;
+  }
+
+  /**
    * Initialize connection to wallet
    * @description creates web3 provider and establishes secure connection to selected wallet
    * @summary if not connected to wallet will show connection modal, but if already connected (data stored in localStorage) will only return initial data without showing modal
@@ -118,18 +152,22 @@ export class IAM extends IAMBase {
    *
    * @returns did string, status of connection and info if the user closed the wallet selection modal
    */
-  async initializeConnection(
-    {
-      useMetamaskExtension,
-      reinitializeMetamask
-    }: { useMetamaskExtension: boolean; reinitializeMetamask?: boolean } = {
-      useMetamaskExtension: false
+  async initializeConnection({
+    walletProvider = this._providerType,
+    reinitializeMetamask
+  }: { walletProvider?: WalletProvider; reinitializeMetamask?: boolean } = {}): Promise<
+    InitializeData
+  > {
+    if (!walletProvider && !this._connectionOptions.privateKey) {
+      throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
     }
-  ): Promise<InitializeData> {
+    if (walletProvider && !Object.values(WalletProvider).includes(walletProvider)) {
+      throw new Error(ERROR_MESSAGES.WALLET_PROVIDER_NOT_SUPPORTED);
+    }
     try {
       await this.init({
-        useMetamask: useMetamaskExtension,
-        initializeMetamask: reinitializeMetamask
+        initializeMetamask: reinitializeMetamask,
+        walletProvider
       });
     } catch (err) {
       if (err.message === "User closed modal") {
@@ -137,34 +175,21 @@ export class IAM extends IAMBase {
           did: undefined,
           connected: false,
           userClosedModal: true,
-          didDocument: null
+          didDocument: null,
+          realtimeExchangeConnected: false
         };
       }
       throw new Error(err);
     }
-    const didDocument = await this.getDidDocument();
 
     return {
       did: this.getDid(),
       connected: this.isConnected() || false,
       userClosedModal: false,
-      didDocument
+      didDocument: await this.getDidDocument(),
+      identityToken: this._didSigner?.identityToken,
+      realtimeExchangeConnected: Boolean(this._natsConnection)
     };
-  }
-
-  /**
-   * Close connection to wallet
-   * @description closes the connection between dApp and the wallet
-   *
-   */
-
-  async closeConnection() {
-    if (this._walletConnectProvider) {
-      await this._walletConnectProvider.close();
-      this._did = undefined;
-      this._address = undefined;
-      this._signer = undefined;
-    }
   }
 
   /**
@@ -177,10 +202,7 @@ export class IAM extends IAMBase {
     if (this._walletConnectProvider) {
       return this._walletConnectProvider.connected;
     }
-    if (this._address) {
-      return true;
-    }
-    return false;
+    return !!this._address;
   }
 
   // DID DOCUMENT
@@ -194,39 +216,34 @@ export class IAM extends IAMBase {
   async getDidDocument({
     did = this._did,
     includeClaims = true
-  }: { did?: string; includeClaims?: boolean } | undefined = {}): Promise<IDIDDocument | null> {
+  }: { did?: string; includeClaims?: boolean } | undefined = {}) {
     if (this._cacheClient && did) {
       try {
         const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
-        return didDoc;
+        return {
+          ...didDoc,
+          service: didDoc.service as (IServiceEndpoint & ClaimData)[]
+        };
       } catch (err) {
-        if (err.message === "Request failed with status code 404") {
-          this._cacheClient.addDIDToWatchList({ did });
-          if (this._resolver) {
-            const document = await this._resolver.read(did);
-            if (includeClaims) {
-              const services = await this.downloadClaims({
-                services: document.service && document.service.length > 0 ? document.service : []
-              });
-              document.service = (services as unknown) as IServiceEndpoint[];
-            }
-            return document;
-          }
+        if ((err as AxiosError).response?.status === 401) {
+          throw err;
         }
-        throw err;
+        console.log(err);
       }
     }
+
     if (did && this._resolver) {
       const document = await this._resolver.read(did);
-      if (includeClaims) {
-        const services = await this.downloadClaims({
-          services: document.service && document.service.length > 0 ? document.service : []
-        });
-        document.service = (services as unknown) as IServiceEndpoint[];
-      }
-      return document;
+      return {
+        ...document,
+        service: includeClaims
+          ? await this.downloadClaims({
+              services: document.service && document.service.length > 0 ? document.service : []
+            })
+          : []
+      };
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
   }
 
   /**
@@ -251,7 +268,7 @@ export class IAM extends IAMBase {
       const updated = await this._document.update(didAttribute, data, validity);
       return Boolean(updated);
     }
-    return false;
+    throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
   }
 
   /**
@@ -266,7 +283,7 @@ export class IAM extends IAMBase {
       await this._document.deactivate();
       return true;
     }
-    return false;
+    throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
   }
 
   /**
@@ -276,14 +293,33 @@ export class IAM extends IAMBase {
    * @returns JWT token of created claim
    *
    */
-  async createPublicClaim({ data, subject }: { data: Record<string, unknown>; subject?: string }) {
+  async createPublicClaim({ data, subject }: { data: ClaimData; subject?: string }) {
     if (this._userClaims) {
       if (subject) {
         return this._userClaims.createPublicClaim(data, { subject, issuer: "" });
       }
       return this._userClaims.createPublicClaim(data);
     }
-    throw new Error("User claims not initialized");
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+  }
+
+  private async getClaimId({ claimData }: { claimData: ClaimData }) {
+    const { service = [] } = await this.getDidDocument();
+    const { id, claimTypeVersion } =
+      service.find(
+        ({ profile, claimType, claimTypeVersion }) =>
+          Boolean(profile) ||
+          (claimType === claimData.claimType && claimTypeVersion === claimData.claimTypeVersion)
+      ) || {};
+
+    if (claimData.profile && id) {
+      return id;
+    }
+
+    if (claimData.claimType && id && claimData.claimTypeVersion === claimTypeVersion) {
+      return id;
+    }
+    return uuid();
   }
 
   /**
@@ -295,22 +331,32 @@ export class IAM extends IAMBase {
    */
   async publishPublicClaim({ token }: { token: string }) {
     if (this._userClaims) {
-      const claim = (await this.decodeJWTToken({ token })) as { iss: string };
-      const issuer = claim.iss;
-      if (!(await this._userClaims.verifySignature(token, issuer))) {
+      const { claimData, iss } = (await this.decodeJWTToken({ token })) as {
+        iss: string;
+        claimData: ClaimData;
+      };
+
+      const claimId = await this.getClaimId({ claimData });
+
+      if (!(await this._userClaims.verifySignature(token, iss))) {
         throw new Error("Incorrect signature");
       }
       const url = await this._ipfsStore.save(token);
       await this.updateDidDocument({
         didAttribute: DIDAttribute.ServicePoint,
         data: {
-          type: PubKeyType.VerificationKey2018,
-          value: { id: uuid(), serviceEndpoint: url, hash: hashes.SHA256(token), hashAlg: "SHA256" }
+          type: DIDAttribute.ServicePoint,
+          value: {
+            id: claimId,
+            serviceEndpoint: url,
+            hash: hashes.SHA256(token),
+            hashAlg: "SHA256"
+          }
         }
       });
       return url;
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -346,7 +392,7 @@ export class IAM extends IAMBase {
       });
       return this._userClaims?.createProofClaim(claimUrl, encryptedSaltedFields);
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -360,7 +406,7 @@ export class IAM extends IAMBase {
     if (this._issuerClaims) {
       return this._issuerClaims.issuePublicClaim(token);
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -374,7 +420,7 @@ export class IAM extends IAMBase {
     if (this._verifierClaims) {
       return this._verifierClaims.verifyPublicProof(issuedToken);
     }
-    return null;
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -383,11 +429,12 @@ export class IAM extends IAMBase {
    * @description creates self signed claim and upload the data to ipfs
    *
    */
-  async createSelfSignedClaim({ data }: { data: Record<string, unknown> }) {
+  async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
     if (this._userClaims) {
-      const claim = await this._userClaims.createPublicClaim(data);
-      await this._userClaims.publishPublicClaim(claim, data);
+      const token = await this.createPublicClaim({ data, subject });
+      return this.publishPublicClaim({ token });
     }
+    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
 
   /**
@@ -403,7 +450,7 @@ export class IAM extends IAMBase {
 
   async decodeJWTToken({ token }: { token: string }) {
     if (!this._jwt) {
-      throw new Error("JWT was not initialized");
+      throw new Error(ERROR_MESSAGES.JWT_NOT_INITIALIZED);
     }
     return this._jwt.decode(token);
   }
@@ -417,7 +464,7 @@ export class IAM extends IAMBase {
         }
       });
     }
-    throw new Error("Provider not initialized");
+    throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
   }
 
   /// ROLES
@@ -436,19 +483,10 @@ export class IAM extends IAMBase {
     domain: string;
     data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
   }) {
-    if (this._signer && this._ensResolver) {
-      const ensResolverWithSigner = this._ensResolver.connect(this._signer);
-      const stringifiedData = JSON.stringify(data);
-      const namespaceHash = namehash(domain) as string;
-      const setTextTx = await ensResolverWithSigner.setText(
-        namespaceHash,
-        "metadata",
-        stringifiedData,
-        this._transactionOverrides
-      );
-      await setTextTx.wait();
-      console.log(`Added data: ${stringifiedData} to ${domain} metadata`);
-    }
+    await this.send({
+      calls: [this.setDomainDefinitionTx({ domain, data })],
+      from: await this.getOwner({ namespace: domain })
+    });
   }
 
   /**
@@ -460,8 +498,8 @@ export class IAM extends IAMBase {
    */
   async createOrganization({
     orgName,
-    data,
     namespace,
+    data,
     returnSteps
   }: {
     orgName: string;
@@ -469,46 +507,57 @@ export class IAM extends IAMBase {
     namespace: string;
     returnSteps?: boolean;
   }) {
-    const newDomain = `${orgName}.${namespace}`;
-    const rolesDomain = `${ENSNamespaceTypes.Roles}.${newDomain}`;
-    const appsDomain = `${ENSNamespaceTypes.Application}.${newDomain}`;
+    const orgDomain = `${orgName}.${namespace}`;
+    const rolesDomain = `${ENSNamespaceTypes.Roles}.${orgDomain}`;
+    const appsDomain = `${ENSNamespaceTypes.Application}.${orgDomain}`;
+    const from = await this.getOwner({ namespace });
     const steps = [
       {
-        next: () => this.createSubdomain({ subdomain: orgName, domain: namespace }),
+        tx: this.createSubdomainTx({ domain: namespace, nodeName: orgName, owner: from }),
         info: "Create organization subdomain"
       },
       {
-        next: () => this.setDomainName({ domain: newDomain }),
+        tx: this.setDomainNameTx({ domain: orgDomain }),
         info: "Register reverse name for organization subdomain"
       },
       {
-        next: () => this.setRoleDefinition({ data, domain: newDomain }),
+        tx: this.setDomainDefinitionTx({ domain: orgDomain, data }),
         info: "Set definition for organization"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSNamespaceTypes.Roles, domain: newDomain }),
+        tx: this.createSubdomainTx({
+          domain: orgDomain,
+          nodeName: ENSNamespaceTypes.Roles,
+          owner: from
+        }),
         info: "Create roles subdomain for organization"
       },
       {
-        next: () => this.setDomainName({ domain: rolesDomain }),
+        tx: this.setDomainNameTx({ domain: rolesDomain }),
         info: "Register reverse name for roles subdomain"
       },
       {
-        next: () =>
-          this.createSubdomain({ subdomain: ENSNamespaceTypes.Application, domain: newDomain }),
+        tx: this.createSubdomainTx({
+          domain: orgDomain,
+          nodeName: ENSNamespaceTypes.Application,
+          owner: from
+        }),
         info: "Create app subdomain for organization"
       },
       {
-        next: () => this.setDomainName({ domain: appsDomain }),
+        tx: this.setDomainNameTx({ domain: appsDomain }),
         info: "Register reverse name for app subdomain"
       }
-    ];
+    ].map(step => ({
+      ...step,
+      next: async () => {
+        await this.send({ calls: [step.tx], from });
+      }
+    }));
     if (returnSteps) {
       return steps;
     }
-    for (const { next } of steps) {
-      await next();
-    }
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -521,45 +570,52 @@ export class IAM extends IAMBase {
    */
   async createApplication({
     appName,
-    namespace,
+    namespace: domain,
     data,
     returnSteps
   }: {
-    appName: string;
     namespace: string;
+    appName: string;
     data: IAppDefinition;
     returnSteps?: boolean;
   }) {
-    const newDomain = `${appName}.${namespace}`;
-    const rolesNamespace = `${ENSNamespaceTypes.Roles}.${newDomain}`;
+    const appDomain = `${appName}.${domain}`;
+    const from = await this.getOwner({ namespace: domain });
     const steps = [
       {
-        next: () => this.createSubdomain({ subdomain: appName, domain: namespace }),
+        tx: this.createSubdomainTx({ domain, nodeName: appName, owner: from }),
         info: "Set subdomain for application"
       },
       {
-        next: () => this.setDomainName({ domain: newDomain }),
+        tx: this.setDomainNameTx({ domain: appDomain }),
         info: "Set name for application"
       },
       {
-        next: () => this.setRoleDefinition({ data, domain: newDomain }),
+        tx: this.setDomainDefinitionTx({ data, domain: appDomain }),
         info: "Set definition for application"
       },
       {
-        next: () => this.createSubdomain({ subdomain: ENSNamespaceTypes.Roles, domain: newDomain }),
+        tx: this.createSubdomainTx({
+          domain: appDomain,
+          nodeName: ENSNamespaceTypes.Roles,
+          owner: from
+        }),
         info: "Create roles subdomain for application"
       },
       {
-        next: () => this.setDomainName({ domain: rolesNamespace }),
+        tx: this.setDomainNameTx({ domain: `${ENSNamespaceTypes.Roles}.${appDomain}` }),
         info: "Set name for roles subdomain for application"
       }
-    ];
+    ].map(step => ({
+      ...step,
+      next: async () => {
+        await this.send({ calls: [step.tx], from });
+      }
+    }));
     if (returnSteps) {
       return steps;
     }
-    for (const { next } of steps) {
-      await next();
-    }
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -582,26 +638,30 @@ export class IAM extends IAMBase {
     returnSteps?: boolean;
   }) {
     const newDomain = `${roleName}.${namespace}`;
+    const from = await this.getOwner({ namespace });
     const steps = [
       {
-        next: () => this.createSubdomain({ subdomain: roleName, domain: namespace }),
+        tx: this.createSubdomainTx({ domain: namespace, nodeName: roleName, owner: from }),
         info: "Create subdomain for role"
       },
       {
-        next: () => this.setDomainName({ domain: newDomain }),
+        tx: this.setDomainNameTx({ domain: newDomain }),
         info: "Set name for role"
       },
       {
-        next: () => this.setRoleDefinition({ data, domain: newDomain }),
+        tx: this.setDomainDefinitionTx({ data, domain: newDomain }),
         info: "Set role definition for role"
       }
-    ];
+    ].map(step => ({
+      ...step,
+      next: async () => {
+        await this.send({ calls: [step.tx], from });
+      }
+    }));
     if (returnSteps) {
       return steps;
     }
-    for (const { next } of steps) {
-      await next();
-    }
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -621,13 +681,21 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
-    const notOwnedNamespaces = await this.validateOwnership({
-      namespace,
-      type: ENSNamespaceTypes.Organization
-    });
+    const orgNamespaces = [
+      `${ENSNamespaceTypes.Roles}.${namespace}`,
+      `${ENSNamespaceTypes.Application}.${namespace}`,
+      namespace
+    ];
+    const {
+      alreadyFinished,
+      changeOwnerNamespaces,
+      notOwnedNamespaces
+    } = await this.validateChangeOwnership({ newOwner, namespaces: orgNamespaces });
+
     if (notOwnedNamespaces.length > 0) {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
+    const from = await this.getOwner({ namespace });
 
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
@@ -638,44 +706,29 @@ export class IAM extends IAMBase {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
 
-    const [label, ...rest] = namespace.split(".");
-    const steps: { next: () => Promise<void>; info: string }[] = [
-      {
-        next: () => this.changeSubdomainOwner({ newOwner, namespace: rest.join("."), label }),
+    if (alreadyFinished.length > 0) {
+      console.log(`Already changed ownership of ${alreadyFinished.join(", ")}`);
+    }
+
+    const steps = changeOwnerNamespaces.map(namespace => {
+      const tx = this.changeDomainOwnerTx({ newOwner, namespace });
+      return {
+        tx,
+        next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
+          if (retryCheck) {
+            const owner = await this.getOwner({ namespace });
+            if (owner === newOwner) return;
+          }
+          return this.send({ calls: [tx], from });
+        },
         info: `Changing ownership of ${namespace}`
-      },
-      {
-        next: () =>
-          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Application }),
-        info: `Changing ownership of ${ENSNamespaceTypes.Application}.${namespace}`
-      },
-      {
-        next: () =>
-          this.changeSubdomainOwner({ newOwner, namespace, label: ENSNamespaceTypes.Roles }),
-        info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
-      }
-    ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.changeSubdomainOwner({
-            label: role,
-            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`,
-            newOwner
-          }),
-        info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
-    }
-    const reversedSteps = steps.reverse();
+      };
+    });
+
     if (returnSteps) {
-      return reversedSteps;
+      return steps;
     }
-    for (const { info, next } of reversedSteps) {
-      console.log(info);
-      await next();
-    }
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -695,54 +748,49 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
-    const notOwnedNamespaces = await this.validateOwnership({
-      namespace,
-      type: ENSNamespaceTypes.Application
-    });
+    const appNamespaces = [`${ENSNamespaceTypes.Roles}.${namespace}`, namespace];
+
+    const {
+      alreadyFinished,
+      changeOwnerNamespaces,
+      notOwnedNamespaces
+    } = await this.validateChangeOwnership({ newOwner, namespaces: appNamespaces });
+
     if (notOwnedNamespaces.length > 0) {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    const steps: { next: () => Promise<void>; info: string }[] = [
-      {
-        next: () => this.changeDomainOwner({ newOwner, namespace }),
+    const from = await this.getOwner({ namespace });
+
+    if (alreadyFinished.length > 0) {
+      console.log(`Already changed ownership of ${alreadyFinished.join(", ")}`);
+    }
+
+    const steps = changeOwnerNamespaces.map(namespace => {
+      const tx = this.changeDomainOwnerTx({ newOwner, namespace });
+      return {
+        tx,
+        next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
+          if (retryCheck) {
+            const owner = await this.getOwner({ namespace });
+            if (owner === newOwner) return;
+          }
+          return this.send({ calls: [tx], from });
+        },
         info: `Changing ownership of ${namespace}`
-      },
-      {
-        next: () =>
-          this.changeDomainOwner({
-            newOwner,
-            namespace: `${ENSNamespaceTypes.Roles}.${namespace}`
-          }),
-        info: `Changing ownership of ${ENSNamespaceTypes.Roles}.${namespace}`
-      }
-    ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.changeDomainOwner({
-            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`,
-            newOwner
-          }),
-        info: `Changing ownership of ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
-    }
-    const reversedSteps = steps.reverse();
+      };
+    });
+
     if (returnSteps) {
-      return reversedSteps;
+      return steps;
     }
-    for (const { info, next } of reversedSteps) {
-      console.log(info);
-      await next();
-    }
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
   /**
    * changeRoleOwnership
    *
-   * @description change owner ship of role subdomain
+   * @description change ownership of role subdomain
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
@@ -753,8 +801,11 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    const [label, ...rest] = namespace.split(".");
-    await this.changeSubdomainOwner({ label, namespace: rest.join("."), newOwner });
+    const from = await this.getOwner({ namespace });
+    await this.send({
+      calls: [this.changeDomainOwnerTx({ namespace, newOwner })],
+      from
+    });
   }
 
   /**
@@ -770,56 +821,63 @@ export class IAM extends IAMBase {
     namespace: string;
     returnSteps?: boolean;
   }) {
-    const notOwnedNamespaces = await this.validateOwnership({
-      namespace,
-      type: ENSNamespaceTypes.Organization
-    });
-    if (notOwnedNamespaces.length > 0) {
-      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
-    }
-
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
           domain: `${ENSNamespaceTypes.Application}.${namespace}`
         });
     if (apps && apps.length > 0) {
-      throw new Error("You are not able to remove organization with registered apps");
+      throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
     }
-    const steps: { next: () => Promise<void>; info: string }[] = [
-      {
-        next: () => this.deleteSubdomain({ namespace }),
-        info: `Deleting ${namespace}`
-      },
-      {
-        next: () =>
-          this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Application}.${namespace}` }),
-        info: `Deleting ${ENSNamespaceTypes.Application}.${namespace}`
-      },
-      {
-        next: () => this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
-        info: `Deleting ${ENSNamespaceTypes.Roles}.${namespace}`
-      }
+    const from = await this.getOwner({ namespace });
+
+    const roles = this._cacheClient
+      ? await this._cacheClient.getOrganizationRoles({ namespace })
+      : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
+
+    if (roles && roles.length > 0) {
+      throw new Error(ERROR_MESSAGES.ORG_WITH_ROLES);
+    }
+
+    const orgNamespaces = [
+      `${ENSNamespaceTypes.Roles}.${namespace}`,
+      `${ENSNamespaceTypes.Application}.${namespace}`,
+      namespace
     ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.deleteSubdomain({
-            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-          }),
-        info: `Deleting ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
+
+    const {
+      alreadyFinished,
+      namespacesToDelete,
+      notOwnedNamespaces
+    } = await this.validateDeletePossibility({ namespaces: orgNamespaces });
+
+    if (notOwnedNamespaces.length > 0) {
+      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    const reversedSteps = steps.reverse();
+
+    if (alreadyFinished.length > 0) {
+      console.log(`Already deleted: ${alreadyFinished.join(", ")}`);
+    }
+
+    const steps = namespacesToDelete.map(namespace => {
+      const tx = this.deleteDomainTx({ namespace });
+      return {
+        tx,
+        next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
+          if (retryCheck) {
+            const owner = await this.getOwner({ namespace });
+            if (owner === emptyAddress) return;
+          }
+          return this.send({ calls: [tx], from });
+        },
+        info: `Deleting ${namespace}`
+      };
+    });
+
     if (returnSteps) {
-      return reversedSteps;
+      return steps;
     }
-    for (const { info, next } of reversedSteps) {
-      console.log(info);
-      await next();
-    }
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -836,42 +894,51 @@ export class IAM extends IAMBase {
     namespace: string;
     returnSteps?: boolean;
   }) {
-    const notOwnedNamespaces = await this.validateOwnership({
-      namespace,
-      type: ENSNamespaceTypes.Application
-    });
+    const from = await this.getOwner({ namespace });
+
+    const roles = this._cacheClient
+      ? await this._cacheClient.getApplicationRoles({ namespace })
+      : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
+
+    if (roles && roles.length > 0) {
+      throw new Error(ERROR_MESSAGES.APP_WITH_ROLES);
+    }
+
+    const appNamespaces = [`${ENSNamespaceTypes.Roles}.${namespace}`, namespace];
+
+    const {
+      alreadyFinished,
+      namespacesToDelete,
+      notOwnedNamespaces
+    } = await this.validateDeletePossibility({ namespaces: appNamespaces });
+
     if (notOwnedNamespaces.length > 0) {
       throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    const steps: { next: () => Promise<void>; info: string }[] = [
-      {
-        next: () => this.deleteSubdomain({ namespace }),
+
+    if (alreadyFinished.length > 0) {
+      console.log(`Already deleted: ${alreadyFinished.join(", ")}`);
+    }
+
+    const steps = namespacesToDelete.map(namespace => {
+      const tx = this.deleteDomainTx({ namespace });
+      return {
+        tx,
+        next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
+          if (retryCheck) {
+            const owner = await this.getOwner({ namespace });
+            if (owner === emptyAddress) return;
+          }
+          return this.send({ calls: [tx], from });
+        },
         info: `Deleting ${namespace}`
-      },
-      {
-        next: () => this.deleteSubdomain({ namespace: `${ENSNamespaceTypes.Roles}.${namespace}` }),
-        info: `Deleting ${ENSNamespaceTypes.Roles}.${namespace}`
-      }
-    ];
-    const roles =
-      (await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` })) || [];
-    for (const role of roles) {
-      steps.push({
-        next: () =>
-          this.deleteSubdomain({
-            namespace: `${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-          }),
-        info: `Deleting ${role}.${ENSNamespaceTypes.Roles}.${namespace}`
-      });
-    }
-    const reversedSteps = steps.reverse();
+      };
+    });
+
     if (returnSteps) {
-      return reversedSteps;
+      return steps;
     }
-    for (const { info, next } of reversedSteps) {
-      console.log(info);
-      await next();
-    }
+    await this.send({ calls: steps.map(({ tx }) => tx), from });
     return [];
   }
 
@@ -889,7 +956,10 @@ export class IAM extends IAMBase {
     if (notOwnedNamespaces.length > 0) {
       throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
     }
-    await this.deleteSubdomain({ namespace });
+    await this.send({
+      calls: [this.deleteDomainTx({ namespace })],
+      from: await this.getOwner({ namespace })
+    });
   }
 
   /**
@@ -949,12 +1019,20 @@ export class IAM extends IAMBase {
   /**
    * getENSTypesByOwner
    */
-  getENSTypesByOwner({ type, owner }: { type: ENSNamespaceTypes; owner: string }) {
+  getENSTypesByOwner({
+    type,
+    owner,
+    excludeSubOrgs = false
+  }: {
+    type: ENSNamespaceTypes;
+    owner: string;
+    excludeSubOrgs?: boolean;
+  }) {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
     if (type === ENSNamespaceTypes.Organization) {
-      return this._cacheClient.getOrganizationsByOwner({ owner });
+      return this._cacheClient.getOrganizationsByOwner({ owner, excludeSubOrgs });
     }
     if (type === ENSNamespaceTypes.Application) {
       return this._cacheClient.getApplicationsByOwner({ owner });
@@ -997,6 +1075,38 @@ export class IAM extends IAMBase {
   }
 
   /**
+   * getSubOrgsByOrgNamespace
+   *
+   * @description get all sub organizations for organization namespace
+   * @returns array of subdomains or empty array when there is no subdomains
+   *
+   */
+  getSubOrgsByOrgNamespace({ namespace }: { namespace: string }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getSubOrganizationsByOrganization({ namespace });
+  }
+
+  /**
+   * getOrgHierarchy
+   *
+   * @description get all hierarchy of an organization (20 levels deep)
+   * @returns organization with all nested subOrgs
+   *
+   */
+  async getOrgHierarchy({ namespace }: { namespace: string }): Promise<IOrganization> {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    const org = await this._cacheClient.getOrgHierarchy({ namespace });
+    [org, ...(org.subOrgs || []), ...(org.apps || []), ...(org.roles || [])].forEach(
+      domain => (domain.isOwnedByCurrentUser = domain.owner === this.address)
+    );
+    return org;
+  }
+
+  /**
    * getRoleDIDs
    *
    * @description get all users did which have certain role
@@ -1017,19 +1127,19 @@ export class IAM extends IAMBase {
    * @returns array of subdomains or empty array when there is no subdomains
    *
    */
-  async getSubdomains({ domain }: { domain: string }) {
-    if (this._ensRegistry) {
-      const domains = await this.getFilteredDomainsFromEvent({ domain });
-      const role = domain.split(".");
-      const subdomains: Record<string, null> = {};
-      for (const name of domains) {
-        const nameArray = name.split(".").reverse();
-        if (nameArray.length <= role.length) continue;
-        subdomains[nameArray[role.length]] = null;
-      }
-      return Object.keys(subdomains);
-    }
-    throw new ENSRegistryNotInitializedError();
+  async getSubdomains({
+    domain,
+    mode = "FIRSTLEVEL"
+  }: {
+    domain: string;
+    mode?: "ALL" | "FIRSTLEVEL";
+  }): Promise<string[]> {
+    return getSubdomains({
+      domain,
+      ensRegistry: this._ensRegistry,
+      ensResolver: this._ensResolver,
+      mode
+    });
   }
 
   /**
@@ -1079,48 +1189,90 @@ export class IAM extends IAMBase {
    *
    */
   async validateOwnership({ namespace, type }: { namespace: string; type: ENSNamespaceTypes }) {
-    if (this._address) {
-      if (type === ENSNamespaceTypes.Roles) {
-        const [, ...parentDomain] = namespace.split(".");
-        const owner = await this.getOwner({ namespace: parentDomain.join(".") });
-        return owner === this._address ? [] : [parentDomain.join(".")];
+    return this.nonOwnedNodesOf({ namespace, type, owner: this._address as string });
+  }
+
+  protected async validateChangeOwnership({
+    namespaces,
+    newOwner
+  }: {
+    namespaces: string[];
+    newOwner: string;
+  }) {
+    const namespacesOwners = await this.namespacesWithRelations(namespaces);
+    return namespacesOwners.reduce(
+      (acc, { namespace, owner }) => {
+        if (owner === newOwner) {
+          acc.alreadyFinished.push(namespace);
+          return acc;
+        }
+        if (owner === emptyAddress || owner === this._address) {
+          acc.changeOwnerNamespaces.push(namespace);
+          return acc;
+        }
+        acc.notOwnedNamespaces.push(namespace);
+        return acc;
+      },
+      {
+        notOwnedNamespaces: [],
+        alreadyFinished: [],
+        changeOwnerNamespaces: []
+      } as {
+        notOwnedNamespaces: string[];
+        alreadyFinished: string[];
+        changeOwnerNamespaces: string[];
       }
-      if (type === ENSNamespaceTypes.Application) {
-        const appRolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
-        const namespaces = [namespace, appRolesNamespace];
-        const notOwnedNamespaces = await Promise.all(
-          namespaces.map(async namespace => {
-            const owner = await this.getOwner({ namespace });
-            if (owner !== this._address) {
-              return namespace;
-            }
-            return null;
-          })
-        );
-        return (notOwnedNamespaces.filter(Boolean) as any) as string[];
+    );
+  }
+
+  protected async validateDeletePossibility({ namespaces }: { namespaces: string[] }) {
+    const namespacesOwners = await this.namespacesWithRelations(namespaces);
+    return namespacesOwners.reduce(
+      (acc, { namespace, owner }) => {
+        if (owner === emptyAddress) {
+          acc.alreadyFinished.push(namespace);
+          return acc;
+        }
+        if (owner === this._address) {
+          acc.namespacesToDelete.push(namespace);
+          return acc;
+        }
+        acc.notOwnedNamespaces.push(namespace);
+        return acc;
+      },
+      {
+        notOwnedNamespaces: [],
+        alreadyFinished: [],
+        namespacesToDelete: []
+      } as {
+        notOwnedNamespaces: string[];
+        alreadyFinished: string[];
+        namespacesToDelete: string[];
       }
-      if (type === ENSNamespaceTypes.Organization) {
-        const [, ...iamNamespace] = namespace.split(".");
-        const rolesNamespace = `${ENSNamespaceTypes.Roles}.${namespace}`;
-        const appsNamespace = `${ENSNamespaceTypes.Application}.${namespace}`;
-        const namespaces = [iamNamespace.join("."), rolesNamespace, appsNamespace, namespace];
-        const notOwnedNamespaces = await Promise.all(
-          namespaces.map(async namespace => {
-            const owner = await this.getOwner({ namespace });
-            if (owner !== this._address) {
-              return namespace;
-            }
-            return null;
-          })
-        );
-        return (notOwnedNamespaces.filter(Boolean) as any) as string[];
-      }
-      throw new Error("ENS type not supported");
-    }
-    throw new Error("User not logged in");
+    );
   }
 
   // NATS
+
+  private verifyEnrolmentPreconditions({
+    claims,
+    enrolmentPreconditions
+  }: {
+    claims: (IServiceEndpoint & ClaimData)[];
+    enrolmentPreconditions: IRoleDefinition["enrolmentPreconditions"];
+  }) {
+    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
+    for (const { type, conditions } of enrolmentPreconditions) {
+      if (type === PreconditionTypes.Role && conditions) {
+        const conditionMet = claims.some(
+          ({ claimType }) => claimType && conditions.includes(claimType)
+        );
+        if (!conditionMet) {
+          throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
+        }
+      }
+    }
+  }
 
   async createClaimRequest({
     issuer,
@@ -1130,12 +1282,26 @@ export class IAM extends IAMBase {
     claim: { claimType: string; fields: { key: string; value: string | number }[] };
   }) {
     if (!this._did) {
-      throw new Error("User not logged in");
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
+
+    const [roleDefinition, didDocument] = await Promise.all([
+      this.getDefinition({
+        type: ENSNamespaceTypes.Roles,
+        namespace: claim.claimType
+      }),
+      this.getDidDocument({ includeClaims: true })
+    ]);
+
+    if (!roleDefinition) {
+      throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
+    }
+
+    const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
+
+    this.verifyEnrolmentPreconditions({ claims: didDocument.service, enrolmentPreconditions });
+
     const token = await this.createPublicClaim({ data: claim, subject: claim.claimType });
-    if (!token) {
-      throw new Error("Token was not generated");
-    }
     const message: IClaimRequest = {
       id: uuid(),
       token,
@@ -1167,13 +1333,10 @@ export class IAM extends IAMBase {
     id: string;
   }) {
     if (!this._did) {
-      throw new Error("User not logged in");
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
 
     const issuedToken = await this.issuePublicClaim({ token });
-    if (!issuedToken) {
-      throw new Error("Token was not generated");
-    }
     const preparedData: IClaimIssuance = {
       id,
       issuedToken,
@@ -1195,7 +1358,7 @@ export class IAM extends IAMBase {
 
   async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
     if (!this._did) {
-      throw new Error("User not logged in");
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
 
     const preparedData: IClaimRejection = {
@@ -1216,6 +1379,13 @@ export class IAM extends IAMBase {
     this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
   }
 
+  async deleteClaim({ id }: { id: string }) {
+    if (this._cacheClient) {
+      await this._cacheClient.deleteClaim({ claimId: id });
+    }
+    throw new CacheClientNotProvidedError();
+  }
+
   async subscribeToMessages({
     topic = `${this._did}.${NATS_EXCHANGE_TOPIC}`,
     messageHandler
@@ -1224,12 +1394,18 @@ export class IAM extends IAMBase {
     messageHandler: (data: IMessage) => void;
   }) {
     if (!this._natsConnection) {
-      throw new NATSConnectionNotEstablishedError();
+      return;
     }
-    const subscription = this._natsConnection.subscribe(topic);
-    for await (const msg of subscription) {
+    this._exchangeSubscription = this._natsConnection.subscribe(topic);
+    for await (const msg of this._exchangeSubscription) {
       const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
       messageHandler(decodedMessage);
+    }
+  }
+
+  async unsubscribeFromMessages() {
+    if (this._exchangeSubscription) {
+      this._exchangeSubscription.unsubscribe();
     }
   }
 
@@ -1263,5 +1439,53 @@ export class IAM extends IAMBase {
       throw new CacheClientNotProvidedError();
     }
     return this._cacheClient.getIssuedClaims({ did, isAccepted, parentNamespace });
+  }
+
+  protected async nonOwnedNodesOf({
+    namespace,
+    type,
+    owner
+  }: {
+    namespace: string;
+    type: ENSNamespaceTypes;
+    owner: string;
+  }) {
+    if (
+      ![
+        ENSNamespaceTypes.Roles,
+        ENSNamespaceTypes.Application,
+        ENSNamespaceTypes.Organization
+      ].includes(type)
+    ) {
+      throw new Error(ERROR_MESSAGES.ENS_TYPE_NOT_SUPPORTED);
+    }
+    if (this._address) {
+      const namespacesToCheck =
+        type === ENSNamespaceTypes.Roles
+          ? [namespace]
+          : type === ENSNamespaceTypes.Application
+          ? [namespace, ENSNamespaceTypes.Application]
+          : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
+      return Promise.all(
+        namespacesToCheck.map(ns => this.getOwner({ namespace: ns }))
+      ).then(owners => owners.filter(o => ![owner, emptyAddress].includes(o)));
+    }
+    throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+  }
+
+  /**
+   * @description Collects all namespaces related data. Currently its includes only owner
+   * @param namespaces
+   */
+  async namespacesWithRelations(namespaces: string[]) {
+    return Promise.all(
+      namespaces.map(async namespace => {
+        const owner = await this.getOwner({ namespace });
+        return {
+          namespace,
+          owner
+        };
+      })
+    );
   }
 }

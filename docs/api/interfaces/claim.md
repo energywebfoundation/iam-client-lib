@@ -16,6 +16,7 @@
 * [createdAt](claim.md#createdat)
 * [id](claim.md#id)
 * [isAccepted](claim.md#isaccepted)
+* [isRejected](claim.md#isrejected)
 * [issuedToken](claim.md#issuedtoken)
 * [parentNamespace](claim.md#parentnamespace)
 * [requester](claim.md#requester)
@@ -57,6 +58,12 @@ ___
 ### isAccepted
 
 •  **isAccepted**: boolean
+
+___
+
+### isRejected
+
+• `Optional` **isRejected**: undefined \| false \| true
 
 ___
 

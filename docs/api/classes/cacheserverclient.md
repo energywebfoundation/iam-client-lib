@@ -19,35 +19,43 @@
 ### Methods
 
 * [addDIDToWatchList](cacheserverclient.md#adddidtowatchlist)
+* [addFailedRequest](cacheserverclient.md#addfailedrequest)
+* [deleteClaim](cacheserverclient.md#deleteclaim)
 * [getAppDefinition](cacheserverclient.md#getappdefinition)
 * [getApplicationRoles](cacheserverclient.md#getapplicationroles)
 * [getApplicationsByOrganization](cacheserverclient.md#getapplicationsbyorganization)
 * [getApplicationsByOwner](cacheserverclient.md#getapplicationsbyowner)
-* [getApplicationsBySearchPhrase](cacheserverclient.md#getapplicationsbysearchphrase)
 * [getDIDsForRole](cacheserverclient.md#getdidsforrole)
 * [getDidDocument](cacheserverclient.md#getdiddocument)
 * [getIssuedClaims](cacheserverclient.md#getissuedclaims)
+* [getNamespaceBySearchPhrase](cacheserverclient.md#getnamespacebysearchphrase)
 * [getOrgDefinition](cacheserverclient.md#getorgdefinition)
+* [getOrgHierarchy](cacheserverclient.md#getorghierarchy)
 * [getOrganizationRoles](cacheserverclient.md#getorganizationroles)
 * [getOrganizationsByOwner](cacheserverclient.md#getorganizationsbyowner)
-* [getOrganizationsBySearchPhrase](cacheserverclient.md#getorganizationsbysearchphrase)
 * [getRequestedClaims](cacheserverclient.md#getrequestedclaims)
 * [getRoleDefinition](cacheserverclient.md#getroledefinition)
 * [getRolesByOwner](cacheserverclient.md#getrolesbyowner)
+* [getSubOrganizationsByOrganization](cacheserverclient.md#getsuborganizationsbyorganization)
+* [handleRefreshToken](cacheserverclient.md#handlerefreshtoken)
+* [handleUnauthorized](cacheserverclient.md#handleunauthorized)
 * [issueClaim](cacheserverclient.md#issueclaim)
+* [login](cacheserverclient.md#login)
+* [refreshToken](cacheserverclient.md#refreshtoken)
+* [rejectClaim](cacheserverclient.md#rejectclaim)
 * [requestClaim](cacheserverclient.md#requestclaim)
 
 ## Constructors
 
 ### constructor
 
-\+ **new CacheServerClient**(`__namedParameters`: { url: string  }): [CacheServerClient](cacheserverclient.md)
+\+ **new CacheServerClient**(`__namedParameters`: { cacheServerSupportsAuth: boolean = true; url: string  }): [CacheServerClient](cacheserverclient.md)
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { url: string  } |
+`__namedParameters` | { cacheServerSupportsAuth: boolean = true; url: string  } |
 
 **Returns:** [CacheServerClient](cacheserverclient.md)
 
@@ -62,6 +70,34 @@ Name | Type |
 Name | Type |
 ------ | ------ |
 `__namedParameters` | { did: string  } |
+
+**Returns:** Promise\<void>
+
+___
+
+### addFailedRequest
+
+▸ **addFailedRequest**(`callback`: (token?: undefined \| string) => void): void
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`callback` | (token?: undefined \| string) => void |
+
+**Returns:** void
+
+___
+
+### deleteClaim
+
+▸ **deleteClaim**(`__namedParameters`: { claimId: string  }): Promise\<void>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { claimId: string  } |
 
 **Returns:** Promise\<void>
 
@@ -123,20 +159,6 @@ Name | Type |
 
 ___
 
-### getApplicationsBySearchPhrase
-
-▸ **getApplicationsBySearchPhrase**(`__namedParameters`: { search: string  }): Promise\<[IApp](../interfaces/iapp.md)[]>
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { search: string  } |
-
-**Returns:** Promise\<[IApp](../interfaces/iapp.md)[]>
-
-___
-
 ### getDIDsForRole
 
 ▸ **getDIDsForRole**(`__namedParameters`: { namespace: string  }): Promise\<string[]>
@@ -179,6 +201,20 @@ Name | Type |
 
 ___
 
+### getNamespaceBySearchPhrase
+
+▸ **getNamespaceBySearchPhrase**(`__namedParameters`: { search: string ; types: undefined \| (\"App\" \| \"Org\" \| \"Role\")[]  }): Promise\<[IApp](../interfaces/iapp.md)[] \| [IRole](../interfaces/irole.md)[] \| [IOrganization](../interfaces/iorganization.md)[]>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { search: string ; types: undefined \| (\"App\" \| \"Org\" \| \"Role\")[]  } |
+
+**Returns:** Promise\<[IApp](../interfaces/iapp.md)[] \| [IRole](../interfaces/irole.md)[] \| [IOrganization](../interfaces/iorganization.md)[]>
+
+___
+
 ### getOrgDefinition
 
 ▸ **getOrgDefinition**(`__namedParameters`: { namespace: string  }): Promise\<[IOrganizationDefinition](../interfaces/iorganizationdefinition.md)>
@@ -190,6 +226,20 @@ Name | Type |
 `__namedParameters` | { namespace: string  } |
 
 **Returns:** Promise\<[IOrganizationDefinition](../interfaces/iorganizationdefinition.md)>
+
+___
+
+### getOrgHierarchy
+
+▸ **getOrgHierarchy**(`__namedParameters`: { namespace: string  }): Promise\<[IOrganization](../interfaces/iorganization.md)>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { namespace: string  } |
+
+**Returns:** Promise\<[IOrganization](../interfaces/iorganization.md)>
 
 ___
 
@@ -209,27 +259,13 @@ ___
 
 ### getOrganizationsByOwner
 
-▸ **getOrganizationsByOwner**(`__namedParameters`: { owner: string  }): Promise\<[IOrganization](../interfaces/iorganization.md)[]>
+▸ **getOrganizationsByOwner**(`__namedParameters`: { excludeSubOrgs: boolean ; owner: string  }): Promise\<[IOrganization](../interfaces/iorganization.md)[]>
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { owner: string  } |
-
-**Returns:** Promise\<[IOrganization](../interfaces/iorganization.md)[]>
-
-___
-
-### getOrganizationsBySearchPhrase
-
-▸ **getOrganizationsBySearchPhrase**(`__namedParameters`: { search: string  }): Promise\<[IOrganization](../interfaces/iorganization.md)[]>
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { search: string  } |
+`__namedParameters` | { excludeSubOrgs: boolean ; owner: string  } |
 
 **Returns:** Promise\<[IOrganization](../interfaces/iorganization.md)[]>
 
@@ -277,15 +313,87 @@ Name | Type |
 
 ___
 
-### issueClaim
+### getSubOrganizationsByOrganization
 
-▸ **issueClaim**(`__namedParameters`: { did: string ; message: [IMessage](../interfaces/imessage.md)  }): Promise\<void>
+▸ **getSubOrganizationsByOrganization**(`__namedParameters`: { namespace: string  }): Promise\<[IOrganization](../interfaces/iorganization.md)[]>
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { did: string ; message: [IMessage](../interfaces/imessage.md)  } |
+`__namedParameters` | { namespace: string  } |
+
+**Returns:** Promise\<[IOrganization](../interfaces/iorganization.md)[]>
+
+___
+
+### handleRefreshToken
+
+▸ **handleRefreshToken**(): Promise\<void>
+
+**Returns:** Promise\<void>
+
+___
+
+### handleUnauthorized
+
+▸ **handleUnauthorized**(`error`: AxiosError): Promise\<unknown>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`error` | AxiosError |
+
+**Returns:** Promise\<unknown>
+
+___
+
+### issueClaim
+
+▸ **issueClaim**(`__namedParameters`: { did: string ; message: [IClaimIssuance](../interfaces/iclaimissuance.md)  }): Promise\<void>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { did: string ; message: [IClaimIssuance](../interfaces/iclaimissuance.md)  } |
+
+**Returns:** Promise\<void>
+
+___
+
+### login
+
+▸ **login**(`identityToken`: string): Promise\<void>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`identityToken` | string |
+
+**Returns:** Promise\<void>
+
+___
+
+### refreshToken
+
+▸ **refreshToken**(): Promise\<{ refreshToken: string ; token: string  }>
+
+**Returns:** Promise\<{ refreshToken: string ; token: string  }>
+
+___
+
+### rejectClaim
+
+▸ **rejectClaim**(`__namedParameters`: { did: string ; message: [IClaimRejection](../interfaces/iclaimrejection.md)  }): Promise\<void>
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { did: string ; message: [IClaimRejection](../interfaces/iclaimrejection.md)  } |
 
 **Returns:** Promise\<void>
 
@@ -293,12 +401,12 @@ ___
 
 ### requestClaim
 
-▸ **requestClaim**(`__namedParameters`: { did: string ; message: [IMessage](../interfaces/imessage.md)  }): Promise\<void>
+▸ **requestClaim**(`__namedParameters`: { did: string ; message: [IClaimRequest](../interfaces/iclaimrequest.md)  }): Promise\<void>
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { did: string ; message: [IMessage](../interfaces/imessage.md)  } |
+`__namedParameters` | { did: string ; message: [IClaimRequest](../interfaces/iclaimrequest.md)  } |
 
 **Returns:** Promise\<void>

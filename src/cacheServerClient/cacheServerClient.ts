@@ -1,88 +1,117 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { stringify } from "qs";
-import {
-  IApp,
-  IAppDefinition,
-  IOrganization,
-  IRole,
-  IOrganizationDefinition,
-  IRoleDefinition,
-  Claim
-} from "./cacheServerClient.types";
+import { IApp, IOrganization, IRole, Claim } from "./cacheServerClient.types";
 
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-export interface ICacheServerClient {
-  getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
-  getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
-  getAppDefinition: ({ namespace }: { namespace: string }) => Promise<IAppDefinition>;
-  getApplicationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
-  getOrganizationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
-  getOrganizationsByOwner: ({ owner }: { owner: string }) => Promise<IOrganization[]>;
-  getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
-  getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
-  getNamespaceBySearchPhrase: ({
-    types,
-    search
-  }: {
-    types?: ("App" | "Org" | "Role")[];
-    search: string;
-  }) => Promise<IOrganization[] | IApp[] | IRole[]>;
-  getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
-  getIssuedClaims: ({
-    did,
-    isAccepted,
-    parentNamespace
-  }: {
-    did: string;
-    isAccepted?: boolean;
-    parentNamespace?: string;
-  }) => Promise<Claim[]>;
-  getRequestedClaims: ({
-    did,
-    isAccepted,
-    parentNamespace
-  }: {
-    did: string;
-    isAccepted?: boolean;
-    parentNamespace?: string;
-  }) => Promise<Claim[]>;
-  requestClaim: ({ message, did }: { message: IClaimRequest; did: string }) => Promise<void>;
-  issueClaim: ({ message, did }: { message: IClaimIssuance; did: string }) => Promise<void>;
-  rejectClaim: ({ message, did }: { message: IClaimRejection; did: string }) => Promise<void>;
-  getDIDsForRole: ({ namespace }: { namespace: string }) => Promise<string[]>;
-  getDidDocument: ({
-    did,
-    includeClaims
-  }: {
-    did: string;
-    includeClaims?: boolean;
-  }) => Promise<IDIDDocument>;
-  addDIDToWatchList: ({ did }: { did: string }) => Promise<void>;
-}
 
+import { ICacheServerClient } from "./ICacheServerClient";
+import { isBrowser } from "../utils/isBrowser";
+
+export interface CacheServerClientOptions {
+  url: string;
+  cacheServerSupportsAuth?: boolean;
+}
 export class CacheServerClient implements ICacheServerClient {
   private httpClient: AxiosInstance;
+  private isAlreadyFetchingAccessToken = false;
+  private failedRequests: Array<(token?: string) => void> = [];
+  private authEnabled: boolean;
+  private isBrowser: boolean;
+  private refresh_token: string | undefined;
 
-  constructor({ url }: { url: string }) {
+  constructor({ url, cacheServerSupportsAuth = true }: CacheServerClientOptions) {
     this.httpClient = axios.create({
-      baseURL: url
+      baseURL: url,
+      withCredentials: true
     });
+    this.httpClient.interceptors.response.use(function(response: AxiosResponse) {
+      return response;
+    }, this.handleUnauthorized);
+    this.authEnabled = cacheServerSupportsAuth;
+    this.isBrowser = isBrowser();
+  }
+
+  async handleRefreshToken() {
+    const { refreshToken, token } = await this.refreshToken();
+    this.refresh_token = refreshToken;
+    this.failedRequests = this.failedRequests.filter(callback =>
+      callback(this.isBrowser ? undefined : token)
+    );
+    if (!this.isBrowser) {
+      this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      this.refresh_token = refreshToken;
+    }
+  }
+
+  addFailedRequest(callback: (token?: string) => void) {
+    this.failedRequests.push(callback);
+  }
+
+  handleUnauthorized = async (error: AxiosError) => {
+    const { config, response } = error;
+    const originalRequest = config;
+    if (
+      this.authEnabled &&
+      response &&
+      response.status === 401 &&
+      config &&
+      config.url?.indexOf("/login") === -1 &&
+      config.url?.indexOf("/refresh_token") === -1
+    ) {
+      const retryOriginalRequest = new Promise(resolve => {
+        this.addFailedRequest((token?: string) => {
+          if (token) {
+            originalRequest.headers.Authorization = "Bearer " + token;
+          }
+          resolve(axios(originalRequest));
+        });
+      });
+      if (!this.isAlreadyFetchingAccessToken) {
+        this.isAlreadyFetchingAccessToken = true;
+        await this.handleRefreshToken();
+        this.isAlreadyFetchingAccessToken = false;
+      }
+      return retryOriginalRequest;
+    }
+    return Promise.reject(error);
+  };
+
+  async login(identityToken: string) {
+    if (!this.authEnabled) return;
+
+    const {
+      data: { refreshToken, token }
+    } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
+      identityToken
+    });
+
+    if (!this.isBrowser) {
+      this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      this.refresh_token = refreshToken;
+    }
+  }
+
+  async refreshToken() {
+    const { data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
+      `/refresh_token${this.isBrowser ? "" : `?refresh_token=${this.refresh_token}`}`
+    );
+    return data;
   }
 
   async getRoleDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getOrgDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getAppDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IApp>(`/app/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getApplicationRoles({ namespace }: { namespace: string }) {
@@ -95,9 +124,27 @@ export class CacheServerClient implements ICacheServerClient {
     return data.Data;
   }
 
-  async getOrganizationsByOwner({ owner }: { owner: string }) {
-    const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(`/owner/${owner}/orgs`);
+  async getOrganizationsByOwner({
+    owner,
+    excludeSubOrgs
+  }: {
+    owner: string;
+    excludeSubOrgs: boolean;
+  }) {
+    const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(
+      `/owner/${owner}/orgs?excludeSubOrgs=${excludeSubOrgs}`
+    );
     return data.orgs;
+  }
+
+  async getSubOrganizationsByOrganization({ namespace }: { namespace: string }) {
+    const { data } = await this.httpClient.get<IOrganization[]>(`/org/${namespace}/suborgs`);
+    return data;
+  }
+
+  async getOrgHierarchy({ namespace }: { namespace: string }) {
+    const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}/hierarchy`);
+    return data;
   }
 
   async getNamespaceBySearchPhrase({
@@ -188,6 +235,10 @@ export class CacheServerClient implements ICacheServerClient {
 
   async rejectClaim({ message, did }: { message: IClaimRejection; did: string }) {
     await this.httpClient.post<void>(`/claim/reject/${did}`, message);
+  }
+
+  async deleteClaim({ claimId }: { claimId: string }) {
+    await this.httpClient.delete<void>(`/claim/${claimId}`);
   }
 
   async getDIDsForRole({ namespace }: { namespace: string }) {

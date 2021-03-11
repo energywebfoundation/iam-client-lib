@@ -1,71 +1,135 @@
 **[iam-client-lib](README.md)**
 
 # Identity and Access Management (IAM) Client Library
-TypeScript library to be used within decentralised applications for authentication and authorisation using DIDs (Decentralised Identifiers) and VCs (Verifiable Credentials)
 
-## Maintainers
- - [Kim Honoridez](https://github.com/kim-energyweb>)
- - [Daniel Wojno](https://github.com/dwojno>)
- - [Dmitry Fesenko](https://github.com/JGiter)
+TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
+
+##
+
+![IAM-client-lib demos](screenshots/react-angular-vue_demos.png)
+
+## Live Demos
+
+[![react logo](examples/react-icon.png) React Demo](https://did-auth-demo.energyweb.org/react-example/) / [![angular logo](examples/angular-icon.png) Angular Demo](https://did-auth-demo.energyweb.org/angular-example/) / [![vue logo](examples/vue-icon.png) Vue Demo](https://did-auth-demo.energyweb.org/vue-example/)
+
+Demo source code: [iam-client-examples](https://github.com/energywebfoundation/iam-client-examples)
+
+## Documentation
+
+[Read the Docs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/_/sharing/ojw5kxd0al7k1llbcp78i6oiv)
 
 ## Getting Started
+
 For development purposes, please follow below steps to integrate the library with your dApps.
 
 ### Prerequisites
+
 `iam-client-lib` is written in TypeScript. Make sure to have Node.js (>= v10) installed.
 Create a folder named ***iam-client-lib*** and clone this GIT project.
 
-### Installing Dependencies
-Using `npm` to install dependencies:
-```sh
-$ npm install
+### Install
+
+Latest stable version
+
+``` sh
+$ npm i iam-client-lib 
 ```
 
-### Compile & Build
-To generate bundled JS files and types, use the following command. Generated files are located in the ***dist*** folder.
-```sh
-$ npm run build
+Prerelease version
+
+``` sh
+$ npm i iam-client-lib@canary
 ```
 
-### Link as node_module
-If your dApp is using ***node_modules*** for dependencies, call the following command from your dApp's main folder. 
+### Sample Config for browsers (TypeScript)
 
-Make sure that your dApp preserves *symbolic links* (symlink) as below command creates one inside your *node_modules* folder. 
+```js
+import {
+  IAM,
+  WalletProvider,
+  setCacheClientOptions,
+  setChainConfig,
+  setMessagingOptions,
+  MessagingMethod,
+} from 'iam-client-lib'
 
-```sh
-$ npm link ../path/to/iam-client-lib/
-```
-The `iam-client-lib` folder must now exist in your *node_modules* folder.
-
-### Add library as a dependency
-
-You can add this library as a dependency
-
-```sh
-$ npm i https://github.com/energywebfoundation/iam-client-lib.git#branch_name
-```
-
-### Sample Import (TypeScript)
-```sh
-import { IAM, CacheServerClient } from 'iam-client-lib';
-
-export class Sample {
+export class App {
     private _iam: IAM;
 
     constructor() {
-      // create default cache server client (optional)
-        const cacheClient = new CacheServerClient({ url: 'http://cache-server.com'})
+      // IAM has builtin default settings for VOLTA CHAIN
+      
+      // If you want to change default cache server config or add config for your network
+      setCacheClientOptions(1111, {
+        url: 'https://some-cache-server.com/',
+        cacheServerSupportsAuth: true,
+      })
 
-      // create IAM instance with provided rpc URL
-        this._iam = new IAM({
-          rpcUrl: 'https://volta-rpc.energyweb.org/',
-          chainId: 73799,
-          cacheClient // optional
-        });
+      // If you want to change default chain config or add config for your network
+      setChainConfig(1111, {
+        didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
+        ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
+        ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
+        rpcUrl: 'http://some-rpc.com',
+      })
+
+      // If you want to change default messaging config or add config for your network
+      setMessagingOptions(1111, {
+        messagingMethod: MessagingMethod.Nats,
+        natsServerUrl: 'https://some-exchange-server.com',
+      })
+
+      // create IAM instance
+      this._iam = new IAM();
     }
 
     async initializeIAM() {
       // this will show connection modal and authenticate
+      const { did, connected } = await this._iam.initializeConnection({
+        walletProvider: WalletProvider.MetaMask,
+      });
+
+      // after successfully authentication you can retrieve the signer
+      const signer = this._iam.getSigner();
+    }
+
+```
+
+### Sample Config for Node.js (TypeScript)
+
+```js
+import { IAM } from 'iam-client-lib'
+
+export class App {
+    private _iam: IAM;
+
+    constructor() {
+     // IAM has builtin default settings for VOLTA CHAIN
+      
+      // If you want to change default cache server config or add config for your network
+      setCacheClientOptions(1111, {
+        url: 'https://some-cache-server.com/',
+        cacheServerSupportsAuth: true,
+      })
+
+      // If you want to change default chain config or add config for your network
+      setChainConfig(1111, {
+        didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
+        ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
+        ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
+        rpcUrl: 'http://some-rpc.com',
+      })
+
+      // create IAM instance
+      this._iam = new IAM({
+        // only for Node.js env you need to pass rpcUrl in the constructor
+        rpcUrl: 'http://some-rpc.com',
+        privateKey: '9945c05be0b1b7b35b7cec937e78c6552ecedca764b53a772547d94a687db929'
+      });
+    }
+
+    async initializeIAM() {
+      // this will authenticate
       const { did, connected } = await this._iam.initializeConnection();
 
       // after successfully authentication you can retrieve the signer
@@ -74,4 +138,40 @@ export class Sample {
 
 ```
 
+## Development
+
+For testing use ```npm run test:watch```
+
+### Installing Dependencies
+
+Using `npm` to install dependencies:
+
+``` sh
+$ npm install
+```
+
+### Compile & Build
+
+To generate bundled JS files and types, use the following command. Generated files are located in the ***dist*** folder.
+
+``` sh
+$ npm run build
+```
+
+## Active Maintainers
+
+ - [Kim Honoridez](https://github.com/kim-energyweb)
+ - [Daniel Wojno](https://github.com/dwojno)
+ - [Dmitry Fesenko](https://github.com/JGiter)
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
 ## License
+
+This project is licensed under the GNU General Public License v3.0 or later - see the [LICENSE](LICENSE) file for details
+
+## FAQ
+
+Frequently asked questions and their answers will be collected here.

@@ -39,28 +39,95 @@ Prerelease version
 $ npm i iam-client-lib@canary
 ```
 
-### Sample Import (TypeScript)
+### Sample Config for browsers (TypeScript)
 
-``` sh
-import { IAM, CacheServerClient } from 'iam-client-lib';
+```js
+import {
+  IAM,
+  WalletProvider,
+  setCacheClientOptions,
+  setChainConfig,
+  setMessagingOptions,
+  MessagingMethod,
+} from 'iam-client-lib'
 
-export class Sample {
+export class App {
     private _iam: IAM;
 
     constructor() {
-      // create default cache server client (optional)
-        const cacheClient = new CacheServerClient({ url: 'http://cache-server.com'})
+      // IAM has builtin default settings for VOLTA CHAIN
+      
+      // If you want to change default cache server config or add config for your network
+      setCacheClientOptions(1111, {
+        url: 'https://some-cache-server.com/',
+        cacheServerSupportsAuth: true,
+      })
 
-      // create IAM instance with provided rpc URL
-        this._iam = new IAM({
-          rpcUrl: 'https://volta-rpc.energyweb.org/',
-          chainId: 73799,
-          cacheClient // optional
-        });
+      // If you want to change default chain config or add config for your network
+      setChainConfig(1111, {
+        didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
+        ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
+        ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
+        rpcUrl: 'http://some-rpc.com',
+      })
+
+      // If you want to change default messaging config or add config for your network
+      setMessagingOptions(1111, {
+        messagingMethod: MessagingMethod.Nats,
+        natsServerUrl: 'https://some-exchange-server.com',
+      })
+
+      // create IAM instance
+      this._iam = new IAM();
     }
 
     async initializeIAM() {
       // this will show connection modal and authenticate
+      const { did, connected } = await this._iam.initializeConnection({
+        walletProvider: WalletProvider.MetaMask,
+      });
+
+      // after successfully authentication you can retrieve the signer
+      const signer = this._iam.getSigner();
+    }
+
+```
+
+### Sample Config for Node.js (TypeScript)
+
+```js
+import { IAM } from 'iam-client-lib'
+
+export class App {
+    private _iam: IAM;
+
+    constructor() {
+     // IAM has builtin default settings for VOLTA CHAIN
+      
+      // If you want to change default cache server config or add config for your network
+      setCacheClientOptions(1111, {
+        url: 'https://some-cache-server.com/',
+        cacheServerSupportsAuth: true,
+      })
+
+      // If you want to change default chain config or add config for your network
+      setChainConfig(1111, {
+        didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
+        ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
+        ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
+        rpcUrl: 'http://some-rpc.com',
+      })
+
+      // create IAM instance
+      this._iam = new IAM({
+        // only for Node.js env you need to pass rpcUrl in the constructor
+        rpcUrl: 'http://some-rpc.com',
+        privateKey: '9945c05be0b1b7b35b7cec937e78c6552ecedca764b53a772547d94a687db929'
+      });
+    }
+
+    async initializeIAM() {
+      // this will authenticate
       const { did, connected } = await this._iam.initializeConnection();
 
       // after successfully authentication you can retrieve the signer

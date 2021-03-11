@@ -1,7 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
-import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
+import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
@@ -13,71 +12,83 @@ import { PublicResolverFactory } from "../../ethers/PublicResolverFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { PublicResolver } from "../../ethers/PublicResolver";
 import { JWT } from "@ew-did-registry/jwt";
-import { ICacheServerClient } from "../cacheServerClient/cacheServerClient";
+import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+import { ERROR_MESSAGES } from "../errors";
 import {
-  ENSRegistryNotInitializedError,
-  ENSResolverNotInitializedError,
-  MethodNotAvailableInNodeEnvError
-} from "../errors";
-import { IRoleDefinition } from "../cacheServerClient/cacheServerClient.types";
+  IAppDefinition,
+  IOrganizationDefinition,
+  IRoleDefinition
+} from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
-import { Provider } from "ethers/providers";
 import { Owner as IdentityOwner } from "../signer/Signer";
-import { arrayify, computePublicKey, hashMessage, keccak256, recoverPublicKey } from "ethers/utils";
+import { WalletProvider } from "../types/WalletProvider";
+import { SignerFactory } from "../signer/SignerFactory";
+import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
+import {
+  cacheServerClientOptions,
+  chainConfigs,
+  messagingOptions,
+  MessagingOptions
+} from "./chainConfig";
 
-const { hexlify, bigNumberify, Interface } = utils;
+const { hexlify, bigNumberify } = utils;
+const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
-export enum MessagingMethod {
-  CacheServer = "cacheServer",
-  WebRTC = "webRTC",
-  SmartContractStorage = "smartContractStorage"
-}
+import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 
-type ConnectionOptions = {
-  rpcUrl: string;
-  chainId?: number;
+export type ConnectionOptions = {
+  /** only required in node env */
+  rpcUrl?: string;
   infuraId?: string;
-  ensResolverAddress?: string;
-  ensRegistryAddress?: string;
-  didContractAddress?: string;
   ipfsUrl?: string;
   bridgeUrl?: string;
-  messagingMethod?: MessagingMethod;
-  natsServerUrl?: string;
-  cacheClient?: ICacheServerClient;
   privateKey?: string;
+  ewKeyManagerUrl?: string;
 };
 
-export const emptyAddress = "0x0000000000000000000000000000000000000000";
+export type EncodedCall = {
+  to: string;
+  data: string;
+  value?: string;
+};
+
+export type Transaction = {
+  calls: EncodedCall[];
+  from: string;
+};
+
+export interface ClaimData extends Record<string, unknown> {
+  profile?: any;
+  claimType?: string;
+  claimTypeVersion?: string;
+}
 
 /**
  * @class
  */
 export class IAMBase {
   protected _runningInBrowser: boolean;
-  protected _connectionOptions: {
-    rpcUrl: string;
-    chainId: number;
-    privateKey?: string;
-    bridgeUrl: string;
-    infuraId?: string;
-  };
+  protected _connectionOptions: ConnectionOptions;
 
   protected _did: string | undefined;
-  protected _provider: providers.JsonRpcProvider | undefined;
+  protected _provider: providers.JsonRpcProvider;
   protected _walletConnectProvider: WalletConnectProvider | undefined;
+  protected _metamaskProvider: { on: any; request: any } | undefined;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
+  protected _safeAddress: string | undefined;
   protected _didSigner: IdentityOwner | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
+  protected _providerType: WalletProvider | undefined;
+  protected _publicKey: string | undefined;
 
   protected _registrySetting: RegistrySettings;
-  protected _resolver: Resolver | undefined;
+  protected _resolver: Resolver;
   protected _document: DIDDocumentFull | undefined;
   protected _userClaims: ClaimsUser | undefined;
   protected _issuerClaims: ClaimsIssuer | undefined;
@@ -85,93 +96,80 @@ export class IAMBase {
   protected _ipfsStore: DidStore;
   protected _jwt: JWT | undefined;
 
-  protected _ensRegistry: EnsRegistry | undefined;
-  protected _ensResolver: PublicResolver | undefined;
+  protected _ensRegistry: EnsRegistry;
+  protected _ensResolver: PublicResolver;
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
 
-  protected _cacheClient: ICacheServerClient | undefined;
+  protected _cacheClient: ICacheServerClient;
 
-  protected _natsServerUrl: string | undefined;
+  protected _messagingOptions: MessagingOptions;
   protected _natsConnection: NatsConnection | undefined;
   protected _jsonCodec: Codec<any> | undefined;
+
+  private readonly _ewKeyManagerUrl: string;
+  private ttl = bigNumberify(0);
 
   /**
    * IAM Constructor
    *
-   * @param {object} options connection options to connect with wallet connect
-   * @param {string} options.rpcUrl url to the ethereum network
-   * @param {number} options.chainID id of chain, default = 1
-   * @param {number} options.infuraId id of infura network, default = undefined
-   *
    */
   public constructor({
     rpcUrl,
-    chainId = 1,
     infuraId,
-    ensRegistryAddress = "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
-    ensResolverAddress = "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
     ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
-    cacheClient,
-    messagingMethod,
-    natsServerUrl,
     bridgeUrl = "https://walletconnect.energyweb.org",
     privateKey,
-    didContractAddress = VoltaAddress1056
-  }: ConnectionOptions) {
+    ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new"
+  }: ConnectionOptions = {}) {
     this._runningInBrowser = isBrowser();
-    this._ensRegistryAddress = ensRegistryAddress;
-    this._ensResolverAddress = ensResolverAddress;
-
     errors.setLogLevel("error");
 
     this._connectionOptions = {
-      chainId,
       privateKey,
       rpcUrl,
       bridgeUrl,
       infuraId
     };
 
-    this._cacheClient = cacheClient;
-
-    this._registrySetting = {
-      abi: abi1056,
-      address: didContractAddress,
-      method: Methods.Erc1056
-    };
-
     this._ipfsStore = new DidStore(ipfsUrl);
-    this._provider = new providers.JsonRpcProvider(rpcUrl);
 
-    if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
-      this._natsServerUrl = natsServerUrl;
-      this._jsonCodec = JSONCodec();
+    if (this._runningInBrowser) {
+      this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
+      const publicKey = localStorage.getItem(PUBLIC_KEY);
+      if (publicKey) {
+        this._publicKey = publicKey;
+      }
     }
+
+    this._ewKeyManagerUrl = ewKeyManagerUrl;
   }
 
   // INITIAL
 
   protected async init({
-    useMetamask,
-    initializeMetamask
+    initializeMetamask,
+    walletProvider: walletProvider
   }: {
-    useMetamask: boolean;
     initializeMetamask?: boolean;
+    walletProvider?: WalletProvider;
   }) {
-    await this.setupProvider({ useMetamask, initializeMetamask });
+    await this.initSigner({ walletProvider, initializeMetamask });
+    await this.initChain();
+    this.initEventHandlers();
+
     if (this._runningInBrowser) {
-      await this.setupBrowserEnv();
+      await this.setupMessaging();
     }
-    await this.setupUniversalEnv();
-  }
-
-  private async setupBrowserEnv() {
-    await this.setupNATS();
-  }
-
-  private async setupUniversalEnv() {
-    if (this._signer && this._didSigner) {
+    if (this._signer) {
+      this._didSigner = await SignerFactory.create({
+        provider: this._provider,
+        signer: this._signer,
+        publicKey: this._publicKey
+      });
+      this._publicKey = this._didSigner.publicKey;
+      this._didSigner.identityToken &&
+        (await this.loginToCacheServer(this._didSigner.identityToken));
       await this.setAddress();
       this.setDid();
       await this.setDocument();
@@ -179,122 +177,203 @@ export class IAMBase {
     }
     this.setResolver();
     this.setJWT();
-    this.setupENS();
+    this.storeSession();
   }
 
-  private async setupProvider({
-    useMetamask,
-    initializeMetamask
+  private async initSigner({
+    initializeMetamask,
+    walletProvider
   }: {
-    useMetamask: boolean;
+    useMetamask?: boolean;
     initializeMetamask?: boolean;
+    walletProvider?: WalletProvider;
   }) {
-    this._provider = new providers.JsonRpcProvider(this._connectionOptions.rpcUrl);
-    if (this._connectionOptions.privateKey) {
-      this._signer = new Wallet(this._connectionOptions.privateKey, this._provider);
-      const publicKey = await this.getPublicKey();
-      this._didSigner = new IdentityOwner(
-        this._signer,
-        this._provider,
-        publicKey,
-        this._connectionOptions.privateKey
-      );
+    const { privateKey, rpcUrl, bridgeUrl, infuraId } = this._connectionOptions;
+
+    if (!this._runningInBrowser) {
+      if (!privateKey) {
+        throw new Error(ERROR_MESSAGES.NO_PRIVATE_KEY);
+      }
+      if (!rpcUrl) {
+        throw new Error(ERROR_MESSAGES.NO_RPC_URL);
+      }
+      this._provider = new JsonRpcProvider({ url: rpcUrl });
+      this._signer = new Wallet(privateKey, this._provider);
       return;
     }
-    if (this._runningInBrowser) {
-      const metamaskProvider = (await detectMetamask({
+
+    if (walletProvider === WalletProvider.MetaMask) {
+      const metamaskProvider: any = await detectMetamask({
         mustBeMetaMask: true
-      })) as any;
-      if (metamaskProvider && useMetamask) {
-        if (initializeMetamask) {
-          await metamaskProvider.request({
-            method: "wallet_requestPermissions",
-            params: [
-              {
-                eth_accounts: {}
-              }
-            ]
-          });
-        } else {
-          const accounts: string[] = await metamaskProvider.request({
-            method: "eth_accounts",
-            params: [
-              {
-                eth_accounts: {}
-              }
-            ]
-          });
-          if (accounts.length < 1) {
-            await metamaskProvider.request({
-              method: "wallet_requestPermissions",
-              params: [
-                {
-                  eth_accounts: {}
-                }
-              ]
-            });
-          }
-        }
-        const provider = new providers.Web3Provider(metamaskProvider);
-        this._signer = provider.getSigner();
-        const publicKey = await this.getPublicKey();
-        this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
-        return;
+      });
+      if (!metamaskProvider) {
+        throw new Error(ERROR_MESSAGES.METAMASK_EXTENSION_NOT_AVAILABLE);
       }
+      this._metamaskProvider = metamaskProvider;
+      const requestObject = {
+        method: initializeMetamask ? "wallet_requestPermissions" : "eth_accounts",
+        params: [
+          {
+            eth_accounts: {}
+          }
+        ]
+      };
+      const accounts: string[] = await metamaskProvider.request(requestObject);
+
+      if (!initializeMetamask && accounts.length < 1) {
+        await metamaskProvider.request({
+          method: "wallet_requestPermissions",
+          params: [
+            {
+              eth_accounts: {}
+            }
+          ]
+        });
+      }
+      this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
+
+      this._providerType = walletProvider;
+      this._provider = this._signer.provider as providers.Web3Provider;
+      console.log("metamask chain id:", (await this._provider.getNetwork()).chainId);
+      return;
+    }
+    if (
+      walletProvider &&
+      [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)
+    ) {
       this._transactionOverrides = {
         gasLimit: hexlify(4900000),
         gasPrice: hexlify(0.1)
       };
+
+      const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
+
+      const rpc = Object.entries(chainConfigs).reduce(
+        (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }),
+        {}
+      );
+
       this._walletConnectProvider = new WalletConnectProvider({
-        rpc: {
-          [this._connectionOptions.chainId]: this._connectionOptions.rpcUrl
-        },
-        infuraId: this._connectionOptions.infuraId,
-        bridge: this._connectionOptions.bridgeUrl
+        rpc,
+        infuraId,
+        bridge: bridgeUrl,
+        qrcode: showQRCode
       });
-      await this._walletConnectProvider.enable();
-      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
-      const publicKey = await this.getPublicKey();
-      this._didSigner = new IdentityOwner(this._signer, this._provider, publicKey);
-    }
-  }
 
-  private async getPublicKey() {
-    if (this._signer) {
-      const address = await this._signer.getAddress();
-      const hash = keccak256(address);
-      const digest = hashMessage(arrayify(hash));
-      if (((this._signer?.provider as any)?.provider as WalletConnectProvider)?.isWalletConnect) {
-        const sig = await this._signer.signMessage(arrayify(digest));
-        return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+      if (walletProvider === WalletProvider.EwKeyManager) {
+        this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
+          // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
+          const wcUri = payload.params[0];
+
+          const encoded = encodeURIComponent(wcUri);
+          const hasQueryString = this._ewKeyManagerUrl.includes("?");
+          const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
+          window.open(url, "_blank");
+        });
       }
-      const sig = await this._signer.signMessage(arrayify(hash));
-      return computePublicKey(recoverPublicKey(digest, sig), true).slice(2);
+
+      await this._walletConnectProvider.enable();
+
+      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+      this._provider = this._signer.provider as providers.Web3Provider;
+      this._providerType = walletProvider;
+      return;
     }
-    throw new Error("Signer not initialized");
+    throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
   }
 
-  private async setAddress() {
+  private storeSession() {
+    if (this._runningInBrowser && this._didSigner) {
+      localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
+      localStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
+    }
+  }
+
+  protected clearSession() {
+    if (this._runningInBrowser) {
+      localStorage.removeItem(WALLET_PROVIDER);
+      localStorage.removeItem(PUBLIC_KEY);
+    }
+  }
+
+  /**
+   * Add event handler for certain events
+   * @requires to be called after the connection to wallet was initialized
+   *
+   */
+  on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
+    if (!this._providerType) return;
+    switch (event) {
+      case "accountChanged": {
+        this._walletConnectProvider?.wc.on("session_update", eventHandler);
+        this._metamaskProvider?.on("accountsChanged", eventHandler);
+        break;
+      }
+      case "disconnected": {
+        this._walletConnectProvider?.wc.on("disconnect", eventHandler);
+        break;
+      }
+      case "networkChanged": {
+        this._walletConnectProvider?.wc.on("session_update", eventHandler);
+        this._metamaskProvider?.on("networkChanged", eventHandler);
+        break;
+      }
+      default:
+        throw new Error("Event not supported");
+    }
+  }
+
+  private initEventHandlers() {
+    this.on("accountChanged", () => {
+      this.closeConnection();
+    });
+    this.on("disconnected", () => {
+      this.closeConnection();
+    });
+    this.on("networkChanged", () => {
+      this.closeConnection();
+    });
+  }
+
+  /**
+   * Close connection to wallet
+   * @description closes the connection between dApp and the wallet
+   *
+   */
+  async closeConnection() {
+    if (this._walletConnectProvider) {
+      await this._walletConnectProvider.close();
+    }
+    this.clearSession();
+    this._did = undefined;
+    this._address = undefined;
+    this._signer = undefined;
+  }
+
+  private async loginToCacheServer(token: string) {
+    if (this._cacheClient) {
+      await this._cacheClient.login(token);
+    }
+  }
+
+  protected async setAddress() {
     if (this._signer) {
       this._address = await this._signer.getAddress();
     }
   }
 
+  get address() {
+    return this._address;
+  }
+
   private setResolver() {
     if (this._registrySetting) {
-      this._resolver = new Resolver(this._provider as Provider, this._registrySetting);
+      this._resolver = new Resolver(this._provider as providers.Provider, this._registrySetting);
     }
   }
 
   private setDid() {
     this._did = `did:${Methods.Erc1056}:${this._address}`;
-  }
-
-  private setupENS() {
-    if (this._provider) {
-      this._ensRegistry = EnsRegistryFactory.connect(this._ensRegistryAddress, this._provider);
-      this._ensResolver = PublicResolverFactory.connect(this._ensResolverAddress, this._provider);
-    }
   }
 
   private async setDocument() {
@@ -321,17 +400,34 @@ export class IAMBase {
       this._jwt = new JWT(this._didSigner);
       return;
     }
-    throw new Error("Signer not available");
+    throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
-  private async setupNATS() {
-    if (this._natsServerUrl) {
-      let protocol = "ws";
-      if (this._natsServerUrl.indexOf("https://") === 0) {
-        protocol = "wss";
+  private async setupMessaging() {
+    const { messagingMethod, natsServerUrl } = this._messagingOptions || {};
+    if (natsServerUrl && messagingMethod === MessagingMethod.Nats) {
+      this._jsonCodec = JSONCodec();
+      try {
+        let protocol = "ws";
+        if (natsServerUrl.indexOf("https://") === 0) {
+          protocol = "wss";
+        }
+        const timeout = 3000;
+        // this race condition duplicate timeout is there because unable to catch the error that occurs when NATS.ws timeouts
+        const connection = await Promise.race<NatsConnection | undefined>([
+          connect({
+            servers: `${protocol}://${natsServerUrl}`,
+            timeout,
+            pingInterval: 50 * 1000
+          }),
+          new Promise<undefined>(resolve => setTimeout(resolve, timeout))
+        ]);
+
+        if (!connection) return;
+        this._natsConnection = connection;
+      } catch (err) {
+        console.log(err);
       }
-      this._natsConnection = await connect({ servers: `${protocol}://${this._natsServerUrl}` });
-      console.log(`Nats server connected at ${this._natsConnection.getServer()}`);
     }
   }
 
@@ -340,56 +436,48 @@ export class IAMBase {
       services.map(async ({ serviceEndpoint, ...rest }) => {
         const data = await this._ipfsStore.get(serviceEndpoint);
         const { claimData, ...claimRest } = this._jwt?.decode(data) as {
-          claimData: Record<string, string>;
+          claimData: ClaimData;
         };
         return {
           serviceEndpoint,
           ...rest,
           ...claimData,
           ...claimRest
-        };
+        } as IServiceEndpoint & ClaimData;
       })
     );
   }
 
-  protected async createSubdomain({ subdomain, domain }: { subdomain: string; domain: string }) {
-    if (this._signer && this._ensRegistry && this._address) {
-      const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-      const roleHash = labelhash(subdomain) as string;
-      const namespaceHash = namehash(domain) as string;
-      const ttl = bigNumberify(0);
-      const setDomainTx = await ensRegistryWithSigner.setSubnodeRecord(
-        namespaceHash,
-        roleHash,
-        this._address,
+  protected createSubdomainTx({
+    domain,
+    nodeName,
+    owner = this._address as string
+  }: {
+    domain: string;
+    nodeName: string;
+    owner?: string;
+  }): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+        namehash(domain),
+        labelhash(nodeName),
+        owner,
         this._ensResolverAddress,
-        ttl,
-        this._transactionOverrides
-      );
-      await setDomainTx.wait();
-      console.log(`Subdomain ${subdomain + "." + domain} created`);
-      return;
-    }
-    throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
+        this.ttl
+      ])
+    };
   }
 
-  protected async setDomainName({ domain }: { domain: string }) {
-    if (this._signer && this._ensResolver) {
-      const ensResolverWithSigner = this._ensResolver.connect(this._signer);
-      const namespaceHash = namehash(domain) as string;
-      const setDomainNameTx = await ensResolverWithSigner.setName(
-        namespaceHash,
-        domain,
-        this._transactionOverrides
-      );
-      await setDomainNameTx.wait();
-      console.log(`Set the name of the domain to ${domain}`);
-      return;
-    }
-    throw new MethodNotAvailableInNodeEnvError("Create Subdomain");
+  protected setDomainNameTx({ domain }: { domain: string }): EncodedCall {
+    const namespaceHash = namehash(domain) as string;
+    return {
+      to: this._ensResolverAddress,
+      data: this._ensResolver?.interface.functions.setName.encode([namespaceHash, domain])
+    };
   }
 
-  protected async changeSubdomainOwner({
+  protected changeSubdomainOwnerTx({
     newOwner,
     label,
     namespace
@@ -397,77 +485,31 @@ export class IAMBase {
     newOwner: string;
     namespace: string;
     label: string;
-  }) {
-    if (!this._ensRegistry) {
-      throw new ENSRegistryNotInitializedError();
-    }
-    if (!this._signer) {
-      throw new Error("Signer not initialized");
-    }
-    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-    const namespaceHash = namehash(namespace);
-    const labelHash = labelhash(label);
-    const tx = await ensRegistryWithSigner.setSubnodeOwner(
-      namespaceHash,
-      labelHash,
-      newOwner,
-      this._transactionOverrides
-    );
-    await tx.wait();
+  }): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setSubnodeOwner.encode([
+        namehash(namespace),
+        labelhash(label),
+        newOwner
+      ])
+    };
   }
 
-  protected async changeDomainOwner({ newOwner, namespace }: { newOwner: string, namespace: string }) {
-    if (!this._ensRegistry) {
-      throw new ENSRegistryNotInitializedError();
-    }
-    if (!this._signer) {
-      throw new Error("Signer not initialized");
-    }
-    const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-    const namespaceHash = namehash(namespace);
-    const tx = await ensRegistryWithSigner.setOwner(
-      namespaceHash,
-      newOwner,
-      this._transactionOverrides
-    );
-    await tx.wait();
-  }
-
-  protected async getFilteredDomainsFromEvent({ domain }: { domain: string }) {
-    if (this._ensResolver && this._provider) {
-      const ensInterface = new Interface(ensResolverContract);
-      const Event = this._ensResolver.filters.TextChanged(null, "metadata", null);
-      const filter = {
-        fromBlock: 0,
-        toBlock: "latest",
-        address: Event.address,
-        topics: [...(Event.topics as string[])]
-      };
-      const logs = await this._provider.getLogs(filter);
-      const rawLogs = logs.map(log => {
-        const parsedLog = ensInterface.parseLog(log);
-        return parsedLog.values;
-      });
-      const domains = await Promise.all(
-        rawLogs.map(async ({ node }) => {
-          return this._ensResolver?.name(node);
-        })
-      );
-      const uniqDomains: Record<string, unknown> = {};
-      for (const item of domains) {
-        if (item && item.endsWith(domain) && !uniqDomains[item]) {
-          uniqDomains[item] = null;
-        }
-      }
-      return Object.keys(uniqDomains);
-    }
-    return [];
+  protected changeDomainOwnerTx({
+    newOwner,
+    namespace
+  }: {
+    newOwner: string;
+    namespace: string;
+  }): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setOwner.encode([namehash(namespace), newOwner])
+    };
   }
 
   protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
-    if (!this._ensResolver) {
-      throw new ENSResolverNotInitializedError();
-    }
     const roleHash = namehash(namespace);
     const metadata = await this._ensResolver.text(roleHash, "metadata");
     const definition = JSON.parse(metadata) as IRoleDefinition;
@@ -477,34 +519,116 @@ export class IAMBase {
     }
   }
 
-  protected async deleteSubdomain({ namespace }: { namespace: string }) {
-    if (this._signer && this._ensRegistry) {
-      const ensRegistryWithSigner = this._ensRegistry.connect(this._signer);
-      const namespaceArray = namespace.split(".");
-      const label = namespaceArray[0];
-      const node = namespaceArray.slice(1).join(".");
-      const labelHash = labelhash(label);
-      const nodeHash = namehash(node);
-      const ttl = bigNumberify(0);
-      const tx = await ensRegistryWithSigner.setSubnodeRecord(
-        nodeHash,
-        labelHash,
+  protected deleteSubdomainTx({ namespace }: { namespace: string }): EncodedCall {
+    const namespaceArray = namespace.split(".");
+    const node = namespaceArray.slice(1).join(".");
+    const label = namespaceArray[0];
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+        namehash(node),
+        labelhash(label),
         emptyAddress,
         emptyAddress,
-        ttl,
-        this._transactionOverrides
-      );
-      await tx.wait();
-      return;
+        this.ttl
+      ])
+    };
+  }
+
+  protected async deleteDomain({ namespace }: { namespace: string }) {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    throw new MethodNotAvailableInNodeEnvError("deleteSubdomain");
+    await this.send({
+      calls: [this.deleteDomainTx({ namespace })],
+      from: await this.getOwner({ namespace })
+    });
   }
 
   protected async getOwner({ namespace }: { namespace: string }) {
-    if (this._ensRegistry) {
-      const node = namehash(namespace);
-      return this._ensRegistry.owner(node);
+    const node = namehash(namespace);
+    return this._ensRegistry.owner(node);
+  }
+
+  protected async send(tx: Transaction) {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    throw new ENSRegistryNotInitializedError();
+    for await (const call of tx.calls) {
+      await (await this._signer.sendTransaction({ ...call, ...this._transactionOverrides })).wait();
+    }
+  }
+
+  protected deleteDomainTx({ namespace }: { namespace: string }): EncodedCall {
+    return {
+      to: this._ensRegistryAddress,
+      data: this._ensRegistry.interface.functions.setRecord.encode([
+        namehash(namespace),
+        emptyAddress,
+        emptyAddress,
+        this.ttl
+      ])
+    };
+  }
+
+  protected setDomainDefinitionTx({
+    domain,
+    data
+  }: {
+    domain: string;
+    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
+  }): EncodedCall {
+    return {
+      to: this._ensResolverAddress,
+      data: this._ensResolver.interface.functions.setText.encode([
+        namehash(domain),
+        "metadata",
+        JSON.stringify(data)
+      ])
+    };
+  }
+
+  protected async deleteSubdomain({ namespace }: { namespace: string }) {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+    await this.send({
+      calls: [this.deleteSubdomainTx({ namespace })],
+      from: await this.getOwner({
+        namespace: namespace
+          .split(".")
+          .slice(1)
+          .join("")
+      })
+    });
+  }
+
+  private async initChain() {
+    const { chainId } = await this._provider.getNetwork();
+    const { ensRegistryAddress, ensResolverAddress, didContractAddress } = chainConfigs[chainId];
+
+    if (!ensRegistryAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain ensRegistryAddress`);
+    if (!ensResolverAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain ensResolverAddress`);
+    if (!didContractAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain didContractAddress`);
+
+    this._registrySetting = {
+      address: didContractAddress,
+      abi: abi1056,
+      method: Methods.Erc1056
+    };
+
+    this._ensRegistryAddress = ensRegistryAddress;
+    this._ensResolverAddress = ensResolverAddress;
+    this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
+    this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
+
+    const cacheOptions = cacheServerClientOptions[chainId];
+
+    cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
+
+    this._messagingOptions = messagingOptions[chainId];
   }
 }

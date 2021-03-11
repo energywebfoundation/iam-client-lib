@@ -6,6 +6,7 @@ import { ENSRegistryNotInitializedError } from "./ENSRegistryNotInitializedError
 import { ENSResolverNotInitializedError } from "./ENSResolverNotInitializedError";
 import { ChangeOwnershipNotPossibleError } from "./ChangeOwnershipNotPossibleError";
 import { DeletingNamespaceNotPossibleError } from "./DeletingNamespaceNotPossibleError";
+import { ERROR_MESSAGES } from "./ErrorMessages";
 
 export {
   CacheClientNotProvidedError,
@@ -15,5 +16,6 @@ export {
   ENSRegistryNotInitializedError,
   ENSResolverNotInitializedError,
   ChangeOwnershipNotPossibleError,
-  DeletingNamespaceNotPossibleError
+  DeletingNamespaceNotPossibleError,
+  ERROR_MESSAGES
 };

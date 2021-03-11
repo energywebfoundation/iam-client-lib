@@ -14,9 +14,16 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSNamespaceTypes, NATS_EXCHANGE_TOPIC } from "./iam";
-import { CacheServerClient, ICacheServerClient } from "./cacheServerClient/cacheServerClient";
-import { MessagingMethod } from './iam/iam-base';
+import { IAM, ENSNamespaceTypes } from "./iam";
+import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
+import { ERROR_MESSAGES } from "./errors";
+import { WalletProvider } from "./types/WalletProvider";
+import {
+  MessagingMethod,
+  NATS_EXCHANGE_TOPIC,
+  PreconditionTypes,
+  VOLTA_CHAIN_ID
+} from "./utils/constants";
 import {
   IApp,
   IAppDefinition,
@@ -33,20 +40,36 @@ import {
   PubKeyType
 } from "@ew-did-registry/did-resolver-interface";
 
+import { setCacheClientOptions, setChainConfig, setMessagingOptions } from "./iam/chainConfig";
+
+import { getSubdomains } from "./utils/getSubDomains";
+
 // MAIN
 export { IAM };
 
-
 // CONSTANTS
 
-export { NATS_EXCHANGE_TOPIC };
+export { NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID };
+
+// UTILS
+
+export { getSubdomains, setCacheClientOptions, setChainConfig, setMessagingOptions };
 
 // ENUMS
-export { DIDAttribute, Encoding, Algorithms, PubKeyType, ENSNamespaceTypes, MessagingMethod };
-
-// CACHE CLIENT
 export {
-  CacheServerClient,
+  DIDAttribute,
+  Encoding,
+  Algorithms,
+  PubKeyType,
+  ENSNamespaceTypes,
+  MessagingMethod,
+  ERROR_MESSAGES,
+  WalletProvider,
+  PreconditionTypes
+};
+
+// TYPES
+export {
   ICacheServerClient,
   IApp,
   IAppDefinition,
@@ -55,3 +78,5 @@ export {
   IRole,
   IRoleDefinition
 };
+
+export { GnosisIam as SafeIam } from "./GnosisIam";

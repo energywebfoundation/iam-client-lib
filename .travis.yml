@@ -7,12 +7,12 @@ before_deploy:
     - git config --global user.name ${GITHUB_USER}
     - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/energywebfoundation/iam-client-lib.git" > /dev/null 2>&1
     - git reset --hard
-    - echo "//registry.npmjs.org/:_authToken=\${NPM_API_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+    - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
     - git fetch origin master:master
     - git fetch origin develop:develop
 
 install:
-  - npm install
+  - npm ci
   - npm run build --prod
 
 script:

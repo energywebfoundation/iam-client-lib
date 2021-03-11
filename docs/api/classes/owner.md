@@ -20,6 +20,7 @@
 
 ### Properties
 
+* [identityToken](owner.md#identitytoken)
 * [privateKey](owner.md#privatekey)
 * [provider](owner.md#provider)
 * [publicKey](owner.md#publickey)
@@ -35,7 +36,7 @@
 
 ### constructor
 
-\+ **new Owner**(`signer`: Signer, `provider`: Provider, `publicKey`: string, `privateKey?`: undefined \| string): [Owner](owner.md)
+\+ **new Owner**(`signer`: Signer, `provider`: Provider, `publicKey`: string, `identityToken?`: undefined \| string, `privateKey?`: undefined \| string): [Owner](owner.md)
 
 *Overrides void*
 
@@ -46,11 +47,18 @@ Name | Type |
 `signer` | Signer |
 `provider` | Provider |
 `publicKey` | string |
+`identityToken?` | undefined \| string |
 `privateKey?` | undefined \| string |
 
 **Returns:** [Owner](owner.md)
 
 ## Properties
+
+### identityToken
+
+• `Optional` **identityToken**: undefined \| string
+
+___
 
 ### privateKey
 
@@ -84,7 +92,7 @@ ___
 
 ### sendTransaction
 
-▸ **sendTransaction**(`transaction`: TransactionRequest): Promise\<TransactionResponse>
+▸ **sendTransaction**(`transaction`: providers.TransactionRequest): Promise\<TransactionResponse>
 
 *Overrides void*
 
@@ -92,7 +100,7 @@ ___
 
 Name | Type |
 ------ | ------ |
-`transaction` | TransactionRequest |
+`transaction` | providers.TransactionRequest |
 
 **Returns:** Promise\<TransactionResponse>
 
@@ -100,7 +108,7 @@ ___
 
 ### signMessage
 
-▸ **signMessage**(`message`: Arrayish): Promise\<string>
+▸ **signMessage**(`message`: utils.Arrayish): Promise\<string>
 
 *Overrides void*
 
@@ -108,7 +116,7 @@ ___
 
 Name | Type |
 ------ | ------ |
-`message` | Arrayish |
+`message` | utils.Arrayish |
 
 **Returns:** Promise\<string>
 

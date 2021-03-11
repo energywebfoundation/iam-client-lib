@@ -1,17 +1,17 @@
-import Web3 from 'web3';
-import { ContractFactory, Wallet, ethers, Contract } from 'ethers';
-import { AsyncSendable } from 'ethers/providers';
+import { ContractFactory, Wallet, Contract, providers, utils } from 'ethers';
 import { ethrReg } from '@ew-did-registry/did-ethr-resolver';
 import { EnsRegistry } from '../ethers/EnsRegistry';
 import { PublicResolver } from '../ethers/PublicResolver';
 import { PublicResolverFactory } from '../ethers/PublicResolverFactory';
 import { EnsRegistryFactory } from '../ethers/EnsRegistryFactory';
 
+const { JsonRpcProvider } = providers;
+const { parseEther } = utils;
+
 const { abi: didContractAbi, bytecode: didContractBytecode } = ethrReg;
 
-const GANACHE_PORT = 8544;
-const web3 = new Web3(`http://localhost:${GANACHE_PORT}`);
-export const provider = new ethers.providers.Web3Provider(web3.currentProvider as AsyncSendable);
+export const GANACHE_PORT = 8544;
+export const provider = new JsonRpcProvider(`http://localhost:${GANACHE_PORT}`);
 export let ensRegistry: EnsRegistry;
 export let ensResolver: PublicResolver;
 export let didContract: Contract;
@@ -26,10 +26,9 @@ export const deployContracts = async (privateKey: string): Promise<void> => {
 };
 
 export const replenish = async (acc: string) => {
-  const accounts = await web3.eth.getAccounts();
-  await web3.eth.sendTransaction({
-    from: accounts[2],
+  const faucet = provider.getSigner(2);
+  await faucet.sendTransaction({
     to: acc,
-    value: '1000000000000000000',
+    value: parseEther('1.0')
   });
 };

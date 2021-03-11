@@ -27,7 +27,7 @@ module.exports = class extends Environment {
       writable: true
     });
 
-    this.global.process.release.name = '';
+    this.global.process.release.name = 'node';
 
     Object.defineProperty(this.global.process.release, 'name', {
       ...Object.getOwnPropertyDescriptor(process.release, 'name'),

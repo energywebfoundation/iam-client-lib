@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [enrolmentPreconditions](iroledefinition.md#enrolmentpreconditions)
 * [fields](iroledefinition.md#fields)
 * [issuer](iroledefinition.md#issuer)
 * [metadata](iroledefinition.md#metadata)
@@ -19,9 +20,15 @@
 
 ## Properties
 
+### enrolmentPreconditions
+
+• `Optional` **enrolmentPreconditions**: { conditions: string[] ; type: [PreconditionTypes](../enums/preconditiontypes.md)  }[]
+
+___
+
 ### fields
 
-•  **fields**: { fieldType: string ; label: string ; validation: string  }[]
+•  **fields**: { fieldType: string ; label: string ; maxDate?: Date ; maxLength?: undefined \| number ; maxValue?: undefined \| number ; minDate?: Date ; minLength?: undefined \| number ; minValue?: undefined \| number ; pattern?: undefined \| string ; required?: undefined \| false \| true  }[]
 
 ___
 

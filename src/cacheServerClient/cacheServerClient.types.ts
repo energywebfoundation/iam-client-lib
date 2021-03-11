@@ -1,3 +1,5 @@
+import { PreconditionTypes } from "../utils/constants";
+
 export interface IRoleDefinition {
   version: string;
   roleType: string;
@@ -5,7 +7,14 @@ export interface IRoleDefinition {
   fields: {
     fieldType: string;
     label: string;
-    validation: string;
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    pattern?: string;
+    minValue?: number;
+    maxValue?: number;
+    minDate?: Date;
+    maxDate?: Date;
   }[];
   metadata: Record<string, unknown> | Record<string, unknown>[];
   issuer: {
@@ -13,6 +22,7 @@ export interface IRoleDefinition {
     did?: string[];
     roleName?: string;
   };
+  enrolmentPreconditions?: { type: PreconditionTypes; conditions: string[] }[];
 }
 
 export interface IAppDefinition {
@@ -37,6 +47,7 @@ export interface IRole {
   namespace: string;
   owner: string;
   definition: IRoleDefinition;
+  isOwnedByCurrentUser?: boolean;
 }
 
 export interface IOrganization {
@@ -45,6 +56,10 @@ export interface IOrganization {
   namespace: string;
   owner: string;
   definition: IOrganizationDefinition;
+  apps?: IApp[];
+  roles?: IRole[];
+  subOrgs?: IOrganization[];
+  isOwnedByCurrentUser?: boolean;
 }
 
 export interface IApp {
@@ -53,6 +68,8 @@ export interface IApp {
   namespace: string;
   owner: string;
   definition: IAppDefinition;
+  roles?: IRole[];
+  isOwnedByCurrentUser?: boolean;
 }
 
 export interface Claim {
@@ -67,4 +84,5 @@ export interface Claim {
   createdAt: string;
   parentNamespace: string;
   acceptedBy?: string;
+  isRejected?: boolean;
 }
