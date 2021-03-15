@@ -40,7 +40,6 @@ const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
-
 export type ConnectionOptions = {
   /** only required in node env */
   rpcUrl?: string;
@@ -78,7 +77,7 @@ export class IAMBase {
   protected _did: string | undefined;
   protected _provider: providers.JsonRpcProvider;
   protected _metamaskProvider: { on: any; request: any } | undefined;
-  protected _walletConnectService: WalletConnectService
+  protected _walletConnectService: WalletConnectService;
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
   protected _safeAddress: string | undefined;
@@ -196,6 +195,9 @@ export class IAMBase {
       if (!rpcUrl) {
         throw new Error(ERROR_MESSAGES.NO_RPC_URL);
       }
+    }
+
+    if (privateKey && rpcUrl) {
       this._provider = new JsonRpcProvider({ url: rpcUrl });
       this._signer = new Wallet(privateKey, this._provider);
       return;
@@ -256,8 +258,8 @@ export class IAMBase {
 
   private storeSession() {
     if (this._runningInBrowser && this._didSigner) {
-      localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
-      localStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
+      this._providerType && localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
+      this._didSigner.publicKey && localStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
     }
   }
 
@@ -277,9 +279,9 @@ export class IAMBase {
     const isMetamask = this._providerType === WalletProvider.MetaMask;
     switch (event) {
       case "accountChanged": {
-        isMetamask ?
-          this._metamaskProvider?.on("accountsChanged", eventHandler) :
-          this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
+        isMetamask
+          ? this._metamaskProvider?.on("accountsChanged", eventHandler)
+          : this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
         break;
       }
       case "disconnected": {
@@ -288,9 +290,9 @@ export class IAMBase {
         break;
       }
       case "networkChanged": {
-        isMetamask ?
-          this._metamaskProvider?.on("networkChanged", eventHandler) :
-          this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
+        isMetamask
+          ? this._metamaskProvider?.on("networkChanged", eventHandler)
+          : this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
         break;
       }
       default:
