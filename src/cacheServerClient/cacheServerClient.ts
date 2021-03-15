@@ -115,13 +115,13 @@ export class CacheServerClient implements ICacheServerClient {
   }
 
   async getApplicationRoles({ namespace }: { namespace: string }) {
-    const { data } = await this.httpClient.get<{ Data: IRole[] }>(`/app/${namespace}/roles`);
-    return data.Data;
+    const { data } = await this.httpClient.get<IRole[]>(`/app/${namespace}/roles`);
+    return data;
   }
 
   async getOrganizationRoles({ namespace }: { namespace: string }) {
-    const { data } = await this.httpClient.get<{ Data: IRole[] }>(`/org/${namespace}/roles`);
-    return data.Data;
+    const { data } = await this.httpClient.get<IRole[]>(`/org/${namespace}/roles`);
+    return data;
   }
 
   async getOrganizationsByOwner({
@@ -131,10 +131,10 @@ export class CacheServerClient implements ICacheServerClient {
     owner: string;
     excludeSubOrgs: boolean;
   }) {
-    const { data } = await this.httpClient.get<{ orgs: IOrganization[] }>(
-      `/owner/${owner}/orgs?excludeSubOrgs=${excludeSubOrgs}`
+    const { data } = await this.httpClient.get<IOrganization[]>(
+      `/org/owner/${owner}?excludeSubOrgs=${excludeSubOrgs}`
     );
-    return data.orgs;
+    return data;
   }
 
   async getSubOrganizationsByOrganization({ namespace }: { namespace: string }) {
@@ -143,7 +143,7 @@ export class CacheServerClient implements ICacheServerClient {
   }
 
   async getOrgHierarchy({ namespace }: { namespace: string }) {
-    const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}/hierarchy`);
+    const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
     return data;
   }
 
@@ -155,8 +155,8 @@ export class CacheServerClient implements ICacheServerClient {
     search: string;
   }) {
     if (types && types.length > 0) {
-      const { data } = await this.httpClient.get<IOrganization[] | IApp[] | IRole[]>(
-        `/namespace/search/${search}`,
+      const { data } = await this.httpClient.get<(IOrganization | IApp | IRole)[]>(
+        `/search/${search}`,
         {
           params: {
             types
@@ -168,25 +168,25 @@ export class CacheServerClient implements ICacheServerClient {
       );
       return data;
     }
-    const { data } = await this.httpClient.get<IOrganization[] | IApp[] | IRole[]>(
-      `/namespace/search/${search}`
+    const { data } = await this.httpClient.get<(IOrganization | IApp | IRole)[]>(
+      `/search/${search}`
     );
     return data;
   }
 
   async getApplicationsByOwner({ owner }: { owner: string }) {
-    const { data } = await this.httpClient.get<{ apps: IApp[] }>(`/owner/${owner}/apps`);
-    return data.apps;
+    const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}`);
+    return data;
   }
 
   async getApplicationsByOrganization({ namespace }: { namespace: string }) {
-    const { data } = await this.httpClient.get<{ Data: IApp[] }>(`/org/${namespace}/apps`);
-    return data.Data;
+    const { data } = await this.httpClient.get<IApp[]>(`/org/${namespace}/apps`);
+    return data;
   }
 
   async getRolesByOwner({ owner }: { owner: string }) {
-    const { data } = await this.httpClient.get<{ roles: IRole[] }>(`/owner/${owner}/roles`);
-    return data.roles;
+    const { data } = await this.httpClient.get<IRole[]>(`/role/owner/${owner}`);
+    return data;
   }
 
   async getIssuedClaims({
@@ -198,13 +198,13 @@ export class CacheServerClient implements ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) {
-    const { data } = await this.httpClient.get<{ claim: Claim[] }>(`/claim/issuer/${did}`, {
+    const { data } = await this.httpClient.get<Claim[]>(`/claim/issuer/${did}`, {
       params: {
         accepted: isAccepted,
         parentNamespace
       }
     });
-    return data.claim;
+    return data;
   }
 
   async getRequestedClaims({
@@ -216,13 +216,13 @@ export class CacheServerClient implements ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) {
-    const { data } = await this.httpClient.get<{ claim: Claim[] }>(`/claim/requester/${did}`, {
+    const { data } = await this.httpClient.get<Claim[]>(`/claim/requester/${did}`, {
       params: {
         accepted: isAccepted,
         parentNamespace
       }
     });
-    return data.claim;
+    return data;
   }
 
   async requestClaim({ message, did }: { message: IClaimRequest; did: string }) {
