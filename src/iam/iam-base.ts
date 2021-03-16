@@ -34,7 +34,7 @@ const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
-import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
+import { emptyAddress, MessagingMethod, NODE_FIELDS_KEY, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 
 export type ConnectionOptions = {
   /** only required in node env */
@@ -597,7 +597,7 @@ export class IAMBase {
       to: this._ensResolverAddress,
       data: this._ensResolver.interface.functions.setText.encode([
         namehash(domain),
-        "metadata",
+        NODE_FIELDS_KEY,
         JSON.stringify(data)
       ])
     };

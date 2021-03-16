@@ -8,7 +8,7 @@ import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
-import { utilsTests } from './utils.testSuite';
+import { utilsTests } from './utilsTests/utils.testSuite';
 
 const { namehash, bigNumberify } = utils;
 
@@ -22,7 +22,7 @@ export const rpcUrl = `http://localhost:${GANACHE_PORT}`;
 
 describe("IAM tests", () => {
   // sometimes the transaction are taking more then default 5000 ms jest timeout
-  jest.setTimeout(30000);
+  jest.setTimeout(60000);
 
   beforeAll(async () => {
     await deployContracts(privateKey);
