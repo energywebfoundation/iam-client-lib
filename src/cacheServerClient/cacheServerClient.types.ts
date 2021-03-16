@@ -1,3 +1,5 @@
+import { PreconditionTypes } from "../utils/constants";
+
 export interface IRoleDefinition {
   version: string;
   roleType: string;
@@ -20,6 +22,7 @@ export interface IRoleDefinition {
     did?: string[];
     roleName?: string;
   };
+  enrolmentPreconditions?: { type: PreconditionTypes; conditions: string[] }[];
 }
 
 export interface IAppDefinition {

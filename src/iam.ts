@@ -45,7 +45,9 @@ import {
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
 import { getSubdomains } from "./utils/getSubDomains";
-import { emptyAddress, NATS_EXCHANGE_TOPIC } from "./utils/constants";
+import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
+import { Subscription } from "nats.ws";
+import { AxiosError } from "axios";
 
 export type InitializeData = {
   did: string | undefined;
@@ -85,11 +87,12 @@ export enum ENSNamespaceTypes {
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM extends IAMBase {
+  private _exchangeSubscription: Subscription | undefined;
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
-          request: any;
-        }
+        request: any;
+      }
       | undefined;
 
     const chainId = (await provider?.request({
@@ -196,8 +199,8 @@ export class IAM extends IAMBase {
    *
    */
   isConnected(): boolean {
-    if (this._walletConnectProvider) {
-      return this._walletConnectProvider.connected;
+    if (this._providerType && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(this._providerType)) {
+      return this._walletConnectService.isConnected();
     }
     return !!this._address;
   }
@@ -215,11 +218,18 @@ export class IAM extends IAMBase {
     includeClaims = true
   }: { did?: string; includeClaims?: boolean } | undefined = {}) {
     if (this._cacheClient && did) {
-      const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
-      return {
-        ...didDoc,
-        service: didDoc.service as (IServiceEndpoint & ClaimData)[]
-      };
+      try {
+        const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
+        return {
+          ...didDoc,
+          service: didDoc.service as (IServiceEndpoint & ClaimData)[]
+        };
+      } catch (err) {
+        if ((err as AxiosError).response?.status === 401) {
+          throw err;
+        }
+        console.log(err);
+      }
     }
 
     if (did && this._resolver) {
@@ -228,8 +238,8 @@ export class IAM extends IAMBase {
         ...document,
         service: includeClaims
           ? await this.downloadClaims({
-              services: document.service && document.service.length > 0 ? document.service : []
-            })
+            services: document.service && document.service.length > 0 ? document.service : []
+          })
           : []
       };
     }
@@ -690,8 +700,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
@@ -814,8 +824,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
     }
@@ -1244,6 +1254,26 @@ export class IAM extends IAMBase {
 
   // NATS
 
+  private verifyEnrolmentPreconditions({
+    claims,
+    enrolmentPreconditions
+  }: {
+    claims: (IServiceEndpoint & ClaimData)[];
+    enrolmentPreconditions: IRoleDefinition["enrolmentPreconditions"];
+  }) {
+    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
+    for (const { type, conditions } of enrolmentPreconditions) {
+      if (type === PreconditionTypes.Role && conditions) {
+        const conditionMet = claims.some(
+          ({ claimType }) => claimType && conditions.includes(claimType)
+        );
+        if (!conditionMet) {
+          throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
+        }
+      }
+    }
+  }
+
   async createClaimRequest({
     issuer,
     claim
@@ -1254,6 +1284,23 @@ export class IAM extends IAMBase {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
+
+    const [roleDefinition, didDocument] = await Promise.all([
+      this.getDefinition({
+        type: ENSNamespaceTypes.Roles,
+        namespace: claim.claimType
+      }),
+      this.getDidDocument({ includeClaims: true })
+    ]);
+
+    if (!roleDefinition) {
+      throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
+    }
+
+    const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
+
+    this.verifyEnrolmentPreconditions({ claims: didDocument.service, enrolmentPreconditions });
+
     const token = await this.createPublicClaim({ data: claim, subject: claim.claimType });
     const message: IClaimRequest = {
       id: uuid(),
@@ -1349,10 +1396,16 @@ export class IAM extends IAMBase {
     if (!this._natsConnection) {
       return;
     }
-    const subscription = this._natsConnection.subscribe(topic);
-    for await (const msg of subscription) {
+    this._exchangeSubscription = this._natsConnection.subscribe(topic);
+    for await (const msg of this._exchangeSubscription) {
       const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
       messageHandler(decodedMessage);
+    }
+  }
+
+  async unsubscribeFromMessages() {
+    if (this._exchangeSubscription) {
+      this._exchangeSubscription.unsubscribe();
     }
   }
 
@@ -1411,8 +1464,8 @@ export class IAM extends IAMBase {
         type === ENSNamespaceTypes.Roles
           ? [namespace]
           : type === ENSNamespaceTypes.Application
-          ? [namespace, ENSNamespaceTypes.Application]
-          : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
+            ? [namespace, ENSNamespaceTypes.Application]
+            : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
       return Promise.all(
         namespacesToCheck.map(ns => this.getOwner({ namespace: ns }))
       ).then(owners => owners.filter(o => ![owner, emptyAddress].includes(o)));

@@ -9,7 +9,7 @@ export enum ERROR_MESSAGES {
   USER_NOT_LOGGED_IN = "User not logged in",
   NO_PROVIDER = "Initialization of singer failed due to no provider",
   NO_PRIVATE_KEY = "Initialization of signer not possible in nodejs env without private key",
-  NO_RPC_URL = "Rpc url needed to initialize provider in node js enviroment",
+  NO_RPC_URL = "Rpc url needed to initialize provider in node js environment",
   CACHE_CLIENT_NOT_PROVIDED = "Cache client not provided",
   ENS_REGISTRY_NOT_INITIALIZED = "ENS registry not initialized",
   ENS_RESOLVER_NOT_INITIALIZED = "ENS resolver not initialized",
@@ -21,5 +21,7 @@ export enum ERROR_MESSAGES {
   ORG_WITH_APPS = "You are not able to remove organization with registered apps",
   ORG_WITH_ROLES = "You are not able to remove organization with registered roles",
   APP_WITH_ROLES = "You are not able to remove application with registered roles",
-  METAMASK_EXTENSION_NOT_AVAILABLE = "Selected Metamask provider but Metamask not available"
+  METAMASK_EXTENSION_NOT_AVAILABLE = "Selected Metamask provider but Metamask not available",
+  ROLE_PRECONDITION_NOT_MET = "Precondition not met, user not eligible to enrol for a role",
+  ROLE_NOT_EXISTS = "Role you want to enroll to does not exists"
 }

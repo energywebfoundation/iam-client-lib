@@ -18,7 +18,6 @@ export class CacheServerClient implements ICacheServerClient {
   private failedRequests: Array<(token?: string) => void> = [];
   private authEnabled: boolean;
   private isBrowser: boolean;
-  private token: string | undefined;
   private refresh_token: string | undefined;
 
   constructor({ url, cacheServerSupportsAuth = true }: CacheServerClientOptions) {
@@ -36,7 +35,6 @@ export class CacheServerClient implements ICacheServerClient {
   async handleRefreshToken() {
     const { refreshToken, token } = await this.refreshToken();
     this.refresh_token = refreshToken;
-    this.token = token;
     this.failedRequests = this.failedRequests.filter(callback =>
       callback(this.isBrowser ? undefined : token)
     );
@@ -103,17 +101,17 @@ export class CacheServerClient implements ICacheServerClient {
 
   async getRoleDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getOrgDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getAppDefinition({ namespace }: { namespace: string }) {
     const { data } = await this.httpClient.get<IApp>(`/app/${namespace}`);
-    return data.definition;
+    return data?.definition;
   }
 
   async getApplicationRoles({ namespace }: { namespace: string }) {

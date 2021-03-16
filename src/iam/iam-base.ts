@@ -1,6 +1,5 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
@@ -28,27 +27,26 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { cacheServerClientOptions, chainConfigs } from "./chainConfig";
+import { emptyAddress, MessagingMethod, NODE_FIELDS_KEY, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
+import {
+  cacheServerClientOptions,
+  chainConfigs,
+  messagingOptions,
+  MessagingOptions
+} from "./chainConfig";
+import { WalletConnectService } from "../walletconnect/WalletConnectService";
 
 const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
-import { emptyAddress, MessagingMethod, NODE_FIELDS_KEY, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 
 export type ConnectionOptions = {
   /** only required in node env */
   rpcUrl?: string;
-  chainId?: number;
   infuraId?: string;
-  ensResolverAddress?: string;
-  ensRegistryAddress?: string;
-  didContractAddress?: string;
   ipfsUrl?: string;
   bridgeUrl?: string;
-  messagingMethod?: MessagingMethod;
-  natsServerUrl?: string;
-  cacheClient?: ICacheServerClient;
   privateKey?: string;
   ewKeyManagerUrl?: string;
 };
@@ -79,8 +77,8 @@ export class IAMBase {
 
   protected _did: string | undefined;
   protected _provider: providers.JsonRpcProvider;
-  protected _walletConnectProvider: WalletConnectProvider | undefined;
   protected _metamaskProvider: { on: any; request: any } | undefined;
+  protected _walletConnectService: WalletConnectService
   protected _address: string | undefined;
   protected _signer: Signer | undefined;
   protected _safeAddress: string | undefined;
@@ -105,36 +103,25 @@ export class IAMBase {
 
   protected _cacheClient: ICacheServerClient;
 
-  protected _natsServerUrl: string | undefined;
+  protected _messagingOptions: MessagingOptions;
   protected _natsConnection: NatsConnection | undefined;
   protected _jsonCodec: Codec<any> | undefined;
 
-  private readonly _ewKeyManagerUrl: string;
   private ttl = bigNumberify(0);
-
-  private _chainId: number;
 
   /**
    * IAM Constructor
-   *
-   * @param {object} options connection options to connect with wallet connect
-   * @param {string} options.rpcUrl url to the ethereum network
-   * @param {number} options.chainID id of chain, default = 1
-   * @param {number} options.infuraId id of infura network, default = undefined
    *
    */
   public constructor({
     rpcUrl,
     infuraId,
     ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
-    messagingMethod,
-    natsServerUrl,
     bridgeUrl = "https://walletconnect.energyweb.org",
     privateKey,
     ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new"
-  }: ConnectionOptions) {
+  }: ConnectionOptions = {}) {
     this._runningInBrowser = isBrowser();
-
     errors.setLogLevel("error");
 
     this._connectionOptions = {
@@ -147,19 +134,14 @@ export class IAMBase {
     this._ipfsStore = new DidStore(ipfsUrl);
 
     if (this._runningInBrowser) {
-      this._providerType = sessionStorage.getItem(WALLET_PROVIDER) as WalletProvider;
-      const publicKey = sessionStorage.getItem(PUBLIC_KEY);
+      this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
+      const publicKey = localStorage.getItem(PUBLIC_KEY);
       if (publicKey) {
         this._publicKey = publicKey;
       }
     }
 
-    if (messagingMethod && messagingMethod === MessagingMethod.CacheServer && natsServerUrl) {
-      this._natsServerUrl = natsServerUrl;
-      this._jsonCodec = JSONCodec();
-    }
-
-    this._ewKeyManagerUrl = ewKeyManagerUrl;
+    this._walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
   }
 
   // INITIAL
@@ -176,7 +158,7 @@ export class IAMBase {
     this.initEventHandlers();
 
     if (this._runningInBrowser) {
-      await this.setupNATS();
+      await this.setupMessaging();
     }
     if (this._signer) {
       this._didSigner = await SignerFactory.create({
@@ -205,7 +187,7 @@ export class IAMBase {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
   }) {
-    const { privateKey, rpcUrl, bridgeUrl, infuraId } = this._connectionOptions;
+    const { privateKey, rpcUrl } = this._connectionOptions;
 
     if (!this._runningInBrowser) {
       if (!privateKey) {
@@ -262,36 +244,9 @@ export class IAMBase {
         gasLimit: hexlify(4900000),
         gasPrice: hexlify(0.1)
       };
-
-      const showQRCode = !(walletProvider === WalletProvider.EwKeyManager);
-
-      const rpc = Object.entries(chainConfigs).reduce(
-        (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }),
-        {}
-      );
-
-      this._walletConnectProvider = new WalletConnectProvider({
-        rpc,
-        infuraId,
-        bridge: bridgeUrl,
-        qrcode: showQRCode
-      });
-
-      if (walletProvider === WalletProvider.EwKeyManager) {
-        this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
-          // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
-          const wcUri = payload.params[0];
-
-          const encoded = encodeURIComponent(wcUri);
-          const hasQueryString = this._ewKeyManagerUrl.includes("?");
-          const url = `${this._ewKeyManagerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;
-          window.open(url, "_blank");
-        });
-      }
-
-      await this._walletConnectProvider.enable();
-
-      this._signer = new providers.Web3Provider(this._walletConnectProvider).getSigner();
+      await this._walletConnectService.initialize(walletProvider);
+      const wcProvider = this._walletConnectService.getProvider();
+      this._signer = new providers.Web3Provider(wcProvider).getSigner();
       this._provider = this._signer.provider as providers.Web3Provider;
       this._providerType = walletProvider;
       return;
@@ -301,38 +256,41 @@ export class IAMBase {
 
   private storeSession() {
     if (this._runningInBrowser && this._didSigner) {
-      sessionStorage.setItem(WALLET_PROVIDER, this._providerType as string);
-      sessionStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
+      localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
+      localStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
     }
   }
 
   protected clearSession() {
     if (this._runningInBrowser) {
-      sessionStorage.removeItem(WALLET_PROVIDER);
-      sessionStorage.removeItem(PUBLIC_KEY);
+      localStorage.removeItem(WALLET_PROVIDER);
+      localStorage.removeItem(PUBLIC_KEY);
     }
   }
 
   /**
    * Add event handler for certain events
    * @requires to be called after the connection to wallet was initialized
-   *
    */
   on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
     if (!this._providerType) return;
+    const isMetamask = this._providerType === WalletProvider.MetaMask;
     switch (event) {
       case "accountChanged": {
-        this._walletConnectProvider?.wc.on("session_update", eventHandler);
-        this._metamaskProvider?.on("accountsChanged", eventHandler);
+        isMetamask ?
+          this._metamaskProvider?.on("accountsChanged", eventHandler) :
+          this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
         break;
       }
       case "disconnected": {
-        this._walletConnectProvider?.wc.on("disconnect", eventHandler);
+        isMetamask === false &&
+          this._walletConnectService.getProvider()?.wc.on("disconnect", eventHandler);
         break;
       }
       case "networkChanged": {
-        this._walletConnectProvider?.wc.on("session_update", eventHandler);
-        this._metamaskProvider?.on("networkChanged", eventHandler);
+        isMetamask ?
+          this._metamaskProvider?.on("networkChanged", eventHandler) :
+          this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
         break;
       }
       default:
@@ -358,9 +316,7 @@ export class IAMBase {
    *
    */
   async closeConnection() {
-    if (this._walletConnectProvider) {
-      await this._walletConnectProvider.close();
-    }
+    await this._walletConnectService.closeConnection();
     this.clearSession();
     this._did = undefined;
     this._address = undefined;
@@ -420,18 +376,20 @@ export class IAMBase {
     throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
   }
 
-  private async setupNATS() {
-    if (this._natsServerUrl) {
+  private async setupMessaging() {
+    const { messagingMethod, natsServerUrl } = this._messagingOptions || {};
+    if (natsServerUrl && messagingMethod === MessagingMethod.Nats) {
+      this._jsonCodec = JSONCodec();
       try {
         let protocol = "ws";
-        if (this._natsServerUrl.indexOf("https://") === 0) {
+        if (natsServerUrl.indexOf("https://") === 0) {
           protocol = "wss";
         }
         const timeout = 3000;
         // this race condition duplicate timeout is there because unable to catch the error that occurs when NATS.ws timeouts
         const connection = await Promise.race<NatsConnection | undefined>([
           connect({
-            servers: `${protocol}://${this._natsServerUrl}`,
+            servers: `${protocol}://${natsServerUrl}`,
             timeout,
             pingInterval: 50 * 1000
           }),
@@ -621,17 +579,29 @@ export class IAMBase {
   private async initChain() {
     const { chainId } = await this._provider.getNetwork();
     const { ensRegistryAddress, ensResolverAddress, didContractAddress } = chainConfigs[chainId];
+
+    if (!ensRegistryAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain ensRegistryAddress`);
+    if (!ensResolverAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain ensResolverAddress`);
+    if (!didContractAddress)
+      throw new Error(`Chain config for chainId: ${chainId} does not contain didContractAddress`);
+
     this._registrySetting = {
       address: didContractAddress,
       abi: abi1056,
       method: Methods.Erc1056
     };
+
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
     this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
 
     const cacheOptions = cacheServerClientOptions[chainId];
+
     cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
+
+    this._messagingOptions = messagingOptions[chainId];
   }
 }

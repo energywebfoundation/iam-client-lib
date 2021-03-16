@@ -5,7 +5,10 @@ export const VOLTA_CHAIN_ID = 73799;
 export const NATS_EXCHANGE_TOPIC = "claim.exchange";
 export const NODE_FIELDS_KEY = "metadata";
 export enum MessagingMethod {
-  CacheServer = "cacheServer",
+  Nats = "nats",
   WebRTC = "webRTC",
   SmartContractStorage = "smartContractStorage"
+}
+export enum PreconditionTypes {
+  Role = "role"
 }
