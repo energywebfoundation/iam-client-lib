@@ -27,7 +27,7 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
+import { emptyAddress, MessagingMethod, NODE_FIELDS_KEY, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 import {
   cacheServerClientOptions,
   chainConfigs,
@@ -557,7 +557,7 @@ export class IAMBase {
       to: this._ensResolverAddress,
       data: this._ensResolver.interface.functions.setText.encode([
         namehash(domain),
-        "metadata",
+        NODE_FIELDS_KEY,
         JSON.stringify(data)
       ])
     };
