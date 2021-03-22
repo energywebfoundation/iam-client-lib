@@ -27,7 +27,13 @@ import { Owner as IdentityOwner } from "../signer/Signer";
 import { WalletProvider } from "../types/WalletProvider";
 import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { emptyAddress, MessagingMethod, NODE_FIELDS_KEY, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
+import {
+  emptyAddress,
+  MessagingMethod,
+  NODE_FIELDS_KEY,
+  PUBLIC_KEY,
+  WALLET_PROVIDER
+} from "../utils/constants";
 import {
   cacheServerClientOptions,
   chainConfigs,
@@ -35,6 +41,7 @@ import {
   MessagingOptions
 } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
+import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
 
 const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
@@ -99,6 +106,8 @@ export class IAMBase {
   protected _ensResolver: PublicResolver;
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
+
+  protected _assetManagerAddress: string;
 
   protected _cacheClient: ICacheServerClient;
 
@@ -580,7 +589,12 @@ export class IAMBase {
 
   private async initChain() {
     const { chainId } = await this._provider.getNetwork();
-    const { ensRegistryAddress, ensResolverAddress, didContractAddress } = chainConfigs[chainId];
+    const {
+      ensRegistryAddress,
+      ensResolverAddress,
+      didContractAddress,
+      assetManagerAddress
+    } = chainConfigs[chainId];
 
     if (!ensRegistryAddress)
       throw new Error(`Chain config for chainId: ${chainId} does not contain ensRegistryAddress`);
@@ -588,6 +602,10 @@ export class IAMBase {
       throw new Error(`Chain config for chainId: ${chainId} does not contain ensResolverAddress`);
     if (!didContractAddress)
       throw new Error(`Chain config for chainId: ${chainId} does not contain didContractAddress`);
+    if (!assetManagerAddress)
+      throw new Error(
+        `Chain config for chainId: ${chainId} does not contain assetManagerContractAddress`
+      );
 
     this._registrySetting = {
       address: didContractAddress,
@@ -597,6 +615,7 @@ export class IAMBase {
 
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
+    this._assetManagerAddress = assetManagerAddress;
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
     this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
 
@@ -605,5 +624,45 @@ export class IAMBase {
     cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
 
     this._messagingOptions = messagingOptions[chainId];
+  }
+
+  // ### ASSETS ###
+
+  protected offerAssetTx({
+    offerTo,
+    assetContractAddress
+  }: {
+    offerTo: string;
+    assetContractAddress: string;
+  }): EncodedCall {
+    const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+    return {
+      data: asset.interface.functions.offer.encode([offerTo]),
+      to: assetContractAddress
+    };
+  }
+
+  protected acceptOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
+    const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+    return {
+      data: asset.interface.functions.acceptOffer.encode([]),
+      to: assetContractAddress
+    };
+  }
+
+  protected rejectOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
+    const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+    return {
+      data: asset.interface.functions.rejectOffer.encode([]),
+      to: assetContractAddress
+    };
+  }
+
+  protected cancelOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
+    const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+    return {
+      data: asset.interface.functions.cancelOffer.encode([]),
+      to: assetContractAddress
+    };
   }
 }

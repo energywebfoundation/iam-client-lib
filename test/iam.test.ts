@@ -1,14 +1,22 @@
-import { utils } from "ethers";
+import { providers, utils } from "ethers";
 import { Keys } from "@ew-did-registry/keys";
 import { IAM, ENSNamespaceTypes } from "../src/iam";
-import { deployContracts, ensRegistry, ensResolver, didContract, GANACHE_PORT } from "./setup_contracts";
+import {
+  deployContracts,
+  ensRegistry,
+  ensResolver,
+  didContract,
+  GANACHE_PORT,
+  assetsManager
+} from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
-import { utilsTests } from './utilsTests/utils.testSuite';
+import { utilsTests } from "./utilsTests/utils.testSuite";
+import { assetsTests } from "./assets.testsuite";
 
 const { namehash, bigNumberify } = utils;
 
@@ -20,33 +28,35 @@ export let iam: IAM;
 
 export const rpcUrl = `http://localhost:${GANACHE_PORT}`;
 
-describe("IAM tests", () => {
+export const provider = new providers.JsonRpcProvider(rpcUrl);
+
+beforeAll(async () => {
   // sometimes the transaction are taking more then default 5000 ms jest timeout
   jest.setTimeout(60000);
-
-  beforeAll(async () => {
-    await deployContracts(privateKey);
-    setChainConfig(9, {
-      rpcUrl,
-      ensRegistryAddress: ensRegistry.address,
-      ensResolverAddress: ensResolver.address,
-      didContractAddress: didContract.address,
-    });
-    setCacheClientOptions(9, { url: "" });
-
-    iam = new IAM({
-      rpcUrl,
-      privateKey
-    });
-    try {
-      await iam.initializeConnection({
-        reinitializeMetamask: false
-      });
-    } catch (e) {
-      console.error(">>> Error initializing connection:", e);
-    }
+  await deployContracts(privateKey);
+  setChainConfig(9, {
+    rpcUrl,
+    ensRegistryAddress: ensRegistry.address,
+    ensResolverAddress: ensResolver.address,
+    didContractAddress: didContract.address,
+    assetManagerAddress: assetsManager.address
   });
+  setCacheClientOptions(9, { url: "" });
 
+  iam = new IAM({
+    rpcUrl,
+    privateKey
+  });
+  try {
+    await iam.initializeConnection({
+      reinitializeMetamask: false
+    });
+  } catch (e) {
+    console.error(">>> Error initializing connection:", e);
+  }
+});
+
+describe("IAM tests", () => {
   test("can create root node", async () => {
     const tx = await ensRegistry.setSubnodeRecord(
       namehash(""),
@@ -72,10 +82,11 @@ describe("IAM tests", () => {
       })
     );
   });
-
-  describe("Organization tests", orgTests);
-  describe("Application tests", appsTests);
-  describe("InitializeConnection tests", initializeConnectionTests);
-  describe("Claim tests", claimsTests);
-  describe("Utils tests", utilsTests);
 });
+
+describe("Organization tests", orgTests);
+describe("Application tests", appsTests);
+describe("InitializeConnection tests", initializeConnectionTests);
+describe("Claim tests", claimsTests);
+describe("Utils tests", utilsTests);
+describe("Assets tests", assetsTests);

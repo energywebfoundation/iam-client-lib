@@ -1,13 +1,17 @@
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import {
+  Asset,
+  AssetHistory,
+  AssetHistoryEventType,
   Claim,
   IApp,
   IAppDefinition,
   IOrganization,
   IOrganizationDefinition,
   IRole,
-  IRoleDefinition
+  IRoleDefinition,
+  Order
 } from "./cacheServerClient.types";
 
 export interface ICacheServerClient {
@@ -71,4 +75,21 @@ export interface ICacheServerClient {
     includeClaims?: boolean;
   }) => Promise<IDIDDocument>;
   addDIDToWatchList: ({ did }: { did: string }) => Promise<void>;
+  getOwnedAssets: ({ did }: { did: string }) => Promise<Asset[]>;
+  getOfferedAssets: ({ did }: { did: string }) => Promise<Asset[]>;
+  getAssetById: ({ id }: { id: string }) => Promise<Asset>;
+  getPreviouslyOwnedAssets: ({ owner }: { owner: string }) => Promise<Asset[]>;
+  getAssetHistory: ({
+    id,
+    order,
+    take,
+    skip,
+    type
+  }: {
+    id: string;
+    order?: Order;
+    take?: number;
+    skip?: number;
+    type?: AssetHistoryEventType;
+  }) => Promise<AssetHistory[]>;
 }

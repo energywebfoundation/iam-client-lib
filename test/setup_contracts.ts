@@ -1,9 +1,11 @@
-import { ContractFactory, Wallet, Contract, providers, utils } from 'ethers';
-import { ethrReg } from '@ew-did-registry/did-ethr-resolver';
-import { EnsRegistry } from '../ethers/EnsRegistry';
-import { PublicResolver } from '../ethers/PublicResolver';
-import { PublicResolverFactory } from '../ethers/PublicResolverFactory';
-import { EnsRegistryFactory } from '../ethers/EnsRegistryFactory';
+import { ContractFactory, Wallet, Contract, providers, utils } from "ethers";
+import { ethrReg } from "@ew-did-registry/did-ethr-resolver";
+import { EnsRegistry } from "../ethers/EnsRegistry";
+import { PublicResolver } from "../ethers/PublicResolver";
+import { PublicResolverFactory } from "../ethers/PublicResolverFactory";
+import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
+import { IdentityManagerFactory } from "../ethers/IdentityManagerFactory";
+import { IdentityManager } from "../ethers/IdentityManager";
 
 const { JsonRpcProvider } = providers;
 const { parseEther } = utils;
@@ -15,20 +17,22 @@ export const provider = new JsonRpcProvider(`http://localhost:${GANACHE_PORT}`);
 export let ensRegistry: EnsRegistry;
 export let ensResolver: PublicResolver;
 export let didContract: Contract;
+export let assetsManager: IdentityManager;
 
 export const deployContracts = async (privateKey: string): Promise<void> => {
   const wallet = new Wallet(privateKey, provider);
   await replenish(wallet.address);
   const didContractFactory = new ContractFactory(didContractAbi, didContractBytecode, wallet);
-  ensRegistry = await (new EnsRegistryFactory(wallet).deploy());
-  ensResolver = await (new PublicResolverFactory(wallet).deploy(ensRegistry.address));
+  ensRegistry = await new EnsRegistryFactory(wallet).deploy();
+  ensResolver = await new PublicResolverFactory(wallet).deploy(ensRegistry.address);
   didContract = await didContractFactory.deploy();
+  assetsManager = await new IdentityManagerFactory(wallet).deploy();
 };
 
 export const replenish = async (acc: string) => {
   const faucet = provider.getSigner(2);
   await faucet.sendTransaction({
     to: acc,
-    value: parseEther('1.0')
+    value: parseEther("3.0")
   });
 };

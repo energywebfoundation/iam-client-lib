@@ -7,6 +7,7 @@ export interface ChainConfig {
   rpcUrl: string;
   ensRegistryAddress: string;
   ensResolverAddress: string;
+  assetManagerAddress: string;
   didContractAddress: string;
 }
 
@@ -24,6 +25,7 @@ export const chainConfigs: Record<number, ChainConfig> = {
     rpcUrl: "https://volta-rpc-vkn5r5zx4ke71f9hcu0c.energyweb.org/",
     ensRegistryAddress: "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
     ensResolverAddress: "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
+    assetManagerAddress: "0x66163955e2D94eFb5823163cc705C42484c90362",
     didContractAddress: VoltaAddress1056
   }
 };

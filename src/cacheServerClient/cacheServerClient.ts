@@ -1,6 +1,15 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { stringify } from "qs";
-import { IApp, IOrganization, IRole, Claim } from "./cacheServerClient.types";
+import {
+  IApp,
+  IOrganization,
+  IRole,
+  Claim,
+  Asset,
+  Order,
+  AssetHistoryEventType,
+  AssetHistory
+} from "./cacheServerClient.types";
 
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
@@ -255,5 +264,43 @@ export class CacheServerClient implements ICacheServerClient {
 
   async addDIDToWatchList({ did }: { did: string }) {
     await this.httpClient.post(`/DID/${did}`);
+  }
+
+  async getOwnedAssets({ did }: { did: string }) {
+    const { data } = await this.httpClient.get<Asset[]>(`/assets/owner/${did}`);
+    return data;
+  }
+
+  async getOfferedAssets({ did }: { did: string }) {
+    const { data } = await this.httpClient.get<Asset[]>(`/assets/offered_to/${did}`);
+    return data;
+  }
+
+  async getAssetById({ id }: { id: string }) {
+    const { data } = await this.httpClient.get<Asset>(`/assets/${id}`);
+    return data;
+  }
+
+  async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
+    const { data } = await this.httpClient.get<Asset[]>(`/assets/owner/history/${owner}`);
+    return data;
+  }
+
+  async getAssetHistory({
+    id,
+    order,
+    take,
+    skip,
+    type
+  }: {
+    id: string;
+    order?: Order;
+    take?: number;
+    skip?: number;
+    type?: AssetHistoryEventType;
+  }) {
+    const query = stringify({ order, take, skip, type }, { skipNulls: true });
+    const { data } = await this.httpClient.get<AssetHistory[]>(`/assets/history/${id}?${query}`);
+    return data;
   }
 }

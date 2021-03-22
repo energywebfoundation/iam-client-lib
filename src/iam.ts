@@ -37,10 +37,12 @@ import {
   ERROR_MESSAGES
 } from "./errors";
 import {
+  AssetHistoryEventType,
   IAppDefinition,
   IOrganization,
   IOrganizationDefinition,
-  IRoleDefinition
+  IRoleDefinition,
+  Order
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
@@ -48,6 +50,7 @@ import { getSubdomains } from "./utils/getSubDomains";
 import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
+import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
 
 export type InitializeData = {
   did: string | undefined;
@@ -1492,5 +1495,118 @@ export class IAM extends IAMBase {
         };
       })
     );
+  }
+
+  // ### ASSETS ###
+  public async registerAsset() {
+    if (!this._address) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    const asset = new OfferableIdentityFactory(this._signer);
+    const { address } = await asset.deploy(this._address, this._assetManagerAddress);
+    if (this._cacheClient) {
+      /*
+       * we need to wait until cache server will resolve assets did document
+       * which is taking some time
+       */
+      let asset = await this.getAssetById({ id: `did:ethr:${address}` });
+      let loops = 0;
+      while (!asset && loops < 20) {
+        asset = await this.getAssetById({ id: `did:ethr:${address}` });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        loops++;
+      }
+    }
+    return address;
+  }
+
+  public async offerAsset({ assetDID, offerTo }: { assetDID: string; offerTo: string }) {
+    if (!this._address) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    const [, , offerToAddress] = offerTo.split(":");
+    const [, , assetContractAddress] = assetDID.split(":");
+    const tx = this.offerAssetTx({ assetContractAddress, offerTo: offerToAddress });
+    await this.send({
+      calls: [tx],
+      from: this._address
+    });
+  }
+
+  public async acceptAssetOffer({ assetDID }: { assetDID: string }) {
+    if (!this._address) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    const [, , assetContractAddress] = assetDID.split(":");
+    const tx = this.acceptOfferTx({ assetContractAddress });
+    await this.send({
+      calls: [tx],
+      from: this._address
+    });
+  }
+
+  public async rejectAssetOffer({ assetDID }: { assetDID: string }) {
+    if (!this._address) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    const [, , assetContractAddress] = assetDID.split(":");
+    const tx = this.rejectOfferTx({ assetContractAddress });
+    await this.send({
+      calls: [tx],
+      from: this._address
+    });
+  }
+
+  public async cancelAssetOffer({ assetDID }: { assetDID: string }) {
+    if (!this._address) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    const [, , assetContractAddress] = assetDID.split(":");
+    const tx = this.cancelOfferTx({ assetContractAddress });
+    await this.send({ calls: [tx], from: this._address });
+  }
+
+  public async getOwnedAssets({ did = this._did }: { did?: string } = {}) {
+    if (!did) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    return this._cacheClient.getOwnedAssets({ did });
+  }
+
+  public async getOfferedAssets({ did = this._did }: { did?: string } = {}) {
+    if (!did) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    return this._cacheClient.getOfferedAssets({ did });
+  }
+
+  public async getAssetById({ id }: { id: string }) {
+    if (this._cacheClient) {
+      return this._cacheClient.getAssetById({ id });
+    }
+    throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
+  }
+
+  public async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
+    if (this._cacheClient) {
+      return this._cacheClient.getPreviouslyOwnedAssets({ owner });
+    }
+    throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
+  }
+
+  public async getAssetHistory({
+    id,
+    ...query
+  }: {
+    id: string;
+    order?: Order;
+    take?: number;
+    skip?: number;
+    type?: AssetHistoryEventType;
+  }) {
+    if (this._cacheClient) {
+      return this._cacheClient.getAssetHistory({ id, ...query });
+    }
+    throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
   }
 }
