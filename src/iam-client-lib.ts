@@ -30,7 +30,11 @@ import {
   IOrganization,
   IOrganizationDefinition,
   IRole,
-  IRoleDefinition
+  IRoleDefinition,
+  Asset,
+  AssetHistory,
+  AssetHistoryEventType,
+  Order
 } from "./cacheServerClient/cacheServerClient.types";
 
 import {
@@ -65,7 +69,9 @@ export {
   MessagingMethod,
   ERROR_MESSAGES,
   WalletProvider,
-  PreconditionTypes
+  PreconditionTypes,
+  Order,
+  AssetHistoryEventType
 };
 
 // TYPES
@@ -76,7 +82,9 @@ export {
   IOrganization,
   IOrganizationDefinition,
   IRole,
-  IRoleDefinition
+  IRoleDefinition,
+  Asset,
+  AssetHistory
 };
 
 export { GnosisIam as SafeIam } from "./GnosisIam";
