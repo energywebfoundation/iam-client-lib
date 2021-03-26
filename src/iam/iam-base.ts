@@ -143,39 +143,61 @@ export class IAMBase {
     this._walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
   }
 
+  private startTime: number;
+  private elapsedTime = () => new Date().getTime() - this.startTime;
+
   // INITIAL
 
   protected async init({
     initializeMetamask,
-    walletProvider: walletProvider
+    walletProvider: walletProvider,
+    logStopwatch = false
   }: {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
+    logStopwatch?: boolean;
   }) {
+    this.startTime = new Date().getTime();
+    logStopwatch && console.info(this.elapsedTime(), "starting iam init");
     await this.initSigner({ walletProvider, initializeMetamask });
+    logStopwatch && console.info(this.elapsedTime(), "finished initSigner");
     await this.initChain();
+    logStopwatch && console.info(this.elapsedTime(), "finished initChain");
     this.initEventHandlers();
+    logStopwatch && console.info(this.elapsedTime(), "finished initEventHandlers");
 
     if (this._runningInBrowser) {
       await this.setupMessaging();
+      logStopwatch && console.info(this.elapsedTime(), "finished setupMessagin");
     }
     if (this._signer) {
+      logStopwatch && console.info(this.elapsedTime(), "starting SignerFactory.create");
       this._didSigner = await SignerFactory.create({
         provider: this._provider,
         signer: this._signer,
         publicKey: this._publicKey
       });
+      logStopwatch && console.info(this.elapsedTime(), "finished SignerFactory.create");
       this._publicKey = this._didSigner.publicKey;
       this._didSigner.identityToken &&
         (await this.loginToCacheServer(this._didSigner.identityToken));
+      logStopwatch && console.info(this.elapsedTime(), "finished loginToCacheServer");
       await this.setAddress();
+      logStopwatch && console.info(this.elapsedTime(), "finished setAddress");
       this.setDid();
+      logStopwatch && console.info(this.elapsedTime(), "finished setDid");
       await this.setDocument();
+      logStopwatch && console.info(this.elapsedTime(), "finished setDocument");
       this.setClaims();
+      logStopwatch && console.info(this.elapsedTime(), "finished setClaims");
     }
     this.setResolver();
+    logStopwatch && console.info(this.elapsedTime(), "finished setResolver");
     this.setJWT();
+    logStopwatch && console.info(this.elapsedTime(), "finished setJWT");
     this.storeSession();
+    logStopwatch && console.info(this.elapsedTime(), "finished storeSession");
+    logStopwatch && console.info(this.elapsedTime(), "finished iam init");
   }
 
   private async initSigner({

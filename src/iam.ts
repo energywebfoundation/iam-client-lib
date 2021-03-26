@@ -154,8 +154,9 @@ export class IAM extends IAMBase {
    */
   async initializeConnection({
     walletProvider = this._providerType,
-    reinitializeMetamask
-  }: { walletProvider?: WalletProvider; reinitializeMetamask?: boolean } = {}): Promise<
+    reinitializeMetamask,
+    logStopwatch = false
+  }: { walletProvider?: WalletProvider; reinitializeMetamask?: boolean, logStopwatch?: boolean } = {}): Promise<
     InitializeData
   > {
     const { privateKey } = this._connectionOptions;
@@ -169,7 +170,8 @@ export class IAM extends IAMBase {
     try {
       await this.init({
         initializeMetamask: reinitializeMetamask,
-        walletProvider
+        walletProvider,
+        logStopwatch
       });
     } catch (err) {
       if (err.message === "User closed modal") {
