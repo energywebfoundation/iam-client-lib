@@ -151,7 +151,7 @@ export class IAMBase {
   protected async init({
     initializeMetamask,
     walletProvider: walletProvider,
-    logStopwatch = false
+    logStopwatch = true
   }: {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;

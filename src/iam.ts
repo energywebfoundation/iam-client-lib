@@ -155,7 +155,7 @@ export class IAM extends IAMBase {
   async initializeConnection({
     walletProvider = this._providerType,
     reinitializeMetamask,
-    logStopwatch = false
+    logStopwatch
   }: { walletProvider?: WalletProvider; reinitializeMetamask?: boolean, logStopwatch?: boolean } = {}): Promise<
     InitializeData
   > {
