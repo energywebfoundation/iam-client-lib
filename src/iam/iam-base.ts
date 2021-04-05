@@ -1,7 +1,7 @@
 import { providers, Signer, utils, errors, Wallet } from "ethers";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
-import { IServiceEndpoint, RegistrySettings } from "@ew-did-registry/did-resolver-interface";
+import { IServiceEndpoint, RegistrySettings, KeyTags } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
@@ -362,12 +362,14 @@ export class IAMBase {
 
   private async setDocument() {
     if (this._did && this._didSigner) {
-      const document = new DIDDocumentFull(
+      this._document = new DIDDocumentFull(
         this._did,
         new Operator(this._didSigner, this._registrySetting)
       );
-      await document.create();
-      this._document = document;
+      const cachedDoc = await this._cacheClient.getDidDocument({ did: this._did });
+      if (!cachedDoc.publicKey.find((pk) => pk.id.endsWith(KeyTags.OWNER))) {
+        await this._document.create();
+      }
     }
   }
 
