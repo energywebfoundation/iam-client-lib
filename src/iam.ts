@@ -1284,12 +1284,14 @@ export class IAM extends IAMBase {
 
   async createClaimRequest({
     issuer,
-    claim
+    claim,
+    did = this._did
   }: {
     issuer: string[];
     claim: { claimType: string; fields: { key: string; value: string | number }[] };
+    did?: string;
   }) {
-    if (!this._did) {
+    if (!did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
 
@@ -1298,7 +1300,7 @@ export class IAM extends IAMBase {
         type: ENSNamespaceTypes.Roles,
         namespace: claim.claimType
       }),
-      this.getDidDocument({ includeClaims: true })
+      this.getDidDocument({ did, includeClaims: true })
     ]);
 
     if (!roleDefinition) {
@@ -1314,12 +1316,12 @@ export class IAM extends IAMBase {
       id: uuid(),
       token,
       claimIssuer: issuer,
-      requester: this._did || ""
+      requester: did
     };
 
     if (!this._natsConnection) {
       if (this._cacheClient) {
-        return this._cacheClient.requestClaim({ did: this._did, message });
+        return this._cacheClient.requestClaim({ did, message });
       }
       throw new NATSConnectionNotEstablishedError();
     }
