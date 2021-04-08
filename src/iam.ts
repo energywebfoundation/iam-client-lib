@@ -1285,14 +1285,17 @@ export class IAM extends IAMBase {
   async createClaimRequest({
     issuer,
     claim,
-    did = this._did
+    subject
   }: {
     issuer: string[];
     claim: { claimType: string; fields: { key: string; value: string | number }[] };
-    did?: string;
+    subject?: string;
   }) {
-    if (!did) {
+    if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    if (!subject) {
+      subject = this._did;
     }
 
     const [roleDefinition, didDocument] = await Promise.all([
@@ -1300,7 +1303,7 @@ export class IAM extends IAMBase {
         type: ENSNamespaceTypes.Roles,
         namespace: claim.claimType
       }),
-      this.getDidDocument({ did, includeClaims: true })
+      this.getDidDocument({ did: subject, includeClaims: true })
     ]);
 
     if (!roleDefinition) {
@@ -1311,17 +1314,17 @@ export class IAM extends IAMBase {
 
     this.verifyEnrolmentPreconditions({ claims: didDocument.service, enrolmentPreconditions });
 
-    const token = await this.createPublicClaim({ data: claim, subject: claim.claimType });
+    const token = await this.createPublicClaim({ data: claim, subject });
     const message: IClaimRequest = {
       id: uuid(),
       token,
       claimIssuer: issuer,
-      requester: did
+      requester: this._did,
     };
 
     if (!this._natsConnection) {
       if (this._cacheClient) {
-        return this._cacheClient.requestClaim({ did, message });
+        return this._cacheClient.requestClaim({ did: subject, message });
       }
       throw new NATSConnectionNotEstablishedError();
     }
@@ -1334,11 +1337,11 @@ export class IAM extends IAMBase {
   }
 
   async issueClaimRequest({
-    requesterDID,
+    requester,
     id,
     token
   }: {
-    requesterDID: string;
+    requester: string;
     token: string;
     id: string;
   }) {
@@ -1350,7 +1353,7 @@ export class IAM extends IAMBase {
     const preparedData: IClaimIssuance = {
       id,
       issuedToken,
-      requester: requesterDID,
+      requester: requester,
       claimIssuer: [this._did],
       acceptedBy: this._did
     };
@@ -1363,7 +1366,7 @@ export class IAM extends IAMBase {
     }
 
     const dataToSend = this._jsonCodec?.encode(preparedData);
-    this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+    this._natsConnection.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
   }
 
   async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
