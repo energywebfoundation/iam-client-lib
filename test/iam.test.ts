@@ -15,6 +15,7 @@ import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
+import { addKnownResolver } from "@energyweb/iam-contracts";
 import { utilsTests } from "./utilsTests/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
 
@@ -34,13 +35,15 @@ beforeAll(async () => {
   // sometimes the transaction are taking more then default 5000 ms jest timeout
   jest.setTimeout(60000);
   await deployContracts(privateKey);
-  setChainConfig(9, {
+  const chainID = 9;
+  setChainConfig(chainID, {
     rpcUrl,
     ensRegistryAddress: ensRegistry.address,
     ensResolverAddress: ensResolver.address,
     didContractAddress: didContract.address,
     assetManagerAddress: assetsManager.address
   });
+  addKnownResolver(chainID, ensResolver.address, "roledefv1");
   setCacheClientOptions(9, { url: "" });
 
   iam = new IAM({

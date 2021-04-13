@@ -14,6 +14,7 @@
 //
 // @authors: Kim Honoridez
 
+import { IRoleDefinition, IAppDefinition, IOrganizationDefinition } from "@energyweb/iam-contracts";
 import { IAM, ENSNamespaceTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
@@ -26,11 +27,8 @@ import {
 } from "./utils/constants";
 import {
   IApp,
-  IAppDefinition,
   IOrganization,
-  IOrganizationDefinition,
   IRole,
-  IRoleDefinition,
   Asset,
   AssetHistory,
   AssetHistoryEventType,

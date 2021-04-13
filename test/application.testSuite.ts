@@ -12,9 +12,10 @@ export const appsTests = () => {
   const appNode = `${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`;
 
   test("application can be created", async () => {
+    const appDefinition = { appName: "Application 1" };
     await iam.createApplication({
       appName: app,
-      data: { appName: "Application 1" },
+      data: appDefinition,
       namespace: `${ENSNamespaceTypes.Application}.${org1}.${root}`
     });
 
@@ -26,6 +27,9 @@ export const appsTests = () => {
     expect(
       await iam.getSubdomains({ domain: `${ENSNamespaceTypes.Application}.${org1}.${root}` })
     ).toContain(`${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`);
+
+    const readAppDefinition = await iam.getDefinition({ type: ENSNamespaceTypes.Application, namespace: appNode});
+    expect(readAppDefinition).toMatchObject(appDefinition);
   });
 
   test("application owner can be changed", async () => {

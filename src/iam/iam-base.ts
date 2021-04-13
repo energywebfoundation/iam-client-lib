@@ -1,4 +1,5 @@
 import { providers, Signer, utils, errors, Wallet } from "ethers";
+import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
@@ -7,20 +8,16 @@ import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
 import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
-import { PublicResolverFactory } from "../../ethers/PublicResolverFactory";
+import { RoleDefinitionResolverFactory } from "../../ethers/RoleDefinitionResolverFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
-import { PublicResolver } from "../../ethers/PublicResolver";
+import { RoleDefinitionResolver } from "../../ethers/RoleDefinitionResolver";
 import { JWT } from "@ew-did-registry/jwt";
+import { DomainReader, DomainTransactionFactory } from "@energyweb/iam-contracts";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
-import {
-  ClaimData,
-  IAppDefinition,
-  IOrganizationDefinition,
-  IRoleDefinition
-} from "../cacheServerClient/cacheServerClient.types";
+import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
@@ -30,7 +27,6 @@ import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
 import {
   emptyAddress,
   MessagingMethod,
-  NODE_FIELDS_KEY,
   PUBLIC_KEY,
   WALLET_PROVIDER
 } from "../utils/constants";
@@ -101,7 +97,8 @@ export class IAMBase {
   protected _jwt: JWT | undefined;
 
   protected _ensRegistry: EnsRegistry;
-  protected _ensResolver: PublicResolver;
+  protected _ensResolver: RoleDefinitionResolver;
+  protected _domainDefinitionTransactionFactory: DomainTransactionFactory
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
 
@@ -114,6 +111,8 @@ export class IAMBase {
   protected _jsonCodec: Codec<any> | undefined;
 
   private ttl = bigNumberify(0);
+
+  protected _domainDefinitionReader: DomainReader;
 
   /**
    * IAM Constructor
@@ -488,14 +487,6 @@ export class IAMBase {
     };
   }
 
-  protected setDomainNameTx({ domain }: { domain: string }): EncodedCall {
-    const namespaceHash = namehash(domain) as string;
-    return {
-      to: this._ensResolverAddress,
-      data: this._ensResolver?.interface.functions.setName.encode([namespaceHash, domain])
-    };
-  }
-
   protected changeSubdomainOwnerTx({
     newOwner,
     label,
@@ -590,23 +581,6 @@ export class IAMBase {
     };
   }
 
-  protected setDomainDefinitionTx({
-    domain,
-    data
-  }: {
-    domain: string;
-    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
-  }): EncodedCall {
-    return {
-      to: this._ensResolverAddress,
-      data: this._ensResolver.interface.functions.setText.encode([
-        namehash(domain),
-        NODE_FIELDS_KEY,
-        JSON.stringify(data)
-      ])
-    };
-  }
-
   protected async deleteSubdomain({ namespace }: { namespace: string }) {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
@@ -655,7 +629,9 @@ export class IAMBase {
     this._ensResolverAddress = ensResolverAddress;
     this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
-    this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
+    this._ensResolver = RoleDefinitionResolverFactory.connect(ensResolverAddress, this._provider);
+    this._domainDefinitionReader = new DomainReader(this._provider);
+    this._domainDefinitionTransactionFactory = new DomainTransactionFactory(this._ensResolver);
 
     const cacheOptions = cacheServerClientOptions[chainId];
 

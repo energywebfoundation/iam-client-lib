@@ -1,4 +1,5 @@
 import { VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
+import { setRegistryAddress } from "@energyweb/iam-contracts";
 import { CacheServerClientOptions } from "../cacheServerClient/cacheServerClient";
 import { MessagingMethod } from "../utils/constants";
 
@@ -50,6 +51,9 @@ export const messagingOptions: Record<number, MessagingOptions> = {
  */
 export const setChainConfig = function(chainId: number, config: Partial<ChainConfig>) {
   chainConfigs[chainId] = { ...chainConfigs[chainId], ...config };
+  if (config.ensRegistryAddress) {
+    setRegistryAddress(chainId, config.ensRegistryAddress);
+  }
 };
 
 /**

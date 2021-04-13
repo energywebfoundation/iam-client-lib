@@ -1,8 +1,8 @@
 import { EventFilter, utils, providers } from "ethers";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { PublicResolver } from "../../ethers/PublicResolver";
-import { abi as ensResolverContract } from "@ensdomains/resolver/build/contracts/PublicResolver.json";
-import { abi as ensRegistryContract } from "@ensdomains/resolver/build/contracts/ENS.json";
+import { abi as ensResolverContract } from "@energyweb/iam-contracts/build/contracts/PublicResolver.json";
+import { abi as ensRegistryContract } from "@energyweb/iam-contracts/build/contracts/ENS.json";
 
 import { namehash } from "./ENS_hash";
 import { emptyAddress } from "./constants";

@@ -16,6 +16,7 @@
 // @authors: Daniel Wojno
 
 import { providers, Signer } from "ethers";
+import { IRoleDefinition, IAppDefinition, IOrganizationDefinition } from "@energyweb/iam-contracts";
 import {
   DIDAttribute,
   IDIDDocument,
@@ -39,10 +40,7 @@ import {
 } from "./errors";
 import {
   AssetHistoryEventType, ClaimData,
-  IAppDefinition,
   IOrganization,
-  IOrganizationDefinition,
-  IRoleDefinition,
   Order
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -514,7 +512,7 @@ export class IAM extends IAMBase {
     data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
   }) {
     await this.send({
-      calls: [this.setDomainDefinitionTx({ domain, data })],
+      calls: [this._domainDefinitionTransactionFactory.editDomain({ domain, domainDefinition: data })],
       from: await this.getOwner({ namespace: domain })
     });
   }
@@ -547,12 +545,8 @@ export class IAM extends IAMBase {
         info: "Create organization subdomain"
       },
       {
-        tx: this.setDomainNameTx({ domain: orgDomain }),
-        info: "Register reverse name for organization subdomain"
-      },
-      {
-        tx: this.setDomainDefinitionTx({ domain: orgDomain, data }),
-        info: "Set definition for organization"
+        tx: this._domainDefinitionTransactionFactory.newDomain({ domain: orgDomain, domainDefinition: data }),
+        info: "Register reverse name and set definition for organization subdomain"
       },
       {
         tx: this.createSubdomainTx({
@@ -563,7 +557,7 @@ export class IAM extends IAMBase {
         info: "Create roles subdomain for organization"
       },
       {
-        tx: this.setDomainNameTx({ domain: rolesDomain }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: rolesDomain }),
         info: "Register reverse name for roles subdomain"
       },
       {
@@ -575,7 +569,7 @@ export class IAM extends IAMBase {
         info: "Create app subdomain for organization"
       },
       {
-        tx: this.setDomainNameTx({ domain: appsDomain }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: appsDomain }),
         info: "Register reverse name for app subdomain"
       }
     ].map(step => ({
@@ -617,12 +611,8 @@ export class IAM extends IAMBase {
         info: "Set subdomain for application"
       },
       {
-        tx: this.setDomainNameTx({ domain: appDomain }),
-        info: "Set name for application"
-      },
-      {
-        tx: this.setDomainDefinitionTx({ data, domain: appDomain }),
-        info: "Set definition for application"
+        tx: this._domainDefinitionTransactionFactory.newDomain({ domainDefinition: data, domain: appDomain }),
+        info: "Set name definition for application"
       },
       {
         tx: this.createSubdomainTx({
@@ -633,7 +623,7 @@ export class IAM extends IAMBase {
         info: "Create roles subdomain for application"
       },
       {
-        tx: this.setDomainNameTx({ domain: `${ENSNamespaceTypes.Roles}.${appDomain}` }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: `${ENSNamespaceTypes.Roles}.${appDomain}` }),
         info: "Set name for roles subdomain for application"
       }
     ].map(step => ({
@@ -675,12 +665,8 @@ export class IAM extends IAMBase {
         info: "Create subdomain for role"
       },
       {
-        tx: this.setDomainNameTx({ domain: newDomain }),
-        info: "Set name for role"
-      },
-      {
-        tx: this.setDomainDefinitionTx({ data, domain: newDomain }),
-        info: "Set role definition for role"
+        tx: this._domainDefinitionTransactionFactory.newRole({ domain: newDomain, roleDefinition: data }),
+        info: "Set name and definition for role"
       }
     ].map(step => ({
       ...step,
@@ -1012,10 +998,9 @@ export class IAM extends IAMBase {
       }
       throw new ENSTypeNotSupportedError();
     }
-    if (this._ensResolver) {
+    if (this._domainDefinitionReader) {
       const roleHash = namehash(namespace);
-      const metadata = await this._ensResolver.text(roleHash, "metadata");
-      return JSON.parse(metadata) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
+      return await this._domainDefinitionReader.read(roleHash) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
     }
     throw new ENSResolverNotInitializedError();
   }

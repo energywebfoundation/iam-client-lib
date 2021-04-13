@@ -1,46 +1,5 @@
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-import { PreconditionTypes } from "../utils/constants";
-
-export interface IRoleDefinition {
-  version: string;
-  roleType: string;
-  roleName: string;
-  fields: {
-    fieldType: string;
-    label: string;
-    required?: boolean;
-    minLength?: number;
-    maxLength?: number;
-    pattern?: string;
-    minValue?: number;
-    maxValue?: number;
-    minDate?: Date;
-    maxDate?: Date;
-  }[];
-  metadata: Record<string, unknown> | Record<string, unknown>[];
-  issuer: {
-    issuerType?: string;
-    did?: string[];
-    roleName?: string;
-  };
-  enrolmentPreconditions?: { type: PreconditionTypes; conditions: string[] }[];
-}
-
-export interface IAppDefinition {
-  appName: string;
-  logoUrl?: string;
-  websiteUrl?: string;
-  description?: string;
-  others?: Record<string, unknown>;
-}
-
-export interface IOrganizationDefinition {
-  orgName: string;
-  logoUrl?: string;
-  websiteUrl?: string;
-  description?: string;
-  others?: Record<string, unknown>;
-}
+import { IRoleDefinition, IAppDefinition, IOrganizationDefinition } from "@energyweb/iam-contracts";
 
 export interface IRole {
   uid: string;
