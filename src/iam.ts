@@ -23,6 +23,7 @@ import {
   IUpdateData
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
+import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
 import { IAMBase, ClaimData } from "./iam/iam-base";
@@ -51,6 +52,7 @@ import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/co
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
+import { DIDDocumentFull } from '@ew-did-registry/did-document';
 
 export type InitializeData = {
   did: string | undefined;
@@ -338,33 +340,51 @@ export class IAM extends IAMBase {
    *
    */
   async publishPublicClaim({ token }: { token: string }) {
-    if (this._userClaims) {
-      const { claimData, iss } = (await this.decodeJWTToken({ token })) as {
-        iss: string;
-        claimData: ClaimData;
-      };
-
-      const claimId = await this.getClaimId({ claimData });
-
-      if (!(await this._userClaims.verifySignature(token, iss))) {
-        throw new Error("Incorrect signature");
-      }
-      const url = await this._ipfsStore.save(token);
-      await this.updateDidDocument({
-        didAttribute: DIDAttribute.ServicePoint,
-        data: {
-          type: DIDAttribute.ServicePoint,
-          value: {
-            id: claimId,
-            serviceEndpoint: url,
-            hash: hashes.SHA256(token),
-            hashAlg: "SHA256"
-          }
-        }
-      });
-      return url;
+    if (!this._didSigner) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+    if (!this._userClaims) {
+      throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+    }
+    if (!this._document) {
+      throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
+    }
+    
+    const { iss, sub, claimData } = (await this.decodeJWTToken({ token })) as {
+      iss: string;
+      sub: string;
+      claimData: ClaimData;
+    };
+    if (!(await this._userClaims.verifySignature(token, iss))) {
+      throw new Error("Incorrect signature");
+    }
+
+    let document: DIDDocumentFull;
+    if (sub === this._did) {
+      document = this._document;
+    } else if ((await this.getOwnedAssets({})).find((a) => a.document.id === sub)) {
+      const operator = new ProxyOperator(this._didSigner, this._registrySetting, sub);
+      document = new DIDDocumentFull(sub, operator);
+    } else {
+      throw new Error(ERROR_MESSAGES.CLAIM_PUBLISHER_NOT_REQUESTER);
+    }
+
+    const url = await this._ipfsStore.save(token);
+    const claimId = await this.getClaimId({ claimData });
+    await document.update(
+      DIDAttribute.ServicePoint,
+      {
+        type: DIDAttribute.ServicePoint,
+        value: {
+          id: claimId,
+          serviceEndpoint: url,
+          hash: hashes.SHA256(token),
+          hashAlg: "SHA256"
+        }
+      }
+    );    
+
+    return url;
   }
 
   /**
@@ -1338,8 +1358,8 @@ export class IAM extends IAMBase {
 
   async issueClaimRequest({
     requester,
+    token,
     id,
-    token
   }: {
     requester: string;
     token: string;
@@ -1348,9 +1368,8 @@ export class IAM extends IAMBase {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
-
     const issuedToken = await this.issuePublicClaim({ token });
-    const preparedData: IClaimIssuance = {
+    const message: IClaimIssuance = {
       id,
       issuedToken,
       requester: requester,
@@ -1360,12 +1379,12 @@ export class IAM extends IAMBase {
 
     if (!this._natsConnection) {
       if (this._cacheClient) {
-        return this._cacheClient.issueClaim({ did: this._did, message: preparedData });
+        return this._cacheClient.issueClaim({ did: this._did, message });
       }
       throw new NATSConnectionNotEstablishedError();
     }
 
-    const dataToSend = this._jsonCodec?.encode(preparedData);
+    const dataToSend = this._jsonCodec?.encode(message);
     this._natsConnection.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
   }
 
