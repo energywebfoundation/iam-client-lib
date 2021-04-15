@@ -1,5 +1,5 @@
+import { getSubdomains } from "@energyweb/iam-contracts";
 import { changeResolver, ChangeResolverParams } from '../../src/utils/change_resolver';
-import { getSubdomains } from '../../src/utils/getSubDomains';
 import { root, rootOwner, rpcUrl } from '../iam.test';
 import { org1 } from '../organization.testSuite';
 import { ensRegistry, ensResolver, provider } from '../setup_contracts';

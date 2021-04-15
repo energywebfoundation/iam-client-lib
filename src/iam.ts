@@ -16,7 +16,7 @@
 // @authors: Daniel Wojno
 
 import { providers, Signer } from "ethers";
-import { IRoleDefinition, IAppDefinition, IOrganizationDefinition } from "@energyweb/iam-contracts";
+import { IRoleDefinition, IAppDefinition, IOrganizationDefinition, getSubdomains } from "@energyweb/iam-contracts";
 import {
   DIDAttribute,
   IDIDDocument,
@@ -45,7 +45,6 @@ import {
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
-import { getSubdomains } from "./utils/getSubDomains";
 import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";

@@ -14,7 +14,7 @@
 //
 // @authors: Kim Honoridez
 
-import { IRoleDefinition, IAppDefinition, IOrganizationDefinition } from "@energyweb/iam-contracts";
+import { IRoleDefinition, IAppDefinition, IOrganizationDefinition, getSubdomains } from "@energyweb/iam-contracts";
 import { IAM, ENSNamespaceTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
@@ -47,8 +47,6 @@ import {
 } from "@ew-did-registry/did-resolver-interface";
 
 import { setCacheClientOptions, setChainConfig, setMessagingOptions } from "./iam/chainConfig";
-
-import { getSubdomains } from "./utils/getSubDomains";
 
 // MAIN
 export { IAM };

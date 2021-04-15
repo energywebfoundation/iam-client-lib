@@ -1,9 +1,9 @@
+import { getSubdomains } from "@energyweb/iam-contracts";
 import { Wallet } from "ethers";
 import { providers } from "ethers";
 import { namehash } from "ethers/utils";
 import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
 import { PublicResolverFactory } from "../../ethers/PublicResolverFactory";
-import { getSubdomains } from "../utils/getSubDomains";
 import { NODE_FIELDS_KEY } from "./constants";
 import { labelhash } from "./ENS_hash";
 
