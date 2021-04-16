@@ -1443,7 +1443,7 @@ export class IAM extends IAMBase {
 
   // CLAIMS
 
-  async getRequestedClaims({
+  async getClaimsByRequester({
     did,
     isAccepted,
     parentNamespace

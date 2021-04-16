@@ -53,7 +53,7 @@ export interface ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
-  getRequestedClaims: ({
+  getClaimsByRequester: ({
     did,
     isAccepted,
     parentNamespace
