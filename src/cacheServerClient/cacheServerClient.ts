@@ -233,6 +233,24 @@ export class CacheServerClient implements ICacheServerClient {
     });
     return data;
   }
+  
+  async getClaimsBySubject({
+    did,
+    isAccepted,
+    parentNamespace
+  }: {
+    did: string;
+    isAccepted?: boolean;
+    parentNamespace?: string;
+  }) {
+    const { data } = await this.httpClient.get<Claim[]>(`/claim/subject/${did}`, {
+      params: {
+        accepted: isAccepted,
+        parentNamespace
+      }
+    });
+    return data;
+  }
 
   async requestClaim({ message, did }: { message: IClaimRequest; did: string }) {
     await this.httpClient.post<void>(`/claim/request/${did}`, message);

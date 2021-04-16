@@ -62,6 +62,14 @@ export interface ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
+  getClaimsBySubject: ({
+    did,
+    isAccepted,
+    parentNamespace
+  }: {
+    did: string, isAccepted?: boolean;
+    parentNamespace?: string;
+  }) => Promise<Claim[]>;
   requestClaim: ({ message, did }: { message: IClaimRequest; did: string }) => Promise<void>;
   issueClaim: ({ message, did }: { message: IClaimIssuance; did: string }) => Promise<void>;
   rejectClaim: ({ message, did }: { message: IClaimRejection; did: string }) => Promise<void>;
