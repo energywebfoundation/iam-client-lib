@@ -1455,10 +1455,10 @@ export class IAM extends IAMBase {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
-    return this._cacheClient.getRequestedClaims({ did, isAccepted, parentNamespace });
+    return this._cacheClient.getClaimsByRequester({ did, isAccepted, parentNamespace });
   }
 
-  async getIssuedClaims({
+  async getClaimsByIssuer({
     did,
     isAccepted,
     parentNamespace
@@ -1470,7 +1470,7 @@ export class IAM extends IAMBase {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
-    return this._cacheClient.getIssuedClaims({ did, isAccepted, parentNamespace });
+    return this._cacheClient.getClaimsByIssuer({ did, isAccepted, parentNamespace });
   }
 
   protected async nonOwnedNodesOf({

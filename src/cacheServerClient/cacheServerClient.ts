@@ -198,7 +198,7 @@ export class CacheServerClient implements ICacheServerClient {
     return data;
   }
 
-  async getIssuedClaims({
+  async getClaimsByIssuer({
     did,
     isAccepted,
     parentNamespace
