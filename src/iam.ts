@@ -1444,7 +1444,7 @@ export class IAM extends IAMBase {
   // CLAIMS
 
   /**
-  * @description - Returns claims for given requester. Allows filtering by status and role parent namespace
+  * @description - Returns claims for given requester. Allows filtering by status and parent namespace
   */
   async getClaimsByRequester({
     did,
@@ -1462,7 +1462,7 @@ export class IAM extends IAMBase {
   }
 
   /**
-  * @description - Returns claims for given issuer. Allows filtering by status and role parent namespace
+  * @description - Returns claims for given issuer. Allows filtering by status and parent namespace
   */
   async getClaimsByIssuer({
     did,
@@ -1480,7 +1480,7 @@ export class IAM extends IAMBase {
   }
 
   /**
-  * @description - Returns claims for given subject. Allows filtering by status and role parent namespace
+  * @description - Returns claims for given subject. Allows filtering by status and parent namespace
   */
   async getClaimsBySubject({
     did, isAccepted, parentNamespace
