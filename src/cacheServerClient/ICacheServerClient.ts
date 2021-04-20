@@ -44,7 +44,7 @@ export interface ICacheServerClient {
     search: string;
   }) => Promise<(IOrganization | IApp | IRole)[]>;
   getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
-  getIssuedClaims: ({
+  getClaimsByIssuer: ({
     did,
     isAccepted,
     parentNamespace
@@ -53,13 +53,21 @@ export interface ICacheServerClient {
     isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
-  getRequestedClaims: ({
+  getClaimsByRequester: ({
     did,
     isAccepted,
     parentNamespace
   }: {
     did: string;
     isAccepted?: boolean;
+    parentNamespace?: string;
+  }) => Promise<Claim[]>;
+  getClaimsBySubject: ({
+    did,
+    isAccepted,
+    parentNamespace
+  }: {
+    did: string, isAccepted?: boolean;
     parentNamespace?: string;
   }) => Promise<Claim[]>;
   requestClaim: ({ message, did }: { message: IClaimRequest; did: string }) => Promise<void>;

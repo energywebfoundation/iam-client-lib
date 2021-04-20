@@ -349,7 +349,7 @@ export class IAM extends IAMBase {
     if (!this._document) {
       throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
     }
-    
+
     const { iss, sub, claimData } = (await this.decodeJWTToken({ token })) as {
       iss: string;
       sub: string;
@@ -382,7 +382,7 @@ export class IAM extends IAMBase {
           hashAlg: "SHA256"
         }
       }
-    );    
+    );
 
     return url;
   }
@@ -1443,7 +1443,10 @@ export class IAM extends IAMBase {
 
   // CLAIMS
 
-  async getRequestedClaims({
+  /**
+  * @description - Returns claims for given requester. Allows filtering by status and parent namespace
+  */
+  async getClaimsByRequester({
     did,
     isAccepted,
     parentNamespace
@@ -1455,10 +1458,13 @@ export class IAM extends IAMBase {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
-    return this._cacheClient.getRequestedClaims({ did, isAccepted, parentNamespace });
+    return this._cacheClient.getClaimsByRequester({ did, isAccepted, parentNamespace });
   }
 
-  async getIssuedClaims({
+  /**
+  * @description - Returns claims for given issuer. Allows filtering by status and parent namespace
+  */
+  async getClaimsByIssuer({
     did,
     isAccepted,
     parentNamespace
@@ -1470,7 +1476,23 @@ export class IAM extends IAMBase {
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
-    return this._cacheClient.getIssuedClaims({ did, isAccepted, parentNamespace });
+    return this._cacheClient.getClaimsByIssuer({ did, isAccepted, parentNamespace });
+  }
+
+  /**
+  * @description - Returns claims for given subject. Allows filtering by status and parent namespace
+  */
+  async getClaimsBySubject({
+    did, isAccepted, parentNamespace
+  }: {
+    did: string;
+    isAccepted?: boolean;
+    parentNamespace?: string;
+  }) {
+    if (!this._cacheClient) {
+      throw new CacheClientNotProvidedError();
+    }
+    return this._cacheClient.getClaimsBySubject({ did, isAccepted, parentNamespace });
   }
 
   protected async nonOwnedNodesOf({

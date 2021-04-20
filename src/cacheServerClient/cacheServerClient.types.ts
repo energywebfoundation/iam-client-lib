@@ -77,6 +77,7 @@ export interface Claim {
   uid: string;
   id: string;
   requester: string;
+  subject: string;
   claimIssuer: string[];
   claimType: string;
   token: string;
