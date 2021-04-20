@@ -210,7 +210,7 @@ export class CacheServerClient implements ICacheServerClient {
     const { data } = await this.httpClient.get<Claim[]>(`/claim/issuer/${did}`, {
       params: {
         accepted: isAccepted,
-        parentNamespace
+        namespace: parentNamespace
       }
     });
     return data;
@@ -228,7 +228,7 @@ export class CacheServerClient implements ICacheServerClient {
     const { data } = await this.httpClient.get<Claim[]>(`/claim/requester/${did}`, {
       params: {
         accepted: isAccepted,
-        parentNamespace
+        namespace: parentNamespace
       }
     });
     return data;
@@ -246,7 +246,7 @@ export class CacheServerClient implements ICacheServerClient {
     const { data } = await this.httpClient.get<Claim[]>(`/claim/subject/${did}`, {
       params: {
         accepted: isAccepted,
-        parentNamespace
+        namespace: parentNamespace
       }
     });
     return data;
