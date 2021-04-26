@@ -25,7 +25,7 @@ import {
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { namehash } from "./utils/ENS_hash";
-import { v4 as uuid } from "uuid";
+import { v4, v5 } from "uuid";
 import { IAMBase, ClaimData } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
@@ -48,7 +48,7 @@ import {
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
 import { getSubdomains } from "./utils/getSubDomains";
-import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
+import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes, UUID_NAMESPACE } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
@@ -329,7 +329,7 @@ export class IAM extends IAMBase {
     if (claimData.claimType && id && claimData.claimTypeVersion === claimTypeVersion) {
       return id;
     }
-    return uuid();
+    return v4();
   }
 
   /**
@@ -1330,13 +1330,13 @@ export class IAM extends IAMBase {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
     }
 
-    const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
+    const { enrolmentPreconditions, roleName, version } = roleDefinition as IRoleDefinition;
 
     this.verifyEnrolmentPreconditions({ claims: didDocument.service, enrolmentPreconditions });
 
     const token = await this.createPublicClaim({ data: claim, subject });
     const message: IClaimRequest = {
-      id: uuid(),
+      id: v5(JSON.stringify({ subject, roleName, version }), UUID_NAMESPACE),
       token,
       claimIssuer: issuer,
       requester: this._did,
