@@ -53,6 +53,7 @@ import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { DIDDocumentFull } from '@ew-did-registry/did-document';
 import { Methods } from '@ew-did-registry/did';
+import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 
 export type InitializeData = {
   did: string | undefined;
@@ -363,7 +364,7 @@ export class IAM extends IAMBase {
     if (sub === this._did) {
       document = this._document;
     } else if ((await this.getOwnedAssets({})).find((a) => a.document.id === sub)) {
-      const operator = new ProxyOperator(this._didSigner, this._registrySetting, sub);
+      const operator = new ProxyOperator(this._didSigner, this._registrySetting, addressOf(sub));
       document = new DIDDocumentFull(sub, operator);
     } else {
       throw new Error(ERROR_MESSAGES.CLAIM_PUBLISHER_NOT_REQUESTER);
