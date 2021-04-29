@@ -88,3 +88,4 @@ export {
 };
 
 export { GnosisIam as SafeIam } from "./GnosisIam";
+export * from './utils/did';
