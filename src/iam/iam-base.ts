@@ -42,6 +42,8 @@ import {
 } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
 import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
+import { IdentityManagerFactory } from '../../ethers/IdentityManagerFactory';
+import { IdentityManager } from '../../ethers/IdentityManager';
 
 const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
@@ -107,7 +109,7 @@ export class IAMBase {
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
 
-  protected _assetManagerAddress: string;
+  protected _assetManager: IdentityManager;
 
   protected _cacheClient: ICacheServerClient;
 
@@ -612,6 +614,9 @@ export class IAMBase {
       throw new Error(
         `Chain config for chainId: ${chainId} does not contain assetManagerContractAddress`
       );
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
 
     this._registrySetting = {
       address: didContractAddress,
@@ -621,7 +626,7 @@ export class IAMBase {
 
     this._ensRegistryAddress = ensRegistryAddress;
     this._ensResolverAddress = ensResolverAddress;
-    this._assetManagerAddress = assetManagerAddress;
+    this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
     this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
 

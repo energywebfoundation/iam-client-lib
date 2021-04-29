@@ -6,6 +6,7 @@ import { PublicResolverFactory } from "../ethers/PublicResolverFactory";
 import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
 import { IdentityManagerFactory } from "../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../ethers/IdentityManager";
+import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
 
 const { JsonRpcProvider } = providers;
 const { parseEther } = utils;
@@ -26,7 +27,10 @@ export const deployContracts = async (privateKey: string): Promise<void> => {
   ensRegistry = await new EnsRegistryFactory(wallet).deploy();
   ensResolver = await new PublicResolverFactory(wallet).deploy(ensRegistry.address);
   didContract = await didContractFactory.deploy();
-  assetsManager = await new IdentityManagerFactory(wallet).deploy();
+
+  const identityFactory = new OfferableIdentityFactory(wallet);
+  const library = await identityFactory.deploy();
+  assetsManager = await new IdentityManagerFactory(wallet).deploy(library.address);
 };
 
 export const replenish = async (acc: string) => {
