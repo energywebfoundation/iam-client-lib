@@ -340,6 +340,9 @@ export class IAM extends IAMBase {
    *
    */
   async publishPublicClaim({ token }: { token: string }) {
+    if (!this._did) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
     if (!this._didSigner) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
@@ -350,11 +353,17 @@ export class IAM extends IAMBase {
       throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
     }
 
-    const { iss, sub, claimData } = (await this.decodeJWTToken({ token })) as {
+    const payload = (await this.decodeJWTToken({ token })) as {
       iss: string;
       sub: string;
       claimData: ClaimData;
     };
+    const { iss, claimData } = payload;
+    let sub = payload.sub;
+    if (!sub || sub.length === 0) {
+      sub = this._did;
+    }
+
     if (!(await this._userClaims.verifySignature(token, iss))) {
       throw new Error("Incorrect signature");
     }

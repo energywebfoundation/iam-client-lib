@@ -24,5 +24,5 @@ export enum ERROR_MESSAGES {
   METAMASK_EXTENSION_NOT_AVAILABLE = "Selected Metamask provider but Metamask not available",
   ROLE_PRECONDITION_NOT_MET = "Precondition not met, user not eligible to enrol for a role",
   ROLE_NOT_EXISTS = "Role you want to enroll to does not exists",
-  CLAIM_PUBLISHER_NOT_REQUESTER = "Claim publisher did not requested this claim"
+  CLAIM_PUBLISHER_NOT_REQUESTER = "Claim subject is not controlled by publisher"
 }
