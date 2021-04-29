@@ -51,8 +51,8 @@ import { getSubdomains } from "./utils/getSubDomains";
 import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
-import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
 import { DIDDocumentFull } from '@ew-did-registry/did-document';
+import { Methods } from '@ew-did-registry/did';
 
 export type InitializeData = {
   did: string | undefined;
@@ -1548,22 +1548,33 @@ export class IAM extends IAMBase {
     if (!this._address) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
-    const asset = new OfferableIdentityFactory(this._signer);
-    const { address } = await asset.deploy(this._address, this._assetManagerAddress);
-    if (this._cacheClient) {
-      /*
-       * we need to wait until cache server will resolve assets did document
-       * which is taking some time
-       */
-      let asset = await this.getAssetById({ id: `did:ethr:${address}` });
-      let loops = 0;
-      while (!asset && loops < 20) {
-        asset = await this.getAssetById({ id: `did:ethr:${address}` });
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        loops++;
-      }
+    if (!this._didSigner) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    return address;
+    try {
+      const event = (await (await this._assetManager.createIdentity(this._address)).wait())
+        .events?.find((e) => e.event === this._assetManager.interface.events.IdentityCreated.name);
+      const identity = (event?.args as string[])[0];
+      const operator = new ProxyOperator(this._didSigner, this._registrySetting, identity);
+      await operator.create();
+
+      if (this._cacheClient) {
+        let asset = await this.getAssetById({ id: `did:ethr:${identity}` });
+        let loops = 0;
+        /*
+         * we need to wait until cache server will resolve assets did document
+         * which is taking some time
+         */
+        while (!asset && loops < 20) {
+          asset = await this.getAssetById({ id: `did:${Methods.Erc1056}:${identity}` });
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          loops++;
+        }
+      }
+      return identity;
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 
   public async offerAsset({ assetDID, offerTo }: { assetDID: string; offerTo: string }) {
