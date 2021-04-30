@@ -1415,8 +1415,9 @@ export class IAM extends IAMBase {
   async deleteClaim({ id }: { id: string }) {
     if (this._cacheClient) {
       await this._cacheClient.deleteClaim({ claimId: id });
+    } else {
+      throw new CacheClientNotProvidedError();
     }
-    throw new CacheClientNotProvidedError();
   }
 
   async subscribeTo({
