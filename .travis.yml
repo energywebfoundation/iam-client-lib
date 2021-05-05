@@ -26,7 +26,7 @@ deploy:
       on:
           branch: develop
     - provider: script
-      script: 'npx semantic-release'
+      script: 'npx semantic-release && git checkout develop && git merge origin/master && git push origin develop'
       skip_cleanup: true
       on:
           branch: master
