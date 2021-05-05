@@ -54,6 +54,7 @@ import { AxiosError } from "axios";
 import { DIDDocumentFull } from '@ew-did-registry/did-document';
 import { Methods } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
+import { isValidDID } from './utils/did';
 
 export type InitializeData = {
   did: string | undefined;
@@ -361,7 +362,7 @@ export class IAM extends IAMBase {
     };
     const { iss, claimData } = payload;
     let sub = payload.sub;
-    if (!sub || sub.length === 0) {
+    if (!sub || sub.length === 0 || !isValidDID(sub)) {
       sub = this._did;
     }
 
