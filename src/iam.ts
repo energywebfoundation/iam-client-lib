@@ -53,6 +53,7 @@ import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { DIDDocumentFull } from '@ew-did-registry/did-document';
 import { Methods } from '@ew-did-registry/did';
+import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 
 export type InitializeData = {
   did: string | undefined;
@@ -92,7 +93,7 @@ export enum ENSNamespaceTypes {
  * Decentralized Identity and Access Management (IAM) Type
  */
 export class IAM extends IAMBase {
-  private _exchangeSubscription: Subscription | undefined;
+  private _subscriptions: Subscription[] = [];
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
@@ -372,7 +373,7 @@ export class IAM extends IAMBase {
     if (sub === this._did) {
       document = this._document;
     } else if ((await this.getOwnedAssets({})).find((a) => a.document.id === sub)) {
-      const operator = new ProxyOperator(this._didSigner, this._registrySetting, sub);
+      const operator = new ProxyOperator(this._didSigner, this._registrySetting, addressOf(sub));
       document = new DIDDocumentFull(sub, operator);
     } else {
       throw new Error(ERROR_MESSAGES.CLAIM_PUBLISHER_NOT_REQUESTER);
@@ -1427,26 +1428,34 @@ export class IAM extends IAMBase {
     throw new CacheClientNotProvidedError();
   }
 
-  async subscribeToMessages({
-    topic = `${this._did}.${NATS_EXCHANGE_TOPIC}`,
+  async subscribeTo({
+    subject = `${this._did}.${NATS_EXCHANGE_TOPIC}`,
     messageHandler
   }: {
-    topic?: string;
+    subject?: string;
     messageHandler: (data: IMessage) => void;
   }) {
     if (!this._natsConnection) {
       return;
     }
-    this._exchangeSubscription = this._natsConnection.subscribe(topic);
-    for await (const msg of this._exchangeSubscription) {
-      const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
-      messageHandler(decodedMessage);
-    }
+    const subscription = this._natsConnection.subscribe(subject, {
+      callback: (err, msg) => {
+        if (err) {
+          console.error(`Nats error:${err.message}`);
+          return;
+        }
+        const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
+        messageHandler(decodedMessage);
+      }
+    });
+    this._subscriptions.push(subscription);
+    return subscription.getID();
   }
 
-  async unsubscribeFromMessages() {
-    if (this._exchangeSubscription) {
-      this._exchangeSubscription.unsubscribe();
+  async unsubscribeFrom(subscriptionId: number) {
+    const i = this._subscriptions.findIndex((s) => s.getID() === subscriptionId);
+    if (i !== -1) {
+      this._subscriptions.splice(i, 1)[0].unsubscribe();
     }
   }
 
