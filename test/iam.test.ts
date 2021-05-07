@@ -14,6 +14,7 @@ import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
+import { approvalTests } from "./approval.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
 import { utilsTests } from "./utilsTests/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
@@ -56,7 +57,7 @@ beforeAll(async () => {
   }
 });
 
-describe("IAM tests", () => {
+describe.only("IAM tests", () => {
   test("can create root node", async () => {
     const tx = await ensRegistry.setSubnodeRecord(
       namehash(""),
@@ -84,9 +85,10 @@ describe("IAM tests", () => {
   });
 });
 
-describe("Organization tests", orgTests);
+describe.only("Organization tests", orgTests);
 describe("Application tests", appsTests);
 describe("InitializeConnection tests", initializeConnectionTests);
 describe("Claim tests", claimsTests);
 describe("Utils tests", utilsTests);
 describe("Assets tests", assetsTests);
+describe.only("Approval tests", approvalTests);

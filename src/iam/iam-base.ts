@@ -542,11 +542,11 @@ export class IAMBase {
     return this._ensRegistry.owner(node);
   }
 
-  protected async send(tx: Transaction) {
+  protected async send({ calls }: Transaction) {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    for await (const call of tx.calls) {
+    for await (const call of calls) {
       await (await this._signer.sendTransaction({ ...call, ...this._transactionOverrides })).wait();
     }
   }

@@ -7,6 +7,11 @@ import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
 import { IdentityManagerFactory } from "../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../ethers/IdentityManager";
 import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
+import { RoleDefinitionResolver } from "@energyweb/iam-contracts/typechain/RoleDefinitionResolver";
+import { RoleDefinitionResolver__factory } from '@energyweb/iam-contracts/typechain/factories/RoleDefinitionResolver__factory';
+import { DomainNotifier } from "@energyweb/iam-contracts/typechain/DomainNotifier";
+import { DomainNotifier__factory } from '@energyweb/iam-contracts/typechain/factories/DomainNotifier__factory';
+import { setRegistryAddress, addKnownResolver, ResolverContractType } from '@energyweb/iam-contracts';
 
 const { JsonRpcProvider } = providers;
 const { parseEther } = utils;
@@ -17,20 +22,31 @@ export const GANACHE_PORT = 8544;
 export const provider = new JsonRpcProvider(`http://localhost:${GANACHE_PORT}`);
 export let ensRegistry: EnsRegistry;
 export let ensResolver: PublicResolver;
+export let notifier: DomainNotifier;
+export let roleResolver: RoleDefinitionResolver;
 export let didContract: Contract;
 export let assetsManager: IdentityManager;
 
 export const deployContracts = async (privateKey: string): Promise<void> => {
   const wallet = new Wallet(privateKey, provider);
   await replenish(wallet.address);
+
   const didContractFactory = new ContractFactory(didContractAbi, didContractBytecode, wallet);
-  ensRegistry = await new EnsRegistryFactory(wallet).deploy();
-  ensResolver = await new PublicResolverFactory(wallet).deploy(ensRegistry.address);
   didContract = await didContractFactory.deploy();
 
+  ensRegistry = await (await new EnsRegistryFactory(wallet).deploy()).deployed();
+  ensResolver = await (await new PublicResolverFactory(wallet).deploy(ensRegistry.address)).deployed();
+  notifier = await (await new DomainNotifier__factory(wallet).deploy(ensRegistry.address)).deployed();
+  roleResolver = await (await new RoleDefinitionResolver__factory(wallet).deploy(ensRegistry.address, notifier.address)).deployed();
+
+  const chainId = (await provider.getNetwork()).chainId;
+  setRegistryAddress(chainId, ensRegistry.address);
+  addKnownResolver(chainId, roleResolver.address, ResolverContractType.RoleDefinitionResolver_v1);
+  addKnownResolver(chainId, roleResolver.address, ResolverContractType.PublicResolver);
+
   const identityFactory = new OfferableIdentityFactory(wallet);
-  const library = await identityFactory.deploy();
-  assetsManager = await new IdentityManagerFactory(wallet).deploy(library.address);
+  const library = await (await identityFactory.deploy()).deployed();
+  assetsManager = await (await new IdentityManagerFactory(wallet).deploy(library.address)).deployed();
 };
 
 export const replenish = async (acc: string) => {
