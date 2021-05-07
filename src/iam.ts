@@ -362,6 +362,8 @@ export class IAM extends IAMBase {
     };
     const { iss, claimData } = payload;
     let sub = payload.sub;
+    // Initial claim design assumed that role subject is requester because of which
+    // sub filed was ignored
     if (!sub || sub.length === 0 || !isValidDID(sub)) {
       sub = this._did;
     }
