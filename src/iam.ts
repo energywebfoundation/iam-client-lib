@@ -54,6 +54,7 @@ import { AxiosError } from "axios";
 import { DIDDocumentFull } from '@ew-did-registry/did-document';
 import { Methods } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
+import { isValidDID } from './utils/did';
 
 export type InitializeData = {
   did: string | undefined;
@@ -341,6 +342,9 @@ export class IAM extends IAMBase {
    *
    */
   async publishPublicClaim({ token }: { token: string }) {
+    if (!this._did) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
     if (!this._didSigner) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
@@ -351,11 +355,19 @@ export class IAM extends IAMBase {
       throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
     }
 
-    const { iss, sub, claimData } = (await this.decodeJWTToken({ token })) as {
+    const payload = (await this.decodeJWTToken({ token })) as {
       iss: string;
       sub: string;
       claimData: ClaimData;
     };
+    const { iss, claimData } = payload;
+    let sub = payload.sub;
+    // Initial claim design assumed that role subject is requester because of which
+    // sub filed was ignored
+    if (!sub || sub.length === 0 || !isValidDID(sub)) {
+      sub = this._did;
+    }
+
     if (!(await this._userClaims.verifySignature(token, iss))) {
       throw new Error("Incorrect signature");
     }
