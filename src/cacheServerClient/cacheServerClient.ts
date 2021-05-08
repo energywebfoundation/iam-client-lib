@@ -16,29 +16,38 @@ import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 
 import { ICacheServerClient } from "./ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
+import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import { Signer } from "ethers";
 
 export interface CacheServerClientOptions {
   url: string;
   cacheServerSupportsAuth?: boolean;
 }
 export class CacheServerClient implements ICacheServerClient {
+  public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
   private httpClient: AxiosInstance;
   private isAlreadyFetchingAccessToken = false;
   private failedRequests: Array<(token?: string) => void> = [];
   private authEnabled: boolean;
   private isBrowser: boolean;
   private refresh_token: string | undefined;
+  private readonly signer: Signer
 
-  constructor({ url, cacheServerSupportsAuth = true }: CacheServerClientOptions) {
+  constructor({ url, cacheServerSupportsAuth = true }: CacheServerClientOptions, signer: Signer) {
     this.httpClient = axios.create({
       baseURL: url,
       withCredentials: true
     });
-    this.httpClient.interceptors.response.use(function(response: AxiosResponse) {
+    this.httpClient.interceptors.response.use(function (response: AxiosResponse) {
       return response;
     }, this.handleUnauthorized);
     this.authEnabled = cacheServerSupportsAuth;
     this.isBrowser = isBrowser();
+    this.signer = signer;
+  }
+
+  isAuthEnabled() {
+    return this.authEnabled;
   }
 
   async handleRefreshToken() {
@@ -86,9 +95,13 @@ export class CacheServerClient implements ICacheServerClient {
     return Promise.reject(error);
   };
 
-  async login(identityToken: string) {
-    if (!this.authEnabled) return;
+  async login() {
+    // Simple test to check if logged in or no. TODO: have dedicated endpoint on the cache-server
+    // If receive unauthorized response, expect that refreshToken() will be called
+    await this.getRoleDefinition({ namespace: "testing.if.logged.in" });
+  }
 
+  private async performlogin(identityToken: string) {
     const {
       data: { refreshToken, token }
     } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
@@ -99,12 +112,20 @@ export class CacheServerClient implements ICacheServerClient {
       this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       this.refresh_token = refreshToken;
     }
+    return { token, refreshToken };
   }
 
-  async refreshToken() {
-    const { data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
-      `/refresh_token${this.isBrowser ? "" : `?refresh_token=${this.refresh_token}`}`
-    );
+  private async refreshToken() {
+    let data: { token: string, refreshToken: string };
+    try {
+      ({ data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
+        `/refresh_token${this.isBrowser ? "" : `?refresh_token=${this.refresh_token}`}`
+      ));
+    }
+    catch {
+      this.pubKeyAndIdentityToken = await getPublicKeyAndIdentityToken(this.signer);
+      data = await this.performlogin(this.pubKeyAndIdentityToken.identityToken);
+    }
     return data;
   }
 
@@ -233,7 +254,7 @@ export class CacheServerClient implements ICacheServerClient {
     });
     return data;
   }
-  
+
   async getClaimsBySubject({
     did,
     isAccepted,
