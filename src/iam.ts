@@ -204,7 +204,7 @@ export class IAM extends IAMBase {
   /**
    * isConnected
    *
-   * @returns info if the connection is already established
+   * @returns info if the connection to wallet/signer is already established
    *
    */
   isConnected(): boolean {
