@@ -68,7 +68,7 @@ export const claimsTests = () => {
     await iam.createSelfSignedClaim({ data: { profile: { name: "Dan" } } });
     const { service: updatedService = [] } = await iam.getDidDocument();
     const { profile } = updatedService.find(({ id: claimId }) => id === claimId) || {};
-    expect(profile.name).toBe("Dan");
+    expect(profile?.name).toBe("Dan");
     expect(updatedService.length).toBe(4);
   });
 };
