@@ -196,7 +196,7 @@ export class IAM extends IAMBase {
       connected: this.isConnected() || false,
       userClosedModal: false,
       didDocument: await this.getDidDocument(),
-      identityToken: this._didSigner?.identityToken,
+      identityToken: this._identityToken,
       realtimeExchangeConnected: Boolean(this._natsConnection)
     };
   }

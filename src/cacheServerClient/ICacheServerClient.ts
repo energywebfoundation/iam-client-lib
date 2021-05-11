@@ -1,5 +1,6 @@
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
+import { IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 import {
   Asset,
   AssetHistory,
@@ -15,7 +16,9 @@ import {
 } from "./cacheServerClient.types";
 
 export interface ICacheServerClient {
-  login: (claim: string) => Promise<void>;
+  pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
+  login: () => Promise<void>;
+  isAuthEnabled: () => boolean;
   getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
   getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
   getAppDefinition: ({ namespace }: { namespace: string }) => Promise<IAppDefinition>;

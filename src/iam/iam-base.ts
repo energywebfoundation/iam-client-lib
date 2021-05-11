@@ -23,9 +23,8 @@ import {
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
-import { Owner as IdentityOwner } from "../signer/Signer";
+import { Owner as IdentityOwner, Owner } from "../signer/Owner";
 import { WalletProvider } from "../types/WalletProvider";
-import { SignerFactory } from "../signer/SignerFactory";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
 import {
   emptyAddress,
@@ -44,6 +43,7 @@ import { WalletConnectService } from "../walletconnect/WalletConnectService";
 import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
 import { IdentityManagerFactory } from '../../ethers/IdentityManagerFactory';
 import { IdentityManager } from '../../ethers/IdentityManager';
+import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 
 const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
@@ -107,6 +107,7 @@ export class IAMBase {
   protected _signer: Signer | undefined;
   protected _safeAddress: string | undefined;
   protected _didSigner: IdentityOwner | undefined;
+  protected _identityToken: string | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
   protected _providerType: WalletProvider | undefined;
   protected _publicKey: string | undefined;
@@ -161,10 +162,6 @@ export class IAMBase {
 
     if (this._runningInBrowser) {
       this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
-      const publicKey = localStorage.getItem(PUBLIC_KEY);
-      if (publicKey) {
-        this._publicKey = publicKey;
-      }
     }
 
     this._walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
@@ -187,15 +184,36 @@ export class IAMBase {
       await this.setupMessaging();
     }
     if (this._signer) {
-      this._didSigner = await SignerFactory.create({
-        provider: this._provider,
-        signer: this._signer,
-        publicKey: this._publicKey
-      });
-      this._publicKey = this._didSigner.publicKey;
-      this._didSigner.identityToken &&
-        (await this.loginToCacheServer(this._didSigner.identityToken));
-      await this.setAddress();
+      let identityToken: string | undefined;
+      let publicKey: string | undefined;
+
+      // Login to the cache-server may require signature of identityToken
+      // from which we can derive a publicKey
+      const fromCacheLogin = await this.loginToCacheServer();
+      publicKey = fromCacheLogin?.publicKey;
+      identityToken = fromCacheLogin?.identityToken;
+
+      // We need a pubKey to create DID document.
+      // So if didn't get one from cache server login, need to get in some other way.  
+      if (!publicKey && this._runningInBrowser) {
+        // Check local storage.
+        // This is to that publicKey can be reused when refreshing the page
+        const savedPublicKey = localStorage.getItem(PUBLIC_KEY);
+        if (savedPublicKey) {
+          publicKey = savedPublicKey;
+        }
+      }
+      if (!publicKey) {
+        ({ publicKey, identityToken } = await getPublicKeyAndIdentityToken(this._signer));
+      }
+      if (!publicKey) {
+        throw new Error(ERROR_MESSAGES.UNABLE_TO_OBTAIN_PUBLIC_KEY);
+      }
+      this._didSigner = new Owner(this._signer, this._provider, publicKey);
+      this._identityToken = identityToken;
+      this._publicKey = publicKey;
+
+      identityToken && await this.setAddress();
       this.setDid();
       await this.setDocument();
       this.setClaims();
@@ -352,10 +370,13 @@ export class IAMBase {
     this._signer = undefined;
   }
 
-  private async loginToCacheServer(token: string) {
-    if (this._cacheClient) {
-      await this._cacheClient.login(token);
+  private async loginToCacheServer(): Promise<IPubKeyAndIdentityToken | undefined> {
+    if (this._signer && this._cacheClient && this._cacheClient.isAuthEnabled()) {
+      await this._cacheClient.login();
+      // Expect that if login generated pubKey&IdToken, then will be accessible as property
+      return this._cacheClient.pubKeyAndIdentityToken;
     }
+    return undefined;
   }
 
   protected async setAddress() {
@@ -648,7 +669,7 @@ export class IAMBase {
 
     const cacheOptions = cacheServerClientOptions[chainId];
 
-    cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions));
+    cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions, this._signer));
 
     this._messagingOptions = messagingOptions[chainId];
   }
