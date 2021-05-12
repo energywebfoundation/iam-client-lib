@@ -26,7 +26,7 @@ import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase, ClaimData } from "./iam/iam-base";
+import { IAMBase} from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
@@ -38,7 +38,7 @@ import {
   ERROR_MESSAGES
 } from "./errors";
 import {
-  AssetHistoryEventType,
+  AssetHistoryEventType, ClaimData,
   IAppDefinition,
   IOrganization,
   IOrganizationDefinition,

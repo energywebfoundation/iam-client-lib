@@ -34,7 +34,11 @@ import {
   Asset,
   AssetHistory,
   AssetHistoryEventType,
-  Order
+  Order,
+  ClaimData,
+  Profile,
+  AssetProfiles,
+  AssetProfile
 } from "./cacheServerClient/cacheServerClient.types";
 
 import {
@@ -84,7 +88,11 @@ export {
   IRole,
   IRoleDefinition,
   Asset,
-  AssetHistory
+  AssetHistory,
+  ClaimData,
+  Profile,
+  AssetProfiles,
+  AssetProfile
 };
 
 export { GnosisIam as SafeIam } from "./GnosisIam";
