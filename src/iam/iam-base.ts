@@ -16,6 +16,7 @@ import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
 import {
+  ClaimData,
   IAppDefinition,
   IOrganizationDefinition,
   IRoleDefinition
@@ -69,28 +70,6 @@ export type Transaction = {
   calls: EncodedCall[];
   from: string;
 };
-
-export interface AssetProfile {
-  name?: string;
-  icon?: string;
-}
-
-export interface AssetProfiles {
-  [key:string]: AssetProfile;
-}
-
-export interface Profile {
-  name?: string;
-  birthdate?: string;
-  address?: string;
-  assetProfiles?: AssetProfiles;
-}
-
-export interface ClaimData extends Record<string, unknown> {
-  profile?: Profile;
-  claimType?: string;
-  claimTypeVersion?: string;
-}
 
 /**
  * @class
@@ -194,7 +173,7 @@ export class IAMBase {
       identityToken = fromCacheLogin?.identityToken;
 
       // We need a pubKey to create DID document.
-      // So if didn't get one from cache server login, need to get in some other way.  
+      // So if didn't get one from cache server login, need to get in some other way.
       if (!publicKey && this._runningInBrowser) {
         // Check local storage.
         // This is to that publicKey can be reused when refreshing the page
