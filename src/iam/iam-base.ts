@@ -376,7 +376,9 @@ export class IAMBase {
   }
 
   private setDid() {
-    this._did = `did:${Methods.Erc1056}:${this._address}`;
+    if (this._address) {
+      this._did = `did:${Methods.Erc1056}:${this._address}`;
+    }
   }
 
   private async setDocument() {
