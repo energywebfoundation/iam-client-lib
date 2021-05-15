@@ -89,7 +89,7 @@ export class IAMBase {
   protected _identityToken: string | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
   protected _providerType: WalletProvider | undefined;
-  protected _publicKey: string | undefined;
+  protected _publicKey: string | undefined | null;
 
   protected _registrySetting: RegistrySettings;
   protected _resolver: Resolver;
@@ -139,8 +139,11 @@ export class IAMBase {
 
     this._ipfsStore = new DidStore(ipfsUrl);
 
+    // Need to get providerType and publicKey in constructor because they are used
+    // to infer if the session is active.
     if (this._runningInBrowser) {
       this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
+      this._publicKey = localStorage.getItem(PUBLIC_KEY);
     }
 
     this._walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
@@ -163,34 +166,25 @@ export class IAMBase {
       await this.setupMessaging();
     }
     if (this._signer) {
-      let identityToken: string | undefined;
-      let publicKey: string | undefined;
-
-      const savedPublicKey = localStorage.getItem(PUBLIC_KEY);
-      const fromCacheLogin = await this.loginToCacheServer(savedPublicKey);
-      publicKey = fromCacheLogin?.publicKey;
-      identityToken = fromCacheLogin?.identityToken;
+      // Assume that this._publicKey contains the publicKey stored in Local Storage, if there is one
+      const fromCacheLogin = await this.loginToCacheServer(this._publicKey);
+      this._publicKey = this._publicKey ?? fromCacheLogin?.publicKey;
+      this._identityToken = fromCacheLogin?.identityToken;
 
       // We need a pubKey to create DID document.
-      // So if didn't get one from cache server login, need to get in some other way.
-      if (!publicKey && this._runningInBrowser) {
-        // Check local storage.
-        // This is to that publicKey can be reused when refreshing the page
-        if (savedPublicKey) {
-          publicKey = savedPublicKey;
-        }
+      // So if didn't get one from cache server login and there wasn't one saved
+      // then need to request signature to compute one.
+      if (!this._publicKey) {
+        const { publicKey, identityToken } = await getPublicKeyAndIdentityToken(this._signer);
+        this._publicKey = publicKey;
+        this._identityToken = identityToken;
       }
-      if (!publicKey) {
-        ({ publicKey, identityToken } = await getPublicKeyAndIdentityToken(this._signer));
-      }
-      if (!publicKey) {
+      if (!this._publicKey) {
         throw new Error(ERROR_MESSAGES.UNABLE_TO_OBTAIN_PUBLIC_KEY);
       }
-      this._didSigner = new Owner(this._signer, this._provider, publicKey);
-      this._identityToken = identityToken;
-      this._publicKey = publicKey;
+      this._didSigner = new Owner(this._signer, this._provider, this._publicKey);
 
-      identityToken && await this.setAddress();
+      await this.setAddress();
       this.setDid();
       await this.setDocument();
       this.setClaims();
@@ -347,7 +341,7 @@ export class IAMBase {
     this._signer = undefined;
   }
 
-  private async loginToCacheServer(savedPublicKey: string | null): Promise<IPubKeyAndIdentityToken | undefined> {
+  private async loginToCacheServer(savedPublicKey: string | undefined | null): Promise<IPubKeyAndIdentityToken | undefined> {
     if (this._signer && this._cacheClient && this._cacheClient.isAuthEnabled()) {
       // If no saved publicKey then assume that user has never signed in or has signed out 
       if (!savedPublicKey) {
