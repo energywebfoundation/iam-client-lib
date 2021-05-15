@@ -166,8 +166,7 @@ export class IAMBase {
       await this.setupMessaging();
     }
     if (this._signer) {
-      // Assume that this._publicKey contains the publicKey stored in Local Storage, if there is one
-      const fromCacheLogin = await this.loginToCacheServer(this._publicKey);
+      const fromCacheLogin = await this.loginToCacheServer();
       this._publicKey = this._publicKey ?? fromCacheLogin?.publicKey;
       this._identityToken = fromCacheLogin?.identityToken;
 
@@ -272,6 +271,15 @@ export class IAMBase {
     throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
   }
 
+  /**
+   * Check if session is active
+   *
+   * @returns boolean that indicates the session state
+   */
+  public isSessionActive() {
+    return Boolean(this._publicKey) && Boolean(this._providerType);
+  }
+
   private storeSession() {
     if (this._runningInBrowser && this._didSigner) {
       this._providerType && localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
@@ -341,15 +349,15 @@ export class IAMBase {
     this._signer = undefined;
   }
 
-  private async loginToCacheServer(savedPublicKey: string | undefined | null): Promise<IPubKeyAndIdentityToken | undefined> {
+  private async loginToCacheServer(): Promise<IPubKeyAndIdentityToken | undefined> {
     if (this._signer && this._cacheClient && this._cacheClient.isAuthEnabled()) {
-      // If no saved publicKey then assume that user has never signed in or has signed out 
-      if (!savedPublicKey) {
+      // If session isn't active then assume that user has never signed in or has signed out 
+      if (!this.isSessionActive()) {
         const { pubKeyAndIdentityToken } = await this._cacheClient.login();
         return pubKeyAndIdentityToken;
       }
-      // publicKey is there so maybe user has signed in before.
-      // Test cache-server login to confirm that their tokens (in the http-only cookies) are still valid
+      // session is active so maybe user has signed in before.
+      // Test cache-server login to confirm that their tokens are still valid
       else {
         await this._cacheClient.testLogin();
         // Expect that if login generated pubKey&IdToken, then will be accessible as property of cacheClient

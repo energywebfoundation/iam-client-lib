@@ -26,7 +26,7 @@ import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase} from "./iam/iam-base";
+import { IAMBase } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
@@ -129,17 +129,6 @@ export class IAM extends IAMBase {
 
   getSigner(): providers.JsonRpcSigner | Signer | undefined {
     return this._signer;
-  }
-
-  // CONNECTION
-
-  /**
-   * Check if session is active
-   *
-   * @returns boolean that indicates the session state
-   */
-  isSessionActive() {
-    return Boolean(this._publicKey) && Boolean(this._providerType);
   }
 
   /**
