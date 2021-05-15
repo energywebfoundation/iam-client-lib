@@ -95,38 +95,39 @@ export class CacheServerClient implements ICacheServerClient {
     return Promise.reject(error);
   };
 
-  async login() {
+  public async testLogin(): Promise<void> {
     // Simple test to check if logged in or no. TODO: have dedicated endpoint on the cache-server
     // If receive unauthorized response, expect that refreshToken() will be called
     await this.getRoleDefinition({ namespace: "testing.if.logged.in" });
   }
 
-  private async performlogin(identityToken: string) {
+  public async login(): Promise<{ pubKeyAndIdentityToken: IPubKeyAndIdentityToken, token: string, refreshToken: string }> {
+    const pubKeyAndIdentityToken = await getPublicKeyAndIdentityToken(this.signer);
     const {
       data: { refreshToken, token }
     } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
-      identityToken
+      identityToken: pubKeyAndIdentityToken.identityToken
     });
 
     if (!this.isBrowser) {
       this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       this.refresh_token = refreshToken;
     }
-    return { token, refreshToken };
+    return { pubKeyAndIdentityToken, token, refreshToken };
   }
 
-  private async refreshToken() {
-    let data: { token: string, refreshToken: string };
+  private async refreshToken(): Promise<{ token: string, refreshToken: string }> {
     try {
-      ({ data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
+      const { data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
         `/refresh_token${this.isBrowser ? "" : `?refresh_token=${this.refresh_token}`}`
-      ));
+      );
+      return data;
     }
     catch {
-      this.pubKeyAndIdentityToken = await getPublicKeyAndIdentityToken(this.signer);
-      data = await this.performlogin(this.pubKeyAndIdentityToken.identityToken);
+      const loginResult = await this.login();
+      this.pubKeyAndIdentityToken = loginResult.pubKeyAndIdentityToken;
+      return loginResult;
     }
-    return data;
   }
 
   async getRoleDefinition({ namespace }: { namespace: string }) {

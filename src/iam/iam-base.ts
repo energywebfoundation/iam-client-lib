@@ -166,9 +166,8 @@ export class IAMBase {
       let identityToken: string | undefined;
       let publicKey: string | undefined;
 
-      // Login to the cache-server may require signature of identityToken
-      // from which we can derive a publicKey
-      const fromCacheLogin = await this.loginToCacheServer();
+      const savedPublicKey = localStorage.getItem(PUBLIC_KEY);
+      const fromCacheLogin = await this.loginToCacheServer(savedPublicKey);
       publicKey = fromCacheLogin?.publicKey;
       identityToken = fromCacheLogin?.identityToken;
 
@@ -177,7 +176,6 @@ export class IAMBase {
       if (!publicKey && this._runningInBrowser) {
         // Check local storage.
         // This is to that publicKey can be reused when refreshing the page
-        const savedPublicKey = localStorage.getItem(PUBLIC_KEY);
         if (savedPublicKey) {
           publicKey = savedPublicKey;
         }
@@ -349,11 +347,20 @@ export class IAMBase {
     this._signer = undefined;
   }
 
-  private async loginToCacheServer(): Promise<IPubKeyAndIdentityToken | undefined> {
+  private async loginToCacheServer(savedPublicKey: string | null): Promise<IPubKeyAndIdentityToken | undefined> {
     if (this._signer && this._cacheClient && this._cacheClient.isAuthEnabled()) {
-      await this._cacheClient.login();
-      // Expect that if login generated pubKey&IdToken, then will be accessible as property
-      return this._cacheClient.pubKeyAndIdentityToken;
+      // If no saved publicKey then assume that user has never signed in or has signed out 
+      if (!savedPublicKey) {
+        const { pubKeyAndIdentityToken } = await this._cacheClient.login();
+        return pubKeyAndIdentityToken;
+      }
+      // publicKey is there so maybe user has signed in before.
+      // Test cache-server login to confirm that their tokens (in the http-only cookies) are still valid
+      else {
+        await this._cacheClient.testLogin();
+        // Expect that if login generated pubKey&IdToken, then will be accessible as property of cacheClient
+        return this._cacheClient.pubKeyAndIdentityToken;
+      }
     }
     return undefined;
   }

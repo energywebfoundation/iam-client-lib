@@ -17,7 +17,8 @@ import {
 
 export interface ICacheServerClient {
   pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
-  login: () => Promise<void>;
+  testLogin: () => Promise<void>;
+  login: () => Promise<{ pubKeyAndIdentityToken: IPubKeyAndIdentityToken, token: string, refreshToken: string }>;
   isAuthEnabled: () => boolean;
   getRoleDefinition: ({ namespace }: { namespace: string }) => Promise<IRoleDefinition>;
   getOrgDefinition: ({ namespace }: { namespace: string }) => Promise<IOrganizationDefinition>;
