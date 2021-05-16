@@ -167,7 +167,7 @@ export class IAMBase {
     }
     if (this._signer) {
       const fromCacheLogin = await this.loginToCacheServer();
-      this._publicKey = this._publicKey ?? fromCacheLogin?.publicKey;
+      this._publicKey = fromCacheLogin?.publicKey ?? this._publicKey;
       this._identityToken = fromCacheLogin?.identityToken;
 
       // We need a pubKey to create DID document.
