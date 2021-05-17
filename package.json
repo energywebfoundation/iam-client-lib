@@ -21,7 +21,7 @@
     "build:typechain:identityManager": "typechain --target ethers-v4 --outDir ethers ./node_modules/@ew-did-registry/proxyidentity/build/contracts/IdentityManager.json",
     "prepare": "npm run build",
     "start-rpc": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --accounts 20 --networkId=9 --gasLimit=10000000",
-    "test:watch": "npm run start-rpc -- \"jest --coverage --env=./test/env.js --watchAll\"",
+    "test:watch": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./test/env.js --watchAll\"",
     "test:prod": "npm run start-rpc -- \"jest --no-cache --env=./test/env.js\"",
     "change_resolver": "ts-node -O '{\"module\": \"commonjs\"}' ./scripts/change-resolver.ts"
   },
@@ -63,6 +63,7 @@
     "@walletconnect/web3-provider": "1.0.0-rc.4",
     "axios": "^0.21.1",
     "base64url": "^3.0.1",
+    "concurrently": "^6.1.0",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "4.0.45",
     "js-sha3": "^0.8.0",
