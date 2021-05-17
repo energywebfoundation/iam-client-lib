@@ -20,9 +20,11 @@
     "build:typechain:offerableIdentity": "typechain --target ethers-v4 --outDir ethers ./node_modules/@ew-did-registry/proxyidentity/build/contracts/OfferableIdentity.json",
     "build:typechain:identityManager": "typechain --target ethers-v4 --outDir ethers ./node_modules/@ew-did-registry/proxyidentity/build/contracts/IdentityManager.json",
     "prepare": "npm run build",
-    "start-rpc": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --accounts 20 --networkId=9 --gasLimit=10000000",
-    "test:watch": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./test/env.js --watchAll\"",
+    "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --accounts 20 --networkId=9 --gasLimit=10000000",
+    "test:watch": "npm run start-rpc -- \"jest --coverage --env=./test/env.js --watchAll\"",
     "test:prod": "npm run start-rpc -- \"jest --no-cache --env=./test/env.js\"",
+    "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --accounts 20 --networkId=9 --gasLimit=10000000",
+    "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./test/env.js --watchAll\"",
     "change_resolver": "ts-node -O '{\"module\": \"commonjs\"}' ./scripts/change-resolver.ts"
   },
   "keywords": [
