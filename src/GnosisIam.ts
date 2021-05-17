@@ -161,4 +161,8 @@ export class GnosisIam extends IAM {
     );
     return org;
   }
+
+  async isOperatorOf(owner: string): Promise<boolean> {
+    return await super.isOperatorOf(owner) || owner === this._safeAddress;
+  }
 }

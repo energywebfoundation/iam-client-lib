@@ -824,17 +824,13 @@ export class IAM extends IAMBase {
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
-    const notOwnedNamespaces = await this.validateOwnership({
-      namespace,
-      type: ENSNamespaceTypes.Roles
-    });
-    if (notOwnedNamespaces.length > 0) {
-      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
+    const domainOwner = await this.getOwner({ namespace });
+    if (!this.isOperatorOf(domainOwner)) {
+      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces: [namespace] });
     }
-    const from = await this.getOwner({ namespace });
     await this.send({
       calls: [this.changeDomainOwnerTx({ namespace, newOwner })],
-      from
+      from: domainOwner
     });
   }
 
@@ -979,16 +975,13 @@ export class IAM extends IAMBase {
    *
    */
   async deleteRole({ namespace }: { namespace: string }) {
-    const notOwnedNamespaces = await this.validateOwnership({
-      namespace,
-      type: ENSNamespaceTypes.Roles
-    });
-    if (notOwnedNamespaces.length > 0) {
-      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
+    const domainOwner = await this.getOwner({ namespace });
+    if (!this.isOperatorOf(domainOwner)) {
+      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces: [namespace] });
     }
     await this.send({
       calls: [this.deleteDomainTx({ namespace })],
-      from: await this.getOwner({ namespace })
+      from: domainOwner
     });
   }
 
@@ -1211,17 +1204,6 @@ export class IAM extends IAMBase {
     throw new ENSRegistryNotInitializedError();
   }
 
-  /**
-   * validateOwnership
-   *
-   * @description check ownership of the domain and subdomains of org, app or role
-   * @returns true or false whatever the passed is user is a owner of org, app or role
-   *
-   */
-  async validateOwnership({ namespace, type }: { namespace: string; type: ENSNamespaceTypes }) {
-    return this.nonOwnedNodesOf({ namespace, type, owner: this._address as string });
-  }
-
   protected async validateChangeOwnership({
     namespaces,
     newOwner
@@ -1236,7 +1218,7 @@ export class IAM extends IAMBase {
           acc.alreadyFinished.push(namespace);
           return acc;
         }
-        if (owner === emptyAddress || owner === this._address) {
+        if (owner === emptyAddress || this.isOperatorOf(owner)) {
           acc.changeOwnerNamespaces.push(namespace);
           return acc;
         }
@@ -1263,7 +1245,7 @@ export class IAM extends IAMBase {
           acc.alreadyFinished.push(namespace);
           return acc;
         }
-        if (owner === this._address) {
+        if (this.isOperatorOf(owner)) {
           acc.namespacesToDelete.push(namespace);
           return acc;
         }
@@ -1554,7 +1536,40 @@ export class IAM extends IAMBase {
     );
   }
 
+  /**
+   * 
+   * @description Returns true if signer allowed to operate over domains owned by `owner`
+   */
+  async isOperatorOf(owner: string): Promise<boolean> {
+    return await this.isApproved({ owner, operator: this._address as string });
+  }
+
+  /**
+   * @description - grants operator control over all domains owned by signer
+   */
+  async setApproval(
+    { operator, approve }: { operator: string, approve: boolean }
+  ) {
+    const registryApprovalTx = this._ensRegistry.interface.functions.setApprovalForAll.encode([
+      operator,
+      approve
+    ]);
+    await this.send({
+      calls: [{ data: registryApprovalTx, to: this._ensRegistryAddress }],
+      from: this._address as string
+    });
+  }
+
+  async isApproved({ owner, operator }: { owner: string, operator: string }): Promise<boolean> {
+    return this._ensRegistry.functions.isApprovedForAll(
+      owner,
+      operator,
+      this._transactionOverrides
+    );
+  }
+  
   // ### ASSETS ###
+  
   public async registerAsset() {
     if (!this._address) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
