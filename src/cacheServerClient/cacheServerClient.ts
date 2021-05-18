@@ -219,6 +219,12 @@ export class CacheServerClient implements ICacheServerClient {
     return data;
   }
 
+  async getAllClaims(): Promise<Claim[]> {
+    const { data } = await this.httpClient.get<Claim[]>('/claim');
+    return data;
+  }
+
+
   async getClaimsByIssuer({
     did,
     isAccepted,

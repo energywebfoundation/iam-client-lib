@@ -26,7 +26,7 @@ import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
-import { IAMBase} from "./iam/iam-base";
+import { IAMBase } from "./iam/iam-base";
 import {
   CacheClientNotProvidedError,
   ChangeOwnershipNotPossibleError,
@@ -1464,6 +1464,10 @@ export class IAM extends IAMBase {
   }
 
   // CLAIMS
+
+  async getAllClaims() {
+    return this._cacheClient.getAllClaims();
+  }
 
   /**
   * @description - Returns claims for given requester. Allows filtering by status and parent namespace
