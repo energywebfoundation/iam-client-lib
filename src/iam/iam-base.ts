@@ -1,5 +1,5 @@
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { IRoleDefinition } from "@energyweb/iam-contracts";
+import { DomainReader, DomainTransactionFactory, DomainHierarchy } from "@energyweb/iam-contracts";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
@@ -8,11 +8,8 @@ import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
 import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
-import { RoleDefinitionResolverFactory } from "../../ethers/RoleDefinitionResolverFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
-import { RoleDefinitionResolver } from "../../ethers/RoleDefinitionResolver";
 import { JWT } from "@ew-did-registry/jwt";
-import { DomainReader, DomainTransactionFactory } from "@energyweb/iam-contracts";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
@@ -38,8 +35,8 @@ import {
 } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
 import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
-import { IdentityManagerFactory } from '../../ethers/IdentityManagerFactory';
-import { IdentityManager } from '../../ethers/IdentityManager';
+import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
+import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 
 const { hexlify, bigNumberify } = utils;
@@ -97,8 +94,9 @@ export class IAMBase {
   protected _jwt: JWT | undefined;
 
   protected _ensRegistry: EnsRegistry;
-  protected _ensResolver: RoleDefinitionResolver;
   protected _domainDefinitionTransactionFactory: DomainTransactionFactory
+  protected _domainDefinitionReader: DomainReader;
+  protected _domainHierarchy: DomainHierarchy;
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
 
@@ -112,7 +110,6 @@ export class IAMBase {
 
   private ttl = bigNumberify(0);
 
-  protected _domainDefinitionReader: DomainReader;
 
   /**
    * IAM Constructor
@@ -521,8 +518,10 @@ export class IAMBase {
 
   protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
     const roleHash = namehash(namespace);
-    const metadata = await this._ensResolver.text(roleHash, "metadata");
-    const definition = JSON.parse(metadata) as IRoleDefinition;
+    const definition = await this._domainDefinitionReader.read({ node: roleHash });
+    if (!DomainReader.isRoleDefinition(definition)) {
+      throw new Error("Domain is not a role definition");
+    }
     const diff = difference(issuer, definition.issuer.did || []);
     if (diff.length > 0) {
       throw new Error(`Issuer validation failed for: ${diff.join(", ")}`);
@@ -601,8 +600,10 @@ export class IAMBase {
     const {
       ensRegistryAddress,
       ensResolverAddress,
+      ensPublicResolverAddress,
+      domainNotifierAddress,
       didContractAddress,
-      assetManagerAddress
+      assetManagerAddress,
     } = chainConfigs[chainId];
 
     if (!ensRegistryAddress)
@@ -629,9 +630,15 @@ export class IAMBase {
     this._ensResolverAddress = ensResolverAddress;
     this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
-    this._ensResolver = RoleDefinitionResolverFactory.connect(ensResolverAddress, this._provider);
-    this._domainDefinitionReader = new DomainReader(this._provider);
-    this._domainDefinitionTransactionFactory = new DomainTransactionFactory(this._ensResolver);
+    this._domainDefinitionReader = new DomainReader({ ensRegistryAddress, provider: this._provider });
+    this._domainDefinitionTransactionFactory = new DomainTransactionFactory({ domainResolverAddress: ensResolverAddress });
+    this._domainHierarchy = new DomainHierarchy({
+      domainReader: this._domainDefinitionReader,
+      ensRegistry: this._ensRegistry,
+      provider: this._provider,
+      domainNotifierAddress: domainNotifierAddress,
+      publicResolverAddress: ensPublicResolverAddress
+    });
 
     const cacheOptions = cacheServerClientOptions[chainId];
 

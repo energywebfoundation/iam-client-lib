@@ -9,6 +9,3 @@ export enum MessagingMethod {
   WebRTC = "webRTC",
   SmartContractStorage = "smartContractStorage"
 }
-export enum PreconditionTypes {
-  Role = "role"
-}

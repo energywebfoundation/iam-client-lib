@@ -14,7 +14,7 @@
 //
 // @authors: Kim Honoridez
 
-import { IRoleDefinition, IAppDefinition, IOrganizationDefinition, getSubdomains } from "@energyweb/iam-contracts";
+import { IRoleDefinition, IAppDefinition, IOrganizationDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { IAM, ENSNamespaceTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
@@ -22,7 +22,6 @@ import { WalletProvider } from "./types/WalletProvider";
 import {
   MessagingMethod,
   NATS_EXCHANGE_TOPIC,
-  PreconditionTypes,
   VOLTA_CHAIN_ID
 } from "./utils/constants";
 import {
@@ -57,7 +56,7 @@ export { NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID };
 
 // UTILS
 
-export { getSubdomains, setCacheClientOptions, setChainConfig, setMessagingOptions };
+export { setCacheClientOptions, setChainConfig, setMessagingOptions };
 
 // ENUMS
 export {
@@ -69,7 +68,7 @@ export {
   MessagingMethod,
   ERROR_MESSAGES,
   WalletProvider,
-  PreconditionTypes,
+  PreconditionType as PreconditionTypes,
   Order,
   AssetHistoryEventType
 };
@@ -92,4 +91,4 @@ export {
 };
 
 export { GnosisIam as SafeIam } from "./GnosisIam";
-export * from './utils/did';
+export * from "./utils/did";

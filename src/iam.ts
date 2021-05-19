@@ -16,7 +16,12 @@
 // @authors: Daniel Wojno
 
 import { providers, Signer } from "ethers";
-import { IRoleDefinition, IAppDefinition, IOrganizationDefinition, getSubdomains } from "@energyweb/iam-contracts";
+import {
+  IRoleDefinition,
+  IAppDefinition,
+  IOrganizationDefinition,
+  PreconditionType
+} from "@energyweb/iam-contracts";
 import {
   DIDAttribute,
   IDIDDocument,
@@ -45,13 +50,13 @@ import {
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
-import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
+import { emptyAddress, NATS_EXCHANGE_TOPIC } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
-import { DIDDocumentFull } from '@ew-did-registry/did-document';
-import { Methods } from '@ew-did-registry/did';
-import { addressOf } from '@ew-did-registry/did-ethr-resolver';
-import { isValidDID } from './utils/did';
+import { DIDDocumentFull } from "@ew-did-registry/did-document";
+import { Methods } from "@ew-did-registry/did";
+import { addressOf } from "@ew-did-registry/did-ethr-resolver";
+import { isValidDID } from "./utils/did";
 
 export type InitializeData = {
   did: string | undefined;
@@ -999,7 +1004,7 @@ export class IAM extends IAMBase {
     }
     if (this._domainDefinitionReader) {
       const roleHash = namehash(namespace);
-      return await this._domainDefinitionReader.read(roleHash) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
+      return await this._domainDefinitionReader.read({ node: roleHash }) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
     }
     throw new ENSResolverNotInitializedError();
   }
@@ -1148,10 +1153,8 @@ export class IAM extends IAMBase {
     domain: string;
     mode?: "ALL" | "FIRSTLEVEL";
   }): Promise<string[]> {
-    return getSubdomains({
+    return this._domainHierarchy.getSubdomainsUsingResolver({
       domain,
-      ensRegistry: this._ensRegistry,
-      ensResolver: this._ensResolver,
       mode
     });
   }
@@ -1277,7 +1280,7 @@ export class IAM extends IAMBase {
   }) {
     if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
     for (const { type, conditions } of enrolmentPreconditions) {
-      if (type === PreconditionTypes.Role && conditions && conditions?.length > 0) {
+      if (type === PreconditionType.Role && conditions && conditions?.length > 0) {
         const conditionMet = claims.some(
           ({ claimType }) => claimType && conditions.includes(claimType)
         );
