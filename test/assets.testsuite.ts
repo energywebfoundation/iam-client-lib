@@ -5,7 +5,7 @@ import { emptyAddress } from "../src/utils/constants";
 import { iam, provider, rootOwner, rpcUrl } from "./iam.test";
 import { replenish } from "./setup_contracts";
 import { PubKeyType } from '@ew-did-registry/did-resolver-interface/src/models/operator';
-import { DIDAttribute } from '@ew-did-registry/did-resolver-interface';
+import { Algorithms, DIDAttribute, Encoding } from '@ew-did-registry/did-resolver-interface';
 
 export const assetsTests = () => {
   test("asset should be created", async () => {
@@ -85,17 +85,22 @@ export const assetsTests = () => {
   test("update did document for asset", async () => {
     const assetAddress = await iam.registerAsset();
 
-    const asset1 = await iam.getDidDocument({did: `did:ethr:${assetAddress}`});
+    const asset1 = await iam.getDidDocument({ did: `did:ethr:${assetAddress}` });
     expect(asset1.publicKey.length).toBe(1);
 
     const update = await iam.updateDidDocument({
       didAttribute: DIDAttribute.PublicKey,
       did: `did:ethr:${assetAddress}`,
-      data: {type: PubKeyType.SignatureAuthentication2018, value: { tag: 'key-1' }}
+      data: {
+        algo: Algorithms.Secp256k1,
+        encoding: Encoding.HEX,
+        type: PubKeyType.SignatureAuthentication2018,
+        value: { tag: 'key-1', publicKey: `0x${new Keys().publicKey}` }
+      }
     });
     expect(update).toBeTruthy();
 
-    const asset = await iam.getDidDocument({did: `did:ethr:${assetAddress}`});
+    const asset = await iam.getDidDocument({ did: `did:ethr:${assetAddress}` });
     expect(asset.publicKey.length).toBe(2);
 
     expect(asset.publicKey[0]).toMatchObject({

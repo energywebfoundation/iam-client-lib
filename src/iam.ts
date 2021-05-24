@@ -17,8 +17,7 @@
 
 import { providers, Signer } from "ethers";
 import {
-  Algorithms,
-  DIDAttribute, Encoding,
+  DIDAttribute,
   IDIDDocument,
   IServiceEndpoint,
   IUpdateData,
@@ -57,8 +56,6 @@ import { DIDDocumentFull } from '@ew-did-registry/did-document';
 import { Methods } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { isValidDID } from './utils/did';
-import { Keys } from '@ew-did-registry/keys';
-import { IAttributePayload } from '@ew-did-registry/did-resolver-interface/src/models/operator';
 
 export type InitializeData = {
   did: string | undefined;
@@ -284,17 +281,8 @@ export class IAM extends IAMBase {
       return Boolean(updated);
     }
 
-    const defaultValue: IAttributePayload = { publicKey: `0x${new Keys().publicKey}` };
-
-    const updateData: IUpdateData = {
-      algo: Algorithms.Secp256k1,
-      encoding: Encoding.HEX,
-      ...data,
-      value: { ...defaultValue, ...data.value }
-    };
-
     const operator = new ProxyOperator(this._didSigner, this._registrySetting, addressOf(did));
-    const update = await operator.update(did, DIDAttribute.PublicKey, updateData);
+    const update = await operator.update(did, DIDAttribute.PublicKey, data);
 
     return Boolean(update);
   }
