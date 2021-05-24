@@ -79,4 +79,11 @@ export const assetsTests = () => {
     expect(owner).toBe(rootOwner.getAddress());
     expect(offeredTo).toBe(emptyAddress);
   });
+
+  test("update asset did document", async() => {
+    const assetAddress = await iam.registerAsset();
+    console.log(assetAddress);
+    const update = await iam.updateAssetDidDocument({did: `did:ethr:${assetAddress}`});
+    expect(update).toBeTruthy();
+  })
 };
