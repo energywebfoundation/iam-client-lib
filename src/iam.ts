@@ -22,7 +22,6 @@ import {
   IDIDDocument,
   IServiceEndpoint,
   IUpdateData,
-  PubKeyType
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";

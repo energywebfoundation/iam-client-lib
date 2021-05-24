@@ -82,13 +82,25 @@ export const assetsTests = () => {
     expect(offeredTo).toBe(emptyAddress);
   });
 
-  test("update asset did document", async () => {
+  test("update did document for asset", async () => {
     const assetAddress = await iam.registerAsset();
+
+    const asset1 = await iam.getDidDocument({did: `did:ethr:${assetAddress}`});
+    expect(asset1.publicKey.length).toBe(1);
+
     const update = await iam.updateDidDocument({
       didAttribute: DIDAttribute.PublicKey,
       did: `did:ethr:${assetAddress}`,
-      data: {type: PubKeyType.SignatureAuthentication2018, value: { publicKey: `0x${new Keys().publicKey}`, tag: 'key-1' }}
+      data: {type: PubKeyType.SignatureAuthentication2018, value: { tag: 'key-1' }}
     });
     expect(update).toBeTruthy();
+
+    const asset = await iam.getDidDocument({did: `did:ethr:${assetAddress}`});
+    expect(asset.publicKey.length).toBe(2);
+
+    expect(asset.publicKey[0]).toMatchObject({
+      type: "Secp256k1sigAuth",
+      id: `did:ethr:${assetAddress}#key-1`
+    });
   });
 };
