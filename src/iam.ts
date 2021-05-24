@@ -17,10 +17,12 @@
 
 import { providers, Signer } from "ethers";
 import {
-  DIDAttribute,
+  Algorithms,
+  DIDAttribute, Encoding,
   IDIDDocument,
   IServiceEndpoint,
-  IUpdateData
+  IUpdateData,
+  PubKeyType
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
@@ -34,11 +36,12 @@ import {
   ENSRegistryNotInitializedError,
   ENSResolverNotInitializedError,
   ENSTypeNotSupportedError,
-  NATSConnectionNotEstablishedError,
-  ERROR_MESSAGES
+  ERROR_MESSAGES,
+  NATSConnectionNotEstablishedError
 } from "./errors";
 import {
-  AssetHistoryEventType, ClaimData,
+  AssetHistoryEventType,
+  ClaimData,
   IAppDefinition,
   IOrganization,
   IOrganizationDefinition,
@@ -55,6 +58,8 @@ import { DIDDocumentFull } from '@ew-did-registry/did-document';
 import { Methods } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { isValidDID } from './utils/did';
+import { Keys } from '@ew-did-registry/keys';
+import { IAttributePayload } from '@ew-did-registry/did-resolver-interface/src/models/operator';
 
 export type InitializeData = {
   did: string | undefined;
@@ -268,6 +273,25 @@ export class IAM extends IAMBase {
     if (this._document) {
       const updated = await this._document.update(didAttribute, data, validity);
       return Boolean(updated);
+    }
+    throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
+  }
+
+  async updateAssetDidDocument(options: {
+    did: string
+  }) {
+    const {did} = options;
+    if (did && this._didSigner) {
+      const value: IAttributePayload = { publicKey: `0x${new Keys().publicKey}`, tag: 'key-2' }
+      const updateData: IUpdateData = {
+        algo: Algorithms.Secp256k1,
+        type: PubKeyType.SignatureAuthentication2018,
+        encoding: Encoding.HEX,
+        value,
+      };
+      const operator = new ProxyOperator(this._didSigner, this._registrySetting, this._ensRegistryAddress);
+      const update = await operator.update(did, DIDAttribute.PublicKey, updateData);
+      return Boolean(update);
     }
     throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
   }
