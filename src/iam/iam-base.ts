@@ -89,7 +89,7 @@ export class IAMBase {
   protected _identityToken: string | undefined;
   protected _transactionOverrides: TransactionOverrides = {};
   protected _providerType: WalletProvider | undefined;
-  protected _publicKey: string | undefined;
+  protected _publicKey: string | undefined | null;
 
   protected _registrySetting: RegistrySettings;
   protected _resolver: Resolver;
@@ -139,8 +139,11 @@ export class IAMBase {
 
     this._ipfsStore = new DidStore(ipfsUrl);
 
+    // Need to get providerType and publicKey in constructor because they are used
+    // to infer if the session is active.
     if (this._runningInBrowser) {
       this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
+      this._publicKey = localStorage.getItem(PUBLIC_KEY);
     }
 
     this._walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
@@ -163,36 +166,24 @@ export class IAMBase {
       await this.setupMessaging();
     }
     if (this._signer) {
-      let identityToken: string | undefined;
-      let publicKey: string | undefined;
-
-      // Login to the cache-server may require signature of identityToken
-      // from which we can derive a publicKey
       const fromCacheLogin = await this.loginToCacheServer();
-      publicKey = fromCacheLogin?.publicKey;
-      identityToken = fromCacheLogin?.identityToken;
+      this._publicKey = fromCacheLogin?.publicKey ?? this._publicKey;
+      this._identityToken = fromCacheLogin?.identityToken;
 
       // We need a pubKey to create DID document.
-      // So if didn't get one from cache server login, need to get in some other way.
-      if (!publicKey && this._runningInBrowser) {
-        // Check local storage.
-        // This is to that publicKey can be reused when refreshing the page
-        const savedPublicKey = localStorage.getItem(PUBLIC_KEY);
-        if (savedPublicKey) {
-          publicKey = savedPublicKey;
-        }
+      // So if didn't get one from cache server login and there wasn't one saved
+      // then need to request signature to compute one.
+      if (!this._publicKey) {
+        const { publicKey, identityToken } = await getPublicKeyAndIdentityToken(this._signer);
+        this._publicKey = publicKey;
+        this._identityToken = identityToken;
       }
-      if (!publicKey) {
-        ({ publicKey, identityToken } = await getPublicKeyAndIdentityToken(this._signer));
-      }
-      if (!publicKey) {
+      if (!this._publicKey) {
         throw new Error(ERROR_MESSAGES.UNABLE_TO_OBTAIN_PUBLIC_KEY);
       }
-      this._didSigner = new Owner(this._signer, this._provider, publicKey);
-      this._identityToken = identityToken;
-      this._publicKey = publicKey;
+      this._didSigner = new Owner(this._signer, this._provider, this._publicKey);
 
-      identityToken && await this.setAddress();
+      await this.setAddress();
       this.setDid();
       await this.setDocument();
       this.setClaims();
@@ -280,6 +271,15 @@ export class IAMBase {
     throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
   }
 
+  /**
+   * Check if session is active
+   *
+   * @returns boolean that indicates the session state
+   */
+  public isSessionActive() {
+    return Boolean(this._publicKey) && Boolean(this._providerType);
+  }
+
   private storeSession() {
     if (this._runningInBrowser && this._didSigner) {
       this._providerType && localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
@@ -351,9 +351,18 @@ export class IAMBase {
 
   private async loginToCacheServer(): Promise<IPubKeyAndIdentityToken | undefined> {
     if (this._signer && this._cacheClient && this._cacheClient.isAuthEnabled()) {
-      await this._cacheClient.login();
-      // Expect that if login generated pubKey&IdToken, then will be accessible as property
-      return this._cacheClient.pubKeyAndIdentityToken;
+      // If session isn't active then assume that user has never signed in or has signed out 
+      if (!this.isSessionActive()) {
+        const { pubKeyAndIdentityToken } = await this._cacheClient.login();
+        return pubKeyAndIdentityToken;
+      }
+      // session is active so maybe user has signed in before.
+      // Test cache-server login to confirm that their tokens are still valid
+      else {
+        await this._cacheClient.testLogin();
+        // Expect that if login generated pubKey&IdToken, then will be accessible as property of cacheClient
+        return this._cacheClient.pubKeyAndIdentityToken;
+      }
     }
     return undefined;
   }
@@ -375,7 +384,9 @@ export class IAMBase {
   }
 
   private setDid() {
-    this._did = `did:${Methods.Erc1056}:${this._address}`;
+    if (this._address) {
+      this._did = `did:${Methods.Erc1056}:${this._address}`;
+    }
   }
 
   private async setDocument() {
