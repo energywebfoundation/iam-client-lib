@@ -80,10 +80,12 @@ export const assetsTests = () => {
     expect(offeredTo).toBe(emptyAddress);
   });
 
-  test("update asset did document", async() => {
+  test("update asset did document", async () => {
     const assetAddress = await iam.registerAsset();
-    console.log(assetAddress);
-    const update = await iam.updateAssetDidDocument({did: `did:ethr:${assetAddress}`});
+    const update = await iam.updateAssetDidDocument({
+      did: `did:ethr:${assetAddress}`,
+      value: { publicKey: `0x${new Keys().publicKey}`, tag: 'key-1' }
+    });
     expect(update).toBeTruthy();
-  })
+  });
 };

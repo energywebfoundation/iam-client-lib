@@ -278,23 +278,25 @@ export class IAM extends IAMBase {
   }
 
   async updateAssetDidDocument(options: {
-    did: string
+    did: string,
+    value: IAttributePayload
   }) {
-    const {did} = options;
+    const { did, value } = options;
     if (did && this._didSigner) {
-      const value: IAttributePayload = { publicKey: `0x${new Keys().publicKey}`, tag: 'key-2' }
+      const defaultValue: IAttributePayload = { publicKey: `0x${new Keys().publicKey}` };
       const updateData: IUpdateData = {
         algo: Algorithms.Secp256k1,
         type: PubKeyType.SignatureAuthentication2018,
         encoding: Encoding.HEX,
-        value,
+        value: {...defaultValue, ...value },
       };
-      const operator = new ProxyOperator(this._didSigner, this._registrySetting, this._ensRegistryAddress);
+      const operator = new ProxyOperator(this._didSigner, this._registrySetting, addressOf(did));
       const update = await operator.update(did, DIDAttribute.PublicKey, updateData);
       return Boolean(update);
     }
     throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
   }
+
 
   /**
    * revokeDidDocument
