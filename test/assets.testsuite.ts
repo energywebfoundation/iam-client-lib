@@ -4,6 +4,8 @@ import { IAM } from "../src/iam";
 import { emptyAddress } from "../src/utils/constants";
 import { iam, provider, rootOwner, rpcUrl } from "./iam.test";
 import { replenish } from "./setup_contracts";
+import { PubKeyType } from '@ew-did-registry/did-resolver-interface/src/models/operator';
+import { DIDAttribute } from '@ew-did-registry/did-resolver-interface';
 
 export const assetsTests = () => {
   test("asset should be created", async () => {
@@ -82,9 +84,10 @@ export const assetsTests = () => {
 
   test("update asset did document", async () => {
     const assetAddress = await iam.registerAsset();
-    const update = await iam.updateAssetDidDocument({
+    const update = await iam.updateDidDocument({
+      didAttribute: DIDAttribute.PublicKey,
       did: `did:ethr:${assetAddress}`,
-      value: { publicKey: `0x${new Keys().publicKey}`, tag: 'key-1' }
+      data: {type: PubKeyType.SignatureAuthentication2018, value: { publicKey: `0x${new Keys().publicKey}`, tag: 'key-1' }}
     });
     expect(update).toBeTruthy();
   });
