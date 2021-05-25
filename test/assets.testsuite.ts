@@ -104,9 +104,8 @@ export const assetsTests = () => {
     const asset = await iam.getDidDocument({ did: `did:${Methods.Erc1056}:${assetAddress}` });
     expect(asset.publicKey.length).toBe(2);
 
-    expect(asset.publicKey).toContain({
-      type: "Secp256k1sigAuth",
-      id: `did:${Methods.Erc1056}:${assetAddress}#key-1`
-    });
+    const did = `did:${Methods.Erc1056}:${assetAddress}#key-1`;
+    const type = 'Secp256k1sigAuth';
+    expect(asset.publicKey.find((asset) => asset.id === did && asset.type === type)).toBeTruthy();
   });
 };
