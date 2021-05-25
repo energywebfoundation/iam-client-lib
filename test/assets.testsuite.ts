@@ -86,7 +86,7 @@ export const assetsTests = () => {
   test("update did document for asset", async () => {
     const assetAddress = await iam.registerAsset();
 
-    const asset1 = await iam.getDidDocument({ did: `did:ethr:${assetAddress}` });
+    const asset1 = await iam.getDidDocument({ did: `did:${Methods.Erc1056}:${assetAddress}` });
     expect(asset1.publicKey.length).toBe(1);
 
     const update = await iam.updateDidDocument({
