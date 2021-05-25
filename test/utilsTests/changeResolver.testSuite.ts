@@ -1,4 +1,4 @@
-import { getSubdomains } from "@energyweb/iam-contracts";
+import { DomainHierarchy, DomainReader, RoleDefinitionResolver__factory, DomainNotifier__factory, ResolverContractType } from "@energyweb/iam-contracts";
 import { changeResolver, ChangeResolverParams } from '../../src/utils/change_resolver';
 import { root, rootOwner, rpcUrl } from '../iam.test';
 import { org1 } from '../organization.testSuite';
@@ -6,21 +6,36 @@ import { ensRegistry, ensResolver, provider } from '../setup_contracts';
 import { namehash } from 'ethers/utils';
 import { NODE_FIELDS_KEY } from '../../src/utils/constants';
 import { Contract, Wallet } from 'ethers';
-import { PublicResolverFactory } from '../../ethers/PublicResolverFactory';
 
 export const changeResolverTests = () => {
   let newResolverAddr: string;
   let newResolver: Contract;
   let params: Omit<ChangeResolverParams, 'rootNode'>;
+  let domainHierarchy: DomainHierarchy;
 
   beforeAll(async () => {
     const wallet = new Wallet(rootOwner.privateKey, provider);
-    newResolver = await (new PublicResolverFactory(wallet).deploy(ensRegistry.address));
+    const domainNotifer = await new DomainNotifier__factory(wallet).deploy(ensRegistry.address);
+    newResolver = await new RoleDefinitionResolver__factory(wallet).deploy(ensRegistry.address, domainNotifer.address);
     newResolverAddr = newResolver.address;
+    const domainReader = new DomainReader({
+      ensRegistryAddress: ensRegistry.address,
+      provider
+    });
+    const { chainId } = await provider.getNetwork();
+    domainReader.addKnownResolver({ chainId, address: ensResolver.address, type: ResolverContractType.RoleDefinitionResolver_v1 });
+    domainReader.addKnownResolver({ chainId, address: newResolverAddr, type: ResolverContractType.RoleDefinitionResolver_v1 });
+    domainHierarchy = new DomainHierarchy({
+      domainReader,
+      ensRegistry,
+      provider,
+      domainNotifierAddress: domainNotifer.address
+    });
     params = {
       privateKey: rootOwner.privateKey,
       registryAddr: ensRegistry.address,
       resolverAddr: ensResolver.address,
+      domainHierarchy,
       rpcUrl,
       newResolverAddr
     };
@@ -31,7 +46,7 @@ export const changeResolverTests = () => {
 
     await changeResolver({ ...params, rootNode });
 
-    const domains = await getSubdomains({ domain: rootNode, ensResolver, ensRegistry, mode: 'ALL' });
+    const domains = await domainHierarchy.getSubdomainsUsingResolver({ domain: rootNode, mode: "ALL" });
     const resolvers = await Promise.all(domains.map(async (domain) => await ensRegistry.resolver(namehash(domain))));
 
     expect(
@@ -48,7 +63,7 @@ export const changeResolverTests = () => {
 
     await changeResolver({ ...params, rootNode });
 
-    const nodes = await getSubdomains({ domain: rootNode, ensResolver, ensRegistry, mode: "ALL" });
+    const nodes = await domainHierarchy.getSubdomainsUsingResolver({ domain: rootNode, mode: "ALL" });
 
     const nodeDefs = await Promise.all(nodes.map(async (domain) => ({
       name: await ensResolver.name(namehash(domain)),

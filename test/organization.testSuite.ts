@@ -58,7 +58,7 @@ export const orgTests = () => {
       metadata: [],
       roleName,
       roleType: "test",
-      version: "1.0.0",
+      version: 1,
       enrolmentPreconditions: [{
         type: PreconditionTypes.Role,
         conditions: [roleDomain] // Circular condition but sufficient for test

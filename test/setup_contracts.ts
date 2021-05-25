@@ -1,13 +1,14 @@
-import { ContractFactory, Wallet, Contract, providers, utils } from "ethers";
+import { DomainNotifier__factory } from "@energyweb/iam-contracts";
+import type { DomainNotifier } from "@energyweb/iam-contracts/dist/typechain/DomainNotifier";
+import { RoleDefinitionResolver__factory } from "@energyweb/iam-contracts";
+import type { RoleDefinitionResolver } from "@energyweb/iam-contracts/dist/typechain/RoleDefinitionResolver";
 import { ethrReg } from "@ew-did-registry/did-ethr-resolver";
+import { ContractFactory, Wallet, Contract, providers, utils } from "ethers";
 import { EnsRegistry } from "../ethers/EnsRegistry";
 import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
 import { IdentityManagerFactory } from "../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../ethers/IdentityManager";
 import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
-import { RoleDefinitionResolver } from "../ethers/RoleDefinitionResolver";
-import { RoleDefinitionResolverFactory } from "../ethers/RoleDefinitionResolverFactory";
-import { DomainNotifierFactory } from "../ethers/DomainNotifierFactory";
 
 const { JsonRpcProvider } = providers;
 const { parseEther } = utils;
@@ -18,6 +19,7 @@ export const GANACHE_PORT = 8544;
 export const provider = new JsonRpcProvider(`http://localhost:${GANACHE_PORT}`);
 export let ensRegistry: EnsRegistry;
 export let ensResolver: RoleDefinitionResolver;
+export let domainNotifer: DomainNotifier;
 export let didContract: Contract;
 export let assetsManager: IdentityManager;
 
@@ -26,8 +28,8 @@ export const deployContracts = async (privateKey: string): Promise<void> => {
   await replenish(wallet.address);
   const didContractFactory = new ContractFactory(didContractAbi, didContractBytecode, wallet);
   ensRegistry = await new EnsRegistryFactory(wallet).deploy();
-  const domainNotifer = await new DomainNotifierFactory(wallet).deploy(ensRegistry.address);
-  ensResolver = await new RoleDefinitionResolverFactory(wallet).deploy(ensRegistry.address, domainNotifer.address);
+  domainNotifer = await new DomainNotifier__factory(wallet).deploy(ensRegistry.address);
+  ensResolver = await new RoleDefinitionResolver__factory(wallet).deploy(ensRegistry.address, domainNotifer.address);
   didContract = await didContractFactory.deploy();
 
   const identityFactory = new OfferableIdentityFactory(wallet);

@@ -1,9 +1,8 @@
-import { getSubdomains } from "@energyweb/iam-contracts";
+import { DomainHierarchy, PublicResolver__factory } from "@energyweb/iam-contracts";
 import { Wallet } from "ethers";
 import { providers } from "ethers";
 import { namehash } from "ethers/utils";
 import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
-import { PublicResolverFactory } from "../../ethers/PublicResolverFactory";
 import { NODE_FIELDS_KEY } from "./constants";
 import { labelhash } from "./ENS_hash";
 
@@ -13,6 +12,7 @@ export interface ChangeResolverParams {
   rootNode: string,
   privateKey: string,
   rpcUrl: string,
+  domainHierarchy: DomainHierarchy,
   registryAddr: string,
   resolverAddr: string,
   newResolverAddr: string
@@ -26,7 +26,7 @@ const owners: Record<string, string> = {};
  * @param resolverAddr 
  */
 export async function changeResolver(
-  { rootNode, privateKey, rpcUrl, registryAddr, resolverAddr, newResolverAddr }:
+  { rootNode, privateKey, rpcUrl, registryAddr, domainHierarchy, resolverAddr, newResolverAddr }:
     ChangeResolverParams
 ) {
   const rootOwner = new Wallet(privateKey).address;
@@ -34,12 +34,12 @@ export async function changeResolver(
   const provider = new JsonRpcProvider(rpcUrl);
   const wallet = new Wallet(privateKey, provider);
   const registry = EnsRegistryFactory.connect(registryAddr, wallet);
-  const resolver = PublicResolverFactory.connect(resolverAddr, wallet);
-  const newResolver = PublicResolverFactory.connect(newResolverAddr, wallet);
+  const resolver = PublicResolver__factory.connect(resolverAddr, wallet);
+  const newResolver = PublicResolver__factory.connect(newResolverAddr, wallet);
 
   const changeDomainResolver = async (parentNode: string) => {
     await migrate(parentNode);
-    const childNodes = await getSubdomains({ domain: parentNode, ensResolver: resolver, ensRegistry: registry, mode: "FIRSTLEVEL" });
+    const childNodes = await domainHierarchy.getSubdomainsUsingResolver({ domain: parentNode, mode: "FIRSTLEVEL" });
     for (const node of childNodes) {
       const owner = await registry.functions.owner(namehash(node));
       owners[node] = owner;

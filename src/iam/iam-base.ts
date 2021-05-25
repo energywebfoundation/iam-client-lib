@@ -1,5 +1,5 @@
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { DomainReader, DomainTransactionFactory, DomainHierarchy } from "@energyweb/iam-contracts";
+import { DomainReader, DomainTransactionFactory, DomainHierarchy, ResolverContractType } from "@energyweb/iam-contracts";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
@@ -631,6 +631,10 @@ export class IAMBase {
     this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
     this._domainDefinitionReader = new DomainReader({ ensRegistryAddress, provider: this._provider });
+    ensPublicResolverAddress
+      && this._domainDefinitionReader.addKnownResolver({ chainId, address: ensPublicResolverAddress, type: ResolverContractType.PublicResolver });
+    ensResolverAddress
+      && this._domainDefinitionReader.addKnownResolver({ chainId, address: ensResolverAddress, type: ResolverContractType.RoleDefinitionResolver_v1 });
     this._domainDefinitionTransactionFactory = new DomainTransactionFactory({ domainResolverAddress: ensResolverAddress });
     this._domainHierarchy = new DomainHierarchy({
       domainReader: this._domainDefinitionReader,

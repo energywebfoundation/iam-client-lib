@@ -7,7 +7,8 @@ import {
   ensResolver,
   didContract,
   GANACHE_PORT,
-  assetsManager
+  assetsManager,
+  domainNotifer
 } from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
@@ -15,7 +16,6 @@ import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
-import { addKnownResolver } from "@energyweb/iam-contracts";
 import { utilsTests } from "./utilsTests/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
 
@@ -41,9 +41,9 @@ beforeAll(async () => {
     ensRegistryAddress: ensRegistry.address,
     ensResolverAddress: ensResolver.address,
     didContractAddress: didContract.address,
-    assetManagerAddress: assetsManager.address
+    assetManagerAddress: assetsManager.address,
+    domainNotifierAddress: domainNotifer.address
   });
-  addKnownResolver(chainID, ensResolver.address, "roledefv1");
   setCacheClientOptions(9, { url: "" });
 
   iam = new IAM({
