@@ -6,6 +6,7 @@ import { iam, provider, rootOwner, rpcUrl } from "./iam.test";
 import { replenish } from "./setup_contracts";
 import { PubKeyType } from '@ew-did-registry/did-resolver-interface/src/models/operator';
 import { Algorithms, DIDAttribute, Encoding } from '@ew-did-registry/did-resolver-interface';
+import { Methods } from '@ew-did-registry/did';
 
 export const assetsTests = () => {
   test("asset should be created", async () => {
@@ -100,12 +101,12 @@ export const assetsTests = () => {
     });
     expect(update).toBeTruthy();
 
-    const asset = await iam.getDidDocument({ did: `did:ethr:${assetAddress}` });
+    const asset = await iam.getDidDocument({ did: `did:${Methods.Erc1056}:${assetAddress}` });
     expect(asset.publicKey.length).toBe(2);
 
-    expect(asset.publicKey[0]).toMatchObject({
+    expect(asset.publicKey).toContain({
       type: "Secp256k1sigAuth",
-      id: `did:ethr:${assetAddress}#key-1`
+      id: `did:${Methods.Erc1056}:${assetAddress}#key-1`
     });
   });
 };
