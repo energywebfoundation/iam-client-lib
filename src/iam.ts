@@ -270,7 +270,6 @@ export class IAM extends IAMBase {
   }): Promise<boolean> {
     const { didAttribute, data, validity, did } = options;
 
-
     if (!did) {
       if (!this._document) {
         throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
