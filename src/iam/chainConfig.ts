@@ -58,7 +58,7 @@ export const messagingOptions: Record<number, MessagingOptions> = {
  * Used to override existing chain configuration or add a missing one
  * Configuration must be set before constructing `IAM`
  */
-export const setChainConfig = function (chainId: number, config: Partial<ChainConfig>) {
+export const setChainConfig = (chainId: number, config: Partial<ChainConfig>) => {
   chainConfigs[chainId] = { ...chainConfigs[chainId], ...config };
 };
 
@@ -66,10 +66,10 @@ export const setChainConfig = function (chainId: number, config: Partial<ChainCo
  * Used to override existing cache server configuration or add a missing one
  * Configuration must be set before constructing `IAM`
  */
-export const setCacheClientOptions = function (
+export const setCacheClientOptions = (
   chainId: number,
   options: Partial<CacheServerClientOptions>
-) {
+) => {
   cacheServerClientOptions[chainId] = { ...cacheServerClientOptions[chainId], ...options };
 };
 
@@ -78,6 +78,6 @@ export const setCacheClientOptions = function (
  * Configuration must be set before constructing `IAM`
  */
 
-export const setMessagingOptions = function (chainId: number, options: Partial<MessagingOptions>) {
+export const setMessagingOptions = (chainId: number, options: Partial<MessagingOptions>) => {
   messagingOptions[chainId] = { ...messagingOptions[chainId], ...options };
 };

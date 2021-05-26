@@ -989,7 +989,8 @@ export class IAM extends IAMBase {
    * @returns metadata string or empty string when there is no metadata
    *
    */
-  async getDefinition({ type, namespace }: { type: ENSNamespaceTypes; namespace: string }) {
+  async getDefinition({ type, namespace }: { type: ENSNamespaceTypes; namespace: string })
+    : Promise<IRoleDefinition | IAppDefinition | IOrganizationDefinition> {
     if (this._cacheClient && type) {
       if (type === ENSNamespaceTypes.Roles) {
         return this._cacheClient.getRoleDefinition({ namespace });
@@ -1004,7 +1005,7 @@ export class IAM extends IAMBase {
     }
     if (this._domainDefinitionReader) {
       const roleHash = namehash(namespace);
-      return await this._domainDefinitionReader.read({ node: roleHash }) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
+      return await this._domainDefinitionReader.read({ node: roleHash });
     }
     throw new ENSResolverNotInitializedError();
   }
