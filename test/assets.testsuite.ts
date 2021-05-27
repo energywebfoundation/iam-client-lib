@@ -4,6 +4,9 @@ import { IAM } from "../src/iam";
 import { emptyAddress } from "../src/utils/constants";
 import { iam, provider, rootOwner, rpcUrl } from "./iam.test";
 import { replenish } from "./setup_contracts";
+import { PubKeyType } from '@ew-did-registry/did-resolver-interface/src/models/operator';
+import { Algorithms, DIDAttribute, Encoding } from '@ew-did-registry/did-resolver-interface';
+import { Methods } from '@ew-did-registry/did';
 
 export const assetsTests = () => {
   test("asset should be created", async () => {
@@ -78,5 +81,31 @@ export const assetsTests = () => {
     const offeredTo = await assetContract.offeredTo();
     expect(owner).toBe(rootOwner.getAddress());
     expect(offeredTo).toBe(emptyAddress);
+  });
+
+  test("update did document for asset", async () => {
+    const assetAddress = await iam.registerAsset();
+
+    const asset1 = await iam.getDidDocument({ did: `did:${Methods.Erc1056}:${assetAddress}` });
+    expect(asset1.publicKey.length).toBe(1);
+
+    const update = await iam.updateDidDocument({
+      didAttribute: DIDAttribute.PublicKey,
+      did: `did:ethr:${assetAddress}`,
+      data: {
+        algo: Algorithms.Secp256k1,
+        encoding: Encoding.HEX,
+        type: PubKeyType.SignatureAuthentication2018,
+        value: { tag: 'key-1', publicKey: `0x${new Keys().publicKey}` }
+      }
+    });
+    expect(update).toBeTruthy();
+
+    const asset = await iam.getDidDocument({ did: `did:${Methods.Erc1056}:${assetAddress}` });
+    expect(asset.publicKey.length).toBe(2);
+
+    const did = `did:${Methods.Erc1056}:${assetAddress}#key-1`;
+    const type = 'Secp256k1sigAuth';
+    expect(asset.publicKey.find((asset) => asset.id === did && asset.type === type)).toBeTruthy();
   });
 };
