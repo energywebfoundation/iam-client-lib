@@ -1483,6 +1483,10 @@ export class IAM extends IAMBase {
 
   // CLAIMS
 
+  async getClaimsBySubjects(subjects: string[]) {
+    return this._cacheClient.getClaimsBySubjects(subjects);
+  }
+
   /**
   * @description - Returns claims for given requester. Allows filtering by status and parent namespace
   */

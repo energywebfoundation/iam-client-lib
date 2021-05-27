@@ -48,6 +48,7 @@ export interface ICacheServerClient {
     search: string;
   }) => Promise<(IOrganization | IApp | IRole)[]>;
   getRolesByOwner: ({ owner }: { owner: string }) => Promise<IRole[]>;
+  getClaimsBySubjects: (subjects: string[]) => Promise<Claim[]>;
   getClaimsByIssuer: ({
     did,
     isAccepted,
