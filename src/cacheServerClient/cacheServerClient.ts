@@ -220,6 +220,12 @@ export class CacheServerClient implements ICacheServerClient {
     return data;
   }
 
+  async getClaimsBySubjects(subjects: string[]): Promise<Claim[]> {
+    const { data } = await this.httpClient.get<Claim[]>('/claim/by/subjects', { params: { subjects: subjects.join(',') } });
+    return data;
+  }
+
+
   async getClaimsByIssuer({
     did,
     isAccepted,

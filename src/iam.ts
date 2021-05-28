@@ -23,10 +23,12 @@ import {
   PreconditionType
 } from "@energyweb/iam-contracts";
 import {
+  Algorithms,
   DIDAttribute,
+  Encoding,
   IDIDDocument,
   IServiceEndpoint,
-  IUpdateData
+  IUpdateData,
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
@@ -40,11 +42,12 @@ import {
   ENSRegistryNotInitializedError,
   ENSResolverNotInitializedError,
   ENSTypeNotSupportedError,
-  NATSConnectionNotEstablishedError,
-  ERROR_MESSAGES
+  ERROR_MESSAGES,
+  NATSConnectionNotEstablishedError
 } from "./errors";
 import {
-  AssetHistoryEventType, ClaimData,
+  AssetHistoryEventType,
+  ClaimData,
   IOrganization,
   Order
 } from "./cacheServerClient/cacheServerClient.types";
@@ -255,6 +258,7 @@ export class IAM extends IAMBase {
    * @param options.didAttribute Type of document to be updated
    *
    * @param options.data New attribute value
+   * @param options.did Asset did to be updated
    * @param options.validity Time (s) for the attribute to expire
    *
    * @description updates did document based on data provided
@@ -264,15 +268,35 @@ export class IAM extends IAMBase {
   async updateDidDocument(options: {
     didAttribute: DIDAttribute;
     data: IUpdateData;
+    did?: string;
     validity?: number;
   }): Promise<boolean> {
-    const { didAttribute, data, validity } = options;
-    if (this._document) {
+    const { didAttribute, data, validity, did } = options;
+
+    if (!did) {
+      if (!this._document) {
+        throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
+      }
       const updated = await this._document.update(didAttribute, data, validity);
       return Boolean(updated);
     }
-    throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_INITIALIZED);
+
+    if (!this._didSigner) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+
+    const updateData: IUpdateData = {
+      algo: Algorithms.Secp256k1,
+      encoding: Encoding.HEX,
+      ...data,
+    };
+
+    const operator = new ProxyOperator(this._didSigner, this._registrySetting, addressOf(did));
+    const update = await operator.update(did, didAttribute, updateData);
+
+    return Boolean(update);
   }
+
 
   /**
    * revokeDidDocument
@@ -1447,6 +1471,10 @@ export class IAM extends IAMBase {
   }
 
   // CLAIMS
+
+  async getClaimsBySubjects(subjects: string[]) {
+    return this._cacheClient.getClaimsBySubjects(subjects);
+  }
 
   /**
   * @description - Returns claims for given requester. Allows filtering by status and parent namespace
