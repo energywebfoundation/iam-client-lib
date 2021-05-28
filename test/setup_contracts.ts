@@ -1,7 +1,7 @@
 import { DomainNotifier__factory } from "@energyweb/iam-contracts";
-import type { DomainNotifier } from "@energyweb/iam-contracts/dist/typechain/DomainNotifier";
+import type { DomainNotifier } from "@energyweb/iam-contracts/dist/ethers-v4/DomainNotifier";
 import { RoleDefinitionResolver__factory } from "@energyweb/iam-contracts";
-import type { RoleDefinitionResolver } from "@energyweb/iam-contracts/dist/typechain/RoleDefinitionResolver";
+import type { RoleDefinitionResolver } from "@energyweb/iam-contracts/dist/ethers-v4/RoleDefinitionResolver";
 import { ethrReg } from "@ew-did-registry/did-ethr-resolver";
 import { ContractFactory, Wallet, Contract, providers, utils } from "ethers";
 import { EnsRegistry } from "../ethers/EnsRegistry";
