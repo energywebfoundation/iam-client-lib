@@ -3,9 +3,8 @@ import { changeResolver, ChangeResolverParams } from '../../src/utils/change_res
 import { root, rootOwner, rpcUrl } from '../iam.test';
 import { org1 } from '../organization.testSuite';
 import { ensRegistry, ensResolver, provider } from '../setup_contracts';
-import { namehash } from 'ethers/utils';
 import { NODE_FIELDS_KEY } from '../../src/utils/constants';
-import { Contract, Wallet } from 'ethers';
+import { Contract, Wallet, utils } from 'ethers';
 
 export const changeResolverTests = () => {
   let newResolverAddr: string;
@@ -47,7 +46,7 @@ export const changeResolverTests = () => {
     await changeResolver({ ...params, rootNode });
 
     const domains = await domainHierarchy.getSubdomainsUsingResolver({ domain: rootNode, mode: "ALL" });
-    const resolvers = await Promise.all(domains.map(async (domain) => await ensRegistry.resolver(namehash(domain))));
+    const resolvers = await Promise.all(domains.map(async (domain) => await ensRegistry.resolver(utils.namehash(domain))));
 
     expect(
       resolvers
@@ -58,21 +57,21 @@ export const changeResolverTests = () => {
   test('root resolver can be changed', async () => {
     const rootNode = `${root}`;
 
-    await ensRegistry.setOwner(namehash('org1-1.org1.root'), '0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14');
-    await ensRegistry.setOwner(namehash('org1.root'), '0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14');
+    await ensRegistry.setOwner(utils.namehash('org1-1.org1.root'), '0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14');
+    await ensRegistry.setOwner(utils.namehash('org1.root'), '0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14');
 
     await changeResolver({ ...params, rootNode });
 
     const nodes = await domainHierarchy.getSubdomainsUsingResolver({ domain: rootNode, mode: "ALL" });
 
     const nodeDefs = await Promise.all(nodes.map(async (domain) => ({
-      name: await ensResolver.name(namehash(domain)),
-      fields: await ensResolver.text(namehash(domain), NODE_FIELDS_KEY),
-      owner: await ensRegistry.owner(namehash(domain)),
+      name: await ensResolver.name(utils.namehash(domain)),
+      fields: await ensResolver.text(utils.namehash(domain), NODE_FIELDS_KEY),
+      owner: await ensRegistry.owner(utils.namehash(domain)),
     })
     ));
 
-    const resolvers = await Promise.all(nodes.map(async (node) => await ensRegistry.resolver(namehash(node))));
+    const resolvers = await Promise.all(nodes.map(async (node) => await ensRegistry.resolver(utils.namehash(node))));
 
     await changeResolver({ ...params, rootNode });
 
@@ -83,9 +82,9 @@ export const changeResolverTests = () => {
 
     /** node names, definitions and owners should be migrated along with nodes */
     expect(nodeDefs).toEqual(await Promise.all(nodes.map(async (domain) => ({
-      name: await newResolver.name(namehash(domain)),
-      fields: await newResolver.text(namehash(domain), NODE_FIELDS_KEY),
-      owner: await ensRegistry.owner(namehash(domain)),
+      name: await newResolver.name(utils.namehash(domain)),
+      fields: await newResolver.text(utils.namehash(domain), NODE_FIELDS_KEY),
+      owner: await ensRegistry.owner(utils.namehash(domain)),
     })
     )));
   });

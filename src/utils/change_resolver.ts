@@ -1,7 +1,5 @@
 import { DomainHierarchy, PublicResolver__factory } from "@energyweb/iam-contracts";
-import { Wallet } from "ethers";
-import { providers } from "ethers";
-import { namehash } from "ethers/utils";
+import { Wallet, providers, utils } from "ethers";
 import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
 import { NODE_FIELDS_KEY } from "./constants";
 import { labelhash } from "./ENS_hash";
@@ -41,23 +39,23 @@ export async function changeResolver(
     await migrate(parentNode);
     const childNodes = await domainHierarchy.getSubdomainsUsingResolver({ domain: parentNode, mode: "FIRSTLEVEL" });
     for (const node of childNodes) {
-      const owner = await registry.functions.owner(namehash(node));
+      const owner = await registry.functions.owner(utils.namehash(node));
       owners[node] = owner;
-      await registry.setSubnodeOwner(namehash(parentNode), labelhash(node.split('.')[0]), rootOwner);
+      await registry.setSubnodeOwner(utils.namehash(parentNode), labelhash(node.split('.')[0]), rootOwner);
       await migrate(node);
       await changeDomainResolver(node);
     }
   };
 
   const migrate = async (node: string) => {
-    await registry.setResolver(namehash(node), newResolverAddr);
-    await newResolver.setName(namehash(node), await resolver.name(namehash(node)));
-    await newResolver.setText(namehash(node), NODE_FIELDS_KEY, await resolver.text(namehash(node), NODE_FIELDS_KEY));
+    await registry.setResolver(utils.namehash(node), newResolverAddr);
+    await newResolver.setName(utils.namehash(node), await resolver.name(utils.namehash(node)));
+    await newResolver.setText(utils.namehash(node), NODE_FIELDS_KEY, await resolver.text(utils.namehash(node), NODE_FIELDS_KEY));
   };
 
   const restoreOwners = async () => {
     for (const node in owners) {
-      await registry.setOwner(namehash(node), owners[node]);
+      await registry.setOwner(utils.namehash(node), owners[node]);
     }
   };
 
