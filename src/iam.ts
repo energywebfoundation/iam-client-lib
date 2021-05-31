@@ -20,7 +20,9 @@ import {
   IRoleDefinition,
   IAppDefinition,
   IOrganizationDefinition,
-  PreconditionType
+  PreconditionType,
+  EncodedCall,
+  DomainReader
 } from "@energyweb/iam-contracts";
 import {
   Algorithms,
@@ -60,6 +62,7 @@ import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID } from "./utils/did";
+import { chainConfigs } from "./iam/chainConfig";
 
 export type InitializeData = {
   did: string | undefined;
@@ -539,10 +542,48 @@ export class IAM extends IAMBase {
     domain: string;
     data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
   }) {
+    // Special case of updating legacy PublicResolver definitions
+    if (await this.updateLegacyDefinition(domain, data)) {
+      return;
+    }
+    // Standard update
     await this.send({
       calls: [this._domainDefinitionTransactionFactory.editDomain({ domain, domainDefinition: data })],
       from: await this.getOwner({ namespace: domain })
     });
+  }
+
+  /**
+   * In initial version of Switchboard, role definitions where contained in ENS PublicResolver.
+   * However, in order for key properties of role definitions to be readable on-chain, a new RoleDefinitionResolver is used.
+   * This function sets the resolver in the ENS to the new contract for definitions that are pointing to the old contract
+   * @param domain domain to potentially update
+   * @param data definition to apply to domain
+   */
+  protected async updateLegacyDefinition(domain: string, data: IAppDefinition | IOrganizationDefinition | IRoleDefinition): Promise<boolean> {
+    const node = namehash(domain);
+    const currentResolverAddress = await this._ensRegistry.resolver(node);
+    const { chainId } = await this._provider.getNetwork();
+    const { ensPublicResolverAddress, ensResolverAddress, ensRegistryAddress } = chainConfigs[chainId];
+    if (currentResolverAddress === ensPublicResolverAddress) {
+      const updateResolverTransaction: EncodedCall = {
+        to: ensRegistryAddress,
+        data: this._ensRegistry.interface.functions.setResolver.encode([
+          node,
+          ensResolverAddress
+        ])
+      };
+      // Need to use newRole/newDomain as need to set reverse domain name
+      const updateDomain = DomainReader.isRoleDefinition(data)
+        ? this._domainDefinitionTransactionFactory.newRole({ domain, roleDefinition: data })
+        : this._domainDefinitionTransactionFactory.newDomain({ domain, domainDefinition: data });
+      await this.send({
+        calls: [updateResolverTransaction, updateDomain],
+        from: await this.getOwner({ namespace: domain })
+      });
+      return true;
+    }
+    return false;
   }
 
   /**
