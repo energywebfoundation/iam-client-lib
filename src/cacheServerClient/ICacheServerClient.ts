@@ -1,3 +1,4 @@
+import { IAppDefinition, IOrganizationDefinition, IRoleDefinition } from "@energyweb/iam-contracts";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
@@ -7,11 +8,8 @@ import {
   AssetHistoryEventType,
   Claim,
   IApp,
-  IAppDefinition,
   IOrganization,
-  IOrganizationDefinition,
   IRole,
-  IRoleDefinition,
   Order
 } from "./cacheServerClient.types";
 
