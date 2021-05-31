@@ -1,7 +1,10 @@
+import { IRoleDefinition } from "@energyweb/iam-contracts";
+import { Methods } from "@ew-did-registry/did";
 import { ENSNamespaceTypes } from "../src/iam";
 import { iam, root, rootOwner } from "./iam.test";
-import { Methods } from "@ew-did-registry/did";
-import { IRoleDefinition } from "../src/cacheServerClient/cacheServerClient.types";
+import { ensResolver } from "./setup_contracts";
+import { namehash } from "../src/utils/ENS_hash";
+import { PreconditionTypes } from "../src/iam-client-lib";
 
 export const org1 = "org1";
 
@@ -43,16 +46,23 @@ export const orgTests = () => {
   test("org role can be created", async () => {
     const namespace = `${org1}.${root}`;
     const roleName = `${org1}-role1`;
+    const roleDomain = `${roleName}.${namespace}`;
+    const roleNode = namehash(roleDomain);
+
     const data: IRoleDefinition = {
       fields: [],
       issuer: {
+        issuerType: "DID",
         did: [`did:${Methods.Erc1056}:${rootOwner.getAddress()}`]
       },
       metadata: [],
       roleName,
       roleType: "test",
-      version: "1.0.0",
-      enrolmentPreconditions: []
+      version: 1,
+      enrolmentPreconditions: [{
+        type: PreconditionTypes.Role,
+        conditions: [roleDomain] // Circular condition but sufficient for test
+      }]
     };
 
     await iam.createRole({
@@ -62,10 +72,12 @@ export const orgTests = () => {
     });
 
     const roleDef = await iam.getDefinition({
-      namespace: `${roleName}.${namespace}`,
+      namespace: roleDomain,
       type: ENSNamespaceTypes.Roles
     });
-
     expect(roleDef).toMatchObject<IRoleDefinition>(data);
+
+    const reverseName = await ensResolver.name(roleNode);
+    expect(reverseName).toEqual(roleDomain);
   });
 };

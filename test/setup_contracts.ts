@@ -1,8 +1,10 @@
-import { ContractFactory, Wallet, Contract, providers, utils } from "ethers";
+import { DomainNotifier__factory } from "@energyweb/iam-contracts";
+import type { DomainNotifier } from "@energyweb/iam-contracts/dist/ethers-v4/DomainNotifier";
+import { RoleDefinitionResolver__factory } from "@energyweb/iam-contracts";
+import type { RoleDefinitionResolver } from "@energyweb/iam-contracts/dist/ethers-v4/RoleDefinitionResolver";
 import { ethrReg } from "@ew-did-registry/did-ethr-resolver";
+import { ContractFactory, Wallet, Contract, providers, utils } from "ethers";
 import { EnsRegistry } from "../ethers/EnsRegistry";
-import { PublicResolver } from "../ethers/PublicResolver";
-import { PublicResolverFactory } from "../ethers/PublicResolverFactory";
 import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
 import { IdentityManagerFactory } from "../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../ethers/IdentityManager";
@@ -16,7 +18,8 @@ const { abi: didContractAbi, bytecode: didContractBytecode } = ethrReg;
 export const GANACHE_PORT = 8544;
 export const provider = new JsonRpcProvider(`http://localhost:${GANACHE_PORT}`);
 export let ensRegistry: EnsRegistry;
-export let ensResolver: PublicResolver;
+export let ensResolver: RoleDefinitionResolver;
+export let domainNotifer: DomainNotifier;
 export let didContract: Contract;
 export let assetsManager: IdentityManager;
 
@@ -25,7 +28,8 @@ export const deployContracts = async (privateKey: string): Promise<void> => {
   await replenish(wallet.address);
   const didContractFactory = new ContractFactory(didContractAbi, didContractBytecode, wallet);
   ensRegistry = await new EnsRegistryFactory(wallet).deploy();
-  ensResolver = await new PublicResolverFactory(wallet).deploy(ensRegistry.address);
+  domainNotifer = await new DomainNotifier__factory(wallet).deploy(ensRegistry.address);
+  ensResolver = await new RoleDefinitionResolver__factory(wallet).deploy(ensRegistry.address, domainNotifer.address);
   didContract = await didContractFactory.deploy();
 
   const identityFactory = new OfferableIdentityFactory(wallet);

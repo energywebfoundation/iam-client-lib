@@ -1,4 +1,5 @@
 import { providers, Signer, utils, errors, Wallet } from "ethers";
+import { DomainReader, DomainTransactionFactory, DomainHierarchy, ResolverContractType } from "@energyweb/iam-contracts";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
@@ -7,20 +8,13 @@ import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
 import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
-import { PublicResolverFactory } from "../../ethers/PublicResolverFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
-import { PublicResolver } from "../../ethers/PublicResolver";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
-import {
-  ClaimData,
-  IAppDefinition,
-  IOrganizationDefinition,
-  IRoleDefinition
-} from "../cacheServerClient/cacheServerClient.types";
+import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
@@ -30,7 +24,6 @@ import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
 import {
   emptyAddress,
   MessagingMethod,
-  NODE_FIELDS_KEY,
   PUBLIC_KEY,
   WALLET_PROVIDER
 } from "../utils/constants";
@@ -42,8 +35,8 @@ import {
 } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
 import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
-import { IdentityManagerFactory } from '../../ethers/IdentityManagerFactory';
-import { IdentityManager } from '../../ethers/IdentityManager';
+import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
+import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 
 const { hexlify, bigNumberify } = utils;
@@ -101,7 +94,9 @@ export class IAMBase {
   protected _jwt: JWT | undefined;
 
   protected _ensRegistry: EnsRegistry;
-  protected _ensResolver: PublicResolver;
+  protected _domainDefinitionTransactionFactory: DomainTransactionFactory
+  protected _domainDefinitionReader: DomainReader;
+  protected _domainHierarchy: DomainHierarchy;
   protected _ensResolverAddress: string;
   protected _ensRegistryAddress: string;
 
@@ -114,6 +109,7 @@ export class IAMBase {
   protected _jsonCodec: Codec<any> | undefined;
 
   private ttl = bigNumberify(0);
+
 
   /**
    * IAM Constructor
@@ -488,14 +484,6 @@ export class IAMBase {
     };
   }
 
-  protected setDomainNameTx({ domain }: { domain: string }): EncodedCall {
-    const namespaceHash = namehash(domain) as string;
-    return {
-      to: this._ensResolverAddress,
-      data: this._ensResolver?.interface.functions.setName.encode([namespaceHash, domain])
-    };
-  }
-
   protected changeSubdomainOwnerTx({
     newOwner,
     label,
@@ -530,8 +518,10 @@ export class IAMBase {
 
   protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
     const roleHash = namehash(namespace);
-    const metadata = await this._ensResolver.text(roleHash, "metadata");
-    const definition = JSON.parse(metadata) as IRoleDefinition;
+    const definition = await this._domainDefinitionReader.read({ node: roleHash });
+    if (!DomainReader.isRoleDefinition(definition)) {
+      throw new Error("Domain is not a role definition");
+    }
     const diff = difference(issuer, definition.issuer.did || []);
     if (diff.length > 0) {
       throw new Error(`Issuer validation failed for: ${diff.join(", ")}`);
@@ -590,23 +580,6 @@ export class IAMBase {
     };
   }
 
-  protected setDomainDefinitionTx({
-    domain,
-    data
-  }: {
-    domain: string;
-    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
-  }): EncodedCall {
-    return {
-      to: this._ensResolverAddress,
-      data: this._ensResolver.interface.functions.setText.encode([
-        namehash(domain),
-        NODE_FIELDS_KEY,
-        JSON.stringify(data)
-      ])
-    };
-  }
-
   protected async deleteSubdomain({ namespace }: { namespace: string }) {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
@@ -627,8 +600,10 @@ export class IAMBase {
     const {
       ensRegistryAddress,
       ensResolverAddress,
+      ensPublicResolverAddress,
+      domainNotifierAddress,
       didContractAddress,
-      assetManagerAddress
+      assetManagerAddress,
     } = chainConfigs[chainId];
 
     if (!ensRegistryAddress)
@@ -655,7 +630,19 @@ export class IAMBase {
     this._ensResolverAddress = ensResolverAddress;
     this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
     this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
-    this._ensResolver = PublicResolverFactory.connect(ensResolverAddress, this._provider);
+    this._domainDefinitionReader = new DomainReader({ ensRegistryAddress, provider: this._provider });
+    ensPublicResolverAddress
+      && this._domainDefinitionReader.addKnownResolver({ chainId, address: ensPublicResolverAddress, type: ResolverContractType.PublicResolver });
+    ensResolverAddress
+      && this._domainDefinitionReader.addKnownResolver({ chainId, address: ensResolverAddress, type: ResolverContractType.RoleDefinitionResolver_v1 });
+    this._domainDefinitionTransactionFactory = new DomainTransactionFactory({ domainResolverAddress: ensResolverAddress });
+    this._domainHierarchy = new DomainHierarchy({
+      domainReader: this._domainDefinitionReader,
+      ensRegistry: this._ensRegistry,
+      provider: this._provider,
+      domainNotifierAddress: domainNotifierAddress,
+      publicResolverAddress: ensPublicResolverAddress
+    });
 
     const cacheOptions = cacheServerClientOptions[chainId];
 
