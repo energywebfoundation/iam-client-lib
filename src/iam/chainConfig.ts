@@ -35,7 +35,7 @@ export const chainConfigs: Record<number, ChainConfig> = {
     ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
     ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: VOLTA_DOMAIN_NOTIFER_ADDRESS,
-    assetManagerAddress: "0x262b36981743E7D91d4eB5b3F5ecaEA9d3A638ca",
+    assetManagerAddress: "0xE258fA7D1cc8964D0dEB7204Df947bCa42b2c940",
     didContractAddress: VoltaAddress1056
   }
 };
