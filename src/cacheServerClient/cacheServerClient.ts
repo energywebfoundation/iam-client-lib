@@ -229,16 +229,16 @@ export class CacheServerClient implements ICacheServerClient {
   async getClaimsByIssuer({
     did,
     isAccepted,
-    parentNamespace
+    namespace
   }: {
     did: string;
     isAccepted?: boolean;
-    parentNamespace?: string;
+    namespace?: string;
   }) {
     const { data } = await this.httpClient.get<Claim[]>(`/claim/issuer/${did}`, {
       params: {
-        accepted: isAccepted,
-        namespace: parentNamespace
+        isAccepted,
+        namespace
       }
     });
     return data;
@@ -247,16 +247,16 @@ export class CacheServerClient implements ICacheServerClient {
   async getClaimsByRequester({
     did,
     isAccepted,
-    parentNamespace
+    namespace
   }: {
     did: string;
     isAccepted?: boolean;
-    parentNamespace?: string;
+    namespace?: string;
   }) {
     const { data } = await this.httpClient.get<Claim[]>(`/claim/requester/${did}`, {
       params: {
-        accepted: isAccepted,
-        namespace: parentNamespace
+        isAccepted,
+        namespace
       }
     });
     return data;
@@ -265,16 +265,16 @@ export class CacheServerClient implements ICacheServerClient {
   async getClaimsBySubject({
     did,
     isAccepted,
-    parentNamespace
+    namespace
   }: {
     did: string;
     isAccepted?: boolean;
-    parentNamespace?: string;
+    namespace?: string;
   }) {
     const { data } = await this.httpClient.get<Claim[]>(`/claim/subject/${did}`, {
       params: {
-        accepted: isAccepted,
-        namespace: parentNamespace
+        isAccepted,
+        namespace
       }
     });
     return data;
