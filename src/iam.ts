@@ -17,8 +17,15 @@
 
 import { providers, Signer } from "ethers";
 import {
+  IRoleDefinition,
+  IAppDefinition,
+  IOrganizationDefinition,
+  PreconditionType
+} from "@energyweb/iam-contracts";
+import {
   Algorithms,
-  DIDAttribute, Encoding,
+  DIDAttribute,
+  Encoding,
   IDIDDocument,
   IServiceEndpoint,
   IUpdateData,
@@ -41,22 +48,18 @@ import {
 import {
   AssetHistoryEventType,
   ClaimData,
-  IAppDefinition,
   IOrganization,
-  IOrganizationDefinition,
-  IRoleDefinition,
   Order
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
-import { getSubdomains } from "./utils/getSubDomains";
-import { emptyAddress, NATS_EXCHANGE_TOPIC, PreconditionTypes } from "./utils/constants";
+import { emptyAddress, NATS_EXCHANGE_TOPIC } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
-import { DIDDocumentFull } from '@ew-did-registry/did-document';
-import { Methods } from '@ew-did-registry/did';
-import { addressOf } from '@ew-did-registry/did-ethr-resolver';
-import { isValidDID } from './utils/did';
+import { DIDDocumentFull } from "@ew-did-registry/did-document";
+import { Methods } from "@ew-did-registry/did";
+import { addressOf } from "@ew-did-registry/did-ethr-resolver";
+import { isValidDID } from "./utils/did";
 
 export type InitializeData = {
   did: string | undefined;
@@ -537,7 +540,7 @@ export class IAM extends IAMBase {
     data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
   }) {
     await this.send({
-      calls: [this.setDomainDefinitionTx({ domain, data })],
+      calls: [this._domainDefinitionTransactionFactory.editDomain({ domain, domainDefinition: data })],
       from: await this.getOwner({ namespace: domain })
     });
   }
@@ -570,12 +573,8 @@ export class IAM extends IAMBase {
         info: "Create organization subdomain"
       },
       {
-        tx: this.setDomainNameTx({ domain: orgDomain }),
-        info: "Register reverse name for organization subdomain"
-      },
-      {
-        tx: this.setDomainDefinitionTx({ domain: orgDomain, data }),
-        info: "Set definition for organization"
+        tx: this._domainDefinitionTransactionFactory.newDomain({ domain: orgDomain, domainDefinition: data }),
+        info: "Register reverse name and set definition for organization subdomain"
       },
       {
         tx: this.createSubdomainTx({
@@ -586,7 +585,7 @@ export class IAM extends IAMBase {
         info: "Create roles subdomain for organization"
       },
       {
-        tx: this.setDomainNameTx({ domain: rolesDomain }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: rolesDomain }),
         info: "Register reverse name for roles subdomain"
       },
       {
@@ -598,7 +597,7 @@ export class IAM extends IAMBase {
         info: "Create app subdomain for organization"
       },
       {
-        tx: this.setDomainNameTx({ domain: appsDomain }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: appsDomain }),
         info: "Register reverse name for app subdomain"
       }
     ].map(step => ({
@@ -640,12 +639,8 @@ export class IAM extends IAMBase {
         info: "Set subdomain for application"
       },
       {
-        tx: this.setDomainNameTx({ domain: appDomain }),
-        info: "Set name for application"
-      },
-      {
-        tx: this.setDomainDefinitionTx({ data, domain: appDomain }),
-        info: "Set definition for application"
+        tx: this._domainDefinitionTransactionFactory.newDomain({ domainDefinition: data, domain: appDomain }),
+        info: "Set name definition for application"
       },
       {
         tx: this.createSubdomainTx({
@@ -656,7 +651,7 @@ export class IAM extends IAMBase {
         info: "Create roles subdomain for application"
       },
       {
-        tx: this.setDomainNameTx({ domain: `${ENSNamespaceTypes.Roles}.${appDomain}` }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: `${ENSNamespaceTypes.Roles}.${appDomain}` }),
         info: "Set name for roles subdomain for application"
       }
     ].map(step => ({
@@ -698,12 +693,8 @@ export class IAM extends IAMBase {
         info: "Create subdomain for role"
       },
       {
-        tx: this.setDomainNameTx({ domain: newDomain }),
-        info: "Set name for role"
-      },
-      {
-        tx: this.setDomainDefinitionTx({ data, domain: newDomain }),
-        info: "Set role definition for role"
+        tx: this._domainDefinitionTransactionFactory.newRole({ domain: newDomain, roleDefinition: data }),
+        info: "Set name and definition for role"
       }
     ].map(step => ({
       ...step,
@@ -1022,7 +1013,8 @@ export class IAM extends IAMBase {
    * @returns metadata string or empty string when there is no metadata
    *
    */
-  async getDefinition({ type, namespace }: { type: ENSNamespaceTypes; namespace: string }) {
+  async getDefinition({ type, namespace }: { type: ENSNamespaceTypes; namespace: string })
+    : Promise<IRoleDefinition | IAppDefinition | IOrganizationDefinition> {
     if (this._cacheClient && type) {
       if (type === ENSNamespaceTypes.Roles) {
         return this._cacheClient.getRoleDefinition({ namespace });
@@ -1035,10 +1027,9 @@ export class IAM extends IAMBase {
       }
       throw new ENSTypeNotSupportedError();
     }
-    if (this._ensResolver) {
+    if (this._domainDefinitionReader) {
       const roleHash = namehash(namespace);
-      const metadata = await this._ensResolver.text(roleHash, "metadata");
-      return JSON.parse(metadata) as IRoleDefinition | IAppDefinition | IOrganizationDefinition;
+      return await this._domainDefinitionReader.read({ node: roleHash });
     }
     throw new ENSResolverNotInitializedError();
   }
@@ -1187,10 +1178,8 @@ export class IAM extends IAMBase {
     domain: string;
     mode?: "ALL" | "FIRSTLEVEL";
   }): Promise<string[]> {
-    return getSubdomains({
+    return this._domainHierarchy.getSubdomainsUsingResolver({
       domain,
-      ensRegistry: this._ensRegistry,
-      ensResolver: this._ensResolver,
       mode
     });
   }
@@ -1316,7 +1305,7 @@ export class IAM extends IAMBase {
   }) {
     if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
     for (const { type, conditions } of enrolmentPreconditions) {
-      if (type === PreconditionTypes.Role && conditions && conditions?.length > 0) {
+      if (type === PreconditionType.Role && conditions && conditions?.length > 0) {
         const conditionMet = claims.some(
           ({ claimType }) => claimType && conditions.includes(claimType)
         );

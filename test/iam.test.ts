@@ -7,7 +7,8 @@ import {
   ensResolver,
   didContract,
   GANACHE_PORT,
-  assetsManager
+  assetsManager,
+  domainNotifer
 } from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
@@ -34,12 +35,14 @@ beforeAll(async () => {
   // sometimes the transaction are taking more then default 5000 ms jest timeout
   jest.setTimeout(60000);
   await deployContracts(privateKey);
-  setChainConfig(9, {
+  const chainID = 9;
+  setChainConfig(chainID, {
     rpcUrl,
     ensRegistryAddress: ensRegistry.address,
     ensResolverAddress: ensResolver.address,
     didContractAddress: didContract.address,
-    assetManagerAddress: assetsManager.address
+    assetManagerAddress: assetsManager.address,
+    domainNotifierAddress: domainNotifer.address
   });
   setCacheClientOptions(9, { url: "" });
 

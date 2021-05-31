@@ -7,7 +7,7 @@ const { computeAddress } = utils;
  * Implementation of ethers Signer in order to test km-crypto
  */
 export class KmsSignerMock extends Signer {
-  constructor(private readonly privateKey:string) {
+  constructor(private readonly privateKey: string) {
     super();
   }
 
@@ -19,6 +19,7 @@ export class KmsSignerMock extends Signer {
     return computeAddress(this.privateKey);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async sendTransaction(tr: providers.TransactionRequest): Promise<providers.TransactionResponse> {
     throw new Error("sendTransaction is not implemented");
   }

@@ -1,4 +1,10 @@
 import { VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
+import {
+  VOLTA_DOMAIN_NOTIFER_ADDRESS,
+  VOLTA_ENS_REGISTRY_ADDRESS,
+  VOLTA_PUBLIC_RESOLVER_ADDRESS,
+  VOLTA_RESOLVER_V1_ADDRESS
+} from "@energyweb/iam-contracts";
 import { CacheServerClientOptions } from "../cacheServerClient/cacheServerClient";
 import { MessagingMethod } from "../utils/constants";
 
@@ -7,6 +13,8 @@ export interface ChainConfig {
   rpcUrl: string;
   ensRegistryAddress: string;
   ensResolverAddress: string;
+  ensPublicResolverAddress?: string;
+  domainNotifierAddress: string;
   assetManagerAddress: string;
   didContractAddress: string;
 }
@@ -23,8 +31,10 @@ export interface MessagingOptions {
 export const chainConfigs: Record<number, ChainConfig> = {
   [VOLTA_CHAIN_ID]: {
     rpcUrl: "https://volta-rpc-vkn5r5zx4ke71f9hcu0c.energyweb.org/",
-    ensRegistryAddress: "0xd7CeF70Ba7efc2035256d828d5287e2D285CD1ac",
-    ensResolverAddress: "0x0a97e07c4Df22e2e31872F20C5BE191D5EFc4680",
+    ensRegistryAddress: VOLTA_ENS_REGISTRY_ADDRESS,
+    ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
+    ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,
+    domainNotifierAddress: VOLTA_DOMAIN_NOTIFER_ADDRESS,
     assetManagerAddress: "0x262b36981743E7D91d4eB5b3F5ecaEA9d3A638ca",
     didContractAddress: VoltaAddress1056
   }
@@ -48,7 +58,7 @@ export const messagingOptions: Record<number, MessagingOptions> = {
  * Used to override existing chain configuration or add a missing one
  * Configuration must be set before constructing `IAM`
  */
-export const setChainConfig = function(chainId: number, config: Partial<ChainConfig>) {
+export const setChainConfig = (chainId: number, config: Partial<ChainConfig>) => {
   chainConfigs[chainId] = { ...chainConfigs[chainId], ...config };
 };
 
@@ -56,10 +66,10 @@ export const setChainConfig = function(chainId: number, config: Partial<ChainCon
  * Used to override existing cache server configuration or add a missing one
  * Configuration must be set before constructing `IAM`
  */
-export const setCacheClientOptions = function(
+export const setCacheClientOptions = (
   chainId: number,
   options: Partial<CacheServerClientOptions>
-) {
+) => {
   cacheServerClientOptions[chainId] = { ...cacheServerClientOptions[chainId], ...options };
 };
 
@@ -68,6 +78,6 @@ export const setCacheClientOptions = function(
  * Configuration must be set before constructing `IAM`
  */
 
-export const setMessagingOptions = function(chainId: number, options: Partial<MessagingOptions>) {
+export const setMessagingOptions = (chainId: number, options: Partial<MessagingOptions>) => {
   messagingOptions[chainId] = { ...messagingOptions[chainId], ...options };
 };
