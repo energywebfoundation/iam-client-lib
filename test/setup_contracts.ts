@@ -9,6 +9,8 @@ import { EnsRegistryFactory } from "../ethers/EnsRegistryFactory";
 import { IdentityManagerFactory } from "../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../ethers/IdentityManager";
 import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
+import { ClaimManager__factory } from "@energyweb/iam-contracts/";
+import { ClaimManager } from "@energyweb/iam-contracts/dist/ethers-v4/ClaimManager";
 
 const { JsonRpcProvider } = providers;
 const { parseEther } = utils;
@@ -22,6 +24,7 @@ export let ensResolver: RoleDefinitionResolver;
 export let domainNotifer: DomainNotifier;
 export let didContract: Contract;
 export let assetsManager: IdentityManager;
+export let claimManager: ClaimManager;
 
 export const deployContracts = async (privateKey: string): Promise<void> => {
   const wallet = new Wallet(privateKey, provider);
@@ -35,6 +38,8 @@ export const deployContracts = async (privateKey: string): Promise<void> => {
   const identityFactory = new OfferableIdentityFactory(wallet);
   const library = await identityFactory.deploy();
   assetsManager = await new IdentityManagerFactory(wallet).deploy(library.address);
+
+  claimManager = await new ClaimManager__factory(wallet).deploy(didContract.address, ensRegistry.address);
 };
 
 export const replenish = async (acc: string) => {

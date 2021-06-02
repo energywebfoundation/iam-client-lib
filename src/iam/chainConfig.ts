@@ -17,6 +17,7 @@ export interface ChainConfig {
   domainNotifierAddress: string;
   assetManagerAddress: string;
   didContractAddress: string;
+  claimManagerAddress: string;
 }
 
 export interface MessagingOptions {
@@ -36,7 +37,8 @@ export const chainConfigs: Record<number, ChainConfig> = {
     ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: VOLTA_DOMAIN_NOTIFER_ADDRESS,
     assetManagerAddress: "0xE258fA7D1cc8964D0dEB7204Df947bCa42b2c940",
-    didContractAddress: VoltaAddress1056
+    didContractAddress: VoltaAddress1056,
+    claimManagerAddress: "0x2F259e307D0Ba78902391c070e7b4aA043E74DBB"
   }
 };
 
