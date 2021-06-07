@@ -7,6 +7,7 @@ import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
+import { ClaimManager } from "@energyweb/iam-contracts/dist";
 import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { JWT } from "@ew-did-registry/jwt";
@@ -101,6 +102,7 @@ export class IAMBase {
   protected _ensRegistryAddress: string;
 
   protected _assetManager: IdentityManager;
+  protected _claimManager: ClaimManager;
 
   protected _cacheClient: ICacheServerClient;
 
@@ -604,6 +606,7 @@ export class IAMBase {
       domainNotifierAddress,
       didContractAddress,
       assetManagerAddress,
+      claimManagerAddress
     } = chainConfigs[chainId];
 
     if (!ensRegistryAddress)
@@ -616,6 +619,9 @@ export class IAMBase {
       throw new Error(
         `Chain config for chainId: ${chainId} does not contain assetManagerContractAddress`
       );
+    if (!claimManagerAddress) {
+      throw new Error(`Chain config for chainId: ${chainId} does not contain claimManagerAddress`);
+    }
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }

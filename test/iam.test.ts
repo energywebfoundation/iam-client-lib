@@ -8,7 +8,8 @@ import {
   didContract,
   GANACHE_PORT,
   assetsManager,
-  domainNotifer
+  domainNotifer,
+  claimManager
 } from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
@@ -42,7 +43,8 @@ beforeAll(async () => {
     ensResolverAddress: ensResolver.address,
     didContractAddress: didContract.address,
     assetManagerAddress: assetsManager.address,
-    domainNotifierAddress: domainNotifer.address
+    domainNotifierAddress: domainNotifer.address,
+    claimManagerAddress: claimManager.address
   });
   setCacheClientOptions(9, { url: "" });
 

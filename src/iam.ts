@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import { providers, Signer } from "ethers";
+import { providers, Signer, utils } from "ethers";
 import {
   IRoleDefinition,
   IAppDefinition,
@@ -64,6 +64,8 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 
+const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify } = utils;
+
 export type InitializeData = {
   did: string | undefined;
   connected: boolean;
@@ -81,6 +83,8 @@ export interface IMessage {
 
 export interface IClaimRequest extends IMessage {
   token: string;
+  registrationTypes: RegistrationTypes[];
+  agreement?: string;
 }
 
 export interface IClaimIssuance extends IMessage {
@@ -96,6 +100,11 @@ export enum ENSNamespaceTypes {
   Roles = "roles",
   Application = "apps",
   Organization = "org"
+}
+
+export enum RegistrationTypes {
+  OffChain = "RegistrationTypes::OffChain",
+  OnChain = "RegistrationTypes::OnChain"
 }
 
 /**
@@ -1337,46 +1346,17 @@ export class IAM extends IAMBase {
 
   // NATS
 
-  private verifyEnrolmentPreconditions({
-    claims,
-    enrolmentPreconditions
+  private async verifyEnrolmentPreconditions({
+    subject,
+    role
   }: {
-    claims: (IServiceEndpoint & ClaimData)[];
-    enrolmentPreconditions: IRoleDefinition["enrolmentPreconditions"];
+    subject: string;
+    role: string;
   }) {
-    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
-    for (const { type, conditions } of enrolmentPreconditions) {
-      if (type === PreconditionType.Role && conditions && conditions?.length > 0) {
-        const conditionMet = claims.some(
-          ({ claimType }) => claimType && conditions.includes(claimType)
-        );
-        if (!conditionMet) {
-          throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
-        }
-      }
-    }
-  }
-
-  async createClaimRequest({
-    issuer,
-    claim,
-    subject
-  }: {
-    issuer: string[];
-    claim: { claimType: string; fields: { key: string; value: string | number }[] };
-    subject?: string;
-  }) {
-    if (!this._did) {
-      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
-    }
-    if (!subject) {
-      subject = this._did;
-    }
-
-    const [roleDefinition, didDocument] = await Promise.all([
+    const [roleDefinition, { service }] = await Promise.all([
       this.getDefinition({
         type: ENSNamespaceTypes.Roles,
-        namespace: claim.claimType
+        namespace: role
       }),
       this.getDidDocument({ did: subject, includeClaims: true })
     ]);
@@ -1387,28 +1367,105 @@ export class IAM extends IAMBase {
 
     const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
 
-    this.verifyEnrolmentPreconditions({ claims: didDocument.service, enrolmentPreconditions });
+    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
+    for (const { type, conditions } of enrolmentPreconditions) {
+      if (type === PreconditionType.Role && conditions && conditions?.length > 0) {
+        const conditionMet = service.some(
+          ({ claimType }) => claimType && conditions.includes(claimType)
+        );
+        if (!conditionMet) {
+          throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
+        }
+      }
+    }
+  }
 
+  private async approveRolePublishing({ subject, role, version }: { subject: string, role: string, version: number }) {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+
+    const erc712_type_hash = id("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+    const agreement_type_hash = id("Agreement(address subject,bytes32 role,uint256 version)");
+
+    const domainSeparator = keccak256(
+      defaultAbiCoder.encode(
+        ["bytes32", "bytes32", "bytes32", "uint256", "address"],
+        [erc712_type_hash, id("Claim Manager"), id("1.0"), (await this._provider.getNetwork()).chainId, this._claimManager.address]
+      )
+    );
+
+    const typedMsgPrefix = "1901";
+    const messageId = Buffer.from(typedMsgPrefix, "hex");
+
+    const agreementHash = solidityKeccak256(
+      ["bytes", "bytes32", "bytes32"],
+      [
+        messageId,
+        domainSeparator,
+        keccak256(defaultAbiCoder.encode(
+          ["bytes32", "address", "bytes32", "uint256"],
+          [agreement_type_hash, subject, namehash(role), version]
+        ))
+      ]
+    );
+
+    return this._signer.signMessage(arrayify(
+      agreementHash
+    ));
+  }
+
+  async createClaimRequest({
+    issuer,
+    claim,
+    subject,
+    registrationTypes = [RegistrationTypes.OffChain]
+  }: {
+    issuer: string[];
+    claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+    subject?: string;
+    registrationTypes?: RegistrationTypes[];
+  }) {
+    if (!this._did) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    if (!subject) {
+      subject = this._did;
+    }
+    const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this.createPublicClaim({ data: claim, subject });
+
+    // TODO: verfiy onchain
+    if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      await this.verifyEnrolmentPreconditions({ subject, role });
+    }
+
     const message: IClaimRequest = {
       id: uuid(),
       token,
       claimIssuer: issuer,
       requester: this._did,
+      registrationTypes
     };
 
-    if (!this._natsConnection) {
-      if (this._cacheClient) {
-        return this._cacheClient.requestClaim({ did: subject, message });
+    if (registrationTypes.includes(RegistrationTypes.OnChain)) {
+      if (!version) {
+        throw new Error(ERROR_MESSAGES.ONCHAIN_ROLE_VERSION_NOT_SPECIFIED);
       }
-      throw new NATSConnectionNotEstablishedError();
+      message.agreement = await this.approveRolePublishing({ subject, role, version });
     }
 
-    const data = this._jsonCodec?.encode(message);
-
-    issuer.map(issuerDID => {
-      this._natsConnection?.publish(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`, data);
-    });
+    if (this._natsConnection) {
+      issuer.map((issuerDID) =>
+        this._natsConnection?.publish(
+          `${issuerDID}.${NATS_EXCHANGE_TOPIC}`,
+          this._jsonCodec?.encode(message)
+        ));
+    } else if (this._cacheClient) {
+      await this._cacheClient.requestClaim({ did: subject, message });
+    } else {
+      throw new NATSConnectionNotEstablishedError();
+    }
   }
 
   async issueClaimRequest({
