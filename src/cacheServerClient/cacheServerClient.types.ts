@@ -83,7 +83,7 @@ export interface Profile {
 export interface ClaimData extends Record<string, unknown> {
   profile?: Profile;
   claimType?: string;
-  claimTypeVersion?: string;
+  claimTypeVersion?: number;
 }
 
 export enum Order {

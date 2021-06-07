@@ -5,7 +5,7 @@ export const claimsTests = () => {
 
   test("ens claim can be created", async () => {
     await iam.createSelfSignedClaim({
-      data: { claimType: namespace, claimTypeVersion: "1" }
+      data: { claimType: namespace, claimTypeVersion: 1 }
     });
     const { service = [] } = await iam.getDidDocument();
     expect(service.find(({ claimType }) => claimType === namespace)).toBeTruthy();
@@ -39,17 +39,17 @@ export const claimsTests = () => {
   });
   test("ens claim should be created when claimTypeVersion do not match", async () => {
     await iam.createSelfSignedClaim({
-      data: { claimType: namespace, claimTypeVersion: "2" }
+      data: { claimType: namespace, claimTypeVersion: 2 }
     });
     const { service: newServices = [] } = await iam.getDidDocument();
     expect(
-      newServices.find(claim => claim.claimType === namespace && claim.claimTypeVersion === "2")
+      newServices.find(claim => claim.claimType === namespace && claim.claimTypeVersion === 2)
     ).toBeTruthy();
     expect(newServices.length).toBe(3);
   });
   test("ens claim should not be created", async () => {
     await iam.createSelfSignedClaim({
-      data: { claimType: namespace, claimTypeVersion: "2" }
+      data: { claimType: namespace, claimTypeVersion: 2 }
     });
     const { service: newServices = [] } = await iam.getDidDocument();
     expect(newServices.length).toBe(3);
