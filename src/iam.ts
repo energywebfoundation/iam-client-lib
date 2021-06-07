@@ -1395,7 +1395,8 @@ export class IAM extends IAMBase {
       )
     );
 
-    const messageId = Buffer.from("1901", "hex");
+    const typedMsgPrefix = "1901";
+    const messageId = Buffer.from(typedMsgPrefix, "hex");
 
     const agreementHash = solidityKeccak256(
       ["bytes", "bytes32", "bytes32"],
@@ -1434,6 +1435,7 @@ export class IAM extends IAMBase {
     const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this.createPublicClaim({ data: claim, subject });
 
+    // TODO: verfiy onchain
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       await this.verifyEnrolmentPreconditions({ subject, role });
     }

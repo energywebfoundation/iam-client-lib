@@ -36,8 +36,10 @@ export const chainConfigs: Record<number, ChainConfig> = {
     ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
     ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: VOLTA_DOMAIN_NOTIFER_ADDRESS,
+    // TODO: export from did-lib
     assetManagerAddress: "0xE258fA7D1cc8964D0dEB7204Df947bCa42b2c940",
     didContractAddress: VoltaAddress1056,
+    // TODO: export from iam-contracts
     claimManagerAddress: "0x2F259e307D0Ba78902391c070e7b4aA043E74DBB"
   }
 };
