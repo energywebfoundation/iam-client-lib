@@ -1538,13 +1538,15 @@ export class IAM extends IAMBase {
   }
 
   async registrationTypesOfRoles(roles: string[]): Promise<Record<string, Set<RegistrationTypes>>> {
-    const types: Record<string, Set<RegistrationTypes>> = roles.reduce((acc, role) => acc[role] = new Set(), {});
+    const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
+      (acc, role) => ({ ...acc, [role]: new Set() }), {}
+    );
     for await (const role of roles) {
-      const def = await this._domainDefinitionReader.read({ node: role });
+      const def = await this.getDefinition({ type: ENSNamespaceTypes.Roles, namespace: role });
       if (!DomainReader.isRoleDefinition(def)) {
         continue;
       }
-      const resolver = await this._ensRegistry.resolver(role);
+      const resolver = await this._ensRegistry.resolver(namehash(role));
       const { chainId } = await this._provider.getNetwork();
       const { ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
       if (resolver === ensResolverAddress) {
