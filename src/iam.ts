@@ -1483,9 +1483,9 @@ export class IAM extends IAMBase {
     if (!this._jwt) {
       throw new Error(ERROR_MESSAGES.JWT_NOT_INITIALIZED);
     }
-    const { claimType, claimTypeVersion, sub } = this._jwt.decode(token) as { claimType: string; claimTypeVersion: string; sub: string };
+    const { claimData, claimTypeVersion, sub } = this._jwt.decode(token) as { claimData: { claimType: string }, claimTypeVersion: string; sub: string };
     const issuedToken = await this.issuePublicClaim({
-      token: await this._jwt.sign({ claimType, claimTypeVersion }, { subject: sub, issuer: this._did })
+      token: await this._jwt.sign({ claimData, claimTypeVersion }, { subject: sub, issuer: this._did })
     });
     const message: IClaimIssuance = {
       id,
