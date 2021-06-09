@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 
 import { IRoleDefinition, IAppDefinition, IOrganizationDefinition, PreconditionType } from "@energyweb/iam-contracts";
-import { IAM, ENSNamespaceTypes } from "./iam";
+import { IAM, ENSNamespaceTypes, RegistrationTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
 import { WalletProvider } from "./types/WalletProvider";
@@ -70,7 +70,8 @@ export {
   WalletProvider,
   PreconditionType as PreconditionTypes,
   Order,
-  AssetHistoryEventType
+  AssetHistoryEventType,
+  RegistrationTypes
 };
 
 // TYPES
