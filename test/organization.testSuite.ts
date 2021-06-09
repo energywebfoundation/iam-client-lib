@@ -1,10 +1,11 @@
 import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
-import { ENSNamespaceTypes } from "../src/iam";
+import { ENSNamespaceTypes, RegistrationTypes } from "../src/iam";
 import { iam, root, rootOwner } from "./iam.test";
-import { ensResolver } from "./setup_contracts";
+import { ensRegistry, ensResolver, provider } from "./setup_contracts";
 import { namehash } from "../src/utils/ENS_hash";
 import { PreconditionTypes } from "../src/iam-client-lib";
+import { chainConfigs } from "../src/iam/chainConfig";
 
 export const org1 = "org1";
 
@@ -79,5 +80,15 @@ export const orgTests = () => {
 
     const reverseName = await ensResolver.name(roleNode);
     expect(reverseName).toEqual(roleDomain);
+
+    const resolver = await ensRegistry.resolver(roleNode);
+    const actualTypes = (await iam.registrationTypesOfRoles([roleDomain]))[roleDomain];
+    const { chainId } = await provider.getNetwork();
+    const expectedTypes = resolver === chainConfigs[chainId].ensPublicResolverAddress ?
+      new Set([RegistrationTypes.OffChain]) :
+      resolver === chainConfigs[chainId].ensResolverAddress ?
+        new Set([RegistrationTypes.OffChain, RegistrationTypes.OnChain]) :
+        [];
+    expect(actualTypes).toEqual(expectedTypes);
   });
 };

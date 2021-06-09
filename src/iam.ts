@@ -1537,6 +1537,29 @@ export class IAM extends IAMBase {
     }
   }
 
+  async registrationTypesOfRoles(roles: string[]): Promise<Record<string, Set<RegistrationTypes>>> {
+    const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
+      (acc, role) => ({ ...acc, [role]: new Set() }), {}
+    );
+    for await (const role of roles) {
+      const def = await this.getDefinition({ type: ENSNamespaceTypes.Roles, namespace: role });
+      if (!DomainReader.isRoleDefinition(def)) {
+        continue;
+      }
+      const resolver = await this._ensRegistry.resolver(namehash(role));
+      const { chainId } = await this._provider.getNetwork();
+      const { ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
+      if (resolver === ensResolverAddress) {
+        types[role].add(RegistrationTypes.OnChain);
+        types[role].add(RegistrationTypes.OffChain);
+      }
+      else if (resolver === ensPublicResolverAddress) {
+        types[role].add(RegistrationTypes.OffChain);
+      }
+    }
+    return types;
+  }
+
   async subscribeTo({
     subject = `${this._did}.${NATS_EXCHANGE_TOPIC}`,
     messageHandler
