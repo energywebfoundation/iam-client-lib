@@ -55,7 +55,7 @@ import {
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
-import { emptyAddress, erc712_type_hash, NATS_EXCHANGE_TOPIC, proof_type_hash, typedMsgPrefix } from "./utils/constants";
+import { defaultClaimExpiry, emptyAddress, erc712_type_hash, NATS_EXCHANGE_TOPIC, proof_type_hash, typedMsgPrefix } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
@@ -1545,7 +1545,8 @@ export class IAM extends IAMBase {
       });
     }
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const { claimType: role, claimTypeVersion: version, expiry } = claimData;
+      const { claimType: role, claimTypeVersion: version} = claimData;
+      const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
       const claimManager = ClaimManager__factory.connect(this._claimManager, this._signer);
       const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
       await claimManager.register(
