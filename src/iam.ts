@@ -1551,7 +1551,7 @@ export class IAM extends IAMBase {
       await claimManager.register(
         addressOf(sub),
         namehash(role),
-        version, 
+        version,
         expiry,
         addressOf(this._did),
         subjectAgreement,
@@ -1560,15 +1560,14 @@ export class IAM extends IAMBase {
       message.onChainProof = onChainProof;
     }
 
-    if (!this._natsConnection) {
-      if (this._cacheClient) {
-        return this._cacheClient.issueClaim({ did: this._did, message });
-      }
+    if (this._natsConnection) {
+      const dataToSend = this._jsonCodec?.encode(message);
+      this._natsConnection.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+    } else if (this._cacheClient) {
+      return this._cacheClient.issueClaim({ did: this._did, message });
+    } else {
       throw new NATSConnectionNotEstablishedError();
     }
-
-    const dataToSend = this._jsonCodec?.encode(message);
-    this._natsConnection.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
   }
 
   async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {

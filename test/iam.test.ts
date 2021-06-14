@@ -15,7 +15,7 @@ import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
-import { claimsTests } from "./claims.testSuite";
+import { claimsTests } from "./claimsTests/claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
 import { utilsTests } from "./utilsTests/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";

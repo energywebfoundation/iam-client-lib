@@ -1,6 +1,6 @@
-import { iam } from "./iam.test";
+import { iam } from "../iam.test";
 
-export const claimsTests = () => {
+export const selfsignedClaimsTests = function () {
   const namespace = "daniel.iam.ewc";
 
   test("ens claim can be created", async () => {
@@ -71,4 +71,4 @@ export const claimsTests = () => {
     expect(profile?.name).toBe("Dan");
     expect(updatedService.length).toBe(4);
   });
-};
+}
