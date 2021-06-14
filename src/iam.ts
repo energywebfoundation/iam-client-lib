@@ -22,8 +22,7 @@ import {
   IOrganizationDefinition,
   PreconditionType,
   EncodedCall,
-  DomainReader,
-  ClaimManager__factory
+  DomainReader
 } from "@energyweb/iam-contracts";
 import {
   Algorithms,
@@ -63,6 +62,7 @@ import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
+import { canonizeSig } from "./utils/enrollment";
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
@@ -1394,7 +1394,13 @@ export class IAM extends IAMBase {
     const domainSeparator = keccak256(
       defaultAbiCoder.encode(
         ["bytes32", "bytes32", "bytes32", "uint256", "address"],
-        [erc712_type_hash, id("Claim Manager"), id("1.0"), (await this._provider.getNetwork()).chainId, this._claimManager.address]
+        [
+          erc712_type_hash,
+          id("Claim Manager"),
+          id("1.0"),
+          (await this._provider.getNetwork()).chainId,
+          this._claimManager.address
+        ]
       )
     );
 
@@ -1412,9 +1418,9 @@ export class IAM extends IAMBase {
       ]
     );
 
-    return this._signer.signMessage(arrayify(
+    return canonizeSig(await this._signer.signMessage(arrayify(
       agreementHash
-    ));
+    )));
   }
 
   private async createOnChainProof(role: string, version: number, expiry: number, subject: string): Promise<string> {
@@ -1446,14 +1452,14 @@ export class IAM extends IAMBase {
         domainSeparator,
         utils.keccak256(defaultAbiCoder.encode(
           ["bytes32", "address", "bytes32", "uint", "uint", "address"],
-          [proof_type_hash, addressOf(subject), utils.namehash(role), version, expiry, this._address]
+          [proof_type_hash, addressOf(subject), namehash(role), version, expiry, addressOf(this._did)]
         ))
       ]
     );
 
-    return this._signer.signMessage(arrayify(
+    return canonizeSig(await this._signer.signMessage(arrayify(
       proofHash
-    ));
+    )));
   }
 
   async createClaimRequest({
@@ -1545,11 +1551,10 @@ export class IAM extends IAMBase {
       });
     }
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const { claimType: role, claimTypeVersion: version} = claimData;
+      const { claimType: role, claimTypeVersion: version } = claimData;
       const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
-      const claimManager = ClaimManager__factory.connect(this._claimManager, this._signer);
       const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
-      await claimManager.register(
+      await (await this._claimManager.register(
         addressOf(sub),
         namehash(role),
         version,
@@ -1557,7 +1562,7 @@ export class IAM extends IAMBase {
         addressOf(this._did),
         subjectAgreement,
         onChainProof
-      );
+      )).wait();
       message.onChainProof = onChainProof;
     }
 
