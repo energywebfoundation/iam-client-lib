@@ -1417,7 +1417,7 @@ export class IAM extends IAMBase {
     ));
   }
 
-  async createOnChainProof(role: string, version: number, expiry: number, subject: string): Promise<string> {
+  private async createOnChainProof(role: string, version: number, expiry: number, subject: string): Promise<string> {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
