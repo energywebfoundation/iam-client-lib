@@ -1407,7 +1407,7 @@ export class IAM extends IAMBase {
         domainSeparator,
         keccak256(defaultAbiCoder.encode(
           ["bytes32", "address", "bytes32", "uint256"],
-          [agreement_type_hash, subject, namehash(role), version]
+          [agreement_type_hash, addressOf(subject), namehash(role), version]
         ))
       ]
     );
@@ -1446,7 +1446,7 @@ export class IAM extends IAMBase {
         domainSeparator,
         utils.keccak256(defaultAbiCoder.encode(
           ["bytes32", "address", "bytes32", "uint", "uint", "address"],
-          [proof_type_hash, subject, utils.namehash(role), version, expiry, this._address]
+          [proof_type_hash, addressOf(subject), utils.namehash(role), version, expiry, this._address]
         ))
       ]
     );
