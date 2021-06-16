@@ -9,13 +9,14 @@ import {
   GANACHE_PORT,
   assetsManager,
   domainNotifer,
-  claimManager
+  claimManager,
+  replenish
 } from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
-import { claimsTests } from "./claims.testSuite";
+import { claimsTests } from "./claimsTests/claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
 import { utilsTests } from "./utilsTests/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
@@ -32,23 +33,9 @@ export const rpcUrl = `http://localhost:${GANACHE_PORT}`;
 
 export const provider = new providers.JsonRpcProvider(rpcUrl);
 
-beforeAll(async () => {
-  // sometimes the transaction are taking more then default 5000 ms jest timeout
-  jest.setTimeout(60000);
-  await deployContracts(privateKey);
-  const chainID = 9;
-  setChainConfig(chainID, {
-    rpcUrl,
-    ensRegistryAddress: ensRegistry.address,
-    ensResolverAddress: ensResolver.address,
-    didContractAddress: didContract.address,
-    assetManagerAddress: assetsManager.address,
-    domainNotifierAddress: domainNotifer.address,
-    claimManagerAddress: claimManager.address
-  });
-  setCacheClientOptions(9, { url: "" });
-
-  iam = new IAM({
+export const createIam = async (privateKey: string) => {
+  await replenish(new Keys({ privateKey }).getAddress());
+  const iam = new IAM({
     rpcUrl,
     privateKey
   });
@@ -59,6 +46,26 @@ beforeAll(async () => {
   } catch (e) {
     console.error(">>> Error initializing connection:", e);
   }
+  return iam;
+};
+
+beforeAll(async () => {
+  // sometimes the transaction are taking more then default 5000 ms jest timeout
+  jest.setTimeout(60000);
+  await deployContracts(privateKey);
+  const chainID = 1;
+  setChainConfig(chainID, {
+    rpcUrl,
+    ensRegistryAddress: ensRegistry.address,
+    ensResolverAddress: ensResolver.address,
+    didContractAddress: didContract.address,
+    assetManagerAddress: assetsManager.address,
+    domainNotifierAddress: domainNotifer.address,
+    claimManagerAddress: claimManager.address
+  });
+  setCacheClientOptions(1, { url: "" });
+
+  iam = await createIam(privateKey);
 });
 
 describe("IAM tests", () => {

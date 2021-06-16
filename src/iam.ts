@@ -34,7 +34,6 @@ import {
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
-import { namehash } from "./utils/ENS_hash";
 import { v4 as uuid } from "uuid";
 import { IAMBase } from "./iam/iam-base";
 import {
@@ -55,7 +54,7 @@ import {
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
-import { emptyAddress, NATS_EXCHANGE_TOPIC } from "./utils/constants";
+import { defaultClaimExpiry, emptyAddress, erc712_type_hash, NATS_EXCHANGE_TOPIC, proof_type_hash, typedMsgPrefix } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
@@ -63,8 +62,9 @@ import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
+import { canonizeSig } from "./utils/enrollment";
 
-const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify } = utils;
+const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
   did: string | undefined;
@@ -78,7 +78,7 @@ export type InitializeData = {
 export interface IMessage {
   id: string;
   requester: string;
-  claimIssuer: string[];
+  claimIssuer?: string[];
 }
 
 export interface IClaimRequest extends IMessage {
@@ -88,7 +88,10 @@ export interface IClaimRequest extends IMessage {
 }
 
 export interface IClaimIssuance extends IMessage {
-  issuedToken: string;
+  // issuedToken is is only provided in the case of off-chain role
+  issuedToken?: string;
+  // onChainProof is only provided in case of on-chain role
+  onChainProof?: string;
   acceptedBy: string;
 }
 
@@ -1391,11 +1394,16 @@ export class IAM extends IAMBase {
     const domainSeparator = keccak256(
       defaultAbiCoder.encode(
         ["bytes32", "bytes32", "bytes32", "uint256", "address"],
-        [erc712_type_hash, id("Claim Manager"), id("1.0"), (await this._provider.getNetwork()).chainId, this._claimManager.address]
+        [
+          erc712_type_hash,
+          id("Claim Manager"),
+          id("1.0"),
+          (await this._provider.getNetwork()).chainId,
+          this._claimManager.address
+        ]
       )
     );
 
-    const typedMsgPrefix = "1901";
     const messageId = Buffer.from(typedMsgPrefix, "hex");
 
     const agreementHash = solidityKeccak256(
@@ -1405,23 +1413,60 @@ export class IAM extends IAMBase {
         domainSeparator,
         keccak256(defaultAbiCoder.encode(
           ["bytes32", "address", "bytes32", "uint256"],
-          [agreement_type_hash, subject, namehash(role), version]
+          [agreement_type_hash, addressOf(subject), namehash(role), version]
         ))
       ]
     );
 
-    return this._signer.signMessage(arrayify(
+    return canonizeSig(await this._signer.signMessage(arrayify(
       agreementHash
-    ));
+    )));
+  }
+
+  private async createOnChainProof(role: string, version: number, expiry: number, subject: string): Promise<string> {
+    if (!this._did) {
+      throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+    }
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+    const messageId = Buffer.from(typedMsgPrefix, "hex");
+
+    const domainSeparator = utils.keccak256(
+      defaultAbiCoder.encode(
+        ["bytes32", "bytes32", "bytes32", "uint256", "address"],
+        [
+          erc712_type_hash,
+          utils.id("Claim Manager"),
+          utils.id("1.0"),
+          (await this._provider.getNetwork()).chainId,
+          this._claimManager.address
+        ]
+      )
+    );
+
+    const proofHash = solidityKeccak256(
+      ["bytes", "bytes32", "bytes32"],
+      [
+        messageId,
+        domainSeparator,
+        utils.keccak256(defaultAbiCoder.encode(
+          ["bytes32", "address", "bytes32", "uint", "uint", "address"],
+          [proof_type_hash, addressOf(subject), namehash(role), version, expiry, addressOf(this._did)]
+        ))
+      ]
+    );
+
+    return canonizeSig(await this._signer.signMessage(arrayify(
+      proofHash
+    )));
   }
 
   async createClaimRequest({
-    issuer,
     claim,
     subject,
     registrationTypes = [RegistrationTypes.OffChain]
   }: {
-    issuer: string[];
     claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
     subject?: string;
     registrationTypes?: RegistrationTypes[];
@@ -1439,6 +1484,9 @@ export class IAM extends IAMBase {
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       await this.verifyEnrolmentPreconditions({ subject, role });
     }
+
+    // temporarily, until claimIssuer is not removed from Claim entity
+    const issuer = [`did:${Methods.Erc1056}:${emptyAddress}`];
 
     const message: IClaimRequest = {
       id: uuid(),
@@ -1472,10 +1520,14 @@ export class IAM extends IAMBase {
     requester,
     token,
     id,
+    subjectAgreement,
+    registrationTypes
   }: {
     requester: string;
     token: string;
     id: string;
+    subjectAgreement: string;
+    registrationTypes: RegistrationTypes[]
   }) {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1483,27 +1535,46 @@ export class IAM extends IAMBase {
     if (!this._jwt) {
       throw new Error(ERROR_MESSAGES.JWT_NOT_INITIALIZED);
     }
-    const { claimData, sub } = this._jwt.decode(token) as { claimData: { claimType: string; claimTypeVersion: string }; sub: string };
-    const issuedToken = await this.issuePublicClaim({
-      token: await this._jwt.sign({ claimData }, { subject: sub, issuer: this._did })
-    });
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+    const { claimData, sub } = this._jwt.decode(token) as
+      { claimData: { claimType: string; claimTypeVersion: number, expiry: number }; sub: string };
     const message: IClaimIssuance = {
       id,
-      issuedToken,
-      requester: requester,
+      requester,
       claimIssuer: [this._did],
       acceptedBy: this._did
     };
-
-    if (!this._natsConnection) {
-      if (this._cacheClient) {
-        return this._cacheClient.issueClaim({ did: this._did, message });
-      }
-      throw new NATSConnectionNotEstablishedError();
+    if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      message.issuedToken = await this.issuePublicClaim({
+        token: await this._jwt.sign({ claimData }, { subject: sub, issuer: this._did })
+      });
+    }
+    if (registrationTypes.includes(RegistrationTypes.OnChain)) {
+      const { claimType: role, claimTypeVersion: version } = claimData;
+      const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
+      const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
+      await (await this._claimManager.register(
+        addressOf(sub),
+        namehash(role),
+        version,
+        expiry,
+        addressOf(this._did),
+        subjectAgreement,
+        onChainProof
+      )).wait();
+      message.onChainProof = onChainProof;
     }
 
-    const dataToSend = this._jsonCodec?.encode(message);
-    this._natsConnection.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+    if (this._natsConnection) {
+      const dataToSend = this._jsonCodec?.encode(message);
+      this._natsConnection.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+    } else if (this._cacheClient) {
+      return this._cacheClient.issueClaim({ did: this._did, message });
+    } else {
+      throw new NATSConnectionNotEstablishedError();
+    }
   }
 
   async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {

@@ -1,5 +1,5 @@
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import { DomainReader, DomainTransactionFactory, DomainHierarchy, ResolverContractType } from "@energyweb/iam-contracts";
+import { DomainReader, DomainTransactionFactory, DomainHierarchy, ResolverContractType, ClaimManager__factory } from "@energyweb/iam-contracts";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
@@ -649,6 +649,7 @@ export class IAMBase {
       domainNotifierAddress: domainNotifierAddress,
       publicResolverAddress: ensPublicResolverAddress
     });
+    this._claimManager = ClaimManager__factory.connect(claimManagerAddress, this._signer);
 
     const cacheOptions = cacheServerClientOptions[chainId];
 
