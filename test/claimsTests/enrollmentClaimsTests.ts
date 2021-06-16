@@ -101,19 +101,17 @@ export function enrollmentClaimsTests() {
 
   test("enrollment by issuer of type DID", async () => {
     await subjectIam.createClaimRequest({
-      issuer: [staticIssuerDID],
       claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: version, fields: [] },
       registrationTypes,
       subject: subjectDID
     });
     expect(publish).toBeCalledTimes(1);
-    const [issuerChannel, encodedMsg] = publish.mock.calls.pop();
-    expect(issuerChannel).toEqual(`${staticIssuerDID}.${NATS_EXCHANGE_TOPIC}`);
+    const [, encodedMsg] = publish.mock.calls.pop();
     const message = jsonCodec.decode(encodedMsg);
 
     expect(message).toHaveProperty("id");
     expect(message).toHaveProperty("token");
-    expect(message).toMatchObject({ requester: subjectDID, claimIssuer: [staticIssuerDID], registrationTypes });
+    expect(message).toMatchObject({ requester: subjectDID, registrationTypes });
 
     const { id, agreement: subjectAgreement, token } = message;
     await staticIssuerIam.issueClaimRequest({
@@ -144,7 +142,6 @@ export function enrollmentClaimsTests() {
     });
 
     await dynamicIssuerIam.createClaimRequest({
-      issuer: [staticIssuerDID],
       claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: version, fields: [] },
       registrationTypes,
       subject: dynamicIssuerDID

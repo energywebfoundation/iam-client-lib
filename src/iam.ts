@@ -1463,13 +1463,10 @@ export class IAM extends IAMBase {
   }
 
   async createClaimRequest({
-    issuer,
     claim,
     subject,
     registrationTypes = [RegistrationTypes.OffChain]
   }: {
-    // at the moment of requesting there might be no issuers
-    issuer?: string[];
     claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
     subject?: string;
     registrationTypes?: RegistrationTypes[];
@@ -1488,9 +1485,8 @@ export class IAM extends IAMBase {
       await this.verifyEnrolmentPreconditions({ subject, role });
     }
 
-    if (!issuer || issuer.length === 0) {
-      issuer = [`did:${Methods.Erc1056}:${emptyAddress}`];
-    }
+    // temporarily, until claimIssuer is not removed from Claim entity
+    const issuer = [`did:${Methods.Erc1056}:${emptyAddress}`];
 
     const message: IClaimRequest = {
       id: uuid(),
