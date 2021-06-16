@@ -8,32 +8,40 @@ import { IRoleDefinition, NATS_EXCHANGE_TOPIC } from "../../src/iam-client-lib";
 import { createIam, root, rootOwner } from "../iam.test";
 import { claimManager } from "../setup_contracts";
 
-const {namehash} = utils;
+const { namehash } = utils;
 
 export function enrollmentClaimsTests() {
-  const issuer = Wallet.createRandom();
-  const issuerDID = `did:${Methods.Erc1056}:${issuer.address}`;
-  const requester = new Wallet(rootOwner.privateKey); // requester owns root
-  const requesterDID = `did:${Methods.Erc1056}:${requester.address}`;
-  const subject = requester;
+  const staticIissuer = Wallet.createRandom();
+  const staticIssuerDID = `did:${Methods.Erc1056}:${staticIissuer.address}`;
+  const dynamicIssuer = Wallet.createRandom();
+  const dynamicIssuerDID = `did:${Methods.Erc1056}:${dynamicIssuer.address}`;
+  const roleCreator = new Wallet(rootOwner.privateKey); // owns root
+  const roleCreatorDID = `did:${Methods.Erc1056}:${roleCreator.address}`;
+  const subject = roleCreator;
   const subjectDID = `did:${Methods.Erc1056}:${subject.address}`;
-  const roleName = "myrole";
+  const roleName1 = "myrole1";
+  const roleName2 = "myrole2";
   const namespace = root;
   const version = 1;
-  const claimType = `${roleName}.${namespace}`;
-  const roleDefinition: IRoleDefinition = {
-    roleName,
+  const roleDefinition1: IRoleDefinition = {
+    roleName: roleName1,
     roleType: "org",
     fields: [],
     enrolmentPreconditions: [],
-    issuer: { issuerType: "DID", did: [issuerDID] },
+    issuer: { issuerType: "DID", did: [staticIssuerDID] },
     version,
     metadata: {}
   };
+  const roleDefinition2: IRoleDefinition = {
+    ...roleDefinition1,
+    issuer: { issuerType: "ROLE", roleName: `${roleName1}.${root}` }
+  };
   const registrationTypes = [RegistrationTypes.OffChain, RegistrationTypes.OnChain];
   const jsonCodec = JSONCodec();
-  let requesterIam: IAM;
-  let issuerIam: IAM;
+  let roleCreatorIam: IAM;
+  let subjectIam: IAM;
+  let staticIssuerIam: IAM;
+  let dynamicIssuerIam: IAM;
   let publish: jest.Mock;
   let getDidDocument: jest.Mock;
   let getRoleDefinition: jest.Mock;
@@ -42,13 +50,15 @@ export function enrollmentClaimsTests() {
   let _jsonCodec;
 
   beforeAll(async () => {
-    requesterIam = await createIam(requester.privateKey);
-    issuerIam = await createIam(issuer.privateKey);
+    roleCreatorIam = await createIam(roleCreator.privateKey);
+    subjectIam = await createIam(subject.privateKey);
+    staticIssuerIam = await createIam(staticIissuer.privateKey);
+    dynamicIssuerIam = await createIam(dynamicIssuer.privateKey);
 
-    await requesterIam.createRole({
-      roleName,
+    await roleCreatorIam.createRole({
+      roleName: roleName1,
       namespace,
-      data: roleDefinition,
+      data: roleDefinition1,
       returnSteps: false
     });
   });
@@ -61,10 +71,13 @@ export function enrollmentClaimsTests() {
     };
 
     getRoleDefinition = jest.fn().mockImplementation(({ namespace }: { namespace: string }) => {
-      if (namespace === claimType) {
-        return roleDefinition;
-      } else {
-        return undefined;
+      switch (namespace) {
+        case `${roleName1}.${root}`:
+          return roleDefinition1;
+        case `${roleName2}.${root}`:
+          return roleDefinition2;
+        default:
+          return undefined;
       }
     });
     getDidDocument = jest.fn().mockImplementation(() => {
@@ -86,49 +99,73 @@ export function enrollmentClaimsTests() {
     Reflect.set(IAM.prototype, "_jsonCodec", _jsonCodec);
   });
 
-  test("enrollment request should be registered", async () => {
-    await requesterIam.createClaimRequest({
-      issuer: [issuerDID],
-      claim: { claimType, claimTypeVersion: version, fields: [] },
+  test("enrollment by issuer of type DID", async () => {
+    await subjectIam.createClaimRequest({
+      issuer: [staticIssuerDID],
+      claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: version, fields: [] },
       registrationTypes,
       subject: subjectDID
     });
-
     expect(publish).toBeCalledTimes(1);
-    const channel = publish.mock.calls[0][0];
-    const message = publish.mock.calls[0][1];
-    expect(channel).toEqual(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`);
-    expect(jsonCodec.decode(message)).toHaveProperty("id");
-    expect(jsonCodec.decode(message)).toHaveProperty("token");
-    expect(jsonCodec.decode(message)).toMatchObject({ requester: requesterDID, claimIssuer: [issuerDID], registrationTypes });
-  });
+    const [issuerChannel, encodedMsg] = publish.mock.calls.pop();
+    expect(issuerChannel).toEqual(`${staticIssuerDID}.${NATS_EXCHANGE_TOPIC}`);
+    const message = jsonCodec.decode(encodedMsg);
 
-  test("issuing claim request should register on-chain enrollment", async () => {
-    await requesterIam.createClaimRequest({
-      issuer: [issuerDID],
-      claim: { claimType, claimTypeVersion: version, fields: [] },
-      registrationTypes,
-      subject: subjectDID
-    });
+    expect(message).toHaveProperty("id");
+    expect(message).toHaveProperty("token");
+    expect(message).toMatchObject({ requester: subjectDID, claimIssuer: [staticIssuerDID], registrationTypes });
 
-    const { id, agreement, token } = jsonCodec.decode(publish.mock.calls.pop()[1]);
-
-    await issuerIam.issueClaimRequest({
+    const { id, agreement: subjectAgreement, token } = message;
+    await staticIssuerIam.issueClaimRequest({
       id,
       registrationTypes,
-      requester: requesterDID,
-      subjectAgreement: agreement,
+      requester: roleCreatorDID,
+      subjectAgreement,
       token
     });
 
-    const [channel, data] = publish.mock.calls[1];
-    expect(channel).toEqual(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`);
-    
+    const [requesterChannel, data] = publish.mock.calls.pop();
+    expect(requesterChannel).toEqual(`${subjectDID}.${NATS_EXCHANGE_TOPIC}`);
+
     const { claimIssuer, requester, onChainProof } = jsonCodec.decode(data);
-    expect(requester).toEqual(requesterDID);
-    expect(claimIssuer).toEqual([issuerDID]);
+    expect(requester).toEqual(roleCreatorDID);
+    expect(claimIssuer).toEqual([staticIssuerDID]);
     expect(onChainProof).toHaveLength(132);
-    
-    expect(await claimManager.hasRole(addressOf(subjectDID), namehash(`${roleName}.${root}`),version)).toBe(true);
+
+    expect(await claimManager.hasRole(addressOf(subjectDID), namehash(`${roleName1}.${root}`), version)).toBe(true);
+  });
+
+  test("enrollment by issuer of type ROLE", async () => {
+    await roleCreatorIam.createRole({
+      roleName: roleName2,
+      namespace,
+      data: roleDefinition2,
+      returnSteps: false
+    });
+
+    await dynamicIssuerIam.createClaimRequest({
+      issuer: [staticIssuerDID],
+      claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: version, fields: [] },
+      registrationTypes,
+      subject: dynamicIssuerDID
+    });
+    let [, encodedMsg] = publish.mock.calls.pop();
+    let message = jsonCodec.decode(encodedMsg);
+    let { agreement: subjectAgreement, token, id } = message;
+    await staticIssuerIam.issueClaimRequest({ id, requester: dynamicIssuerDID, token, registrationTypes, subjectAgreement });
+
+    expect(await claimManager.hasRole(addressOf(dynamicIssuerDID), namehash(`${roleName1}.${root}`), version));
+
+    await subjectIam.createClaimRequest({
+      subject: subjectDID,
+      claim: { claimType: `${roleName2}.${root}`, claimTypeVersion: version, fields: [] },
+      registrationTypes
+    });
+    ([, encodedMsg] = publish.mock.calls.pop());
+    message = jsonCodec.decode(encodedMsg);
+    ({ agreement: subjectAgreement, token, id } = message);
+    await dynamicIssuerIam.issueClaimRequest({ id, requester: subjectDID, token, registrationTypes, subjectAgreement });
+
+    expect(await claimManager.hasRole(addressOf(subjectDID), namehash(`${roleName2}.${root}`), version));
   });
 }

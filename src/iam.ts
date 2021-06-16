@@ -78,7 +78,7 @@ export type InitializeData = {
 export interface IMessage {
   id: string;
   requester: string;
-  claimIssuer: string[];
+  claimIssuer?: string[];
 }
 
 export interface IClaimRequest extends IMessage {
@@ -1468,7 +1468,8 @@ export class IAM extends IAMBase {
     subject,
     registrationTypes = [RegistrationTypes.OffChain]
   }: {
-    issuer: string[];
+    // at the moment of requesting there might be no issuers
+    issuer?: string[];
     claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
     subject?: string;
     registrationTypes?: RegistrationTypes[];
@@ -1485,6 +1486,10 @@ export class IAM extends IAMBase {
     // TODO: verfiy onchain
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       await this.verifyEnrolmentPreconditions({ subject, role });
+    }
+
+    if (!issuer || issuer.length === 0) {
+      issuer = [`did:${Methods.Erc1056}:${emptyAddress}`];
     }
 
     const message: IClaimRequest = {
