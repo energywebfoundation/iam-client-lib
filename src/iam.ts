@@ -1773,15 +1773,10 @@ export class IAM extends IAMBase {
     if (!this._address) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
-    if (!this._didSigner) {
-      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-    }
     try {
       const event = (await (await this._assetManager.createIdentity(this._address)).wait())
         .events?.find((e) => e.event === this._assetManager.interface.events.IdentityCreated.name);
       const identity = (event?.args as string[])[0];
-      const operator = new ProxyOperator(this._didSigner, this._registrySetting, identity);
-      await operator.create();
 
       if (this._cacheClient) {
         let asset = await this.getAssetById({ id: `did:ethr:${identity}` });

@@ -87,7 +87,7 @@ export const assetsTests = () => {
     const assetAddress = await iam.registerAsset();
 
     const asset1 = await iam.getDidDocument({ did: `did:${Methods.Erc1056}:${assetAddress}` });
-    expect(asset1.publicKey.length).toBe(1);
+    expect(asset1.publicKey.length).toBe(0);
 
     const update = await iam.updateDidDocument({
       didAttribute: DIDAttribute.PublicKey,
@@ -102,7 +102,7 @@ export const assetsTests = () => {
     expect(update).toBeTruthy();
 
     const asset = await iam.getDidDocument({ did: `did:${Methods.Erc1056}:${assetAddress}` });
-    expect(asset.publicKey.length).toBe(2);
+    expect(asset.publicKey.length).toBe(1);
 
     const did = `did:${Methods.Erc1056}:${assetAddress}#key-1`;
     const type = 'Secp256k1sigAuth';
