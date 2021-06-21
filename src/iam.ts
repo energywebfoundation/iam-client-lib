@@ -138,6 +138,10 @@ export class IAM extends IAMBase {
    */
 
   getDid(): string | undefined {
+    const didRegex = new RegExp(`^did:${Methods.Erc1056}:`);
+    if (this._did && didRegex.test(this._did) === true) {
+      this._did = this._did.split(":")[2];
+    }
     return this._did;
   }
 
