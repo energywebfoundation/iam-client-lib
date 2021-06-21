@@ -84,7 +84,7 @@ export interface IMessage {
 export interface IClaimRequest extends IMessage {
   token: string;
   registrationTypes: RegistrationTypes[];
-  agreement?: string;
+  subjectAgreement?: string;
 }
 
 export interface IClaimIssuance extends IMessage {
@@ -1500,7 +1500,7 @@ export class IAM extends IAMBase {
       if (!version) {
         throw new Error(ERROR_MESSAGES.ONCHAIN_ROLE_VERSION_NOT_SPECIFIED);
       }
-      message.agreement = await this.approveRolePublishing({ subject, role, version });
+      message.subjectAgreement = await this.approveRolePublishing({ subject, role, version });
     }
 
     if (this._natsConnection) {
