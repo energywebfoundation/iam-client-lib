@@ -30,7 +30,7 @@ import {
   Encoding,
   IDIDDocument,
   IServiceEndpoint,
-  IUpdateData
+  IUpdateData,
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
@@ -54,14 +54,7 @@ import {
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
-import {
-  defaultClaimExpiry,
-  emptyAddress,
-  erc712_type_hash,
-  NATS_EXCHANGE_TOPIC,
-  proof_type_hash,
-  typedMsgPrefix
-} from "./utils/constants";
+import { defaultClaimExpiry, emptyAddress, erc712_type_hash, NATS_EXCHANGE_TOPIC, proof_type_hash, typedMsgPrefix } from "./utils/constants";
 import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
@@ -125,8 +118,8 @@ export class IAM extends IAMBase {
   static async isMetamaskExtensionPresent() {
     const provider = (await detectEthereumProvider({ mustBeMetaMask: true })) as
       | {
-          request: any;
-        }
+        request: any;
+      }
       | undefined;
 
     const chainId = (await provider?.request({
@@ -145,10 +138,6 @@ export class IAM extends IAMBase {
    */
 
   getDid(): string | undefined {
-    const didRegex = new RegExp(`^did:${Methods.Erc1056}:`);
-    if (this._did && didRegex.test(this._did) === true) {
-      this._did = this._did.split(":")[2];
-    }
     return this._did;
   }
 
@@ -270,8 +259,8 @@ export class IAM extends IAMBase {
         ...document,
         service: includeClaims
           ? await this.downloadClaims({
-              services: document.service && document.service.length > 0 ? document.service : []
-            })
+            services: document.service && document.service.length > 0 ? document.service : []
+          })
           : []
       };
     }
@@ -314,7 +303,7 @@ export class IAM extends IAMBase {
     const updateData: IUpdateData = {
       algo: Algorithms.Secp256k1,
       encoding: Encoding.HEX,
-      ...data
+      ...data,
     };
 
     const operator = new ProxyOperator(this._didSigner, this._registrySetting, addressOf(did));
@@ -322,6 +311,7 @@ export class IAM extends IAMBase {
 
     return Boolean(update);
   }
+
 
   /**
    * revokeDidDocument
@@ -415,7 +405,7 @@ export class IAM extends IAMBase {
     let document: DIDDocumentFull;
     if (sub === this._did) {
       document = this._document;
-    } else if ((await this.getOwnedAssets({})).find(a => a.document.id === sub)) {
+    } else if ((await this.getOwnedAssets({})).find((a) => a.document.id === sub)) {
       const operator = new ProxyOperator(this._didSigner, this._registrySetting, addressOf(sub));
       document = new DIDDocumentFull(sub, operator);
     } else {
@@ -424,15 +414,18 @@ export class IAM extends IAMBase {
 
     const url = await this._ipfsStore.save(token);
     const claimId = await this.getClaimId({ claimData });
-    await document.update(DIDAttribute.ServicePoint, {
-      type: DIDAttribute.ServicePoint,
-      value: {
-        id: claimId,
-        serviceEndpoint: url,
-        hash: hashes.SHA256(token),
-        hashAlg: "SHA256"
+    await document.update(
+      DIDAttribute.ServicePoint,
+      {
+        type: DIDAttribute.ServicePoint,
+        value: {
+          id: claimId,
+          serviceEndpoint: url,
+          hash: hashes.SHA256(token),
+          hashAlg: "SHA256"
+        }
       }
-    });
+    );
 
     return url;
   }
@@ -567,9 +560,7 @@ export class IAM extends IAMBase {
     }
     // Standard update
     await this.send({
-      calls: [
-        this._domainDefinitionTransactionFactory.editDomain({ domain, domainDefinition: data })
-      ],
+      calls: [this._domainDefinitionTransactionFactory.editDomain({ domain, domainDefinition: data })],
       from: await this.getOwner({ namespace: domain })
     });
   }
@@ -581,20 +572,18 @@ export class IAM extends IAMBase {
    * @param domain domain to potentially update
    * @param data definition to apply to domain
    */
-  protected async updateLegacyDefinition(
-    domain: string,
-    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition
-  ): Promise<boolean> {
+  protected async updateLegacyDefinition(domain: string, data: IAppDefinition | IOrganizationDefinition | IRoleDefinition): Promise<boolean> {
     const node = namehash(domain);
     const currentResolverAddress = await this._ensRegistry.resolver(node);
     const { chainId } = await this._provider.getNetwork();
-    const { ensPublicResolverAddress, ensResolverAddress, ensRegistryAddress } = chainConfigs[
-      chainId
-    ];
+    const { ensPublicResolverAddress, ensResolverAddress, ensRegistryAddress } = chainConfigs[chainId];
     if (currentResolverAddress === ensPublicResolverAddress) {
       const updateResolverTransaction: EncodedCall = {
         to: ensRegistryAddress,
-        data: this._ensRegistry.interface.functions.setResolver.encode([node, ensResolverAddress])
+        data: this._ensRegistry.interface.functions.setResolver.encode([
+          node,
+          ensResolverAddress
+        ])
       };
       // Need to use newRole/newDomain as need to set reverse domain name
       const updateDomain = DomainReader.isRoleDefinition(data)
@@ -637,10 +626,7 @@ export class IAM extends IAMBase {
         info: "Create organization subdomain"
       },
       {
-        tx: this._domainDefinitionTransactionFactory.newDomain({
-          domain: orgDomain,
-          domainDefinition: data
-        }),
+        tx: this._domainDefinitionTransactionFactory.newDomain({ domain: orgDomain, domainDefinition: data }),
         info: "Register reverse name and set definition for organization subdomain"
       },
       {
@@ -706,10 +692,7 @@ export class IAM extends IAMBase {
         info: "Set subdomain for application"
       },
       {
-        tx: this._domainDefinitionTransactionFactory.newDomain({
-          domainDefinition: data,
-          domain: appDomain
-        }),
+        tx: this._domainDefinitionTransactionFactory.newDomain({ domainDefinition: data, domain: appDomain }),
         info: "Set name definition for application"
       },
       {
@@ -721,9 +704,7 @@ export class IAM extends IAMBase {
         info: "Create roles subdomain for application"
       },
       {
-        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({
-          domain: `${ENSNamespaceTypes.Roles}.${appDomain}`
-        }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: `${ENSNamespaceTypes.Roles}.${appDomain}` }),
         info: "Set name for roles subdomain for application"
       }
     ].map(step => ({
@@ -765,10 +746,7 @@ export class IAM extends IAMBase {
         info: "Create subdomain for role"
       },
       {
-        tx: this._domainDefinitionTransactionFactory.newRole({
-          domain: newDomain,
-          roleDefinition: data
-        }),
+        tx: this._domainDefinitionTransactionFactory.newRole({ domain: newDomain, roleDefinition: data }),
         info: "Set name and definition for role"
       }
     ].map(step => ({
@@ -819,8 +797,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error("You are not able to change ownership of organization with registered apps");
     }
@@ -943,8 +921,8 @@ export class IAM extends IAMBase {
     const apps = this._cacheClient
       ? await this.getAppsByOrgNamespace({ namespace })
       : await this.getSubdomains({
-          domain: `${ENSNamespaceTypes.Application}.${namespace}`
-        });
+        domain: `${ENSNamespaceTypes.Application}.${namespace}`
+      });
     if (apps && apps.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
     }
@@ -1088,13 +1066,8 @@ export class IAM extends IAMBase {
    * @returns metadata string or empty string when there is no metadata
    *
    */
-  async getDefinition({
-    type,
-    namespace
-  }: {
-    type: ENSNamespaceTypes;
-    namespace: string;
-  }): Promise<IRoleDefinition | IAppDefinition | IOrganizationDefinition> {
+  async getDefinition({ type, namespace }: { type: ENSNamespaceTypes; namespace: string })
+    : Promise<IRoleDefinition | IAppDefinition | IOrganizationDefinition> {
     if (this._cacheClient && type) {
       if (type === ENSNamespaceTypes.Roles) {
         return this._cacheClient.getRoleDefinition({ namespace });
@@ -1376,7 +1349,13 @@ export class IAM extends IAMBase {
 
   // NATS
 
-  private async verifyEnrolmentPreconditions({ subject, role }: { subject: string; role: string }) {
+  private async verifyEnrolmentPreconditions({
+    subject,
+    role
+  }: {
+    subject: string;
+    role: string;
+  }) {
     const [roleDefinition, { service }] = await Promise.all([
       this.getDefinition({
         type: ENSNamespaceTypes.Roles,
@@ -1404,22 +1383,12 @@ export class IAM extends IAMBase {
     }
   }
 
-  private async approveRolePublishing({
-    subject,
-    role,
-    version
-  }: {
-    subject: string;
-    role: string;
-    version: number;
-  }) {
+  private async approveRolePublishing({ subject, role, version }: { subject: string, role: string, version: number }) {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
 
-    const erc712_type_hash = id(
-      "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-    );
+    const erc712_type_hash = id("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
     const agreement_type_hash = id("Agreement(address subject,bytes32 role,uint256 version)");
 
     const domainSeparator = keccak256(
@@ -1442,24 +1411,19 @@ export class IAM extends IAMBase {
       [
         messageId,
         domainSeparator,
-        keccak256(
-          defaultAbiCoder.encode(
-            ["bytes32", "address", "bytes32", "uint256"],
-            [agreement_type_hash, addressOf(subject), namehash(role), version]
-          )
-        )
+        keccak256(defaultAbiCoder.encode(
+          ["bytes32", "address", "bytes32", "uint256"],
+          [agreement_type_hash, addressOf(subject), namehash(role), version]
+        ))
       ]
     );
 
-    return canonizeSig(await this._signer.signMessage(arrayify(agreementHash)));
+    return canonizeSig(await this._signer.signMessage(arrayify(
+      agreementHash
+    )));
   }
 
-  private async createOnChainProof(
-    role: string,
-    version: number,
-    expiry: number,
-    subject: string
-  ): Promise<string> {
+  private async createOnChainProof(role: string, version: number, expiry: number, subject: string): Promise<string> {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
@@ -1486,23 +1450,16 @@ export class IAM extends IAMBase {
       [
         messageId,
         domainSeparator,
-        utils.keccak256(
-          defaultAbiCoder.encode(
-            ["bytes32", "address", "bytes32", "uint", "uint", "address"],
-            [
-              proof_type_hash,
-              addressOf(subject),
-              namehash(role),
-              version,
-              expiry,
-              addressOf(this._did)
-            ]
-          )
-        )
+        utils.keccak256(defaultAbiCoder.encode(
+          ["bytes32", "address", "bytes32", "uint", "uint", "address"],
+          [proof_type_hash, addressOf(subject), namehash(role), version, expiry, addressOf(this._did)]
+        ))
       ]
     );
 
-    return canonizeSig(await this._signer.signMessage(arrayify(proofHash)));
+    return canonizeSig(await this._signer.signMessage(arrayify(
+      proofHash
+    )));
   }
 
   async createClaimRequest({
@@ -1510,11 +1467,7 @@ export class IAM extends IAMBase {
     subject,
     registrationTypes = [RegistrationTypes.OffChain]
   }: {
-    claim: {
-      claimType: string;
-      claimTypeVersion: number;
-      fields: { key: string; value: string | number }[];
-    };
+    claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
     subject?: string;
     registrationTypes?: RegistrationTypes[];
   }) {
@@ -1551,12 +1504,11 @@ export class IAM extends IAMBase {
     }
 
     if (this._natsConnection) {
-      issuer.map(issuerDID =>
+      issuer.map((issuerDID) =>
         this._natsConnection?.publish(
           `${issuerDID}.${NATS_EXCHANGE_TOPIC}`,
           this._jsonCodec?.encode(message)
-        )
-      );
+        ));
     } else if (this._cacheClient) {
       await this._cacheClient.requestClaim({ did: subject, message });
     } else {
@@ -1575,7 +1527,7 @@ export class IAM extends IAMBase {
     token: string;
     id: string;
     subjectAgreement: string;
-    registrationTypes: RegistrationTypes[];
+    registrationTypes: RegistrationTypes[]
   }) {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1586,10 +1538,8 @@ export class IAM extends IAMBase {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-    const { claimData, sub } = this._jwt.decode(token) as {
-      claimData: { claimType: string; claimTypeVersion: number; expiry: number };
-      sub: string;
-    };
+    const { claimData, sub } = this._jwt.decode(token) as
+      { claimData: { claimType: string; claimTypeVersion: number, expiry: number }; sub: string };
     const message: IClaimIssuance = {
       id,
       requester,
@@ -1605,17 +1555,15 @@ export class IAM extends IAMBase {
       const { claimType: role, claimTypeVersion: version } = claimData;
       const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
       const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
-      await (
-        await this._claimManager.register(
-          addressOf(sub),
-          namehash(role),
-          version,
-          expiry,
-          addressOf(this._did),
-          subjectAgreement,
-          onChainProof
-        )
-      ).wait();
+      await (await this._claimManager.register(
+        addressOf(sub),
+        namehash(role),
+        version,
+        expiry,
+        addressOf(this._did),
+        subjectAgreement,
+        onChainProof
+      )).wait();
       message.onChainProof = onChainProof;
     }
 
@@ -1662,8 +1610,7 @@ export class IAM extends IAMBase {
 
   async registrationTypesOfRoles(roles: string[]): Promise<Record<string, Set<RegistrationTypes>>> {
     const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
-      (acc, role) => ({ ...acc, [role]: new Set() }),
-      {}
+      (acc, role) => ({ ...acc, [role]: new Set() }), {}
     );
     for await (const role of roles) {
       const def = await this.getDefinition({ type: ENSNamespaceTypes.Roles, namespace: role });
@@ -1676,7 +1623,8 @@ export class IAM extends IAMBase {
       if (resolver === ensResolverAddress) {
         types[role].add(RegistrationTypes.OnChain);
         types[role].add(RegistrationTypes.OffChain);
-      } else if (resolver === ensPublicResolverAddress) {
+      }
+      else if (resolver === ensPublicResolverAddress) {
         types[role].add(RegistrationTypes.OffChain);
       }
     }
@@ -1708,7 +1656,7 @@ export class IAM extends IAMBase {
   }
 
   async unsubscribeFrom(subscriptionId: number) {
-    const i = this._subscriptions.findIndex(s => s.getID() === subscriptionId);
+    const i = this._subscriptions.findIndex((s) => s.getID() === subscriptionId);
     if (i !== -1) {
       this._subscriptions.splice(i, 1)[0].unsubscribe();
     }
@@ -1721,8 +1669,8 @@ export class IAM extends IAMBase {
   }
 
   /**
-   * @description - Returns claims for given requester. Allows filtering by status and parent namespace
-   */
+  * @description - Returns claims for given requester. Allows filtering by status and parent namespace
+  */
   async getClaimsByRequester({
     did,
     isAccepted,
@@ -1739,8 +1687,8 @@ export class IAM extends IAMBase {
   }
 
   /**
-   * @description - Returns claims for given issuer. Allows filtering by status and parent namespace
-   */
+  * @description - Returns claims for given issuer. Allows filtering by status and parent namespace
+  */
   async getClaimsByIssuer({
     did,
     isAccepted,
@@ -1757,12 +1705,10 @@ export class IAM extends IAMBase {
   }
 
   /**
-   * @description - Returns claims for given subject. Allows filtering by status and parent namespace
-   */
+  * @description - Returns claims for given subject. Allows filtering by status and parent namespace
+  */
   async getClaimsBySubject({
-    did,
-    isAccepted,
-    parentNamespace
+    did, isAccepted, parentNamespace
   }: {
     did: string;
     isAccepted?: boolean;
@@ -1797,8 +1743,8 @@ export class IAM extends IAMBase {
         type === ENSNamespaceTypes.Roles
           ? [namespace]
           : type === ENSNamespaceTypes.Application
-          ? [namespace, ENSNamespaceTypes.Application]
-          : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
+            ? [namespace, ENSNamespaceTypes.Application]
+            : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
       return Promise.all(
         namespacesToCheck.map(ns => this.getOwner({ namespace: ns }))
       ).then(owners => owners.filter(o => ![owner, emptyAddress].includes(o)));
@@ -1828,9 +1774,8 @@ export class IAM extends IAMBase {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
     try {
-      const event = (
-        await (await this._assetManager.createIdentity(this._address)).wait()
-      ).events?.find(e => e.event === this._assetManager.interface.events.IdentityCreated.name);
+      const event = (await (await this._assetManager.createIdentity(this._address)).wait())
+        .events?.find((e) => e.event === this._assetManager.interface.events.IdentityCreated.name);
       const identity = (event?.args as string[])[0];
 
       if (this._cacheClient) {
