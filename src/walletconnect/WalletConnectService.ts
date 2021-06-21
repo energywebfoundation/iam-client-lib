@@ -2,7 +2,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { ControllableWalletConnect } from "./ControllableWalletConnect";
 import { WalletProvider } from "../types/WalletProvider";
-import { chainConfigs } from "../iam/chainConfig";
+// import { chainConfigs } from "../iam/chainConfig";
 
 /**
  * Encapsulates a WalletConnect connection
@@ -28,13 +28,13 @@ export class WalletConnectService {
       qrcodeModal: showQRCode ? QRCodeModal : undefined
     });
 
-    const rpc = Object.entries(chainConfigs).reduce(
-      (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }),
-      {}
-    );
+    // const rpc = Object.entries(chainConfigs).reduce(
+    //   (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }),
+    //   {}
+    // );
 
     this._walletConnectProvider = new WalletConnectProvider({
-      rpc,
+      // rpc,
       infuraId: this._infuraId,
       connector: this._walletConnectClient
     });
@@ -71,7 +71,7 @@ export class WalletConnectService {
 
   async closeConnection(): Promise<void> {
     if (this._walletConnectClient) {
-      // Setting to false to that WalletConnect library doesn't 
+      // Setting to false to that WalletConnect library doesn't
       // try to recreate session after closing
       this._walletConnectClient.canCreateSession = false;
     }
