@@ -55,7 +55,6 @@ beforeAll(async () => {
   await deployContracts(privateKey);
   const chainID = 1;
   setChainConfig(chainID, {
-    rpcUrl,
     ensRegistryAddress: ensRegistry.address,
     ensResolverAddress: ensResolver.address,
     didContractAddress: didContract.address,
