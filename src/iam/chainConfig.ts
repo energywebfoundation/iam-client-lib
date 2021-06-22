@@ -10,7 +10,7 @@ import { MessagingMethod } from "../utils/constants";
 
 const VOLTA_CHAIN_ID = 73799;
 export interface ChainConfig {
-  rpcUrl: string,
+  rpcUrl: string;
   ensRegistryAddress: string;
   ensResolverAddress: string;
   ensPublicResolverAddress?: string;
