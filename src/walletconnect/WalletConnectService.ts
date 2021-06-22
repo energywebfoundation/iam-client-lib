@@ -71,7 +71,7 @@ export class WalletConnectService {
 
   async closeConnection(): Promise<void> {
     if (this._walletConnectClient) {
-      // Setting to false to that WalletConnect library doesn't 
+      // Setting to false to that WalletConnect library doesn't
       // try to recreate session after closing
       this._walletConnectClient.canCreateSession = false;
     }
