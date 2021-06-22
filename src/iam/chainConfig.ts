@@ -31,7 +31,7 @@ export interface MessagingOptions {
  */
 export const chainConfigs: Record<number, ChainConfig> = {
   [VOLTA_CHAIN_ID]: {
-    rpcUrl: "https://volta-rpc.com",
+    rpcUrl: "https://volta-rpc.energyweb.org",
     ensRegistryAddress: VOLTA_ENS_REGISTRY_ADDRESS,
     ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
     ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,
