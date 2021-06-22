@@ -771,14 +771,14 @@ export class IAM extends IAMBase {
    */
   async changeOrgOwnership({
     namespace,
-    newOrgOwner,
+    newOwner,
     returnSteps = false
   }: {
     namespace: string;
-    newOrgOwner: string;
+    newOwner: string;
     returnSteps?: boolean;
   }) {
-    const newOwner = parseDID(newOrgOwner);
+     newOwner = parseDID(newOwner);
     const orgNamespaces = [
       `${ENSNamespaceTypes.Roles}.${namespace}`,
       `${ENSNamespaceTypes.Application}.${namespace}`,
@@ -846,6 +846,7 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
+    newOwner = parseDID(newOwner);
     const appNamespaces = [`${ENSNamespaceTypes.Roles}.${namespace}`, namespace];
 
     const {
@@ -892,6 +893,7 @@ export class IAM extends IAMBase {
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
+     newOwner = parseDID(newOwner);
     const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Roles
@@ -1126,6 +1128,7 @@ export class IAM extends IAMBase {
     owner: string;
     excludeSubOrgs?: boolean;
   }) {
+    owner = parseDID(owner);
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
@@ -1478,7 +1481,7 @@ export class IAM extends IAMBase {
     if (!subject) {
       subject = this._did;
     }
-    this._did = parseDID(this._did);
+
     const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this.createPublicClaim({ data: claim, subject });
 
@@ -1540,6 +1543,7 @@ export class IAM extends IAMBase {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
+  
     const { claimData, sub } = this._jwt.decode(token) as
       { claimData: { claimType: string; claimTypeVersion: number, expiry: number }; sub: string };
     const message: IClaimIssuance = {
@@ -1583,6 +1587,8 @@ export class IAM extends IAMBase {
     if (!this._did) {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
+
+    this._did = parseDID(this._did);
 
     const preparedData: IClaimRejection = {
       id,
