@@ -1588,8 +1588,6 @@ export class IAM extends IAMBase {
       throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
     }
 
-    this._did = parseDID(this._did);
-
     const preparedData: IClaimRejection = {
       id,
       requester: requesterDID,
