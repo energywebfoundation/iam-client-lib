@@ -60,7 +60,7 @@ import { AxiosError } from "axios";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
-import { isValidDID } from "./utils/did";
+import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
 
@@ -138,10 +138,6 @@ export class IAM extends IAMBase {
    */
 
   getDid(): string | undefined {
-    const didRegex = new RegExp(`^did:${Methods.Erc1056}:`);
-    if (this._did && didRegex.test(this._did) === true) {
-      this._did = this._did.split(":")[2];
-    }
     return this._did;
   }
 
@@ -775,13 +771,14 @@ export class IAM extends IAMBase {
    */
   async changeOrgOwnership({
     namespace,
-    newOwner,
+    newOrgOwner,
     returnSteps = false
   }: {
     namespace: string;
-    newOwner: string;
+    newOrgOwner: string;
     returnSteps?: boolean;
   }) {
+    const newOwner = parseDID(newOrgOwner);
     const orgNamespaces = [
       `${ENSNamespaceTypes.Roles}.${namespace}`,
       `${ENSNamespaceTypes.Application}.${namespace}`,
@@ -1481,6 +1478,7 @@ export class IAM extends IAMBase {
     if (!subject) {
       subject = this._did;
     }
+    this._did = parseDID(this._did);
     const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this.createPublicClaim({ data: claim, subject });
 
