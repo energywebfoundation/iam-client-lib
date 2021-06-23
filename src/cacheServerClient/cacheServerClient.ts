@@ -157,13 +157,17 @@ export class CacheServerClient implements ICacheServerClient {
 
   async getOrganizationsByOwner({
     owner,
-    excludeSubOrgs
+    excludeSubOrgs,
+    withApps = false,
+    withRoles = false,
   }: {
     owner: string;
     excludeSubOrgs: boolean;
+    withApps?: boolean;
+    withRoles?: boolean;
   }) {
     const { data } = await this.httpClient.get<IOrganization[]>(
-      `/org/owner/${owner}?excludeSubOrgs=${excludeSubOrgs}`
+      `/org/owner/${owner}?excludeSubOrgs=${excludeSubOrgs}&withApps=${withApps}&withRoles=${withRoles}`
     );
     return data;
   }
@@ -205,8 +209,8 @@ export class CacheServerClient implements ICacheServerClient {
     return data;
   }
 
-  async getApplicationsByOwner({ owner }: { owner: string }) {
-    const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}`);
+  async getApplicationsByOwner({ owner, withRoles = false }: { owner: string; withRoles?: boolean }) {
+    const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}?withRoles=${withRoles}`);
     return data;
   }
 
