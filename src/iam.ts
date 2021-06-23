@@ -60,7 +60,7 @@ import { AxiosError } from "axios";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
-import { isValidDID } from "./utils/did";
+import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
 
@@ -778,6 +778,7 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
+     newOwner = parseDID(newOwner);
     const orgNamespaces = [
       `${ENSNamespaceTypes.Roles}.${namespace}`,
       `${ENSNamespaceTypes.Application}.${namespace}`,
@@ -845,6 +846,7 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
+    newOwner = parseDID(newOwner);
     const appNamespaces = [`${ENSNamespaceTypes.Roles}.${namespace}`, namespace];
 
     const {
@@ -891,6 +893,7 @@ export class IAM extends IAMBase {
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
+     newOwner = parseDID(newOwner);
     const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Roles
@@ -1125,6 +1128,7 @@ export class IAM extends IAMBase {
     owner: string;
     excludeSubOrgs?: boolean;
   }) {
+    owner = parseDID(owner);
     if (!this._cacheClient) {
       throw new CacheClientNotProvidedError();
     }
@@ -1477,6 +1481,7 @@ export class IAM extends IAMBase {
     if (!subject) {
       subject = this._did;
     }
+
     const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this.createPublicClaim({ data: claim, subject });
 
@@ -1538,6 +1543,7 @@ export class IAM extends IAMBase {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
+  
     const { claimData, sub } = this._jwt.decode(token) as
       { claimData: { claimType: string; claimTypeVersion: number, expiry: number }; sub: string };
     const message: IClaimIssuance = {
