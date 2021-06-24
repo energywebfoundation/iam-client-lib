@@ -45,6 +45,7 @@ export function enrollmentClaimsTests() {
   let publish: jest.Mock;
   let getDidDocument: jest.Mock;
   let getRoleDefinition: jest.Mock;
+  let getAssetById: jest.Mock;
   let _natsConnection;
   let _cacheClient;
   let _jsonCodec;
@@ -86,9 +87,13 @@ export function enrollmentClaimsTests() {
     getDidDocument = jest.fn().mockImplementation(() => {
       return { service: {} };
     });
+    getAssetById = jest.fn().mockImplementation(() => {
+      return {};
+    });
     const mockedCacheClient = {
       getRoleDefinition,
-      getDidDocument
+      getDidDocument,
+      getAssetById
     };
 
     Reflect.set(IAM.prototype, "_natsConnection", mockedNatsConnection);
@@ -134,6 +139,41 @@ export function enrollmentClaimsTests() {
     expect(onChainProof).toHaveLength(132);
 
     expect(await claimManager.hasRole(addressOf(subjectDID), namehash(`${roleName1}.${root}`), version)).toBe(true);
+  });
+
+  test("asset enrollment by issuer of type DID", async () => {
+    const assetAddress = await subjectIam.registerAsset();
+    await subjectIam.createClaimRequest({
+      claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: version, fields: [] },
+      registrationTypes,
+      subject: `did:${Methods.Erc1056}:${assetAddress}`
+    });
+    expect(publish).toBeCalledTimes(1);
+    const [, encodedMsg] = publish.mock.calls.pop();
+    const message = jsonCodec.decode(encodedMsg);
+
+    expect(message).toHaveProperty("id");
+    expect(message).toHaveProperty("token");
+    expect(message).toMatchObject({ requester: subjectDID, registrationTypes });
+
+    const { id, subjectAgreement, token } = message;
+    await staticIssuerIam.issueClaimRequest({
+      id,
+      registrationTypes,
+      requester: roleCreatorDID,
+      subjectAgreement,
+      token
+    });
+
+    const [requesterChannel, data] = publish.mock.calls.pop();
+    expect(requesterChannel).toEqual(`${subjectDID}.${NATS_EXCHANGE_TOPIC}`);
+
+    const { claimIssuer, requester, onChainProof } = jsonCodec.decode(data);
+    expect(requester).toEqual(roleCreatorDID);
+    expect(claimIssuer).toEqual([staticIssuerDID]);
+    expect(onChainProof).toHaveLength(132);
+
+    expect(await claimManager.hasRole(assetAddress, namehash(`${roleName1}.${root}`), version)).toBe(true);
   });
 
   test("enrollment by issuer of type ROLE", async () => {
