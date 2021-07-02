@@ -113,7 +113,7 @@ export function enrollmentClaimsTests() {
     expect(message).toHaveProperty("token");
     expect(message).toMatchObject({ requester: subjectDID, registrationTypes });
 
-    const { id, agreement: subjectAgreement, token } = message;
+    const { id, subjectAgreement, token } = message;
     await staticIssuerIam.issueClaimRequest({
       id,
       registrationTypes,
@@ -148,7 +148,7 @@ export function enrollmentClaimsTests() {
     });
     let [, encodedMsg] = publish.mock.calls.pop();
     let message = jsonCodec.decode(encodedMsg);
-    let { agreement: subjectAgreement, token, id } = message;
+    let { subjectAgreement, token, id } = message;
     await staticIssuerIam.issueClaimRequest({ id, requester: dynamicIssuerDID, token, registrationTypes, subjectAgreement });
 
     expect(await claimManager.hasRole(addressOf(dynamicIssuerDID), namehash(`${roleName1}.${root}`), version));
@@ -160,7 +160,7 @@ export function enrollmentClaimsTests() {
     });
     ([, encodedMsg] = publish.mock.calls.pop());
     message = jsonCodec.decode(encodedMsg);
-    ({ agreement: subjectAgreement, token, id } = message);
+    ({ subjectAgreement, token, id } = message);
     await dynamicIssuerIam.issueClaimRequest({ id, requester: subjectDID, token, registrationTypes, subjectAgreement });
 
     expect(await claimManager.hasRole(addressOf(subjectDID), namehash(`${roleName2}.${root}`), version));

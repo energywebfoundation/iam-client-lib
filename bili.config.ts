@@ -21,7 +21,7 @@ const config: Config = {
   input: "src/iam-client-lib.ts",
   output: {
     format: ["cjs", "esm"],
-    minify: true
+    minify: false
   }
 };
 

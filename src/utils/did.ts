@@ -17,4 +17,12 @@ export function addSupportedDID(
   validators.set(method, validator);
 }
 
+export function parseDID(did: string) {
+   const didRegex = new RegExp(`^did:${Methods.Erc1056}:`);
+    if (did && didRegex.test(did) === true) {
+      return did.split(":")[2];
+    }
+    return did;
+}
+
 addSupportedDID(Methods.Erc1056, isValidErc1056);
