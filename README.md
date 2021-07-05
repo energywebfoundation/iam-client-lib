@@ -170,8 +170,8 @@ $ npm run build
 
 ## Active Maintainers
 
-- [Kim Honoridez](https://github.com/kim-energyweb)
-- [Daniel Wojno](https://github.com/dwojno)
+- [Ahmed Ibrahim](https://github.com/ahmedolaibrahim)
+- [John Henderson](https://github.com/jrhender)
 - [Dmitry Fesenko](https://github.com/JGiter)
 
 ## Contributing
