@@ -17,7 +17,6 @@ install:
 
 script:
   - npm run build
-  - npm run build:api_docs
   - npm run test:prod
   
 deploy:

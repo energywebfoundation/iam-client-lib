@@ -20,6 +20,7 @@
 * [issuedToken](claim.md#issuedtoken)
 * [parentNamespace](claim.md#parentnamespace)
 * [requester](claim.md#requester)
+* [subject](claim.md#subject)
 * [token](claim.md#token)
 * [uid](claim.md#uid)
 
@@ -82,6 +83,12 @@ ___
 ### requester
 
 •  **requester**: string
+
+___
+
+### subject
+
+•  **subject**: string
 
 ___
 

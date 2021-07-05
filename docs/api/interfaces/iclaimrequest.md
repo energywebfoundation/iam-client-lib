@@ -14,14 +14,16 @@
 
 * [claimIssuer](iclaimrequest.md#claimissuer)
 * [id](iclaimrequest.md#id)
+* [registrationTypes](iclaimrequest.md#registrationtypes)
 * [requester](iclaimrequest.md#requester)
+* [subjectAgreement](iclaimrequest.md#subjectagreement)
 * [token](iclaimrequest.md#token)
 
 ## Properties
 
 ### claimIssuer
 
-•  **claimIssuer**: string[]
+• `Optional` **claimIssuer**: string[]
 
 *Inherited from [IMessage](imessage.md).[claimIssuer](imessage.md#claimissuer)*
 
@@ -35,11 +37,23 @@ ___
 
 ___
 
+### registrationTypes
+
+•  **registrationTypes**: [RegistrationTypes](../enums/registrationtypes.md)[]
+
+___
+
 ### requester
 
 •  **requester**: string
 
 *Inherited from [IMessage](imessage.md).[requester](imessage.md#requester)*
+
+___
+
+### subjectAgreement
+
+• `Optional` **subjectAgreement**: undefined \| string
 
 ___
 

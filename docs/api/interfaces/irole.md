@@ -21,7 +21,7 @@
 
 ### definition
 
-•  **definition**: [IRoleDefinition](iroledefinition.md)
+•  **definition**: IRoleDefinition
 
 ___
 

@@ -26,6 +26,8 @@ The domain ownership functionality has been redefined accordingly.
 
 ### Methods
 
+* [acceptAssetOffer](gnosisiam.md#acceptassetoffer)
+* [cancelAssetOffer](gnosisiam.md#cancelassetoffer)
 * [changeAppOwnership](gnosisiam.md#changeappownership)
 * [changeOrgOwnership](gnosisiam.md#changeorgownership)
 * [changeRoleOwnership](gnosisiam.md#changeroleownership)
@@ -45,15 +47,22 @@ The domain ownership functionality has been redefined accordingly.
 * [deleteOrganization](gnosisiam.md#deleteorganization)
 * [deleteRole](gnosisiam.md#deleterole)
 * [getAppsByOrgNamespace](gnosisiam.md#getappsbyorgnamespace)
+* [getAssetById](gnosisiam.md#getassetbyid)
+* [getAssetHistory](gnosisiam.md#getassethistory)
+* [getClaimsByIssuer](gnosisiam.md#getclaimsbyissuer)
+* [getClaimsByRequester](gnosisiam.md#getclaimsbyrequester)
+* [getClaimsBySubject](gnosisiam.md#getclaimsbysubject)
+* [getClaimsBySubjects](gnosisiam.md#getclaimsbysubjects)
 * [getDefinition](gnosisiam.md#getdefinition)
 * [getDid](gnosisiam.md#getdid)
 * [getDidDocument](gnosisiam.md#getdiddocument)
 * [getENSTypesByOwner](gnosisiam.md#getenstypesbyowner)
 * [getENSTypesBySearchPhrase](gnosisiam.md#getenstypesbysearchphrase)
-* [getIssuedClaims](gnosisiam.md#getissuedclaims)
+* [getOfferedAssets](gnosisiam.md#getofferedassets)
 * [getOrgHierarchy](gnosisiam.md#getorghierarchy)
+* [getOwnedAssets](gnosisiam.md#getownedassets)
+* [getPreviouslyOwnedAssets](gnosisiam.md#getpreviouslyownedassets)
 * [getProviderType](gnosisiam.md#getprovidertype)
-* [getRequestedClaims](gnosisiam.md#getrequestedclaims)
 * [getRoleDIDs](gnosisiam.md#getroledids)
 * [getRolesByNamespace](gnosisiam.md#getrolesbynamespace)
 * [getSigner](gnosisiam.md#getsigner)
@@ -67,13 +76,17 @@ The domain ownership functionality has been redefined accordingly.
 * [issueClaimRequest](gnosisiam.md#issueclaimrequest)
 * [issuePublicClaim](gnosisiam.md#issuepublicclaim)
 * [namespacesWithRelations](gnosisiam.md#namespaceswithrelations)
+* [offerAsset](gnosisiam.md#offerasset)
 * [on](gnosisiam.md#on)
 * [publishPublicClaim](gnosisiam.md#publishpublicclaim)
+* [registerAsset](gnosisiam.md#registerasset)
+* [registrationTypesOfRoles](gnosisiam.md#registrationtypesofroles)
+* [rejectAssetOffer](gnosisiam.md#rejectassetoffer)
 * [rejectClaimRequest](gnosisiam.md#rejectclaimrequest)
 * [revokeDidDocument](gnosisiam.md#revokediddocument)
 * [setRoleDefinition](gnosisiam.md#setroledefinition)
-* [subscribeToMessages](gnosisiam.md#subscribetomessages)
-* [unsubscribeFromMessages](gnosisiam.md#unsubscribefrommessages)
+* [subscribeTo](gnosisiam.md#subscribeto)
+* [unsubscribeFrom](gnosisiam.md#unsubscribefrom)
 * [updateDidDocument](gnosisiam.md#updatediddocument)
 * [validateOwnership](gnosisiam.md#validateownership)
 * [verifyPublicClaim](gnosisiam.md#verifypublicclaim)
@@ -115,6 +128,38 @@ ___
 **Returns:** string
 
 ## Methods
+
+### acceptAssetOffer
+
+▸ **acceptAssetOffer**(`__namedParameters`: { assetDID: string  }): Promise\<void>
+
+*Inherited from [IAM](iam.md).[acceptAssetOffer](iam.md#acceptassetoffer)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { assetDID: string  } |
+
+**Returns:** Promise\<void>
+
+___
+
+### cancelAssetOffer
+
+▸ **cancelAssetOffer**(`__namedParameters`: { assetDID: string  }): Promise\<void>
+
+*Inherited from [IAM](iam.md).[cancelAssetOffer](iam.md#cancelassetoffer)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { assetDID: string  } |
+
+**Returns:** Promise\<void>
+
+___
 
 ### changeAppOwnership
 
@@ -218,7 +263,7 @@ ___
 
 ### createApplication
 
-▸ **createApplication**(`__namedParameters`: { appName: string ; data: [IAppDefinition](../interfaces/iappdefinition.md) ; domain: string ; returnSteps: undefined \| false \| true  }): Promise\<{ next: () => Promise\<void>  }[]>
+▸ **createApplication**(`__namedParameters`: { appName: string ; data: IAppDefinition ; domain: string ; returnSteps: undefined \| false \| true  }): Promise\<{ next: () => Promise\<void>  }[]>
 
 *Inherited from [IAM](iam.md).[createApplication](iam.md#createapplication)*
 
@@ -232,7 +277,7 @@ createApp
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { appName: string ; data: [IAppDefinition](../interfaces/iappdefinition.md) ; domain: string ; returnSteps: undefined \| false \| true  } |
+`__namedParameters` | { appName: string ; data: IAppDefinition ; domain: string ; returnSteps: undefined \| false \| true  } |
 
 **Returns:** Promise\<{ next: () => Promise\<void>  }[]>
 
@@ -240,7 +285,7 @@ ___
 
 ### createClaimRequest
 
-▸ **createClaimRequest**(`__namedParameters`: { claim: { claimType: string ; fields: { key: string ; value: string \| number  }[]  } ; issuer: string[]  }): Promise\<void>
+▸ **createClaimRequest**(`__namedParameters`: { claim: { claimType: string ; claimTypeVersion: number ; fields: { key: string ; value: string \| number  }[]  } ; registrationTypes: [RegistrationTypes](../enums/registrationtypes.md)[] = [RegistrationTypes.OffChain]; subject: undefined \| string  }): Promise\<void>
 
 *Inherited from [IAM](iam.md).[createClaimRequest](iam.md#createclaimrequest)*
 
@@ -248,7 +293,7 @@ ___
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { claim: { claimType: string ; fields: { key: string ; value: string \| number  }[]  } ; issuer: string[]  } |
+`__namedParameters` | { claim: { claimType: string ; claimTypeVersion: number ; fields: { key: string ; value: string \| number  }[]  } ; registrationTypes: [RegistrationTypes](../enums/registrationtypes.md)[] = [RegistrationTypes.OffChain]; subject: undefined \| string  } |
 
 **Returns:** Promise\<void>
 
@@ -266,7 +311,7 @@ ___
 
 ### createOrganization
 
-▸ **createOrganization**(`__namedParameters`: { data: [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) ; namespace: string ; orgName: string ; returnSteps: undefined \| false \| true  }): Promise\<{ next: () => Promise\<void>  }[]>
+▸ **createOrganization**(`__namedParameters`: { data: IOrganizationDefinition ; namespace: string ; orgName: string ; returnSteps: undefined \| false \| true  }): Promise\<{ next: () => Promise\<void>  }[]>
 
 *Inherited from [IAM](iam.md).[createOrganization](iam.md#createorganization)*
 
@@ -280,7 +325,7 @@ createOrganization
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { data: [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) ; namespace: string ; orgName: string ; returnSteps: undefined \| false \| true  } |
+`__namedParameters` | { data: IOrganizationDefinition ; namespace: string ; orgName: string ; returnSteps: undefined \| false \| true  } |
 
 **Returns:** Promise\<{ next: () => Promise\<void>  }[]>
 
@@ -332,7 +377,7 @@ ___
 
 ### createRole
 
-▸ **createRole**(`__namedParameters`: { data: [IRoleDefinition](../interfaces/iroledefinition.md) ; namespace: string ; returnSteps: undefined \| false \| true ; roleName: string  }): Promise\<{ next: () => Promise\<void>  }[]>
+▸ **createRole**(`__namedParameters`: { data: IRoleDefinition ; namespace: string ; returnSteps: undefined \| false \| true ; roleName: string  }): Promise\<{ next: () => Promise\<void>  }[]>
 
 *Inherited from [IAM](iam.md).[createRole](iam.md#createrole)*
 
@@ -344,7 +389,7 @@ createRole
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { data: [IRoleDefinition](../interfaces/iroledefinition.md) ; namespace: string ; returnSteps: undefined \| false \| true ; roleName: string  } |
+`__namedParameters` | { data: IRoleDefinition ; namespace: string ; returnSteps: undefined \| false \| true ; roleName: string  } |
 
 **Returns:** Promise\<{ next: () => Promise\<void>  }[]>
 
@@ -486,9 +531,111 @@ array of subdomains or empty array when there is no subdomains
 
 ___
 
+### getAssetById
+
+▸ **getAssetById**(`__namedParameters`: { id: string  }): Promise\<[Asset](../interfaces/asset.md)>
+
+*Inherited from [IAM](iam.md).[getAssetById](iam.md#getassetbyid)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { id: string  } |
+
+**Returns:** Promise\<[Asset](../interfaces/asset.md)>
+
+___
+
+### getAssetHistory
+
+▸ **getAssetHistory**(`__namedParameters`: { id: string ; query: query  }): Promise\<[AssetHistory](../interfaces/assethistory.md)[]>
+
+*Inherited from [IAM](iam.md).[getAssetHistory](iam.md#getassethistory)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { id: string ; query: query  } |
+
+**Returns:** Promise\<[AssetHistory](../interfaces/assethistory.md)[]>
+
+___
+
+### getClaimsByIssuer
+
+▸ **getClaimsByIssuer**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
+
+*Inherited from [IAM](iam.md).[getClaimsByIssuer](iam.md#getclaimsbyissuer)*
+
+**`description`** - Returns claims for given issuer. Allows filtering by status and parent namespace
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  } |
+
+**Returns:** Promise\<[Claim](../interfaces/claim.md)[]>
+
+___
+
+### getClaimsByRequester
+
+▸ **getClaimsByRequester**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
+
+*Inherited from [IAM](iam.md).[getClaimsByRequester](iam.md#getclaimsbyrequester)*
+
+**`description`** - Returns claims for given requester. Allows filtering by status and parent namespace
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  } |
+
+**Returns:** Promise\<[Claim](../interfaces/claim.md)[]>
+
+___
+
+### getClaimsBySubject
+
+▸ **getClaimsBySubject**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
+
+*Inherited from [IAM](iam.md).[getClaimsBySubject](iam.md#getclaimsbysubject)*
+
+**`description`** - Returns claims for given subject. Allows filtering by status and parent namespace
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  } |
+
+**Returns:** Promise\<[Claim](../interfaces/claim.md)[]>
+
+___
+
+### getClaimsBySubjects
+
+▸ **getClaimsBySubjects**(`subjects`: string[]): Promise\<[Claim](../interfaces/claim.md)[]>
+
+*Inherited from [IAM](iam.md).[getClaimsBySubjects](iam.md#getclaimsbysubjects)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`subjects` | string[] |
+
+**Returns:** Promise\<[Claim](../interfaces/claim.md)[]>
+
+___
+
 ### getDefinition
 
-▸ **getDefinition**(`__namedParameters`: { namespace: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  }): Promise\<[IRoleDefinition](../interfaces/iroledefinition.md) \| [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) \| [IAppDefinition](../interfaces/iappdefinition.md)>
+▸ **getDefinition**(`__namedParameters`: { namespace: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  }): Promise\<IRoleDefinition \| IAppDefinition \| IOrganizationDefinition>
 
 *Inherited from [IAM](iam.md).[getDefinition](iam.md#getdefinition)*
 
@@ -502,7 +649,7 @@ Name | Type |
 ------ | ------ |
 `__namedParameters` | { namespace: string ; type: [ENSNamespaceTypes](../enums/ensnamespacetypes.md)  } |
 
-**Returns:** Promise\<[IRoleDefinition](../interfaces/iroledefinition.md) \| [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) \| [IAppDefinition](../interfaces/iappdefinition.md)>
+**Returns:** Promise\<IRoleDefinition \| IAppDefinition \| IOrganizationDefinition>
 
 metadata string or empty string when there is no metadata
 
@@ -560,7 +707,7 @@ ___
 
 ### getENSTypesBySearchPhrase
 
-▸ **getENSTypesBySearchPhrase**(`__namedParameters`: { search: string ; types: undefined \| (\"App\" \| \"Org\" \| \"Role\")[]  }): Promise\<[IApp](../interfaces/iapp.md)[] \| [IRole](../interfaces/irole.md)[] \| [IOrganization](../interfaces/iorganization.md)[]>
+▸ **getENSTypesBySearchPhrase**(`__namedParameters`: { search: string ; types: undefined \| (\"App\" \| \"Org\" \| \"Role\")[]  }): Promise\<([IApp](../interfaces/iapp.md) \| [IRole](../interfaces/irole.md) \| [IOrganization](../interfaces/iorganization.md))[]>
 
 *Inherited from [IAM](iam.md).[getENSTypesBySearchPhrase](iam.md#getenstypesbysearchphrase)*
 
@@ -572,23 +719,23 @@ Name | Type |
 ------ | ------ |
 `__namedParameters` | { search: string ; types: undefined \| (\"App\" \| \"Org\" \| \"Role\")[]  } |
 
-**Returns:** Promise\<[IApp](../interfaces/iapp.md)[] \| [IRole](../interfaces/irole.md)[] \| [IOrganization](../interfaces/iorganization.md)[]>
+**Returns:** Promise\<([IApp](../interfaces/iapp.md) \| [IRole](../interfaces/irole.md) \| [IOrganization](../interfaces/iorganization.md))[]>
 
 ___
 
-### getIssuedClaims
+### getOfferedAssets
 
-▸ **getIssuedClaims**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
+▸ **getOfferedAssets**(`__namedParameters?`: { did: undefined \| string = this.\_did }): Promise\<[Asset](../interfaces/asset.md)[]>
 
-*Inherited from [IAM](iam.md).[getIssuedClaims](iam.md#getissuedclaims)*
+*Inherited from [IAM](iam.md).[getOfferedAssets](iam.md#getofferedassets)*
 
 #### Parameters:
 
-Name | Type |
------- | ------ |
-`__namedParameters` | { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  } |
+Name | Type | Default value |
+------ | ------ | ------ |
+`__namedParameters` | { did: undefined \| string = this.\_did } | {} |
 
-**Returns:** Promise\<[Claim](../interfaces/claim.md)[]>
+**Returns:** Promise\<[Asset](../interfaces/asset.md)[]>
 
 ___
 
@@ -608,6 +755,38 @@ Name | Type |
 
 ___
 
+### getOwnedAssets
+
+▸ **getOwnedAssets**(`__namedParameters?`: { did: undefined \| string = this.\_did }): Promise\<[Asset](../interfaces/asset.md)[]>
+
+*Inherited from [IAM](iam.md).[getOwnedAssets](iam.md#getownedassets)*
+
+#### Parameters:
+
+Name | Type | Default value |
+------ | ------ | ------ |
+`__namedParameters` | { did: undefined \| string = this.\_did } | {} |
+
+**Returns:** Promise\<[Asset](../interfaces/asset.md)[]>
+
+___
+
+### getPreviouslyOwnedAssets
+
+▸ **getPreviouslyOwnedAssets**(`__namedParameters`: { owner: string  }): Promise\<[Asset](../interfaces/asset.md)[]>
+
+*Inherited from [IAM](iam.md).[getPreviouslyOwnedAssets](iam.md#getpreviouslyownedassets)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { owner: string  } |
+
+**Returns:** Promise\<[Asset](../interfaces/asset.md)[]>
+
+___
+
 ### getProviderType
 
 ▸ **getProviderType**(): undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager)
@@ -619,22 +798,6 @@ Get the current initialized provider type
 **Returns:** undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager)
 
 provider type if the session is active if not undefined
-
-___
-
-### getRequestedClaims
-
-▸ **getRequestedClaims**(`__namedParameters`: { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  }): Promise\<[Claim](../interfaces/claim.md)[]>
-
-*Inherited from [IAM](iam.md).[getRequestedClaims](iam.md#getrequestedclaims)*
-
-#### Parameters:
-
-Name | Type |
------- | ------ |
-`__namedParameters` | { did: string ; isAccepted: undefined \| false \| true ; parentNamespace: undefined \| string  } |
-
-**Returns:** Promise\<[Claim](../interfaces/claim.md)[]>
 
 ___
 
@@ -796,7 +959,7 @@ isConnected
 
 **Returns:** boolean
 
-info if the connection is already established
+info if the connection to wallet/signer is already established
 
 ___
 
@@ -823,7 +986,7 @@ ___
 
 ▸ **isSessionActive**(): boolean
 
-*Inherited from [IAM](iam.md).[isSessionActive](iam.md#issessionactive)*
+*Inherited from [IAMBase](iambase.md).[isSessionActive](iambase.md#issessionactive)*
 
 Check if session is active
 
@@ -835,7 +998,7 @@ ___
 
 ### issueClaimRequest
 
-▸ **issueClaimRequest**(`__namedParameters`: { id: string ; requesterDID: string ; token: string  }): Promise\<void>
+▸ **issueClaimRequest**(`__namedParameters`: { id: string ; registrationTypes: [RegistrationTypes](../enums/registrationtypes.md)[] ; requester: string ; subjectAgreement: string ; token: string  }): Promise\<void>
 
 *Inherited from [IAM](iam.md).[issueClaimRequest](iam.md#issueclaimrequest)*
 
@@ -843,7 +1006,7 @@ ___
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { id: string ; requesterDID: string ; token: string  } |
+`__namedParameters` | { id: string ; registrationTypes: [RegistrationTypes](../enums/registrationtypes.md)[] ; requester: string ; subjectAgreement: string ; token: string  } |
 
 **Returns:** Promise\<void>
 
@@ -886,6 +1049,22 @@ Name | Type | Description |
 `namespaces` | string[] |   |
 
 **Returns:** Promise\<{ namespace: string ; owner: string  }[]>
+
+___
+
+### offerAsset
+
+▸ **offerAsset**(`__namedParameters`: { assetDID: string ; offerTo: string  }): Promise\<void>
+
+*Inherited from [IAM](iam.md).[offerAsset](iam.md#offerasset)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { assetDID: string ; offerTo: string  } |
+
+**Returns:** Promise\<void>
 
 ___
 
@@ -932,6 +1111,48 @@ ulr to ipfs
 
 ___
 
+### registerAsset
+
+▸ **registerAsset**(): Promise\<string>
+
+*Inherited from [IAM](iam.md).[registerAsset](iam.md#registerasset)*
+
+**Returns:** Promise\<string>
+
+___
+
+### registrationTypesOfRoles
+
+▸ **registrationTypesOfRoles**(`roles`: string[]): Promise\<Record\<string, Set\<[RegistrationTypes](../enums/registrationtypes.md)>>>
+
+*Inherited from [IAM](iam.md).[registrationTypesOfRoles](iam.md#registrationtypesofroles)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`roles` | string[] |
+
+**Returns:** Promise\<Record\<string, Set\<[RegistrationTypes](../enums/registrationtypes.md)>>>
+
+___
+
+### rejectAssetOffer
+
+▸ **rejectAssetOffer**(`__namedParameters`: { assetDID: string  }): Promise\<void>
+
+*Inherited from [IAM](iam.md).[rejectAssetOffer](iam.md#rejectassetoffer)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`__namedParameters` | { assetDID: string  } |
+
+**Returns:** Promise\<void>
+
+___
+
 ### rejectClaimRequest
 
 ▸ **rejectClaimRequest**(`__namedParameters`: { id: string ; requesterDID: string  }): Promise\<void>
@@ -966,7 +1187,7 @@ ___
 
 ### setRoleDefinition
 
-▸ **setRoleDefinition**(`__namedParameters`: { data: [IRoleDefinition](../interfaces/iroledefinition.md) \| [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) \| [IAppDefinition](../interfaces/iappdefinition.md) ; domain: string  }): Promise\<void>
+▸ **setRoleDefinition**(`__namedParameters`: { data: IRoleDefinition \| IOrganizationDefinition \| IAppDefinition ; domain: string  }): Promise\<void>
 
 *Inherited from [IAM](iam.md).[setRoleDefinition](iam.md#setroledefinition)*
 
@@ -980,33 +1201,39 @@ setRoleDefinition
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { data: [IRoleDefinition](../interfaces/iroledefinition.md) \| [IOrganizationDefinition](../interfaces/iorganizationdefinition.md) \| [IAppDefinition](../interfaces/iappdefinition.md) ; domain: string  } |
+`__namedParameters` | { data: IRoleDefinition \| IOrganizationDefinition \| IAppDefinition ; domain: string  } |
 
 **Returns:** Promise\<void>
 
 ___
 
-### subscribeToMessages
+### subscribeTo
 
-▸ **subscribeToMessages**(`__namedParameters`: { messageHandler: (data: [IMessage](../interfaces/imessage.md)) => void ; topic: string = \`${this.\_did}.${NATS\_EXCHANGE\_TOPIC}\` }): Promise\<void>
+▸ **subscribeTo**(`__namedParameters`: { messageHandler: (data: [IMessage](../interfaces/imessage.md)) => void ; subject: string = \`${this.\_did}.${NATS\_EXCHANGE\_TOPIC}\` }): Promise\<undefined \| number>
 
-*Inherited from [IAM](iam.md).[subscribeToMessages](iam.md#subscribetomessages)*
+*Inherited from [IAM](iam.md).[subscribeTo](iam.md#subscribeto)*
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { messageHandler: (data: [IMessage](../interfaces/imessage.md)) => void ; topic: string = \`${this.\_did}.${NATS\_EXCHANGE\_TOPIC}\` } |
+`__namedParameters` | { messageHandler: (data: [IMessage](../interfaces/imessage.md)) => void ; subject: string = \`${this.\_did}.${NATS\_EXCHANGE\_TOPIC}\` } |
 
-**Returns:** Promise\<void>
+**Returns:** Promise\<undefined \| number>
 
 ___
 
-### unsubscribeFromMessages
+### unsubscribeFrom
 
-▸ **unsubscribeFromMessages**(): Promise\<void>
+▸ **unsubscribeFrom**(`subscriptionId`: number): Promise\<void>
 
-*Inherited from [IAM](iam.md).[unsubscribeFromMessages](iam.md#unsubscribefrommessages)*
+*Inherited from [IAM](iam.md).[unsubscribeFrom](iam.md#unsubscribefrom)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`subscriptionId` | number |
 
 **Returns:** Promise\<void>
 
@@ -1014,7 +1241,7 @@ ___
 
 ### updateDidDocument
 
-▸ **updateDidDocument**(`options`: { data: IUpdateData ; didAttribute: DIDAttribute ; validity?: undefined \| number  }): Promise\<boolean>
+▸ **updateDidDocument**(`options`: { data: IUpdateData ; did?: undefined \| string ; didAttribute: DIDAttribute ; validity?: undefined \| number  }): Promise\<boolean>
 
 *Inherited from [IAM](iam.md).[updateDidDocument](iam.md#updatediddocument)*
 
@@ -1024,7 +1251,7 @@ ___
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`options` | { data: IUpdateData ; didAttribute: DIDAttribute ; validity?: undefined \| number  } | Options to connect with blockchain  |
+`options` | { data: IUpdateData ; did?: undefined \| string ; didAttribute: DIDAttribute ; validity?: undefined \| number  } | Options to connect with blockchain  |
 
 **Returns:** Promise\<boolean>
 

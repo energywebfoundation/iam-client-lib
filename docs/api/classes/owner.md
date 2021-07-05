@@ -20,7 +20,6 @@
 
 ### Properties
 
-* [identityToken](owner.md#identitytoken)
 * [privateKey](owner.md#privatekey)
 * [provider](owner.md#provider)
 * [publicKey](owner.md#publickey)
@@ -36,7 +35,7 @@
 
 ### constructor
 
-\+ **new Owner**(`signer`: Signer, `provider`: Provider, `publicKey`: string, `identityToken?`: undefined \| string, `privateKey?`: undefined \| string): [Owner](owner.md)
+\+ **new Owner**(`signer`: Signer, `provider`: Provider, `publicKey`: string, `privateKey?`: undefined \| string): [Owner](owner.md)
 
 *Overrides void*
 
@@ -47,18 +46,11 @@ Name | Type |
 `signer` | Signer |
 `provider` | Provider |
 `publicKey` | string |
-`identityToken?` | undefined \| string |
 `privateKey?` | undefined \| string |
 
 **Returns:** [Owner](owner.md)
 
 ## Properties
-
-### identityToken
-
-• `Optional` **identityToken**: undefined \| string
-
-___
 
 ### privateKey
 

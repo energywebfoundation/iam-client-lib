@@ -21,7 +21,7 @@
 
 ### claimIssuer
 
-•  **claimIssuer**: string[]
+• `Optional` **claimIssuer**: string[]
 
 *Inherited from [IMessage](imessage.md).[claimIssuer](imessage.md#claimissuer)*
 

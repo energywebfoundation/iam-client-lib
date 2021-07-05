@@ -21,6 +21,7 @@
 ### Methods
 
 * [closeConnection](iambase.md#closeconnection)
+* [isSessionActive](iambase.md#issessionactive)
 * [on](iambase.md#on)
 
 ## Constructors
@@ -58,6 +59,18 @@ Close connection to wallet
 **`description`** closes the connection between dApp and the wallet
 
 **Returns:** Promise\<void>
+
+___
+
+### isSessionActive
+
+▸ **isSessionActive**(): boolean
+
+Check if session is active
+
+**Returns:** boolean
+
+boolean that indicates the session state
 
 ___
 
