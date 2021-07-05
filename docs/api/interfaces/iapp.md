@@ -22,7 +22,7 @@
 
 ### definition
 
-•  **definition**: [IAppDefinition](iappdefinition.md)
+•  **definition**: IAppDefinition
 
 ___
 

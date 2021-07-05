@@ -24,7 +24,7 @@
 
 ### claimIssuer
 
-•  **claimIssuer**: string[]
+• `Optional` **claimIssuer**: string[]
 
 ___
 

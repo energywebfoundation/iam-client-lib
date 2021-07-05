@@ -16,6 +16,7 @@
 * [claimIssuer](iclaimissuance.md#claimissuer)
 * [id](iclaimissuance.md#id)
 * [issuedToken](iclaimissuance.md#issuedtoken)
+* [onChainProof](iclaimissuance.md#onchainproof)
 * [requester](iclaimissuance.md#requester)
 
 ## Properties
@@ -28,7 +29,7 @@ ___
 
 ### claimIssuer
 
-•  **claimIssuer**: string[]
+• `Optional` **claimIssuer**: string[]
 
 *Inherited from [IMessage](imessage.md).[claimIssuer](imessage.md#claimissuer)*
 
@@ -44,7 +45,13 @@ ___
 
 ### issuedToken
 
-•  **issuedToken**: string
+• `Optional` **issuedToken**: undefined \| string
+
+___
+
+### onChainProof
+
+• `Optional` **onChainProof**: undefined \| string
 
 ___
 

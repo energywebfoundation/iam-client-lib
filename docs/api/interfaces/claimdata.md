@@ -26,10 +26,10 @@ ___
 
 ### claimTypeVersion
 
-• `Optional` **claimTypeVersion**: undefined \| string
+• `Optional` **claimTypeVersion**: undefined \| number
 
 ___
 
 ### profile
 
-• `Optional` **profile**: any
+• `Optional` **profile**: [Profile](profile.md)
