@@ -25,7 +25,7 @@ For development purposes, please follow below steps to integrate the library wit
 `iam-client-lib` is written in TypeScript. Make sure to have Node.js (>= v10) installed.
 Create a folder named **_iam-client-lib_** and clone this GIT project.
 
-Also note that having a DID document is a prerequisite for using iam and during initialization the user will be asked to create document if one doesn't exsit.
+Also note that having a DID document with a public key is a prerequisite for using iam-client-lib and during initialization the library with attempt to add a public key to the DID document if one doesn't exist. This addition of the public key requires the account to be funded.
 
 ### Install
 
