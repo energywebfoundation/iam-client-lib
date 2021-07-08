@@ -1,0 +1,65 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ 'DOI-887_*' ]
+  pull_request:
+    branches: [ 'develop' ]
+
+jobs:
+  cancel-previous:
+    name: 'Cancel Previous Runs'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: cancel-previous
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10.22.0'
+          registry-url: https://registry.npmjs.org/
+
+      - name: Configure Git
+        run: |
+
+          # git config --global user.email ${GITHUB_EMAIL}
+          # git config --global user.name ${GITHUB_USER}
+          # git remote set-url origin "https://${{ secrets.GITHUB_TOKEN }}@github.com/energywebfoundation/iam-client-lib.git" > /dev/null 2>&1
+          git reset --hard
+          git fetch origin master:master
+          git fetch origin develop:develop
+
+      - name: Set npm credentials
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc
+
+      - name: Install package
+        run: |
+          npm ci
+          npm run build --prod
+
+      - name: Build package
+        run: npm run build
+
+      - name: Test
+        run: npm run test:prod
+
+      - name: Deploy on develop branch
+        if: github.ref == 'refs/heads/develop'
+        run: npx semantic-release
+
+      - name: Deploy on master branch
+        if: github.ref == 'refs/heads/master'
+        run: |
+          npx semantic-release
+          git checkout develop
+          git merge origin/master
+          git push origin develop
