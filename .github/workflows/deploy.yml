@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [ 'DOI-887_*' ]
+    branches: [ 'develop', 'master' ]
   pull_request:
     branches: [ 'develop' ]
 
@@ -30,10 +30,6 @@ jobs:
 
       - name: Configure Git
         run: |
-
-          # git config --global user.email ${GITHUB_EMAIL}
-          # git config --global user.name ${GITHUB_USER}
-          # git remote set-url origin "https://${{ secrets.GITHUB_TOKEN }}@github.com/energywebfoundation/iam-client-lib.git" > /dev/null 2>&1
           git reset --hard
           git fetch origin master:master
           git fetch origin develop:develop
