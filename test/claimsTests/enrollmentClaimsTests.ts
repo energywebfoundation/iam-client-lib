@@ -118,6 +118,7 @@ export function enrollmentClaimsTests() {
   });
 
   async function enrolAndIssue({ subjectDID }: { subjectDID: string }) {
+    const requesterDID = userDID;
     await userIam.createClaimRequest({
       claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: version, fields: [] },
       registrationTypes,
@@ -141,7 +142,7 @@ export function enrollmentClaimsTests() {
     });
 
     const [requesterChannel, data] = publish.mock.calls.pop();
-    expect(requesterChannel).toEqual(`${subjectDID}.${NATS_EXCHANGE_TOPIC}`);
+    expect(requesterChannel).toEqual(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`);
 
     const { claimIssuer, requester, onChainProof } = jsonCodec.decode(data);
     expect(requester).toEqual(roleCreatorDID);
