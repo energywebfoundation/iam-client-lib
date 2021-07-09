@@ -108,16 +108,16 @@ export function enrollmentClaimsTests() {
   });
 
   test("enrollment by issuer of type DID", async () => {
-    await enrolAndIssue({ subjectDID: userDID, requesterDID: userDID });
+    await enrolAndIssue({ subjectDID: userDID });
   });
 
   test("asset enrollment by issuer of type DID", async () => {
     const assetAddress = await userIam.registerAsset();
     const assetDID = `did:${Methods.Erc1056}:${assetAddress}`;
-    await enrolAndIssue({ subjectDID: assetDID, requesterDID: userDID });
+    await enrolAndIssue({ subjectDID: assetDID });
   });
 
-  async function enrolAndIssue({ subjectDID, requesterDID }: { subjectDID: string, requesterDID: string }) {
+  async function enrolAndIssue({ subjectDID }: { subjectDID: string }) {
     await userIam.createClaimRequest({
       claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: version, fields: [] },
       registrationTypes,
@@ -129,7 +129,7 @@ export function enrollmentClaimsTests() {
 
     expect(message).toHaveProperty("id");
     expect(message).toHaveProperty("token");
-    expect(message).toMatchObject({ requester: requesterDID, registrationTypes });
+    expect(message).toMatchObject({ requester: userDID, registrationTypes });
 
     const { id, subjectAgreement, token } = message;
     await staticIssuerIam.issueClaimRequest({
