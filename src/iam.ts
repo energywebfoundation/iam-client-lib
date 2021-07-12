@@ -170,10 +170,16 @@ export class IAM extends IAMBase {
    */
   async initializeConnection({
     walletProvider = this._providerType,
-    reinitializeMetamask
-  }: { walletProvider?: WalletProvider; reinitializeMetamask?: boolean } = {}): Promise<
-    InitializeData
-  > {
+    reinitializeMetamask,
+    initCacheServer = true,
+    initDID = true
+  }: {
+    walletProvider?: WalletProvider;
+    reinitializeMetamask?: boolean;
+    initCacheServer?: boolean,
+    initDID?: boolean
+  } = {}
+  ): Promise<InitializeData> {
     const { privateKey } = this._connectionOptions;
 
     if (!walletProvider && !privateKey) {
@@ -187,6 +193,12 @@ export class IAM extends IAMBase {
         initializeMetamask: reinitializeMetamask,
         walletProvider
       });
+      if (initCacheServer) {
+        await this.connectToCacheServer();
+      }
+      if (initDID) {
+        await this.connectToDIDRegistry();
+      }
     } catch (err) {
       if (err.message === "User closed modal") {
         return {
