@@ -5,7 +5,8 @@ import {
   VOLTA_PUBLIC_RESOLVER_ADDRESS,
   VOLTA_RESOLVER_V1_ADDRESS,
   VOLTA_IDENTITY_MANAGER_ADDRESS,
-  VOLTA_CLAIM_MANAGER_ADDRESS
+  VOLTA_CLAIM_MANAGER_ADDRESS,
+  VOLTA_STAKING_POOL_FACTORY_ADDRESS
 } from "@energyweb/iam-contracts";
 import { CacheServerClientOptions } from "../cacheServerClient/cacheServerClient";
 import { MessagingMethod } from "../utils/constants";
@@ -20,6 +21,7 @@ export interface ChainConfig {
   assetManagerAddress: string;
   didContractAddress: string;
   claimManagerAddress: string;
+  stakingPoolFactoryAddress: string;
 }
 
 export interface MessagingOptions {
@@ -40,7 +42,8 @@ export const chainConfigs: Record<number, ChainConfig> = {
     domainNotifierAddress: VOLTA_DOMAIN_NOTIFER_ADDRESS,
     assetManagerAddress: VOLTA_IDENTITY_MANAGER_ADDRESS,
     didContractAddress: VoltaAddress1056,
-    claimManagerAddress: VOLTA_CLAIM_MANAGER_ADDRESS
+    claimManagerAddress: VOLTA_CLAIM_MANAGER_ADDRESS,
+    stakingPoolFactoryAddress: VOLTA_STAKING_POOL_FACTORY_ADDRESS
   }
 };
 
