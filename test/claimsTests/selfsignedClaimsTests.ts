@@ -1,23 +1,14 @@
 import { IAM } from "../../src/iam";
-import { rootOwner } from "../iam.test";
-import { rpcUrl } from "../setup_contracts";
+import { createIam, rootOwner } from "../iam.test";
 
 export const selfsignedClaimsTests = function () {
   let rootOwnerIam: IAM;
 
-  const namespace = "daniel.iam.ewc";
-
   beforeAll(async () => {
-    rootOwnerIam = new IAM({
-      rpcUrl,
-      privateKey: rootOwner.privateKey
-    });
-    await rootOwnerIam.initializeConnection({
-      reinitializeMetamask: false,
-      initCacheServer: false,
-      initDID: true
-    });
+    rootOwnerIam = await createIam(rootOwner.privateKey, { initDID: true });
   });
+  
+  const namespace = "daniel.iam.ewc";
 
   test("ens claim can be created", async () => {
     await rootOwnerIam.createSelfSignedClaim({

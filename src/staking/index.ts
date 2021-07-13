@@ -1,4 +1,4 @@
-import { DomainReader, StakingPoolFactory__factory, StakingPool__factory, } from "@energyweb/iam-contracts";
+import { DomainReader, ResolverContractType, StakingPoolFactory__factory, StakingPool__factory, } from "@energyweb/iam-contracts";
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
 import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
 import { Signer, utils } from "ethers";
@@ -29,9 +29,13 @@ export class StakingPoolService {
 
   static async init(signer: Required<Signer>) {
     const { chainId } = await signer.provider.getNetwork();
-    const { stakingPoolFactoryAddress, ensRegistryAddress } = chainConfigs[chainId];
+    const { stakingPoolFactoryAddress, ensRegistryAddress, ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
     const stakingPoolFactory = new StakingPoolFactory__factory(signer).attach(stakingPoolFactoryAddress);
     const domainReader = new DomainReader({ ensRegistryAddress, provider: signer.provider });
+    ensPublicResolverAddress
+      && domainReader.addKnownResolver({ chainId, address: ensPublicResolverAddress, type: ResolverContractType.PublicResolver });
+    ensResolverAddress
+      && domainReader.addKnownResolver({ chainId, address: ensResolverAddress, type: ResolverContractType.RoleDefinitionResolver_v1 });
     return new StakingPoolService(stakingPoolFactory, domainReader, signer);
   }
 

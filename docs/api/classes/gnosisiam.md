@@ -33,6 +33,8 @@ The domain ownership functionality has been redefined accordingly.
 * [changeRoleOwnership](gnosisiam.md#changeroleownership)
 * [checkExistenceOfDomain](gnosisiam.md#checkexistenceofdomain)
 * [closeConnection](gnosisiam.md#closeconnection)
+* [connectToCacheServer](gnosisiam.md#connecttocacheserver)
+* [connectToDIDRegistry](gnosisiam.md#connecttodidregistry)
 * [createApplication](gnosisiam.md#createapplication)
 * [createClaimRequest](gnosisiam.md#createclaimrequest)
 * [createIdentityProof](gnosisiam.md#createidentityproof)
@@ -256,6 +258,30 @@ ___
 Close connection to wallet
 
 **`description`** closes the connection between dApp and the wallet
+
+**Returns:** Promise\<void>
+
+___
+
+### connectToCacheServer
+
+▸ **connectToCacheServer**(): Promise\<void>
+
+*Inherited from [IAMBase](iambase.md).[connectToCacheServer](iambase.md#connecttocacheserver)*
+
+**`description`** established connection to cache server and logins in signing authentication token
+
+**Returns:** Promise\<void>
+
+___
+
+### connectToDIDRegistry
+
+▸ **connectToDIDRegistry**(): Promise\<void>
+
+*Inherited from [IAMBase](iambase.md).[connectToDIDRegistry](iambase.md#connecttodidregistry)*
+
+**`description`** creates users DID document if it is not yet exist
 
 **Returns:** Promise\<void>
 
@@ -925,7 +951,7 @@ ___
 
 ### initializeConnection
 
-▸ **initializeConnection**(`__namedParameters?`: { reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) = this.\_providerType }): Promise\<[InitializeData](../globals.md#initializedata)>
+▸ **initializeConnection**(`__namedParameters?`: { initCacheServer: boolean = true; initDID: boolean = true; reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) = this.\_providerType }): Promise\<[InitializeData](../globals.md#initializedata)>
 
 *Inherited from [IAM](iam.md).[initializeConnection](iam.md#initializeconnection)*
 
@@ -941,7 +967,7 @@ Initialize connection to wallet
 
 Name | Type | Default value |
 ------ | ------ | ------ |
-`__namedParameters` | { reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) = this.\_providerType } | {} |
+`__namedParameters` | { initCacheServer: boolean = true; initDID: boolean = true; reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) = this.\_providerType } | {} |
 
 **Returns:** Promise\<[InitializeData](../globals.md#initializedata)>
 

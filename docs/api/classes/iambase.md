@@ -21,6 +21,8 @@
 ### Methods
 
 * [closeConnection](iambase.md#closeconnection)
+* [connectToCacheServer](iambase.md#connecttocacheserver)
+* [connectToDIDRegistry](iambase.md#connecttodidregistry)
 * [isSessionActive](iambase.md#issessionactive)
 * [on](iambase.md#on)
 
@@ -57,6 +59,26 @@ Name | Type | Default value |
 Close connection to wallet
 
 **`description`** closes the connection between dApp and the wallet
+
+**Returns:** Promise\<void>
+
+___
+
+### connectToCacheServer
+
+▸ **connectToCacheServer**(): Promise\<void>
+
+**`description`** established connection to cache server and logins in signing authentication token
+
+**Returns:** Promise\<void>
+
+___
+
+### connectToDIDRegistry
+
+▸ **connectToDIDRegistry**(): Promise\<void>
+
+**`description`** creates users DID document if it is not yet exist
 
 **Returns:** Promise\<void>
 

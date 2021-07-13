@@ -8,6 +8,7 @@
 
 * [APP\_WITH\_ROLES](error_messages.md#app_with_roles)
 * [CACHE\_CLIENT\_NOT\_PROVIDED](error_messages.md#cache_client_not_provided)
+* [CACHE\_SERVER\_NOT\_REGISTERED](error_messages.md#cache_server_not_registered)
 * [CLAIMS\_NOT\_INITIALIZED](error_messages.md#claims_not_initialized)
 * [CLAIM\_PUBLISHER\_NOT\_REQUESTER](error_messages.md#claim_publisher_not_requester)
 * [DID\_DOCUMENT\_NOT\_INITIALIZED](error_messages.md#did_document_not_initialized)
@@ -46,6 +47,12 @@ ___
 ### CACHE\_CLIENT\_NOT\_PROVIDED
 
 •  **CACHE\_CLIENT\_NOT\_PROVIDED**:  = "Cache client not provided"
+
+___
+
+### CACHE\_SERVER\_NOT\_REGISTERED
+
+•  **CACHE\_SERVER\_NOT\_REGISTERED**:  = "Cache server for this chain is not registered"
 
 ___
 
