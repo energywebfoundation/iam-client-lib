@@ -2,6 +2,8 @@
 
 # Class: StakingPool
 
+Abstraction over staking pool smart contract
+
 ## Hierarchy
 
 * **StakingPool**
@@ -41,6 +43,8 @@ Name | Type |
 
 ▸ **checkReward**(): Promise\<BigNumber>
 
+Accumulated reward
+
 **Returns:** Promise\<BigNumber>
 
 ___
@@ -51,9 +55,9 @@ ___
 
 #### Parameters:
 
-Name | Type |
------- | ------ |
-`signer` | Signer |
+Name | Type | Description |
+------ | ------ | ------ |
+`signer` | Signer | Signer connected to provider  |
 
 **Returns:** [StakingPool](stakingpool.md)
 
@@ -67,9 +71,11 @@ ___
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`patron?` | undefined \| string |   |
+`patron?` | undefined \| string | staker address |
 
 **Returns:** Promise\<[Stake](../globals.md#stake)>
+
+Stake
 
 ___
 

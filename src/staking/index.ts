@@ -1,6 +1,7 @@
 import { DomainReader, ResolverContractType, StakingPoolFactory__factory, StakingPool__factory, } from "@energyweb/iam-contracts";
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
 import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
+import { emptyAddress } from '@energyweb/iam-contracts/dist/src/constants';
 import { Signer, utils } from "ethers";
 import { chainConfigs } from "../iam/chainConfig";
 
@@ -24,9 +25,20 @@ export type Stake = {
   status: StakeStatus;
 }
 
+/**
+ * Inteneded for staking pools management
+ */
 export class StakingPoolService {
-  private constructor(private _stakingPoolFactory: StakingPoolFactory, private _domainReader: DomainReader, private _signer) { }
+  private constructor(
+    private _stakingPoolFactory: StakingPoolFactory,
+    private _domainReader: DomainReader,
+    private _signer: Signer
+  ) { }
 
+  /**
+   * @description Connects to the same chain as `signer`
+   * @param signer Signer with connected provider
+   */
   static async init(signer: Required<Signer>) {
     const { chainId } = await signer.provider.getNetwork();
     const { stakingPoolFactoryAddress, ensRegistryAddress, ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
@@ -68,7 +80,9 @@ export class StakingPoolService {
     )).wait();
   }
 
-
+  /**
+   * @description Returns all services for which pools are launched
+   */
   async allServices(): Promise<Service[]> {
     const orgs = await this._stakingPoolFactory.orgsList();
     return Promise.all(
@@ -80,13 +94,23 @@ export class StakingPoolService {
           )));
   }
 
-  async getPool(org: string): Promise<StakingPool> {
+  /**
+   * @description Returns pool launched for `org` if any
+   * @param org ENS name of organization
+   */
+  async getPool(org: string): Promise<StakingPool | null> {
     const service = await this._stakingPoolFactory.services(namehash(org));
+    if (service.pool === emptyAddress) {
+      return null;
+    }
     const pool = new StakingPool__factory(this._signer).attach(service.pool);
     return new StakingPool(pool);
   }
 }
 
+/**
+ * Abstraction over staking pool smart contract
+ */
 export class StakingPool {
   constructor(private pool: StakingPoolContract) { }
 
@@ -104,15 +128,15 @@ export class StakingPool {
   }
 
   /**
-   * 
+   * Accumulated reward
    */
   async checkReward(): Promise<utils.BigNumber> {
     return this.pool.checkReward();
   }
 
   /**
-   * 
-   * @param patron 
+   * @param patron staker address
+   * @returns Stake
    */
   async getStake(patron?: string): Promise<Stake> {
     if (!patron) {
@@ -137,6 +161,9 @@ export class StakingPool {
     (await this.pool.withdraw()).wait();
   }
 
+  /**
+   * @param signer Signer connected to provider
+   */
   connect(signer: Signer): StakingPool {
     return new StakingPool(this.pool.connect(signer));
   }

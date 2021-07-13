@@ -2,6 +2,8 @@
 
 # Class: StakingPoolService
 
+Inteneded for staking pools management
+
 ## Hierarchy
 
 * **StakingPoolService**
@@ -21,21 +23,25 @@
 
 ▸ **allServices**(): Promise\<[Service](../globals.md#service)[]>
 
+**`description`** Returns all services for which pools are launched
+
 **Returns:** Promise\<[Service](../globals.md#service)[]>
 
 ___
 
 ### getPool
 
-▸ **getPool**(`org`: string): Promise\<[StakingPool](stakingpool.md)>
+▸ **getPool**(`org`: string): Promise\<[StakingPool](stakingpool.md) \| null>
+
+**`description`** Returns pool launched for `org` if any
 
 #### Parameters:
 
-Name | Type |
------- | ------ |
-`org` | string |
+Name | Type | Description |
+------ | ------ | ------ |
+`org` | string | ENS name of organization  |
 
-**Returns:** Promise\<[StakingPool](stakingpool.md)>
+**Returns:** Promise\<[StakingPool](stakingpool.md) \| null>
 
 ___
 
@@ -61,10 +67,12 @@ ___
 
 ▸ `Static`**init**(`signer`: Required\<Signer>): Promise\<[StakingPoolService](stakingpoolservice.md)>
 
+**`description`** Connects to the same chain as `signer`
+
 #### Parameters:
 
-Name | Type |
------- | ------ |
-`signer` | Required\<Signer> |
+Name | Type | Description |
+------ | ------ | ------ |
+`signer` | Required\<Signer> | Signer with connected provider  |
 
 **Returns:** Promise\<[StakingPoolService](stakingpoolservice.md)>
