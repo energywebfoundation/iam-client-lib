@@ -6,7 +6,7 @@ import { JSONCodec } from "nats.ws";
 import { IAM, RegistrationTypes } from "../../src/iam";
 import { IRoleDefinition, NATS_EXCHANGE_TOPIC } from "../../src/iam-client-lib";
 import { createIam, root, rootOwner } from "../iam.test";
-import { claimManager } from "../setup_contracts";
+import { claimManager, replenish } from "../setup_contracts";
 
 const { namehash } = utils;
 
@@ -15,7 +15,7 @@ export function enrollmentClaimsTests() {
   const staticIssuerDID = `did:${Methods.Erc1056}:${staticIissuer.address}`;
   const dynamicIssuer = Wallet.createRandom();
   const dynamicIssuerDID = `did:${Methods.Erc1056}:${dynamicIssuer.address}`;
-  const roleCreator = new Wallet(rootOwner.privateKey); // owns root
+  const roleCreator = rootOwner; // owns root
   const roleCreatorDID = `did:${Methods.Erc1056}:${roleCreator.address}`;
   const subject = roleCreator;
   const subjectDID = `did:${Methods.Erc1056}:${subject.address}`;
@@ -50,10 +50,13 @@ export function enrollmentClaimsTests() {
   let _jsonCodec;
 
   beforeAll(async () => {
-    roleCreatorIam = await createIam(roleCreator.privateKey);
-    subjectIam = await createIam(subject.privateKey);
-    staticIssuerIam = await createIam(staticIissuer.privateKey);
-    dynamicIssuerIam = await createIam(dynamicIssuer.privateKey);
+    await replenish(roleCreator.address);
+    roleCreatorIam = await createIam(roleCreator.privateKey, { initDID: true });
+    subjectIam = await createIam(subject.privateKey, { initDID: true });
+    await replenish(staticIissuer.address);
+    staticIssuerIam = await createIam(staticIissuer.privateKey, { initDID: true });
+    await replenish(dynamicIssuer.address);
+    dynamicIssuerIam = await createIam(dynamicIssuer.privateKey, { initDID: true });
 
     await roleCreatorIam.createRole({
       roleName: roleName1,

@@ -1,6 +1,6 @@
 import { IAM } from "../src/iam";
 import { ERROR_MESSAGES } from "../src/errors";
-import { rpcUrl } from "./iam.test";
+import { rpcUrl } from "./setup_contracts";
 import { WalletProvider } from "../src/types/WalletProvider";
 
 const iam_withoutKey = new IAM({ rpcUrl });

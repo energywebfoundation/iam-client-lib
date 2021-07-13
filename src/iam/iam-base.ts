@@ -157,35 +157,15 @@ export class IAMBase {
     walletProvider?: WalletProvider;
   }) {
     await this.initSigner({ walletProvider, initializeMetamask });
+    await this.setAddress();
+    this.setDid();
     await this.initChain();
     this.initEventHandlers();
 
     if (this._runningInBrowser) {
       await this.setupMessaging();
     }
-    if (this._signer) {
-      const fromCacheLogin = await this.loginToCacheServer();
-      this._publicKey = fromCacheLogin?.publicKey ?? this._publicKey;
-      this._identityToken = fromCacheLogin?.identityToken;
 
-      // We need a pubKey to create DID document.
-      // So if didn't get one from cache server login and there wasn't one saved
-      // then need to request signature to compute one.
-      if (!this._publicKey) {
-        const { publicKey, identityToken } = await getPublicKeyAndIdentityToken(this._signer);
-        this._publicKey = publicKey;
-        this._identityToken = identityToken;
-      }
-      if (!this._publicKey) {
-        throw new Error(ERROR_MESSAGES.UNABLE_TO_OBTAIN_PUBLIC_KEY);
-      }
-      this._didSigner = new Owner(this._signer, this._provider, this._publicKey);
-
-      await this.setAddress();
-      this.setDid();
-      await this.setDocument();
-      this.setClaims();
-    }
     this.setResolver();
     this.setJWT();
     this.storeSession();
@@ -267,6 +247,41 @@ export class IAMBase {
       return;
     }
     throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
+  }
+
+  /**
+   * @description established connection to cache server and logins in signing authentication token
+   */
+  async connectToCacheServer() {
+    const { chainId } = await this._provider.getNetwork();
+    const cacheOptions = cacheServerClientOptions[chainId];
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+    if (!cacheOptions.url) {
+      throw new Error(ERROR_MESSAGES.CACHE_SERVER_NOT_REGISTERED);
+    }
+    this._cacheClient = new CacheServerClient(cacheOptions, this._signer);
+    const fromCacheLogin = await this.loginToCacheServer();
+    this._publicKey = fromCacheLogin?.publicKey ?? this._publicKey;
+    this._identityToken = fromCacheLogin?.identityToken;
+  }
+
+  /**
+   * @description creates users DID document if it is not yet exist
+   */
+  async connectToDIDRegistry() {
+    if (!this._signer) {
+      throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+    }
+    if (!this._publicKey) {
+      const { publicKey, identityToken } = await getPublicKeyAndIdentityToken(this._signer);
+      this._publicKey = publicKey;
+      this._identityToken = identityToken;
+    }
+    this._didSigner = new Owner(this._signer, this._provider, this._publicKey);
+    await this.setDocument();
+    this.setClaims();
   }
 
   /**
@@ -413,8 +428,8 @@ export class IAMBase {
   }
 
   private setJWT() {
-    if (this._didSigner) {
-      this._jwt = new JWT(this._didSigner);
+    if (this._signer) {
+      this._jwt = new JWT(this._signer);
       return;
     }
     throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
@@ -651,9 +666,7 @@ export class IAMBase {
     });
     this._claimManager = ClaimManager__factory.connect(claimManagerAddress, this._signer);
 
-    const cacheOptions = cacheServerClientOptions[chainId];
 
-    cacheOptions.url && (this._cacheClient = new CacheServerClient(cacheOptions, this._signer));
 
     this._messagingOptions = messagingOptions[chainId];
   }
