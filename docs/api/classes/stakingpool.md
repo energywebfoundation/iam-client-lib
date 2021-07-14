@@ -81,7 +81,7 @@ ___
 
 ### putStake
 
-▸ **putStake**(`stake`: BigNumber): Promise\<void>
+▸ **putStake**(`stake`: BigNumber \| number): Promise\<void>
 
 **`description`** Locks stake and starts accumulating reward
 
@@ -91,7 +91,7 @@ ___
 
 Name | Type |
 ------ | ------ |
-`stake` | BigNumber |
+`stake` | BigNumber \| number |
 
 **Returns:** Promise\<void>
 

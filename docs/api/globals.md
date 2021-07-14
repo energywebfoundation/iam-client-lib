@@ -69,6 +69,7 @@
 
 ### Variables
 
+* [BigNumber](globals.md#bignumber)
 * [JsonRpcProvider](globals.md#jsonrpcprovider)
 * [NATS\_EXCHANGE\_TOPIC](globals.md#nats_exchange_topic)
 * [NODE\_FIELDS\_KEY](globals.md#node_fields_key)
@@ -213,6 +214,12 @@ Name | Type |
 `from` | string |
 
 ## Variables
+
+### BigNumber
+
+•  **BigNumber**: BigNumber
+
+___
 
 ### JsonRpcProvider
 

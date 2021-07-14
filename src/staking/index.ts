@@ -5,7 +5,7 @@ import { Signer, utils } from "ethers";
 import { chainConfigs } from "../iam/chainConfig";
 import { emptyAddress } from "../utils/constants";
 
-const { namehash } = utils;
+const { namehash, BigNumber } = utils;
 
 export enum StakeStatus { NONSTAKING = 0, STAKING = 1, WITHDRAWING = 2 }
 
@@ -123,8 +123,11 @@ export class StakingPool {
    */
   async putStake(
     /** stake amount */
-    stake: utils.BigNumber,
+    stake: utils.BigNumber | number,
   ): Promise<void> {
+    if (typeof stake === "number") {
+      stake = new BigNumber(stake);
+    }
     (await this.pool.putStake({
       value: stake.toHexString()
     })).wait();
