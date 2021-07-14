@@ -65,14 +65,14 @@ ___
 
 ### init
 
-▸ `Static`**init**(`signer`: Required\<Signer>): Promise\<[StakingPoolService](stakingpoolservice.md)>
+▸ `Static`**init**(`signer`: Signer): Promise\<[StakingPoolService](stakingpoolservice.md)>
 
-**`description`** Connects to the same chain as `signer`
+**`description`** Connects to the same chain as `signer`. The signer must be connected
 
 #### Parameters:
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`signer` | Required\<Signer> | Signer with connected provider  |
+`signer` | Signer | Signer with connected provider  |
 
 **Returns:** Promise\<[StakingPoolService](stakingpoolservice.md)>

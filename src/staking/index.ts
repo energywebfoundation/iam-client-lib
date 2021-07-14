@@ -1,9 +1,9 @@
 import { DomainReader, ResolverContractType, StakingPoolFactory__factory, StakingPool__factory, } from "@energyweb/iam-contracts";
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
 import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
-import { emptyAddress } from '@energyweb/iam-contracts/dist/src/constants';
 import { Signer, utils } from "ethers";
 import { chainConfigs } from "../iam/chainConfig";
+import { emptyAddress } from "../utils/constants";
 
 const { namehash } = utils;
 
@@ -32,14 +32,17 @@ export class StakingPoolService {
   private constructor(
     private _stakingPoolFactory: StakingPoolFactory,
     private _domainReader: DomainReader,
-    private _signer: Signer
+    private _signer: Required<Signer>
   ) { }
 
   /**
-   * @description Connects to the same chain as `signer`
+   * @description Connects to the same chain as `signer`. The signer must be connected
    * @param signer Signer with connected provider
    */
-  static async init(signer: Required<Signer>) {
+  static async init(signer: Signer) {
+    if (!signer.provider) {
+      throw new Error("StakingPoolService.init: Signer is not connected to provider");
+    }
     const { chainId } = await signer.provider.getNetwork();
     const { stakingPoolFactoryAddress, ensRegistryAddress, ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
     const stakingPoolFactory = new StakingPoolFactory__factory(signer).attach(stakingPoolFactoryAddress);
@@ -48,7 +51,7 @@ export class StakingPoolService {
       && domainReader.addKnownResolver({ chainId, address: ensPublicResolverAddress, type: ResolverContractType.PublicResolver });
     ensResolverAddress
       && domainReader.addKnownResolver({ chainId, address: ensResolverAddress, type: ResolverContractType.RoleDefinitionResolver_v1 });
-    return new StakingPoolService(stakingPoolFactory, domainReader, signer);
+    return new StakingPoolService(stakingPoolFactory, domainReader, signer as Required<Signer>);
   }
 
   /**

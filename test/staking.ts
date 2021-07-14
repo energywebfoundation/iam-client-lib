@@ -252,7 +252,9 @@ export const stakingTests = (): void => {
         principal: principalThreshold
       });
       const patronStakingService = await StakingPoolService.init(patron);
-      pool = await patronStakingService.getPool(domain);
+      const launchedPool = await patronStakingService.getPool(domain);
+      expect(launchedPool).not.toBeNull;
+      pool = launchedPool as StakingPool;
       const poolAddress = (await stakingPoolFactory.services(namehash(domain))).pool;
       poolContract = new StakingPool__factory(patron).attach(poolAddress);
     });
