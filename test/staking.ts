@@ -1,15 +1,15 @@
 import { StakingPoolFactory__factory, IRoleDefinition, RewardPool__factory, StakingPool__factory } from "@energyweb/iam-contracts";
 import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
-import { EventFilter, Contract, Wallet, utils } from "ethers";
+import { EventFilter, Contract, Wallet, utils, providers } from "ethers";
 import { Methods } from "@ew-did-registry/did";
 import { IAM, RegistrationTypes, setChainConfig, StakingPool, StakingPoolService } from "../src/iam-client-lib";
 import { claimManager, ensRegistry, replenish, provider, deployer } from "./setup_contracts";
 import { createIam, root, rootOwner } from "./iam.test";
 import { mockJsonCodec, mockNats } from "./testUtils/mocks";
-import { BigNumber } from "ethers/utils";
 
-const { parseEther, namehash } = utils;
+const { parseEther, namehash, BigNumber } = utils;
+const { JsonRpcProvider } = providers;
 
 export const waitFor = (filter: EventFilter, contract: Contract): Promise<any> => new Promise<any>((resolve) => {
   contract.addListener(filter, (...args) => {
@@ -41,10 +41,10 @@ export const stakingTests = (): void => {
   const minStakingPeriod = 5;
 
   const calculateReward = (
-    stakeAmount: BigNumber,
-    depositPeriod: BigNumber,
-    patronRewardPortion: BigNumber
-  ): BigNumber => {
+    stakeAmount: utils.BigNumber,
+    depositPeriod: utils.BigNumber,
+    patronRewardPortion: utils.BigNumber
+  ): utils.BigNumber => {
     const dailyInterestNumerator = new BigNumber(1000312);
     const dailyInterestDenominator = new BigNumber(1000000);
     const secInDay = new BigNumber(60 * 60 * 24);
@@ -65,6 +65,34 @@ export const stakingTests = (): void => {
     const { chainId } = await provider.getNetwork();
     setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address });
   }
+
+  xit("Test in VOLTA", async () => {
+    const provider = new JsonRpcProvider("");
+    const faucet = new Wallet("1aec3458500362c0a0f1772ab724a71b0f9d7da418a2d86d5954ab3f4b58ec4e").connect(provider);
+    const patron = Wallet.createRandom().connect(provider);
+    const stake = parseEther("0.1");
+    await (await faucet.sendTransaction({ to: patron.address, value: parseEther("0.2") })).wait();
+    const stakingService = await StakingPoolService.init(faucet);
+    const org = "dmitryfesenko.iam.ewc";
+    let pool = await stakingService.getPool(org);
+    if (!pool) {
+      await stakingService.launchStakingPool({
+        org,
+        minStakingPeriod: 1,
+        patronRewardPortion: 500,
+        patronRoles: [],
+        principal: parseEther("100"),
+      });
+    }
+    pool = await stakingService.getPool(org);
+    if (pool) {
+      pool = pool.connect(patron);
+      const stakeBeforeStaking = (await pool.getStake()).amount;
+      await pool.putStake(stake);
+      await pool.checkReward();
+      expect((await pool.getStake()).amount.eq(stakeBeforeStaking.add(stake))).toBe(true);
+    }
+  });
 
   beforeAll(async () => {
     await setupStakingPoolFactory();

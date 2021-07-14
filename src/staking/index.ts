@@ -20,8 +20,8 @@ export type Service = {
 
 export type Stake = {
   amount: utils.BigNumber;
-  start: utils.BigNumber;
-  withdrawalRequested: utils.BigNumber;
+  depositStart: utils.BigNumber;
+  depositEnd: utils.BigNumber;
   status: StakeStatus;
 }
 
@@ -73,7 +73,7 @@ export class StakingPoolService {
         principal: utils.BigNumber
       }
   ): Promise<void> {
-    (await this._stakingPoolFactory.launchStakingPool(
+    await (await this._stakingPoolFactory.launchStakingPool(
       namehash(org),
       minStakingPeriod,
       patronRewardPortion,
@@ -128,8 +128,8 @@ export class StakingPool {
     if (typeof stake === "number") {
       stake = new BigNumber(stake);
     }
-    (await this.pool.putStake({
-      value: stake.toHexString()
+    await (await this.pool.putStake({
+      value: stake
     })).wait();
   }
 
@@ -156,7 +156,7 @@ export class StakingPool {
   * Withdraw request unavailable until minimum staking period ends
   */
   async requestWithdraw(): Promise<void> {
-    (await this.pool.requestWithdraw()).wait();
+    await (await this.pool.requestWithdraw()).wait();
   }
 
   /**
@@ -164,7 +164,7 @@ export class StakingPool {
    * @emits StakingPool.StakeWithdrawn
    */
   async withdraw(): Promise<void> {
-    (await this.pool.withdraw()).wait();
+    await (await this.pool.withdraw()).wait();
   }
 
   /**

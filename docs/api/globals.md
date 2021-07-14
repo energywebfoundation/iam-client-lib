@@ -189,16 +189,16 @@ ___
 
 ### Stake
 
-Ƭ  **Stake**: { amount: BigNumber ; start: BigNumber ; status: [StakeStatus](enums/stakestatus.md) ; withdrawalRequested: BigNumber  }
+Ƭ  **Stake**: { amount: BigNumber ; depositEnd: BigNumber ; depositStart: BigNumber ; status: [StakeStatus](enums/stakestatus.md)  }
 
 #### Type declaration:
 
 Name | Type |
 ------ | ------ |
 `amount` | BigNumber |
-`start` | BigNumber |
+`depositEnd` | BigNumber |
+`depositStart` | BigNumber |
 `status` | [StakeStatus](enums/stakestatus.md) |
-`withdrawalRequested` | BigNumber |
 
 ___
 
