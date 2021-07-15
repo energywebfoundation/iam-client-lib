@@ -1,5 +1,6 @@
-![Deploy](https://github.com/energywebfoundation/iam-client-lib/workflows/deploy.yml/badge.svg)
-
+<p align="center">
+  <img src="https://github.com/energywebfoundation/iam-client-lib/actions/workflows/deploy.yml/badge.svg" />
+</p>
 # Identity and Access Management (IAM) Client Library
 
 TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
