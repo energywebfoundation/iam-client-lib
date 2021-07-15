@@ -38,9 +38,7 @@ jobs:
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc
 
       - name: Install package
-        run: |
-          npm ci
-          npm run build --prod
+        run: npm ci
 
       - name: Build package
         run: npm run build
