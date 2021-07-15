@@ -1,5 +1,5 @@
 <p align="center">
-  ![Deploy](https://github.com/energywebfoundation/iam-client-lib/workflows/deploy.yml/badge.svg)
+  <img src="https://github.com/energywebfoundation/iam-client-lib/workflows/deploy.yml/badge.svg" />
 </p>
 # Identity and Access Management (IAM) Client Library
 
