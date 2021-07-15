@@ -14,7 +14,6 @@
 //
 // @authors: Kim Honoridez
 
-import { IRoleDefinition, IAppDefinition, IOrganizationDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { IAM, ENSNamespaceTypes, RegistrationTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
@@ -47,6 +46,15 @@ import {
 
 import { setCacheClientOptions, setChainConfig, setMessagingOptions } from "./iam/chainConfig";
 
+export {
+  IRoleDefinition,
+  IAppDefinition,
+  IOrganizationDefinition,
+  PreconditionType as PreconditionTypes,
+  WITHDRAW_DELAY,
+  PRINCIPAL_THRESHOLD
+} from "@energyweb/iam-contracts";
+
 // MAIN
 export { IAM };
 
@@ -68,7 +76,6 @@ export {
   MessagingMethod,
   ERROR_MESSAGES,
   WalletProvider,
-  PreconditionType as PreconditionTypes,
   Order,
   AssetHistoryEventType,
   RegistrationTypes
@@ -78,11 +85,8 @@ export {
 export {
   ICacheServerClient,
   IApp,
-  IAppDefinition,
   IOrganization,
-  IOrganizationDefinition,
   IRole,
-  IRoleDefinition,
   Asset,
   AssetHistory,
   ClaimData,
