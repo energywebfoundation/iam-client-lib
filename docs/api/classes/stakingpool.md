@@ -22,6 +22,7 @@ Abstraction over staking pool smart contract
 * [putStake](stakingpool.md#putstake)
 * [requestWithdraw](stakingpool.md#requestwithdraw)
 * [withdraw](stakingpool.md#withdraw)
+* [withdrawalDelay](stakingpool.md#withdrawaldelay)
 
 ## Constructors
 
@@ -117,3 +118,13 @@ ___
 **`emits`** StakingPool.StakeWithdrawn
 
 **Returns:** Promise\<void>
+
+___
+
+### withdrawalDelay
+
+▸ **withdrawalDelay**(): Promise\<BigNumber>
+
+**`description`** Returns time left to enable withdraw
+
+**Returns:** Promise\<BigNumber>

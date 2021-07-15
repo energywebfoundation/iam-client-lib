@@ -35,6 +35,7 @@
 * [USER\_NOT\_LOGGED\_IN](error_messages.md#user_not_logged_in)
 * [WALLET\_PROVIDER\_NOT\_SUPPORTED](error_messages.md#wallet_provider_not_supported)
 * [WALLET\_TYPE\_NOT\_PROVIDED](error_messages.md#wallet_type_not_provided)
+* [WITHDRAWAL\_WAS\_NOT\_REQUESTED](error_messages.md#withdrawal_was_not_requested)
 
 ## Enumeration members
 
@@ -209,3 +210,9 @@ ___
 ### WALLET\_TYPE\_NOT\_PROVIDED
 
 •  **WALLET\_TYPE\_NOT\_PROVIDED**:  = "A wallet provider type or a private key must be provided"
+
+___
+
+### WITHDRAWAL\_WAS\_NOT\_REQUESTED
+
+•  **WITHDRAWAL\_WAS\_NOT\_REQUESTED**:  = "Stake withdrawal was not requested"

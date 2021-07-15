@@ -27,5 +27,6 @@ export enum ERROR_MESSAGES {
   ROLE_NOT_EXISTS = "Role you want to enroll to does not exists",
   CLAIM_PUBLISHER_NOT_REQUESTER = "Claim subject is not controlled by publisher",
   ONCHAIN_ROLE_VERSION_NOT_SPECIFIED = "On-chain role version not specified",
-  CACHE_SERVER_NOT_REGISTERED = "Cache server for this chain is not registered"
+  CACHE_SERVER_NOT_REGISTERED = "Cache server for this chain is not registered",
+  WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested"
 }
