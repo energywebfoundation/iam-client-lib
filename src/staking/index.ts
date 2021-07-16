@@ -1,4 +1,4 @@
-import { DomainReader, ResolverContractType, StakingPoolFactory__factory, StakingPool__factory, } from "@energyweb/iam-contracts";
+import { DomainReader, ResolverContractType, StakingPoolFactory__factory, StakingPool__factory, WITHDRAW_DELAY, } from "@energyweb/iam-contracts";
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
 import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
 import { Signer, utils } from "ethers";
@@ -168,7 +168,13 @@ export class StakingPool {
     if (status !== StakeStatus.WITHDRAWING) {
       throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
     }
-    return new BigNumber(new Date().getTime()).sub(depositEnd);
+    const withdrawAvailableFrom = depositEnd.add(WITHDRAW_DELAY);
+    const now = new BigNumber(new Date().getTime());
+    if (withdrawAvailableFrom.lte(now)) {
+      return new BigNumber(0);
+    } else {
+      return withdrawAvailableFrom.sub(now);
+    }
   }
 
   /**
