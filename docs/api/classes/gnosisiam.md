@@ -815,13 +815,13 @@ ___
 
 ### getProviderType
 
-▸ **getProviderType**(): undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager)
+▸ **getProviderType**(): undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) \| [EKC](../enums/walletprovider.md#ekc)
 
 *Inherited from [IAM](iam.md).[getProviderType](iam.md#getprovidertype)*
 
 Get the current initialized provider type
 
-**Returns:** undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager)
+**Returns:** undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) \| [EKC](../enums/walletprovider.md#ekc)
 
 provider type if the session is active if not undefined
 
@@ -951,7 +951,7 @@ ___
 
 ### initializeConnection
 
-▸ **initializeConnection**(`__namedParameters?`: { initCacheServer: boolean = true; initDID: boolean = true; reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) = this.\_providerType }): Promise\<[InitializeData](../globals.md#initializedata)>
+▸ **initializeConnection**(`__namedParameters?`: { initCacheServer: boolean = true; initDID: boolean = true; proxyURL: undefined \| string ; reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) \| [EKC](../enums/walletprovider.md#ekc) = this.\_providerType }): Promise\<[InitializeData](../globals.md#initializedata)>
 
 *Inherited from [IAM](iam.md).[initializeConnection](iam.md#initializeconnection)*
 
@@ -967,7 +967,7 @@ Initialize connection to wallet
 
 Name | Type | Default value |
 ------ | ------ | ------ |
-`__namedParameters` | { initCacheServer: boolean = true; initDID: boolean = true; reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) = this.\_providerType } | {} |
+`__namedParameters` | { initCacheServer: boolean = true; initDID: boolean = true; proxyURL: undefined \| string ; reinitializeMetamask: undefined \| false \| true ; walletProvider: undefined \| [WalletConnect](../enums/walletprovider.md#walletconnect) \| [MetaMask](../enums/walletprovider.md#metamask) \| [EwKeyManager](../enums/walletprovider.md#ewkeymanager) \| [EKC](../enums/walletprovider.md#ekc) = this.\_providerType } | {} |
 
 **Returns:** Promise\<[InitializeData](../globals.md#initializedata)>
 

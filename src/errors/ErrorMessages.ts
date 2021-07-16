@@ -1,4 +1,5 @@
 export enum ERROR_MESSAGES {
+  ERROR_IN_AZURE_PROVIDER = "Error in Azure Provider",
   SIGNER_NOT_INITIALIZED = "Signer not initialized",
   NOT_CONNECTED_TO_VOLTA = "Not connected to volta network",
   CLAIMS_NOT_INITIALIZED = "User claims not initialized",

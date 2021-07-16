@@ -6,11 +6,18 @@
 
 ### Enumeration members
 
+* [EKC](walletprovider.md#ekc)
 * [EwKeyManager](walletprovider.md#ewkeymanager)
 * [MetaMask](walletprovider.md#metamask)
 * [WalletConnect](walletprovider.md#walletconnect)
 
 ## Enumeration members
+
+### EKC
+
+•  **EKC**:  = "EKC"
+
+___
 
 ### EwKeyManager
 

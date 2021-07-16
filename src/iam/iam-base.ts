@@ -39,6 +39,7 @@ import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory"
 import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import EKC from '@energyweb/ekc';
 
 const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
@@ -110,6 +111,8 @@ export class IAMBase {
   protected _natsConnection: NatsConnection | undefined;
   protected _jsonCodec: Codec<any> | undefined;
 
+  protected _ekc: EKC | undefined = undefined;
+
   private ttl = bigNumberify(0);
 
 
@@ -151,12 +154,14 @@ export class IAMBase {
 
   protected async init({
     initializeMetamask,
-    walletProvider: walletProvider
+    walletProvider: walletProvider,
+    proxyURL
   }: {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
+    proxyURL?: string
   }) {
-    await this.initSigner({ walletProvider, initializeMetamask });
+    await this.initSigner({ walletProvider, initializeMetamask, proxyURL });
     await this.setAddress();
     this.setDid();
     await this.initChain();
@@ -173,11 +178,13 @@ export class IAMBase {
 
   private async initSigner({
     initializeMetamask,
-    walletProvider
+    walletProvider,
+    proxyURL
   }: {
     useMetamask?: boolean;
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
+    proxyURL?: string
   }) {
     const { privateKey, rpcUrl } = this._connectionOptions;
 
@@ -244,6 +251,20 @@ export class IAMBase {
       this._signer = new providers.Web3Provider(wcProvider).getSigner();
       this._provider = this._signer.provider as providers.Web3Provider;
       this._providerType = walletProvider;
+      return;
+    }
+    if (walletProvider === WalletProvider.EKC) {
+      try {
+        // proxyURL should be 
+        await EKC.init({ proxyUrl: proxyURL as string });
+        await EKC.login({ mode: 'popup' });
+      } catch (error) {
+        throw new Error(ERROR_MESSAGES.ERROR_IN_AZURE_PROVIDER);
+      }
+      this._signer = EKC.getSigner() as Signer;
+      this._provider = this._signer.provider as providers.Web3Provider;
+      this._providerType = walletProvider;
+
       return;
     }
     throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
@@ -314,22 +335,23 @@ export class IAMBase {
   on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
     if (!this._providerType) return;
     const isMetamask = this._providerType === WalletProvider.MetaMask;
+    const isEKC = this._providerType === WalletProvider.EKC;
     switch (event) {
       case "accountChanged": {
         isMetamask
           ? this._metamaskProvider?.on("accountsChanged", eventHandler)
-          : this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
+          : !isEKC && this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
         break;
       }
       case "disconnected": {
-        isMetamask === false &&
+        isMetamask === false && !isEKC &&
           this._walletConnectService.getProvider()?.wc.on("disconnect", eventHandler);
         break;
       }
       case "networkChanged": {
         isMetamask
           ? this._metamaskProvider?.on("networkChanged", eventHandler)
-          : this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
+          : !isEKC && this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
         break;
       }
       default:
@@ -355,6 +377,9 @@ export class IAMBase {
    *
    */
   async closeConnection() {
+    if (this._providerType === WalletProvider.EKC) {
+      await EKC.logout({ mode: 'popup' });
+    }
     await this._walletConnectService.closeConnection();
     this.clearSession();
     this._did = undefined;
