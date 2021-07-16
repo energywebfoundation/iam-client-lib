@@ -21,17 +21,18 @@ import { appsTests } from "./application.testSuite";
 import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claimsTests/claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
-import { utilsTests } from "./utilsTests/utils.testSuite";
+import { utilsTests } from "./utils/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
+import { stakingTests } from "./staking";
 
 const { namehash, bigNumberify } = utils;
 
-export const rootOwner = Wallet.createRandom().connect(provider);
+export const rootOwner = Wallet.createRandom();
 
 export const root = "root";
 export let rootOwnerIam: IAM;
 
-export const createIam = async (privateKey: string, { initCacheServer = false, initDID = false } = {}) => {
+export const createIam = async (privateKey: string, { initDID = false, initCacheServer = false } = {}) => {
   const iam = new IAM({
     rpcUrl,
     privateKey
@@ -110,3 +111,4 @@ describe("InitializeConnection tests", initializeConnectionTests);
 describe("Claim tests", claimsTests);
 describe("Utils tests", utilsTests);
 describe("Assets tests", assetsTests);
+describe("Staking tests", stakingTests);

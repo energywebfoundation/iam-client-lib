@@ -2,7 +2,7 @@ import { Keys } from "@ew-did-registry/keys";
 import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
 import { IAM } from "../src/iam";
 import { emptyAddress } from "../src/utils/constants";
-import { createIam, rootOwner } from "./iam.test";
+import { rootOwner, createIam } from "./iam.test";
 import { replenish, provider, rpcUrl } from "./setup_contracts";
 import { PubKeyType } from "@ew-did-registry/did-resolver-interface/src/models/operator";
 import { Algorithms, DIDAttribute, Encoding } from "@ew-did-registry/did-resolver-interface";

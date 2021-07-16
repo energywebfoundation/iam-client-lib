@@ -8,6 +8,7 @@
 
 * [APP\_WITH\_ROLES](error_messages.md#app_with_roles)
 * [CACHE\_CLIENT\_NOT\_PROVIDED](error_messages.md#cache_client_not_provided)
+* [CACHE\_SERVER\_NOT\_REGISTERED](error_messages.md#cache_server_not_registered)
 * [CLAIMS\_NOT\_INITIALIZED](error_messages.md#claims_not_initialized)
 * [CLAIM\_PUBLISHER\_NOT\_REQUESTER](error_messages.md#claim_publisher_not_requester)
 * [DID\_DOCUMENT\_NOT\_INITIALIZED](error_messages.md#did_document_not_initialized)
@@ -34,6 +35,7 @@
 * [USER\_NOT\_LOGGED\_IN](error_messages.md#user_not_logged_in)
 * [WALLET\_PROVIDER\_NOT\_SUPPORTED](error_messages.md#wallet_provider_not_supported)
 * [WALLET\_TYPE\_NOT\_PROVIDED](error_messages.md#wallet_type_not_provided)
+* [WITHDRAWAL\_WAS\_NOT\_REQUESTED](error_messages.md#withdrawal_was_not_requested)
 
 ## Enumeration members
 
@@ -46,6 +48,12 @@ ___
 ### CACHE\_CLIENT\_NOT\_PROVIDED
 
 •  **CACHE\_CLIENT\_NOT\_PROVIDED**:  = "Cache client not provided"
+
+___
+
+### CACHE\_SERVER\_NOT\_REGISTERED
+
+•  **CACHE\_SERVER\_NOT\_REGISTERED**:  = "Cache server for this chain is not registered"
 
 ___
 
@@ -202,3 +210,9 @@ ___
 ### WALLET\_TYPE\_NOT\_PROVIDED
 
 •  **WALLET\_TYPE\_NOT\_PROVIDED**:  = "A wallet provider type or a private key must be provided"
+
+___
+
+### WITHDRAWAL\_WAS\_NOT\_REQUESTED
+
+•  **WITHDRAWAL\_WAS\_NOT\_REQUESTED**:  = "Stake withdrawal was not requested"

@@ -18,6 +18,7 @@
 * [ensRegistryAddress](chainconfig.md#ensregistryaddress)
 * [ensResolverAddress](chainconfig.md#ensresolveraddress)
 * [rpcUrl](chainconfig.md#rpcurl)
+* [stakingPoolFactoryAddress](chainconfig.md#stakingpoolfactoryaddress)
 
 ## Properties
 
@@ -66,3 +67,9 @@ ___
 ### rpcUrl
 
 •  **rpcUrl**: string
+
+___
+
+### stakingPoolFactoryAddress
+
+•  **stakingPoolFactoryAddress**: string

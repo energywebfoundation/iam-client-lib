@@ -12,6 +12,7 @@
 * [MessagingMethod](enums/messagingmethod.md)
 * [Order](enums/order.md)
 * [RegistrationTypes](enums/registrationtypes.md)
+* [StakeStatus](enums/stakestatus.md)
 * [WalletProvider](enums/walletprovider.md)
 
 ### Classes
@@ -30,6 +31,8 @@
 * [MethodNotAvailableInNodeEnvError](classes/methodnotavailableinnodeenverror.md)
 * [NATSConnectionNotEstablishedError](classes/natsconnectionnotestablishederror.md)
 * [Owner](classes/owner.md)
+* [StakingPool](classes/stakingpool.md)
+* [StakingPoolService](classes/stakingpoolservice.md)
 * [WalletConnectService](classes/walletconnectservice.md)
 
 ### Interfaces
@@ -60,10 +63,13 @@
 * [ConnectionOptions](globals.md#connectionoptions)
 * [EncodedCall](globals.md#encodedcall)
 * [InitializeData](globals.md#initializedata)
+* [Service](globals.md#service)
+* [Stake](globals.md#stake)
 * [Transaction](globals.md#transaction)
 
 ### Variables
 
+* [BigNumber](globals.md#bignumber)
 * [JsonRpcProvider](globals.md#jsonrpcprovider)
 * [NATS\_EXCHANGE\_TOPIC](globals.md#nats_exchange_topic)
 * [NODE\_FIELDS\_KEY](globals.md#node_fields_key)
@@ -167,6 +173,35 @@ Name | Type |
 
 ___
 
+### Service
+
+Ƭ  **Service**: { org: string ; pool: string ; provider: string  }
+
+#### Type declaration:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`org` | string | organization ENS name |
+`pool` | string | pool address |
+`provider` | string | provider address |
+
+___
+
+### Stake
+
+Ƭ  **Stake**: { amount: BigNumber ; depositEnd: BigNumber ; depositStart: BigNumber ; status: [StakeStatus](enums/stakestatus.md)  }
+
+#### Type declaration:
+
+Name | Type |
+------ | ------ |
+`amount` | BigNumber |
+`depositEnd` | BigNumber |
+`depositStart` | BigNumber |
+`status` | [StakeStatus](enums/stakestatus.md) |
+
+___
+
 ### Transaction
 
 Ƭ  **Transaction**: { calls: [EncodedCall](globals.md#encodedcall)[] ; from: string  }
@@ -179,6 +214,12 @@ Name | Type |
 `from` | string |
 
 ## Variables
+
+### BigNumber
+
+•  **BigNumber**: BigNumber
+
+___
 
 ### JsonRpcProvider
 
@@ -584,7 +625,7 @@ If configuration for some chain is missing or should be reconfigured use `setCha
 
 Name | Type | Value |
 ------ | ------ | ------ |
-`[VOLTA_CHAIN_ID]` | object | { assetManagerAddress: string = "0xE258fA7D1cc8964D0dEB7204Df947bCa42b2c940"; claimManagerAddress: string = "0x2F259e307D0Ba78902391c070e7b4aA043E74DBB"; didContractAddress: string = VoltaAddress1056; domainNotifierAddress: string = VOLTA\_DOMAIN\_NOTIFER\_ADDRESS; ensPublicResolverAddress: string = VOLTA\_PUBLIC\_RESOLVER\_ADDRESS; ensRegistryAddress: string = VOLTA\_ENS\_REGISTRY\_ADDRESS; ensResolverAddress: string = VOLTA\_RESOLVER\_V1\_ADDRESS; rpcUrl: string = "https://volta-rpc.energyweb.org" } |
+`[VOLTA_CHAIN_ID]` | object | { assetManagerAddress: string = VOLTA\_IDENTITY\_MANAGER\_ADDRESS; claimManagerAddress: string = VOLTA\_CLAIM\_MANAGER\_ADDRESS; didContractAddress: string = VoltaAddress1056; domainNotifierAddress: string = VOLTA\_DOMAIN\_NOTIFER\_ADDRESS; ensPublicResolverAddress: string = VOLTA\_PUBLIC\_RESOLVER\_ADDRESS; ensRegistryAddress: string = VOLTA\_ENS\_REGISTRY\_ADDRESS; ensResolverAddress: string = VOLTA\_RESOLVER\_V1\_ADDRESS; rpcUrl: string = "https://volta-rpc.energyweb.org"; stakingPoolFactoryAddress: string = VOLTA\_STAKING\_POOL\_FACTORY\_ADDRESS } |
 
 ___
 
