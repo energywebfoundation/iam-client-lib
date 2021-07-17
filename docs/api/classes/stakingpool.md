@@ -21,6 +21,7 @@ Abstraction over staking pool smart contract
 * [getStake](stakingpool.md#getstake)
 * [putStake](stakingpool.md#putstake)
 * [requestWithdraw](stakingpool.md#requestwithdraw)
+* [requestWithdrawDelay](stakingpool.md#requestwithdrawdelay)
 * [withdraw](stakingpool.md#withdraw)
 * [withdrawalDelay](stakingpool.md#withdrawaldelay)
 
@@ -106,6 +107,16 @@ ___
 Withdraw request unavailable until minimum staking period ends
 
 **Returns:** Promise\<void>
+
+___
+
+### requestWithdrawDelay
+
+▸ **requestWithdrawDelay**(): Promise\<BigNumber>
+
+**`description`** Returns time left to enable request withdraw
+
+**Returns:** Promise\<BigNumber>
 
 ___
 

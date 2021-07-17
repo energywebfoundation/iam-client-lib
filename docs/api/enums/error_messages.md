@@ -31,6 +31,7 @@
 * [ROLE\_NOT\_EXISTS](error_messages.md#role_not_exists)
 * [ROLE\_PRECONDITION\_NOT\_MET](error_messages.md#role_precondition_not_met)
 * [SIGNER\_NOT\_INITIALIZED](error_messages.md#signer_not_initialized)
+* [STAKE\_WAS\_NOT\_PUT](error_messages.md#stake_was_not_put)
 * [UNABLE\_TO\_OBTAIN\_PUBLIC\_KEY](error_messages.md#unable_to_obtain_public_key)
 * [USER\_NOT\_LOGGED\_IN](error_messages.md#user_not_logged_in)
 * [WALLET\_PROVIDER\_NOT\_SUPPORTED](error_messages.md#wallet_provider_not_supported)
@@ -186,6 +187,12 @@ ___
 ### SIGNER\_NOT\_INITIALIZED
 
 •  **SIGNER\_NOT\_INITIALIZED**:  = "Signer not initialized"
+
+___
+
+### STAKE\_WAS\_NOT\_PUT
+
+•  **STAKE\_WAS\_NOT\_PUT**:  = "Stake was not put"
 
 ___
 

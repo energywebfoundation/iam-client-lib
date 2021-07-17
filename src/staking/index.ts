@@ -1,8 +1,8 @@
-import { DomainReader, ResolverContractType, StakingPoolFactory__factory, StakingPool__factory, } from "@energyweb/iam-contracts";
+import { DomainReader, ResolverContractType, StakingPoolFactory__factory, StakingPool__factory } from "@energyweb/iam-contracts";
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
 import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
 import { Signer, utils } from "ethers";
-import { ERROR_MESSAGES } from '../errors';
+import { ERROR_MESSAGES } from "../errors";
 import { chainConfigs } from "../iam/chainConfig";
 import { emptyAddress } from "../utils/constants";
 
@@ -135,6 +135,23 @@ export class StakingPool {
   }
 
   /**
+   * @description Returns time left to enable request withdraw
+   */
+  async requestWithdrawDelay(): Promise<utils.BigNumber> {
+    const { depositStart, status } = await this.getStake();
+    if (status !== StakeStatus.STAKING) {
+      throw new Error(ERROR_MESSAGES.STAKE_WAS_NOT_PUT);
+    }
+    const requestAvailableFrom = depositStart.add(await this.pool.minStakingPeriod());
+    const now = new BigNumber(new Date().getTime());
+    if (requestAvailableFrom.lte(now)) {
+      return new BigNumber(0);
+    } else {
+      return requestAvailableFrom.sub(now);
+    }
+  }
+
+  /**
    * Accumulated reward
    */
   async checkReward(): Promise<utils.BigNumber> {
@@ -168,7 +185,13 @@ export class StakingPool {
     if (status !== StakeStatus.WITHDRAWING) {
       throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
     }
-    return new BigNumber(new Date().getTime()).sub(depositEnd);
+    const withdrawAvailableFrom = depositEnd.add(await this.pool.withdrawDelay());
+    const now = new BigNumber(new Date().getTime());
+    if (withdrawAvailableFrom.lte(now)) {
+      return new BigNumber(0);
+    } else {
+      return withdrawAvailableFrom.sub(now);
+    }
   }
 
   /**
