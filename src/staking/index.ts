@@ -143,7 +143,7 @@ export class StakingPool {
       throw new Error(ERROR_MESSAGES.STAKE_WAS_NOT_PUT);
     }
     const requestAvailableFrom = depositStart.add(await this.pool.minStakingPeriod());
-    const now = new BigNumber(new Date().getTime());
+    const now = await this.now();
     if (requestAvailableFrom.lte(now)) {
       return new BigNumber(0);
     } else {
@@ -186,7 +186,7 @@ export class StakingPool {
       throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
     }
     const withdrawAvailableFrom = depositEnd.add(await this.pool.withdrawDelay());
-    const now = new BigNumber(new Date().getTime());
+    const now = await this.now();
     if (withdrawAvailableFrom.lte(now)) {
       return new BigNumber(0);
     } else {
@@ -207,5 +207,12 @@ export class StakingPool {
    */
   connect(signer: Signer): StakingPool {
     return new StakingPool(this.pool.connect(signer));
+  }
+
+  private async now(): Promise<utils.BigNumber> {
+    const lastBlock = await this.pool.provider.getBlockNumber();
+    return new BigNumber(
+      (await this.pool.provider.getBlock(lastBlock)).timestamp
+    );
   }
 }

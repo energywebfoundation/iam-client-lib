@@ -320,9 +320,10 @@ export const stakingTests = (): void => {
         .rejects.toThrow("StakingPool: Replenishment of the stake is not allowed");
     });
 
-    it("staker should be able to request withdraw", async () => {
+    it("staker should be able to request withdraw", async () => { 
       await pool.putStake(parseEther("0.1"));
-      await new Promise((resolve) => setTimeout(resolve, 1000 * minStakingPeriod));
+      const requestDelay = await pool.requestWithdrawDelay();
+      await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay.toNumber()));
 
       const withdrawRequested = waitFor(
         poolContract.filters.StakeWithdrawalRequested(patron.address, null),
@@ -341,7 +342,8 @@ export const stakingTests = (): void => {
 
     it("can't request withdraw until minimum staking period is last", async () => {
       await pool.putStake(parseEther("0.1"));
-      await new Promise((resolve) => setTimeout(resolve, 1000 * (minStakingPeriod / 2)));
+      const requestDelay = await pool.requestWithdrawDelay();
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (requestDelay.toNumber() / 2)));
 
       return expect(pool.requestWithdraw())
         .rejects.toThrow("StakingPool: Minimum staking period is not expired yet");
@@ -349,7 +351,8 @@ export const stakingTests = (): void => {
 
     it("withdraw can't be rquested twice", async () => {
       await pool.putStake(parseEther("0.1"));
-      await new Promise((resolve) => setTimeout(resolve, 1000 * minStakingPeriod));
+      const requestDelay = await pool.requestWithdrawDelay();
+      await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay.toNumber()));
 
       await pool.requestWithdraw();
 
@@ -364,7 +367,8 @@ export const stakingTests = (): void => {
       );
       await pool.putStake(stake);
       const depositStart = (await stakePut)[2];
-      await new Promise((resolve) => setTimeout(resolve, 1000 * minStakingPeriod));
+      const requestDelay = await pool.requestWithdrawDelay();
+      await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay.toNumber()));
 
       const stakeWithdrawalRequested = waitFor(
         poolContract.filters.StakeWithdrawalRequested(patron.address, null), poolContract
@@ -375,7 +379,8 @@ export const stakingTests = (): void => {
       const expectedReward = calculateReward(stake, (depositEnd.sub(depositStart)), new BigNumber(patronRewardPortion));
       expect(await pool.checkReward()).toEqual(expectedReward);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000 * withdrawDelay));
+      const withdrawalDelay = await pool.withdrawalDelay();
+      await new Promise((resolve) => setTimeout(resolve, 1000 * withdrawalDelay.toNumber()));
 
       const stakeWithdrawn = waitFor(
         poolContract.filters.StakeWithdrawn(patron.address, null),
