@@ -1040,7 +1040,7 @@ ___
 
 ### issuePublicClaim
 
-▸ **issuePublicClaim**(`__namedParameters`: { token: string  }): Promise\<string>
+▸ **issuePublicClaim**(`__namedParameters`: { publicClaim: undefined \| IPublicClaim ; token: undefined \| string  }): Promise\<string>
 
 *Inherited from [IAM](iam.md).[issuePublicClaim](iam.md#issuepublicclaim)*
 
@@ -1052,7 +1052,7 @@ issuePublicClaim
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { token: string  } |
+`__namedParameters` | { publicClaim: undefined \| IPublicClaim ; token: undefined \| string  } |
 
 **Returns:** Promise\<string>
 

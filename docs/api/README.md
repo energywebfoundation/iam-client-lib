@@ -1,5 +1,8 @@
 **[iam-client-lib](README.md)**
 
+<p align="center">
+  <img src="https://github.com/energywebfoundation/iam-client-lib/actions/workflows/deploy.yml/badge.svg" />
+</p>
 # Identity and Access Management (IAM) Client Library
 
 TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
@@ -34,13 +37,13 @@ Also note that having a DID document with a public key is a prerequisite for usi
 Latest stable version
 
 ```sh
-$ npm i iam-client-lib
+npm i iam-client-lib
 ```
 
 Prerelease version
 
 ```sh
-$ npm i iam-client-lib@canary
+npm i iam-client-lib@canary
 ```
 
 ### Sample Config for browsers (TypeScript)
@@ -165,7 +168,7 @@ npm install
 To generate bundled JS files and types, use the following command. Generated files are located in the **_dist_** folder.
 
 ```sh
-$ npm run build
+npm run build
 ```
 
 ## Active Maintainers

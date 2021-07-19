@@ -32,7 +32,7 @@ import {
   IServiceEndpoint,
   IUpdateData,
 } from "@ew-did-registry/did-resolver-interface";
-import { hashes, IProofData, ISaltedFields } from "@ew-did-registry/claims";
+import { hashes, IProofData, IPublicClaim, ISaltedFields } from "@ew-did-registry/claims";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { v4 as uuid } from "uuid";
 import { IAMBase } from "./iam/iam-base";
@@ -485,9 +485,17 @@ export class IAM extends IAMBase {
    * @returns return issued token
    *
    */
-  async issuePublicClaim({ token }: { token: string }) {
+  async issuePublicClaim({ token, publicClaim }: { token?: string, publicClaim?: IPublicClaim }) {
+    console.log(publicClaim, token);
+    
     if (this._issuerClaims) {
-      return this._issuerClaims.issuePublicClaim(token);
+      if (publicClaim) {
+        return this._issuerClaims.issuePublicClaim(publicClaim);
+      }
+      if (token) {
+        return this._issuerClaims.issuePublicClaim(token);
+      }
+      throw new Error("unable to issue Public Claim");
     }
     throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
   }
@@ -790,7 +798,7 @@ export class IAM extends IAMBase {
     newOwner: string;
     returnSteps?: boolean;
   }) {
-     newOwner = parseDID(newOwner);
+    newOwner = parseDID(newOwner);
     const orgNamespaces = [
       `${ENSNamespaceTypes.Roles}.${namespace}`,
       `${ENSNamespaceTypes.Application}.${namespace}`,
@@ -905,7 +913,7 @@ export class IAM extends IAMBase {
    *
    */
   async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
-     newOwner = parseDID(newOwner);
+    newOwner = parseDID(newOwner);
     const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: ENSNamespaceTypes.Roles
@@ -1555,7 +1563,7 @@ export class IAM extends IAMBase {
     if (!this._signer) {
       throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
-  
+
     const { claimData, sub } = this._jwt.decode(token) as
       { claimData: { claimType: string; claimTypeVersion: number, expiry: number }; sub: string };
     const message: IClaimIssuance = {
@@ -1565,8 +1573,13 @@ export class IAM extends IAMBase {
       acceptedBy: this._did
     };
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      const publicClaim: IPublicClaim = {
+        did: sub,
+        signer: this._did,
+        claimData
+      };
       message.issuedToken = await this.issuePublicClaim({
-        token: await this._jwt.sign({ claimData }, { subject: sub, issuer: this._did })
+        publicClaim
       });
     }
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {

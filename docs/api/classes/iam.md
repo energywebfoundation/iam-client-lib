@@ -952,7 +952,7 @@ ___
 
 ### issuePublicClaim
 
-▸ **issuePublicClaim**(`__namedParameters`: { token: string  }): Promise\<string>
+▸ **issuePublicClaim**(`__namedParameters`: { publicClaim: undefined \| IPublicClaim ; token: undefined \| string  }): Promise\<string>
 
 issuePublicClaim
 
@@ -962,7 +962,7 @@ issuePublicClaim
 
 Name | Type |
 ------ | ------ |
-`__namedParameters` | { token: string  } |
+`__namedParameters` | { publicClaim: undefined \| IPublicClaim ; token: undefined \| string  } |
 
 **Returns:** Promise\<string>
 
