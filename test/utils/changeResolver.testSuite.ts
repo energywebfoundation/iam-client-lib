@@ -1,19 +1,20 @@
 import { DomainHierarchy, DomainReader, RoleDefinitionResolver__factory, DomainNotifier__factory, ResolverContractType } from "@energyweb/iam-contracts";
-import { changeResolver, ChangeResolverParams } from '../../src/utils/change_resolver';
-import { root, rootOwner, rpcUrl } from '../iam.test';
-import { org1 } from '../organization.testSuite';
-import { ensRegistry, ensResolver, provider } from '../setup_contracts';
-import { NODE_FIELDS_KEY } from '../../src/utils/constants';
-import { Contract, Wallet, utils } from 'ethers';
+import { changeResolver, ChangeResolverParams } from "../../src/utils/change_resolver";
+import { rpcUrl } from "../setup_contracts";
+import { root, rootOwner } from "../iam.test";
+import { org1 } from "../organization.testSuite";
+import { ensRegistry, ensResolver, provider } from "../setup_contracts";
+import { NODE_FIELDS_KEY } from "../../src/utils/constants";
+import { Contract, Wallet, utils } from "ethers";
 
 export const changeResolverTests = () => {
+  const wallet = new Wallet(rootOwner.privateKey, provider);
   let newResolverAddr: string;
   let newResolver: Contract;
-  let params: Omit<ChangeResolverParams, 'rootNode'>;
+  let params: Omit<ChangeResolverParams, "rootNode">;
   let domainHierarchy: DomainHierarchy;
 
   beforeAll(async () => {
-    const wallet = new Wallet(rootOwner.privateKey, provider);
     const domainNotifer = await new DomainNotifier__factory(wallet).deploy(ensRegistry.address);
     newResolver = await new RoleDefinitionResolver__factory(wallet).deploy(ensRegistry.address, domainNotifer.address);
     newResolverAddr = newResolver.address;
@@ -40,7 +41,7 @@ export const changeResolverTests = () => {
     };
   });
 
-  test('org domain resolver can be changed', async () => {
+  test("org domain resolver can be changed", async () => {
     const rootNode = `${org1}.${root}`;
 
     await changeResolver({ ...params, rootNode });
@@ -54,11 +55,11 @@ export const changeResolverTests = () => {
       .toBe(true);
   });
 
-  test('root resolver can be changed', async () => {
+  test("root resolver can be changed", async () => {
     const rootNode = `${root}`;
 
-    await ensRegistry.setOwner(utils.namehash('org1-1.org1.root'), '0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14');
-    await ensRegistry.setOwner(utils.namehash('org1.root'), '0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14');
+    await ensRegistry.connect(wallet).setOwner(utils.namehash("org1-1.org1.root"), "0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14");
+    await ensRegistry.connect(wallet).setOwner(utils.namehash("org1.root"), "0xE45Ad1e7522288588dA6829A9ea6A09e92FCDe14");
 
     await changeResolver({ ...params, rootNode });
 

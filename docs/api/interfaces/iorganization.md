@@ -30,7 +30,7 @@ ___
 
 ### definition
 
-•  **definition**: [IOrganizationDefinition](iorganizationdefinition.md)
+•  **definition**: IOrganizationDefinition
 
 ___
 

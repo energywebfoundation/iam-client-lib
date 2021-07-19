@@ -26,5 +26,8 @@ export enum ERROR_MESSAGES {
   ROLE_PRECONDITION_NOT_MET = "Precondition not met, user not eligible to enrol for a role",
   ROLE_NOT_EXISTS = "Role you want to enroll to does not exists",
   CLAIM_PUBLISHER_NOT_REQUESTER = "Claim subject is not controlled by publisher",
-  ONCHAIN_ROLE_VERSION_NOT_SPECIFIED = "On-chain role version not specified"
+  ONCHAIN_ROLE_VERSION_NOT_SPECIFIED = "On-chain role version not specified",
+  CACHE_SERVER_NOT_REGISTERED = "Cache server for this chain is not registered",
+  WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested",
+  STAKE_WAS_NOT_PUT = "Stake was not put"
 }

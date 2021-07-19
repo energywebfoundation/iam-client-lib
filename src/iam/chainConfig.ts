@@ -3,7 +3,10 @@ import {
   VOLTA_DOMAIN_NOTIFER_ADDRESS,
   VOLTA_ENS_REGISTRY_ADDRESS,
   VOLTA_PUBLIC_RESOLVER_ADDRESS,
-  VOLTA_RESOLVER_V1_ADDRESS
+  VOLTA_RESOLVER_V1_ADDRESS,
+  VOLTA_IDENTITY_MANAGER_ADDRESS,
+  VOLTA_CLAIM_MANAGER_ADDRESS,
+  VOLTA_STAKING_POOL_FACTORY_ADDRESS
 } from "@energyweb/iam-contracts";
 import { CacheServerClientOptions } from "../cacheServerClient/cacheServerClient";
 import { MessagingMethod } from "../utils/constants";
@@ -18,6 +21,7 @@ export interface ChainConfig {
   assetManagerAddress: string;
   didContractAddress: string;
   claimManagerAddress: string;
+  stakingPoolFactoryAddress: string;
 }
 
 export interface MessagingOptions {
@@ -31,16 +35,15 @@ export interface MessagingOptions {
  */
 export const chainConfigs: Record<number, ChainConfig> = {
   [VOLTA_CHAIN_ID]: {
-    rpcUrl: "https://volta-rpc-vkn5r5zx4ke71f9hcu0c.energyweb.org/",
+    rpcUrl: "https://volta-rpc.energyweb.org",
     ensRegistryAddress: VOLTA_ENS_REGISTRY_ADDRESS,
     ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
     ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: VOLTA_DOMAIN_NOTIFER_ADDRESS,
-    // TODO: export from did-lib
-    assetManagerAddress: "0xE258fA7D1cc8964D0dEB7204Df947bCa42b2c940",
+    assetManagerAddress: VOLTA_IDENTITY_MANAGER_ADDRESS,
     didContractAddress: VoltaAddress1056,
-    // TODO: export from iam-contracts
-    claimManagerAddress: "0x2F259e307D0Ba78902391c070e7b4aA043E74DBB"
+    claimManagerAddress: VOLTA_CLAIM_MANAGER_ADDRESS,
+    stakingPoolFactoryAddress: VOLTA_STAKING_POOL_FACTORY_ADDRESS
   }
 };
 

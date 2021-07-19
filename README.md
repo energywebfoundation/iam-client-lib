@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="https://github.com/energywebfoundation/iam-client-lib/actions/workflows/deploy.yml/badge.svg" />
+</p>
 # Identity and Access Management (IAM) Client Library
 
 TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
@@ -25,18 +28,20 @@ For development purposes, please follow below steps to integrate the library wit
 `iam-client-lib` is written in TypeScript. Make sure to have Node.js (>= v10) installed.
 Create a folder named **_iam-client-lib_** and clone this GIT project.
 
+Also note that having a DID document with a public key is a prerequisite for using iam-client-lib and during initialization the library with attempt to add a public key to the DID document if one doesn't exist. This addition of the public key requires the account to be funded.
+
 ### Install
 
 Latest stable version
 
 ```sh
-$ npm i iam-client-lib
+npm i iam-client-lib
 ```
 
 Prerelease version
 
 ```sh
-$ npm i iam-client-lib@canary
+npm i iam-client-lib@canary
 ```
 
 ### Sample Config for browsers (TypeScript)
@@ -126,6 +131,8 @@ export class App {
       });
     }
 
+
+
     async initializeIAM() {
       // this will authenticate
       const { did, connected } = await this._iam.initializeConnection();
@@ -161,13 +168,13 @@ npm install
 To generate bundled JS files and types, use the following command. Generated files are located in the **_dist_** folder.
 
 ```sh
-$ npm run build
+npm run build
 ```
 
 ## Active Maintainers
 
-- [Kim Honoridez](https://github.com/kim-energyweb)
-- [Daniel Wojno](https://github.com/dwojno)
+- [Ahmed Ibrahim](https://github.com/ahmedolaibrahim)
+- [John Henderson](https://github.com/jrhender)
 - [Dmitry Fesenko](https://github.com/JGiter)
 
 ## Contributing
