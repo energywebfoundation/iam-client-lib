@@ -3,7 +3,7 @@ import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/Stak
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
 import { EventFilter, Contract, Wallet, utils, providers } from "ethers";
 import { Methods } from "@ew-did-registry/did";
-import { IAM, RegistrationTypes, setChainConfig, StakingPool, StakingPoolService } from "../src/iam-client-lib";
+import { ERROR_MESSAGES, IAM, RegistrationTypes, setChainConfig, StakingPool, StakingPoolService } from "../src/iam-client-lib";
 import { claimManager, ensRegistry, replenish, provider, deployer } from "./setup_contracts";
 import { createIam, root, rootOwner } from "./iam.test";
 import { mockJsonCodec, mockNats } from "./testUtils/mocks";
@@ -306,11 +306,20 @@ export const stakingTests = (): void => {
       )).rejects.toThrow("StakingPool: patron is not registered with patron role");
     });
 
-    it("stake amount must be provided", async () => {
+    it("should reject when stake amount isn't provided", async () => {
       return expect(
         pool.putStake(parseEther("0"))
       )
         .rejects.toThrow("StakingPool: stake amount is not provided");
+    });
+
+    it("should not be able to stake with insufficient balance", async () => {
+      const balance = await patron.getBalance();
+
+      return expect(
+        pool.putStake(balance.add(1))
+      )
+        .rejects.toThrow(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
     });
 
     it("stake should not be replenished", async () => {
@@ -320,7 +329,7 @@ export const stakingTests = (): void => {
         .rejects.toThrow("StakingPool: Replenishment of the stake is not allowed");
     });
 
-    it("staker should be able to request withdraw", async () => { 
+    it("staker should be able to request withdraw", async () => {
       await pool.putStake(parseEther("0.1"));
       const requestDelay = await pool.requestWithdrawDelay();
       await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay.toNumber()));

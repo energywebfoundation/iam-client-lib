@@ -103,12 +103,11 @@ export class StakingPoolService {
    * @param org ENS name of organization
    */
   async getPool(org: string): Promise<StakingPool | null> {
-    const service = await this._stakingPoolFactory.services(namehash(org));
-    if (service.pool === emptyAddress) {
+    const { pool } = await this._stakingPoolFactory.services(namehash(org));
+    if (pool === emptyAddress) {
       return null;
     }
-    const pool = new StakingPool__factory(this._signer).attach(service.pool);
-    return new StakingPool(pool);
+    return new StakingPool(this._signer, pool);
   }
 }
 
@@ -116,7 +115,10 @@ export class StakingPoolService {
  * Abstraction over staking pool smart contract
  */
 export class StakingPool {
-  constructor(private pool: StakingPoolContract) { }
+  private pool: StakingPoolContract;
+  constructor(private patron: Required<Signer>, address: string) {
+    this.pool = new StakingPool__factory(patron).attach(address);
+  }
 
   /**
    * @description Locks stake and starts accumulating reward
@@ -128,6 +130,9 @@ export class StakingPool {
   ): Promise<void> {
     if (typeof stake === "number") {
       stake = new BigNumber(stake);
+    }
+    if ((await this.getBalance()).lt(stake)) {
+      throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
     }
     await (await this.pool.putStake({
       value: stake
@@ -206,13 +211,22 @@ export class StakingPool {
    * @param signer Signer connected to provider
    */
   connect(signer: Signer): StakingPool {
-    return new StakingPool(this.pool.connect(signer));
+    if (!signer.provider) {
+      throw new Error("StakingPoolService.init: Signer is not connected to provider");
+    }
+    return new StakingPool(signer as Required<Signer>, this.pool.address);
   }
 
   private async now(): Promise<utils.BigNumber> {
     const lastBlock = await this.pool.provider.getBlockNumber();
     return new BigNumber(
       (await this.pool.provider.getBlock(lastBlock)).timestamp
+    );
+  }
+
+  private async getBalance(): Promise<utils.BigNumber> {
+    return await this.patron.provider.getBalance(
+      await this.patron.getAddress()
     );
   }
 }

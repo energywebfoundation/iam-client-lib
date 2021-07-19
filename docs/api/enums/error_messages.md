@@ -16,6 +16,7 @@
 * [ENS\_REGISTRY\_NOT\_INITIALIZED](error_messages.md#ens_registry_not_initialized)
 * [ENS\_RESOLVER\_NOT\_INITIALIZED](error_messages.md#ens_resolver_not_initialized)
 * [ENS\_TYPE\_NOT\_SUPPORTED](error_messages.md#ens_type_not_supported)
+* [INSUFFICIENT\_BALANCE](error_messages.md#insufficient_balance)
 * [JWT\_NOT\_INITIALIZED](error_messages.md#jwt_not_initialized)
 * [METAMASK\_EXTENSION\_NOT\_AVAILABLE](error_messages.md#metamask_extension_not_available)
 * [NATS\_NOT\_CONNECTED](error_messages.md#nats_not_connected)
@@ -97,6 +98,12 @@ ___
 ### ENS\_TYPE\_NOT\_SUPPORTED
 
 •  **ENS\_TYPE\_NOT\_SUPPORTED**:  = "ENS type not supported"
+
+___
+
+### INSUFFICIENT\_BALANCE
+
+•  **INSUFFICIENT\_BALANCE**:  = "Signer has insufficient balance"
 
 ___
 

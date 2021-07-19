@@ -29,13 +29,14 @@ Abstraction over staking pool smart contract
 
 ### constructor
 
-\+ **new StakingPool**(`pool`: StakingPoolContract): [StakingPool](stakingpool.md)
+\+ **new StakingPool**(`patron`: Required\<Signer>, `address`: string): [StakingPool](stakingpool.md)
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`pool` | StakingPoolContract |
+`patron` | Required\<Signer> |
+`address` | string |
 
 **Returns:** [StakingPool](stakingpool.md)
 
