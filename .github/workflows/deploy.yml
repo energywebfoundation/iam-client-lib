@@ -32,7 +32,6 @@ jobs:
         run: |
           git reset --hard
           git fetch origin master:master
-          git fetch origin develop:develop
 
       - name: Set npm credentials
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc
