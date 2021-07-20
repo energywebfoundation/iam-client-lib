@@ -46,7 +46,7 @@ jobs:
         run: npm run test:prod
 
       - name: Deploy on develop branch
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/bug/configure_git_in_ci'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
