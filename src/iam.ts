@@ -486,8 +486,6 @@ export class IAM extends IAMBase {
    *
    */
   async issuePublicClaim({ token, publicClaim }: { token?: string, publicClaim?: IPublicClaim }) {
-    console.log(publicClaim, token);
-    
     if (this._issuerClaims) {
       if (publicClaim) {
         return this._issuerClaims.issuePublicClaim(publicClaim);
