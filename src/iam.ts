@@ -1369,8 +1369,11 @@ export class IAM extends IAMBase {
     );
   }
 
-  // NATS
-
+  /**
+   * By defaul verifies when preconditions sutisfied by any of registration type
+   * 
+   *  
+   */
   private async verifyEnrolmentPreconditions({
     subject,
     role
