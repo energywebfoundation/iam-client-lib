@@ -25,12 +25,16 @@ export interface ICacheServerClient {
   getOrganizationRoles: ({ namespace }: { namespace: string }) => Promise<IRole[]>;
   getOrganizationsByOwner: ({
     owner,
-    excludeSubOrgs
+    excludeSubOrgs,
+    withApps,
+    withRoles
   }: {
     owner: string;
     excludeSubOrgs: boolean;
+    withApps?: boolean;
+    withRoles?: boolean;
   }) => Promise<IOrganization[]>;
-  getApplicationsByOwner: ({ owner }: { owner: string }) => Promise<IApp[]>;
+  getApplicationsByOwner: ({ owner, withRoles }: { owner: string; withRoles?: boolean }) => Promise<IApp[]>;
   getApplicationsByOrganization: ({ namespace }: { namespace: string }) => Promise<IApp[]>;
   getSubOrganizationsByOrganization: ({
     namespace
