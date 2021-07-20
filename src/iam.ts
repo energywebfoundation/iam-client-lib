@@ -172,12 +172,14 @@ export class IAM extends IAMBase {
     walletProvider = this._providerType,
     reinitializeMetamask,
     initCacheServer = true,
-    initDID = true
+    initDID = true,
+    proxyURL
   }: {
     walletProvider?: WalletProvider;
     reinitializeMetamask?: boolean;
     initCacheServer?: boolean,
-    initDID?: boolean
+    initDID?: boolean,
+    proxyURL?: string
   } = {}
   ): Promise<InitializeData> {
     const { privateKey } = this._connectionOptions;
@@ -191,7 +193,8 @@ export class IAM extends IAMBase {
     try {
       await this.init({
         initializeMetamask: reinitializeMetamask,
-        walletProvider
+        walletProvider,
+        proxyURL
       });
       if (initCacheServer) {
         await this.connectToCacheServer();
