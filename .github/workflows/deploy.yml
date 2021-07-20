@@ -43,21 +43,21 @@ jobs:
         run: npm run build
 
       - name: Test
-        if: github.ref == 'refs/heads/develop'
         run: npm run test:prod
 
       - name: Deploy on develop branch
+        if: github.ref == 'refs/heads/develop'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo $HOME
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> /home/runner/.npmrc
           npx semantic-release
 
       - name: Deploy on master branch
         if: github.ref == 'refs/heads/master'
         run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> /home/runner/.npmrc
           npx semantic-release
           git checkout develop
           git merge origin/master
