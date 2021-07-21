@@ -1374,13 +1374,20 @@ export class IAM extends IAMBase {
    * 
    *  
    */
-  private async verifyEnrolmentPreconditions({
+  private async isEnrolmentPrerequisitesMet({
     subject,
-    role
+    role,
+    registrationTypes = [RegistrationTypes.OffChain, RegistrationTypes.OnChain]
   }: {
     subject: string;
     role: string;
-  }) {
+    registrationTypes?: RegistrationTypes[]
+  }): Promise<boolean> {
+    return registrationTypes.includes(RegistrationTypes.OffChain) && await this.isEnrolmentPrerequisitesMetOffchain({ subject, role }) ||
+      registrationTypes.includes(RegistrationTypes.OnChain) && await this.isEnrolmentPrerequisitesMetOnchain({ subject, role });
+  }
+
+  private async isEnrolmentPrerequisitesMetOffchain({ subject, role }: { subject: string; role: string }): Promise<boolean> {
     const [roleDefinition, { service }] = await Promise.all([
       this.getDefinition({
         type: ENSNamespaceTypes.Roles,
@@ -1395,17 +1402,22 @@ export class IAM extends IAMBase {
 
     const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
 
-    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
+    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return true;
     for (const { type, conditions } of enrolmentPreconditions) {
       if (type === PreconditionType.Role && conditions && conditions?.length > 0) {
         const conditionMet = service.some(
           ({ claimType }) => claimType && conditions.includes(claimType)
         );
         if (!conditionMet) {
-          throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
+          return false;
         }
       }
     }
+    return true;
+  }
+
+  private async isEnrolmentPrerequisitesMetOnchain({ subject, role }: { subject: string; role: string }): Promise<boolean> {
+    throw new Error("Not implemented");
   }
 
   private async approveRolePublishing({ subject, role, version }: { subject: string, role: string, version: number }) {
@@ -1506,9 +1518,8 @@ export class IAM extends IAMBase {
     const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this.createPublicClaim({ data: claim, subject });
 
-    // TODO: verfiy onchain
-    if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      await this.verifyEnrolmentPreconditions({ subject, role });
+    if (!(await this.isEnrolmentPrerequisitesMet({ subject, role }))) {
+      throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
     }
 
     // temporarily, until claimIssuer is not removed from Claim entity
