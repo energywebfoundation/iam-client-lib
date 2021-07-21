@@ -74,6 +74,7 @@
 * [NATS\_EXCHANGE\_TOPIC](globals.md#nats_exchange_topic)
 * [NODE\_FIELDS\_KEY](globals.md#node_fields_key)
 * [PUBLIC\_KEY](globals.md#public_key)
+* [VOLTA\_AVERAGE\_BLOCK\_TIME](globals.md#volta_average_block_time)
 * [VOLTA\_CHAIN\_ID](globals.md#volta_chain_id)
 * [WALLET\_PROVIDER](globals.md#wallet_provider)
 * [abi1056](globals.md#abi1056)
@@ -242,6 +243,12 @@ ___
 ### PUBLIC\_KEY
 
 • `Const` **PUBLIC\_KEY**: \"PublicKey\" = "PublicKey"
+
+___
+
+### VOLTA\_AVERAGE\_BLOCK\_TIME
+
+• `Const` **VOLTA\_AVERAGE\_BLOCK\_TIME**: 5.2 = 5.2
 
 ___
 

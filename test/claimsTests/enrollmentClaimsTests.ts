@@ -1,12 +1,11 @@
 import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
-import { Wallet } from "ethers";
-import { utils } from "ethers";
-import { JSONCodec } from "nats.ws";
-import { IAM, RegistrationTypes } from "../../src/iam";
-import { IRoleDefinition, NATS_EXCHANGE_TOPIC } from "../../src/iam-client-lib";
+import { Wallet, utils } from "ethers";
+import { Codec } from "nats.ws";
+import { IAM, RegistrationTypes, IRoleDefinition, NATS_EXCHANGE_TOPIC } from "../../src/iam-client-lib";
 import { createIam, root, rootOwner } from "../iam.test";
 import { claimManager, replenish } from "../setup_contracts";
+import { mockCacheClient, mockJsonCodec, mockNats, restoreCacheClient, restoreJsonCodec, restoreNats } from "../testUtils/mocks";
 
 const { namehash } = utils;
 
@@ -37,18 +36,12 @@ export function enrollmentClaimsTests() {
     issuer: { issuerType: "ROLE", roleName: `${roleName1}.${root}` }
   };
   const registrationTypes = [RegistrationTypes.OffChain, RegistrationTypes.OnChain];
-  const jsonCodec = JSONCodec();
   let roleCreatorIam: IAM;
   let userIam: IAM;
   let staticIssuerIam: IAM;
   let dynamicIssuerIam: IAM;
   let publish: jest.Mock;
-  let getDidDocument: jest.Mock;
-  let getRoleDefinition: jest.Mock;
-  let getAssetById: jest.Mock;
-  let _natsConnection;
-  let _cacheClient;
-  let _jsonCodec;
+  let mockedJsonCodec: Codec<any>;
 
   beforeAll(async () => {
     await replenish(roleCreator.address);
@@ -67,56 +60,6 @@ export function enrollmentClaimsTests() {
     });
   });
 
-  beforeAll(() => {
-    ({ _natsConnection, _cacheClient, _jsonCodec } = Reflect.get(IAM, "prototype"));
-    publish = jest.fn().mockImplementation();
-    const mockedNatsConnection = {
-      publish
-    };
-
-    getRoleDefinition = jest.fn().mockImplementation(({ namespace }: { namespace: string }) => {
-      switch (namespace) {
-        case `${roleName1}.${root}`:
-          return roleDefinition1;
-        case `${roleName2}.${root}`:
-          return roleDefinition2;
-        default:
-          return undefined;
-      }
-    });
-    getDidDocument = jest.fn().mockImplementation(() => {
-      return { service: {} };
-    });
-    getAssetById = jest.fn().mockImplementation(() => {
-      return {};
-    });
-    const mockedCacheClient = {
-      getRoleDefinition,
-      getDidDocument,
-      getAssetById
-    };
-
-    Reflect.set(IAM.prototype, "_natsConnection", mockedNatsConnection);
-    Reflect.set(IAM.prototype, "_cacheClient", mockedCacheClient);
-    Reflect.set(IAM.prototype, "_jsonCodec", jsonCodec);
-  });
-
-  afterAll(() => {
-    Reflect.set(IAM.prototype, "_natsConnection", _natsConnection);
-    Reflect.set(IAM.prototype, "_cacheClient", _cacheClient);
-    Reflect.set(IAM.prototype, "_jsonCodec", _jsonCodec);
-  });
-
-  test("enrollment by issuer of type DID", async () => {
-    await enrolAndIssue({ subjectDID: userDID });
-  });
-
-  test("asset enrollment by issuer of type DID", async () => {
-    const assetAddress = await userIam.registerAsset();
-    const assetDID = `did:${Methods.Erc1056}:${assetAddress}`;
-    await enrolAndIssue({ subjectDID: assetDID });
-  });
-
   async function enrolAndIssue({ subjectDID }: { subjectDID: string }) {
     const requesterDID = userDID;
     await userIam.createClaimRequest({
@@ -126,7 +69,7 @@ export function enrollmentClaimsTests() {
     });
     expect(publish).toBeCalledTimes(1);
     const [, encodedMsg] = publish.mock.calls.pop();
-    const message = jsonCodec.decode(encodedMsg);
+    const message = mockedJsonCodec.decode(encodedMsg);
 
     expect(message).toHaveProperty("id");
     expect(message).toHaveProperty("token");
@@ -144,13 +87,40 @@ export function enrollmentClaimsTests() {
     const [requesterChannel, data] = publish.mock.calls.pop();
     expect(requesterChannel).toEqual(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`);
 
-    const { claimIssuer, requester, onChainProof } = jsonCodec.decode(data);
+    const { claimIssuer, requester, onChainProof } = mockedJsonCodec.decode(data);
     expect(requester).toEqual(roleCreatorDID);
     expect(claimIssuer).toEqual([staticIssuerDID]);
     expect(onChainProof).toHaveLength(132);
 
     expect(await claimManager.hasRole(addressOf(subjectDID), namehash(`${roleName1}.${root}`), version)).toBe(true);
   }
+
+  beforeAll(() => {
+    ({ publish } = mockNats());
+    mockCacheClient({
+      [`${roleName1}.${root}`]:
+        roleDefinition1,
+      [`${roleName2}.${root}`]:
+        roleDefinition2
+    });
+    mockedJsonCodec = mockJsonCodec();
+  });
+
+  afterAll(() => {
+    restoreNats();
+    restoreCacheClient();
+    restoreJsonCodec();
+  });
+
+  test("enrollment by issuer of type DID", async () => {
+    await enrolAndIssue({ subjectDID: userDID });
+  });
+
+  test("asset enrollment by issuer of type DID", async () => {
+    const assetAddress = await userIam.registerAsset();
+    const assetDID = `did:${Methods.Erc1056}:${assetAddress}`;
+    await enrolAndIssue({ subjectDID: assetDID });
+  });
 
   test("enrollment by issuer of type ROLE", async () => {
     await roleCreatorIam.createRole({
@@ -166,7 +136,7 @@ export function enrollmentClaimsTests() {
       subject: dynamicIssuerDID
     });
     let [, encodedMsg] = publish.mock.calls.pop();
-    let message = jsonCodec.decode(encodedMsg);
+    let message = mockedJsonCodec.decode(encodedMsg);
     let { subjectAgreement, token, id } = message;
     await staticIssuerIam.issueClaimRequest({ id, requester: dynamicIssuerDID, token, registrationTypes, subjectAgreement });
 
@@ -178,7 +148,7 @@ export function enrollmentClaimsTests() {
       registrationTypes
     });
     ([, encodedMsg] = publish.mock.calls.pop());
-    message = jsonCodec.decode(encodedMsg);
+    message = mockedJsonCodec.decode(encodedMsg);
     ({ subjectAgreement, token, id } = message);
     await dynamicIssuerIam.issueClaimRequest({ id, requester: userDID, token, registrationTypes, subjectAgreement });
 
