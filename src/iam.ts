@@ -50,7 +50,7 @@ import {
   AssetHistoryEventType,
   ClaimData,
   IOrganization,
-  Order
+  RegistrationTypes
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
@@ -103,11 +103,6 @@ export enum ENSNamespaceTypes {
   Roles = "roles",
   Application = "apps",
   Organization = "org"
-}
-
-export enum RegistrationTypes {
-  OffChain = "RegistrationTypes::OffChain",
-  OnChain = "RegistrationTypes::OnChain"
 }
 
 /**

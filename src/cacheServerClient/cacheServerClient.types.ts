@@ -32,6 +32,11 @@ export interface IApp {
   isOwnedByCurrentUser?: boolean;
 }
 
+export enum RegistrationTypes {
+  OffChain = "RegistrationTypes::OffChain",
+  OnChain = "RegistrationTypes::OnChain"
+}
+
 export interface Claim {
   uid: string;
   id: string;
