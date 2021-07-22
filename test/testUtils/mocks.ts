@@ -32,9 +32,6 @@ export const mockCacheClient = () => {
 
   const mockedCachedClient = {
     getRoleDefinition: jest.fn(({ namespace }: { namespace: string }) => cachedRoleDefinitions[namespace]),
-    // getDidDocument: jest.fn().mockImplementation(() => {
-    //   return { service: {} };
-    // }),
     getClaimsBySubject: jest.fn(({
       did,
       isAccepted,
