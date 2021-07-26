@@ -187,7 +187,7 @@ ___
 
 ### ROLE\_PREREQUISITES\_NOT\_MET
 
-•  **ROLE\_PREREQUISITES\_NOT\_MET**:  = "Enrolment subject doesn't has required roles"
+•  **ROLE\_PREREQUISITES\_NOT\_MET**:  = "Enrolment subject doesn't have required roles"
 
 ___
 
