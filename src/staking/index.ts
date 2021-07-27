@@ -128,7 +128,7 @@ export class StakingPool {
   async putStake(
     /** stake amount */
     stake: utils.BigNumber | number,
-    transactionSpeed = TransactionSpeed.BASE
+    transactionSpeed = TransactionSpeed.FAST
   ): Promise<void> {
     if (typeof stake === "number") {
       stake = new BigNumber(stake);
@@ -181,7 +181,7 @@ export class StakingPool {
   * @description Stops accumulating of the reward and prepars stake to withdraw after withdraw delay. 
   * Withdraw request unavailable until minimum staking period ends
   */
-  async requestWithdraw(transactionSpeed = TransactionSpeed.BASE): Promise<void> {
+  async requestWithdraw(transactionSpeed = TransactionSpeed.FAST): Promise<void> {
     await (await this.pool.requestWithdraw({
       gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
     })).wait();
@@ -208,7 +208,7 @@ export class StakingPool {
    * @description pays back stake with accumulated reward. Withdrawn unavailable until withdrawn delay ends
    * @emits StakingPool.StakeWithdrawn
    */
-  async withdraw(transactionSpeed = TransactionSpeed.BASE): Promise<void> {
+  async withdraw(transactionSpeed = TransactionSpeed.FAST): Promise<void> {
     await (await this.pool.withdraw({
       gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
     })).wait();
