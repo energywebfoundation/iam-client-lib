@@ -13,6 +13,7 @@
 * [Order](enums/order.md)
 * [RegistrationTypes](enums/registrationtypes.md)
 * [StakeStatus](enums/stakestatus.md)
+* [TransactionSpeed](enums/transactionspeed.md)
 * [WalletProvider](enums/walletprovider.md)
 
 ### Classes

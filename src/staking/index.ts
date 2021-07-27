@@ -9,6 +9,7 @@ import { emptyAddress } from "../utils/constants";
 const { namehash, BigNumber } = utils;
 
 export enum StakeStatus { NONSTAKING = 0, STAKING = 1, WITHDRAWING = 2 }
+export enum TransactionSpeed { BASE = 10, FAST = BASE + 3 }
 
 export type Service = {
   /** organization ENS name */
@@ -127,6 +128,7 @@ export class StakingPool {
   async putStake(
     /** stake amount */
     stake: utils.BigNumber | number,
+    transactionSpeed = TransactionSpeed.BASE
   ): Promise<void> {
     if (typeof stake === "number") {
       stake = new BigNumber(stake);
@@ -135,14 +137,15 @@ export class StakingPool {
       throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
     }
     await (await this.pool.putStake({
-      value: stake
+      value: stake,
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
     })).wait();
   }
 
   /**
    * @description Returns time left to enable request withdraw
    */
-  async requestWithdrawDelay(): Promise<utils.BigNumber> {
+  async requestWithdrawDelay(): Promise<number> {
     const { depositStart, status } = await this.getStake();
     if (status !== StakeStatus.STAKING) {
       throw new Error(ERROR_MESSAGES.STAKE_WAS_NOT_PUT);
@@ -150,9 +153,9 @@ export class StakingPool {
     const requestAvailableFrom = depositStart.add(await this.pool.minStakingPeriod());
     const now = await this.now();
     if (requestAvailableFrom.lte(now)) {
-      return new BigNumber(0);
+      return 0;
     } else {
-      return requestAvailableFrom.sub(now);
+      return (requestAvailableFrom.sub(now)).toNumber();
     }
   }
 
@@ -178,14 +181,16 @@ export class StakingPool {
   * @description Stops accumulating of the reward and prepars stake to withdraw after withdraw delay. 
   * Withdraw request unavailable until minimum staking period ends
   */
-  async requestWithdraw(): Promise<void> {
-    await (await this.pool.requestWithdraw()).wait();
+  async requestWithdraw(transactionSpeed = TransactionSpeed.BASE): Promise<void> {
+    await (await this.pool.requestWithdraw({
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
+    })).wait();
   }
 
   /**
    * @description Returns time left to enable withdraw
    */
-  async withdrawalDelay(): Promise<utils.BigNumber> {
+  async withdrawalDelay(): Promise<number> {
     const { depositEnd, status } = await this.getStake();
     if (status !== StakeStatus.WITHDRAWING) {
       throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
@@ -193,9 +198,9 @@ export class StakingPool {
     const withdrawAvailableFrom = depositEnd.add(await this.pool.withdrawDelay());
     const now = await this.now();
     if (withdrawAvailableFrom.lte(now)) {
-      return new BigNumber(0);
+      return 0;
     } else {
-      return withdrawAvailableFrom.sub(now);
+      return (withdrawAvailableFrom.sub(now)).toNumber();
     }
   }
 
@@ -203,8 +208,10 @@ export class StakingPool {
    * @description pays back stake with accumulated reward. Withdrawn unavailable until withdrawn delay ends
    * @emits StakingPool.StakeWithdrawn
    */
-  async withdraw(): Promise<void> {
-    await (await this.pool.withdraw()).wait();
+  async withdraw(transactionSpeed = TransactionSpeed.BASE): Promise<void> {
+    await (await this.pool.withdraw({
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
+    })).wait();
   }
 
   /**
