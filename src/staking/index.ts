@@ -8,7 +8,9 @@ import { emptyAddress } from "../utils/constants";
 
 const { namehash, BigNumber } = utils;
 
+const BASE_TRANSACTION_SPEED = 10;
 export enum StakeStatus { NONSTAKING = 0, STAKING = 1, WITHDRAWING = 2 }
+export enum TransactionSpeed { AVERAGE = BASE_TRANSACTION_SPEED, FAST = BASE_TRANSACTION_SPEED + 3 }
 
 export type Service = {
   /** organization ENS name */
@@ -127,6 +129,7 @@ export class StakingPool {
   async putStake(
     /** stake amount */
     stake: utils.BigNumber | number,
+    transactionSpeed = TransactionSpeed.AVERAGE
   ): Promise<void> {
     if (typeof stake === "number") {
       stake = new BigNumber(stake);
@@ -135,7 +138,8 @@ export class StakingPool {
       throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
     }
     await (await this.pool.putStake({
-      value: stake
+      value: stake,
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(BASE_TRANSACTION_SPEED)
     })).wait();
   }
 
@@ -178,8 +182,10 @@ export class StakingPool {
   * @description Stops accumulating of the reward and prepars stake to withdraw after withdraw delay. 
   * Withdraw request unavailable until minimum staking period ends
   */
-  async requestWithdraw(): Promise<void> {
-    await (await this.pool.requestWithdraw()).wait();
+  async requestWithdraw(transactionSpeed = TransactionSpeed.AVERAGE): Promise<void> {
+    await (await this.pool.requestWithdraw({
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(BASE_TRANSACTION_SPEED)
+    })).wait();
   }
 
   /**
@@ -203,8 +209,10 @@ export class StakingPool {
    * @description pays back stake with accumulated reward. Withdrawn unavailable until withdrawn delay ends
    * @emits StakingPool.StakeWithdrawn
    */
-  async withdraw(): Promise<void> {
-    await (await this.pool.withdraw()).wait();
+  async withdraw(transactionSpeed = TransactionSpeed.AVERAGE): Promise<void> {
+    await (await this.pool.withdraw({
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(BASE_TRANSACTION_SPEED)
+    })).wait();
   }
 
   /**
