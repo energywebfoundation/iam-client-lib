@@ -8,9 +8,8 @@ import { emptyAddress } from "../utils/constants";
 
 const { namehash, BigNumber } = utils;
 
-const BASE_TRANSACTION_SPEED = 10;
 export enum StakeStatus { NONSTAKING = 0, STAKING = 1, WITHDRAWING = 2 }
-export enum TransactionSpeed { AVERAGE = BASE_TRANSACTION_SPEED, FAST = BASE_TRANSACTION_SPEED + 3 }
+export enum TransactionSpeed { BASE = 10, FAST = BASE + 3 }
 
 export type Service = {
   /** organization ENS name */
@@ -129,7 +128,7 @@ export class StakingPool {
   async putStake(
     /** stake amount */
     stake: utils.BigNumber | number,
-    transactionSpeed = TransactionSpeed.AVERAGE
+    transactionSpeed = TransactionSpeed.BASE
   ): Promise<void> {
     if (typeof stake === "number") {
       stake = new BigNumber(stake);
@@ -139,7 +138,7 @@ export class StakingPool {
     }
     await (await this.pool.putStake({
       value: stake,
-      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(BASE_TRANSACTION_SPEED)
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
     })).wait();
   }
 
@@ -182,9 +181,9 @@ export class StakingPool {
   * @description Stops accumulating of the reward and prepars stake to withdraw after withdraw delay. 
   * Withdraw request unavailable until minimum staking period ends
   */
-  async requestWithdraw(transactionSpeed = TransactionSpeed.AVERAGE): Promise<void> {
+  async requestWithdraw(transactionSpeed = TransactionSpeed.BASE): Promise<void> {
     await (await this.pool.requestWithdraw({
-      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(BASE_TRANSACTION_SPEED)
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
     })).wait();
   }
 
@@ -209,9 +208,9 @@ export class StakingPool {
    * @description pays back stake with accumulated reward. Withdrawn unavailable until withdrawn delay ends
    * @emits StakingPool.StakeWithdrawn
    */
-  async withdraw(transactionSpeed = TransactionSpeed.AVERAGE): Promise<void> {
+  async withdraw(transactionSpeed = TransactionSpeed.BASE): Promise<void> {
     await (await this.pool.withdraw({
-      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(BASE_TRANSACTION_SPEED)
+      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
     })).wait();
   }
 

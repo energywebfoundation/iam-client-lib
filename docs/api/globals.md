@@ -70,7 +70,6 @@
 
 ### Variables
 
-* [BASE\_TRANSACTION\_SPEED](globals.md#base_transaction_speed)
 * [BigNumber](globals.md#bignumber)
 * [JsonRpcProvider](globals.md#jsonrpcprovider)
 * [NATS\_EXCHANGE\_TOPIC](globals.md#nats_exchange_topic)
@@ -216,12 +215,6 @@ Name | Type |
 `from` | string |
 
 ## Variables
-
-### BASE\_TRANSACTION\_SPEED
-
-• `Const` **BASE\_TRANSACTION\_SPEED**: 10 = 10
-
-___
 
 ### BigNumber
 
