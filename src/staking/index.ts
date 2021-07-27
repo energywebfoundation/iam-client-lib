@@ -146,7 +146,7 @@ export class StakingPool {
   /**
    * @description Returns time left to enable request withdraw
    */
-  async requestWithdrawDelay(): Promise<utils.BigNumber> {
+  async requestWithdrawDelay(): Promise<number> {
     const { depositStart, status } = await this.getStake();
     if (status !== StakeStatus.STAKING) {
       throw new Error(ERROR_MESSAGES.STAKE_WAS_NOT_PUT);
@@ -154,9 +154,9 @@ export class StakingPool {
     const requestAvailableFrom = depositStart.add(await this.pool.minStakingPeriod());
     const now = await this.now();
     if (requestAvailableFrom.lte(now)) {
-      return new BigNumber(0);
+      return 0;
     } else {
-      return requestAvailableFrom.sub(now);
+      return (requestAvailableFrom.sub(now)).toNumber();
     }
   }
 
@@ -191,7 +191,7 @@ export class StakingPool {
   /**
    * @description Returns time left to enable withdraw
    */
-  async withdrawalDelay(): Promise<utils.BigNumber> {
+  async withdrawalDelay(): Promise<number> {
     const { depositEnd, status } = await this.getStake();
     if (status !== StakeStatus.WITHDRAWING) {
       throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
@@ -199,9 +199,9 @@ export class StakingPool {
     const withdrawAvailableFrom = depositEnd.add(await this.pool.withdrawDelay());
     const now = await this.now();
     if (withdrawAvailableFrom.lte(now)) {
-      return new BigNumber(0);
+      return 0;
     } else {
-      return withdrawAvailableFrom.sub(now);
+      return (withdrawAvailableFrom.sub(now)).toNumber();
     }
   }
 
