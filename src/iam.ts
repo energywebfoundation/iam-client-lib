@@ -50,7 +50,8 @@ import {
   AssetHistoryEventType,
   ClaimData,
   IOrganization,
-  Order
+  Order,
+  RegistrationTypes
 } from "./cacheServerClient/cacheServerClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { WalletProvider } from "./types/WalletProvider";
@@ -103,11 +104,6 @@ export enum ENSNamespaceTypes {
   Roles = "roles",
   Application = "apps",
   Organization = "org"
-}
-
-export enum RegistrationTypes {
-  OffChain = "RegistrationTypes::OffChain",
-  OnChain = "RegistrationTypes::OnChain"
 }
 
 /**
@@ -1369,22 +1365,19 @@ export class IAM extends IAMBase {
     );
   }
 
-  // NATS
-
-  private async verifyEnrolmentPreconditions({
-    subject,
-    role
-  }: {
-    subject: string;
-    role: string;
-  }) {
-    const [roleDefinition, { service }] = await Promise.all([
-      this.getDefinition({
-        type: ENSNamespaceTypes.Roles,
-        namespace: role
-      }),
-      this.getDidDocument({ did: subject, includeClaims: true })
-    ]);
+  private async verifyEnrolmentPrerequisites(
+    {
+      subject,
+      role
+    }: {
+      subject: string;
+      role: string;
+    }
+  ) {
+    const roleDefinition = await this.getDefinition({
+      type: ENSNamespaceTypes.Roles,
+      namespace: role
+    });
 
     if (!roleDefinition) {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
@@ -1392,15 +1385,20 @@ export class IAM extends IAMBase {
 
     const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
 
-    if (!enrolmentPreconditions || enrolmentPreconditions.length < 1) return;
-    for (const { type, conditions } of enrolmentPreconditions) {
-      if (type === PreconditionType.Role && conditions && conditions?.length > 0) {
-        const conditionMet = service.some(
-          ({ claimType }) => claimType && conditions.includes(claimType)
-        );
-        if (!conditionMet) {
-          throw new Error(ERROR_MESSAGES.ROLE_PRECONDITION_NOT_MET);
-        }
+    if (!enrolmentPreconditions || enrolmentPreconditions.length === 0) return;
+
+    const enroledRoles = new Set(
+      (await this.getClaimsBySubject({ did: subject, isAccepted: true }))
+        .map(({ claimType }) => claimType)
+    );
+    const requiredRoles = new Set(enrolmentPreconditions
+      .filter(({ type }) => type === PreconditionType.Role)
+      .map(({ conditions }) => conditions)
+      .reduce((all, cur) => all.concat(cur), [])
+    );
+    for (const role in requiredRoles) {
+      if (!enroledRoles.has(role)) {
+        throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
       }
     }
   }
@@ -1503,10 +1501,7 @@ export class IAM extends IAMBase {
     const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this.createPublicClaim({ data: claim, subject });
 
-    // TODO: verfiy onchain
-    if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      await this.verifyEnrolmentPreconditions({ subject, role });
-    }
+    await this.verifyEnrolmentPrerequisites({ subject, role });
 
     // temporarily, until claimIssuer is not removed from Claim entity
     const issuer = [`did:${Methods.Erc1056}:${emptyAddress}`];
@@ -1564,6 +1559,9 @@ export class IAM extends IAMBase {
 
     const { claimData, sub } = this._jwt.decode(token) as
       { claimData: { claimType: string; claimTypeVersion: number, expiry: number }; sub: string };
+
+    await this.verifyEnrolmentPrerequisites({ subject: sub, role: claimData.claimType });
+    
     const message: IClaimIssuance = {
       id,
       requester,

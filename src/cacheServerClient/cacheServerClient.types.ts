@@ -32,20 +32,26 @@ export interface IApp {
   isOwnedByCurrentUser?: boolean;
 }
 
+export enum RegistrationTypes {
+  OffChain = "RegistrationTypes::OffChain",
+  OnChain = "RegistrationTypes::OnChain"
+}
+
 export interface Claim {
-  uid: string;
   id: string;
   requester: string;
-  subject: string;
   claimIssuer: string[];
   claimType: string;
+  claimTypeVersion: string;
+  registrationTypes: RegistrationTypes[];
   token: string;
+  subjectAgreement?: string;
+  onChainProof?: string;
   issuedToken?: string;
   isAccepted: boolean;
-  createdAt: string;
-  parentNamespace: string;
   acceptedBy?: string;
   isRejected?: boolean;
+  namespace: string;  
 }
 
 export interface Asset {

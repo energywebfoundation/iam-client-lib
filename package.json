@@ -109,7 +109,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && git add -A docs/api/*.md"
+      "pre-commit": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && git add -A docs/api/"
     }
   }
 }
