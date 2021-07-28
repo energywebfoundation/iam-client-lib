@@ -29,5 +29,7 @@ export enum ERROR_MESSAGES {
   CLAIM_PUBLISHER_NOT_REQUESTER = "Claim subject is not controlled by publisher",
   ONCHAIN_ROLE_VERSION_NOT_SPECIFIED = "On-chain role version not specified",
   CACHE_SERVER_NOT_REGISTERED = "Cache server for this chain is not registered",
-  WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested"
+  WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested",
+  STAKE_WAS_NOT_PUT = "Stake was not put",
+  INSUFFICIENT_BALANCE = "Signer has insufficient balance"
 }

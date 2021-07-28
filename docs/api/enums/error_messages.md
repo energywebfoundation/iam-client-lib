@@ -17,6 +17,7 @@
 * [ENS\_RESOLVER\_NOT\_INITIALIZED](error_messages.md#ens_resolver_not_initialized)
 * [ENS\_TYPE\_NOT\_SUPPORTED](error_messages.md#ens_type_not_supported)
 * [ERROR\_IN\_AZURE\_PROVIDER](error_messages.md#error_in_azure_provider)
+* [INSUFFICIENT\_BALANCE](error_messages.md#insufficient_balance)
 * [JWT\_NOT\_INITIALIZED](error_messages.md#jwt_not_initialized)
 * [METAMASK\_EXTENSION\_NOT\_AVAILABLE](error_messages.md#metamask_extension_not_available)
 * [NATS\_NOT\_CONNECTED](error_messages.md#nats_not_connected)
@@ -32,6 +33,7 @@
 * [ROLE\_NOT\_EXISTS](error_messages.md#role_not_exists)
 * [ROLE\_PRECONDITION\_NOT\_MET](error_messages.md#role_precondition_not_met)
 * [SIGNER\_NOT\_INITIALIZED](error_messages.md#signer_not_initialized)
+* [STAKE\_WAS\_NOT\_PUT](error_messages.md#stake_was_not_put)
 * [UNABLE\_TO\_OBTAIN\_PUBLIC\_KEY](error_messages.md#unable_to_obtain_public_key)
 * [USER\_NOT\_LOGGED\_IN](error_messages.md#user_not_logged_in)
 * [WALLET\_PROVIDER\_NOT\_SUPPORTED](error_messages.md#wallet_provider_not_supported)
@@ -103,6 +105,9 @@ ___
 ### ERROR\_IN\_AZURE\_PROVIDER
 
 •  **ERROR\_IN\_AZURE\_PROVIDER**:  = "Error in Azure Provider"
+### INSUFFICIENT\_BALANCE
+
+•  **INSUFFICIENT\_BALANCE**:  = "Signer has insufficient balance"
 
 ___
 
@@ -193,6 +198,12 @@ ___
 ### SIGNER\_NOT\_INITIALIZED
 
 •  **SIGNER\_NOT\_INITIALIZED**:  = "Signer not initialized"
+
+___
+
+### STAKE\_WAS\_NOT\_PUT
+
+•  **STAKE\_WAS\_NOT\_PUT**:  = "Stake was not put"
 
 ___
 
