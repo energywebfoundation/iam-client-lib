@@ -1,11 +1,11 @@
-import { IAM } from "../src/iam";
-import { ERROR_MESSAGES } from "../src/errors";
-import { rpcUrl } from "./setup_contracts";
-import { WalletProvider } from "../src/types/WalletProvider";
+import { IAM } from "../../src/iam";
+import { ERROR_MESSAGES } from "../../src/errors";
+import { rpcUrl } from "../setup_contracts";
+import { WalletProvider } from "../../src/types/WalletProvider";
 
 const iam_withoutKey = new IAM({ rpcUrl });
 
-export const initializeConnectionTests = () => {
+export const noSignerTests = () => {
   test("initializeConnection requires privateKey or walletProvider enum", async () => {
     await expect(iam_withoutKey.initializeConnection()).rejects.toThrow(
       ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED
