@@ -6,17 +6,17 @@
 
 ### Enumeration members
 
-* [AVERAGE](transactionspeed.md#average)
+* [BASE](transactionspeed.md#base)
 * [FAST](transactionspeed.md#fast)
 
 ## Enumeration members
 
-### AVERAGE
+### BASE
 
-•  **AVERAGE**:  = BASE\_TRANSACTION\_SPEED
+•  **BASE**:  = 0
 
 ___
 
 ### FAST
 
-•  **FAST**:  = BASE\_TRANSACTION\_SPEED + 3
+•  **FAST**:  = 1

@@ -95,7 +95,7 @@ ___
 Name | Type | Default value |
 ------ | ------ | ------ |
 `stake` | BigNumber \| number | - |
-`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.AVERAGE |
+`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.FAST |
 
 **Returns:** Promise\<void>
 
@@ -112,7 +112,7 @@ Withdraw request unavailable until minimum staking period ends
 
 Name | Type | Default value |
 ------ | ------ | ------ |
-`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.AVERAGE |
+`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.FAST |
 
 **Returns:** Promise\<void>
 
@@ -140,7 +140,7 @@ ___
 
 Name | Type | Default value |
 ------ | ------ | ------ |
-`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.AVERAGE |
+`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.FAST |
 
 **Returns:** Promise\<void>
 

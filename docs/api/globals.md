@@ -93,6 +93,7 @@
 * [id](globals.md#id)
 * [keccak256](globals.md#keccak256)
 * [owners](globals.md#owners)
+* [parseUnits](globals.md#parseunits)
 * [proof\_type\_hash](globals.md#proof_type_hash)
 * [recoverPublicKey](globals.md#recoverpublickey)
 * [sha3](globals.md#sha3)
@@ -351,6 +352,12 @@ ___
 ### owners
 
 • `Const` **owners**: Record\<string, string>
+
+___
+
+### parseUnits
+
+•  **parseUnits**: parseUnits
 
 ___
 
