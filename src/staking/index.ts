@@ -6,10 +6,10 @@ import { ERROR_MESSAGES } from "../errors";
 import { chainConfigs } from "../iam/chainConfig";
 import { emptyAddress } from "../utils/constants";
 
-const { namehash, BigNumber } = utils;
+const { namehash, BigNumber, parseUnits } = utils;
 
 export enum StakeStatus { NONSTAKING = 0, STAKING = 1, WITHDRAWING = 2 }
-export enum TransactionSpeed { BASE = 10, FAST = BASE + 3 }
+export enum TransactionSpeed { BASE = 0, FAST = 1 }
 
 export type Service = {
   /** organization ENS name */
@@ -116,6 +116,13 @@ export class StakingPoolService {
  * Abstraction over staking pool smart contract
  */
 export class StakingPool {
+  private overrides = {
+    [TransactionSpeed.BASE]: {},
+    [TransactionSpeed.FAST]: {
+      gasPrice: parseUnits("0.01", "gwei"),
+      gasLimit: 490000
+    }
+  }
   private pool: StakingPoolContract;
   constructor(private patron: Required<Signer>, address: string) {
     this.pool = new StakingPool__factory(patron).attach(address);
@@ -138,7 +145,7 @@ export class StakingPool {
     }
     await (await this.pool.putStake({
       value: stake,
-      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
+      ...this.overrides[transactionSpeed]
     })).wait();
   }
 
@@ -183,7 +190,7 @@ export class StakingPool {
   */
   async requestWithdraw(transactionSpeed = TransactionSpeed.FAST): Promise<void> {
     await (await this.pool.requestWithdraw({
-      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
+      ...this.overrides[transactionSpeed]
     })).wait();
   }
 
@@ -210,7 +217,7 @@ export class StakingPool {
    */
   async withdraw(transactionSpeed = TransactionSpeed.FAST): Promise<void> {
     await (await this.pool.withdraw({
-      gasPrice: (await this.pool.provider.getGasPrice()).mul(transactionSpeed).div(TransactionSpeed.BASE)
+      ...this.overrides[transactionSpeed]
     })).wait();
   }
 
