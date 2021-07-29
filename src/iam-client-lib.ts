@@ -14,7 +14,7 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSNamespaceTypes, RegistrationTypes } from "./iam";
+import { IAM, ENSNamespaceTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
 import { WalletProvider } from "./types/WalletProvider";
@@ -34,7 +34,8 @@ import {
   ClaimData,
   Profile,
   AssetProfiles,
-  AssetProfile
+  AssetProfile,
+  RegistrationTypes
 } from "./cacheServerClient/cacheServerClient.types";
 
 import {

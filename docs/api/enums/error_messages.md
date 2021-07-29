@@ -16,6 +16,7 @@
 * [ENS\_REGISTRY\_NOT\_INITIALIZED](error_messages.md#ens_registry_not_initialized)
 * [ENS\_RESOLVER\_NOT\_INITIALIZED](error_messages.md#ens_resolver_not_initialized)
 * [ENS\_TYPE\_NOT\_SUPPORTED](error_messages.md#ens_type_not_supported)
+* [INSUFFICIENT\_BALANCE](error_messages.md#insufficient_balance)
 * [JWT\_NOT\_INITIALIZED](error_messages.md#jwt_not_initialized)
 * [METAMASK\_EXTENSION\_NOT\_AVAILABLE](error_messages.md#metamask_extension_not_available)
 * [NATS\_NOT\_CONNECTED](error_messages.md#nats_not_connected)
@@ -29,7 +30,7 @@
 * [PROVIDER\_NOT\_INITIALIZED](error_messages.md#provider_not_initialized)
 * [PUBLIC\_KEY\_NOT\_RECOVERED](error_messages.md#public_key_not_recovered)
 * [ROLE\_NOT\_EXISTS](error_messages.md#role_not_exists)
-* [ROLE\_PRECONDITION\_NOT\_MET](error_messages.md#role_precondition_not_met)
+* [ROLE\_PREREQUISITES\_NOT\_MET](error_messages.md#role_prerequisites_not_met)
 * [SIGNER\_NOT\_INITIALIZED](error_messages.md#signer_not_initialized)
 * [STAKE\_WAS\_NOT\_PUT](error_messages.md#stake_was_not_put)
 * [UNABLE\_TO\_OBTAIN\_PUBLIC\_KEY](error_messages.md#unable_to_obtain_public_key)
@@ -97,6 +98,12 @@ ___
 ### ENS\_TYPE\_NOT\_SUPPORTED
 
 •  **ENS\_TYPE\_NOT\_SUPPORTED**:  = "ENS type not supported"
+
+___
+
+### INSUFFICIENT\_BALANCE
+
+•  **INSUFFICIENT\_BALANCE**:  = "Signer has insufficient balance"
 
 ___
 
@@ -178,9 +185,9 @@ ___
 
 ___
 
-### ROLE\_PRECONDITION\_NOT\_MET
+### ROLE\_PREREQUISITES\_NOT\_MET
 
-•  **ROLE\_PRECONDITION\_NOT\_MET**:  = "Precondition not met, user not eligible to enrol for a role"
+•  **ROLE\_PREREQUISITES\_NOT\_MET**:  = "Enrolment subject doesn't have required roles"
 
 ___
 

@@ -1,10 +1,9 @@
 import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
-import { ENSNamespaceTypes, RegistrationTypes } from "../src/iam";
+import { PreconditionTypes, RegistrationTypes, ENSNamespaceTypes } from "../src/iam-client-lib";
 import { rootOwnerIam, root, rootOwner } from "./iam.test";
 import { ensRegistry, ensResolver, provider } from "./setup_contracts";
 import { namehash } from "../src/utils/ENS_hash";
-import { PreconditionTypes } from "../src/iam-client-lib";
 import { chainConfigs } from "../src/iam/chainConfig";
 
 export const org1 = "org1";

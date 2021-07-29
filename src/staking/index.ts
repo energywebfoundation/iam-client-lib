@@ -6,9 +6,10 @@ import { ERROR_MESSAGES } from "../errors";
 import { chainConfigs } from "../iam/chainConfig";
 import { emptyAddress } from "../utils/constants";
 
-const { namehash, BigNumber } = utils;
+const { namehash, BigNumber, parseUnits } = utils;
 
 export enum StakeStatus { NONSTAKING = 0, STAKING = 1, WITHDRAWING = 2 }
+export enum TransactionSpeed { BASE = 0, FAST = 1 }
 
 export type Service = {
   /** organization ENS name */
@@ -103,12 +104,11 @@ export class StakingPoolService {
    * @param org ENS name of organization
    */
   async getPool(org: string): Promise<StakingPool | null> {
-    const service = await this._stakingPoolFactory.services(namehash(org));
-    if (service.pool === emptyAddress) {
+    const { pool } = await this._stakingPoolFactory.services(namehash(org));
+    if (pool === emptyAddress) {
       return null;
     }
-    const pool = new StakingPool__factory(this._signer).attach(service.pool);
-    return new StakingPool(pool);
+    return new StakingPool(this._signer, pool);
   }
 }
 
@@ -116,7 +116,17 @@ export class StakingPoolService {
  * Abstraction over staking pool smart contract
  */
 export class StakingPool {
-  constructor(private pool: StakingPoolContract) { }
+  private overrides = {
+    [TransactionSpeed.BASE]: {},
+    [TransactionSpeed.FAST]: {
+      gasPrice: parseUnits("0.01", "gwei"),
+      gasLimit: 490000
+    }
+  }
+  private pool: StakingPoolContract;
+  constructor(private patron: Required<Signer>, address: string) {
+    this.pool = new StakingPool__factory(patron).attach(address);
+  }
 
   /**
    * @description Locks stake and starts accumulating reward
@@ -125,29 +135,34 @@ export class StakingPool {
   async putStake(
     /** stake amount */
     stake: utils.BigNumber | number,
+    transactionSpeed = TransactionSpeed.FAST
   ): Promise<void> {
     if (typeof stake === "number") {
       stake = new BigNumber(stake);
     }
+    if ((await this.getBalance()).lt(stake)) {
+      throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
+    }
     await (await this.pool.putStake({
-      value: stake
+      value: stake,
+      ...this.overrides[transactionSpeed]
     })).wait();
   }
 
   /**
    * @description Returns time left to enable request withdraw
    */
-  async requestWithdrawDelay(): Promise<utils.BigNumber> {
+  async requestWithdrawDelay(): Promise<number> {
     const { depositStart, status } = await this.getStake();
     if (status !== StakeStatus.STAKING) {
       throw new Error(ERROR_MESSAGES.STAKE_WAS_NOT_PUT);
     }
     const requestAvailableFrom = depositStart.add(await this.pool.minStakingPeriod());
-    const now = new BigNumber(new Date().getTime());
+    const now = await this.now();
     if (requestAvailableFrom.lte(now)) {
-      return new BigNumber(0);
+      return 0;
     } else {
-      return requestAvailableFrom.sub(now);
+      return (requestAvailableFrom.sub(now)).toNumber();
     }
   }
 
@@ -173,24 +188,26 @@ export class StakingPool {
   * @description Stops accumulating of the reward and prepars stake to withdraw after withdraw delay. 
   * Withdraw request unavailable until minimum staking period ends
   */
-  async requestWithdraw(): Promise<void> {
-    await (await this.pool.requestWithdraw()).wait();
+  async requestWithdraw(transactionSpeed = TransactionSpeed.FAST): Promise<void> {
+    await (await this.pool.requestWithdraw({
+      ...this.overrides[transactionSpeed]
+    })).wait();
   }
 
   /**
    * @description Returns time left to enable withdraw
    */
-  async withdrawalDelay(): Promise<utils.BigNumber> {
+  async withdrawalDelay(): Promise<number> {
     const { depositEnd, status } = await this.getStake();
     if (status !== StakeStatus.WITHDRAWING) {
       throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
     }
     const withdrawAvailableFrom = depositEnd.add(await this.pool.withdrawDelay());
-    const now = new BigNumber(new Date().getTime());
+    const now = await this.now();
     if (withdrawAvailableFrom.lte(now)) {
-      return new BigNumber(0);
+      return 0;
     } else {
-      return withdrawAvailableFrom.sub(now);
+      return (withdrawAvailableFrom.sub(now)).toNumber();
     }
   }
 
@@ -198,14 +215,32 @@ export class StakingPool {
    * @description pays back stake with accumulated reward. Withdrawn unavailable until withdrawn delay ends
    * @emits StakingPool.StakeWithdrawn
    */
-  async withdraw(): Promise<void> {
-    await (await this.pool.withdraw()).wait();
+  async withdraw(transactionSpeed = TransactionSpeed.FAST): Promise<void> {
+    await (await this.pool.withdraw({
+      ...this.overrides[transactionSpeed]
+    })).wait();
   }
 
   /**
    * @param signer Signer connected to provider
    */
   connect(signer: Signer): StakingPool {
-    return new StakingPool(this.pool.connect(signer));
+    if (!signer.provider) {
+      throw new Error("StakingPoolService.init: Signer is not connected to provider");
+    }
+    return new StakingPool(signer as Required<Signer>, this.pool.address);
+  }
+
+  private async now(): Promise<utils.BigNumber> {
+    const lastBlock = await this.pool.provider.getBlockNumber();
+    return new BigNumber(
+      (await this.pool.provider.getBlock(lastBlock)).timestamp
+    );
+  }
+
+  private async getBalance(): Promise<utils.BigNumber> {
+    return await this.patron.provider.getBalance(
+      await this.patron.getAddress()
+    );
   }
 }

@@ -23,11 +23,12 @@ export enum ERROR_MESSAGES {
   ORG_WITH_ROLES = "You are not able to remove organization with registered roles",
   APP_WITH_ROLES = "You are not able to remove application with registered roles",
   METAMASK_EXTENSION_NOT_AVAILABLE = "Selected Metamask provider but Metamask not available",
-  ROLE_PRECONDITION_NOT_MET = "Precondition not met, user not eligible to enrol for a role",
+  ROLE_PREREQUISITES_NOT_MET = "Enrolment subject doesn't have required roles",
   ROLE_NOT_EXISTS = "Role you want to enroll to does not exists",
   CLAIM_PUBLISHER_NOT_REQUESTER = "Claim subject is not controlled by publisher",
   ONCHAIN_ROLE_VERSION_NOT_SPECIFIED = "On-chain role version not specified",
   CACHE_SERVER_NOT_REGISTERED = "Cache server for this chain is not registered",
   WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested",
-  STAKE_WAS_NOT_PUT = "Stake was not put"
+  STAKE_WAS_NOT_PUT = "Stake was not put",
+  INSUFFICIENT_BALANCE = "Signer has insufficient balance"
 }

@@ -29,13 +29,14 @@ Abstraction over staking pool smart contract
 
 ### constructor
 
-\+ **new StakingPool**(`pool`: StakingPoolContract): [StakingPool](stakingpool.md)
+\+ **new StakingPool**(`patron`: Required\<Signer>, `address`: string): [StakingPool](stakingpool.md)
 
 #### Parameters:
 
 Name | Type |
 ------ | ------ |
-`pool` | StakingPoolContract |
+`patron` | Required\<Signer> |
+`address` | string |
 
 **Returns:** [StakingPool](stakingpool.md)
 
@@ -83,7 +84,7 @@ ___
 
 ### putStake
 
-▸ **putStake**(`stake`: BigNumber \| number): Promise\<void>
+▸ **putStake**(`stake`: BigNumber \| number, `transactionSpeed?`: [TransactionSpeed](../enums/transactionspeed.md)): Promise\<void>
 
 **`description`** Locks stake and starts accumulating reward
 
@@ -91,9 +92,10 @@ ___
 
 #### Parameters:
 
-Name | Type |
------- | ------ |
-`stake` | BigNumber \| number |
+Name | Type | Default value |
+------ | ------ | ------ |
+`stake` | BigNumber \| number | - |
+`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.FAST |
 
 **Returns:** Promise\<void>
 
@@ -101,10 +103,16 @@ ___
 
 ### requestWithdraw
 
-▸ **requestWithdraw**(): Promise\<void>
+▸ **requestWithdraw**(`transactionSpeed?`: [TransactionSpeed](../enums/transactionspeed.md)): Promise\<void>
 
 **`description`** Stops accumulating of the reward and prepars stake to withdraw after withdraw delay.
 Withdraw request unavailable until minimum staking period ends
+
+#### Parameters:
+
+Name | Type | Default value |
+------ | ------ | ------ |
+`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.FAST |
 
 **Returns:** Promise\<void>
 
@@ -112,21 +120,27 @@ ___
 
 ### requestWithdrawDelay
 
-▸ **requestWithdrawDelay**(): Promise\<BigNumber>
+▸ **requestWithdrawDelay**(): Promise\<number>
 
 **`description`** Returns time left to enable request withdraw
 
-**Returns:** Promise\<BigNumber>
+**Returns:** Promise\<number>
 
 ___
 
 ### withdraw
 
-▸ **withdraw**(): Promise\<void>
+▸ **withdraw**(`transactionSpeed?`: [TransactionSpeed](../enums/transactionspeed.md)): Promise\<void>
 
 **`description`** pays back stake with accumulated reward. Withdrawn unavailable until withdrawn delay ends
 
 **`emits`** StakingPool.StakeWithdrawn
+
+#### Parameters:
+
+Name | Type | Default value |
+------ | ------ | ------ |
+`transactionSpeed` | [TransactionSpeed](../enums/transactionspeed.md) | TransactionSpeed.FAST |
 
 **Returns:** Promise\<void>
 
@@ -134,8 +148,8 @@ ___
 
 ### withdrawalDelay
 
-▸ **withdrawalDelay**(): Promise\<BigNumber>
+▸ **withdrawalDelay**(): Promise\<number>
 
 **`description`** Returns time left to enable withdraw
 
-**Returns:** Promise\<BigNumber>
+**Returns:** Promise\<number>

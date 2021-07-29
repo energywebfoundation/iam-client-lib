@@ -13,16 +13,17 @@
 * [acceptedBy](claim.md#acceptedby)
 * [claimIssuer](claim.md#claimissuer)
 * [claimType](claim.md#claimtype)
-* [createdAt](claim.md#createdat)
+* [claimTypeVersion](claim.md#claimtypeversion)
 * [id](claim.md#id)
 * [isAccepted](claim.md#isaccepted)
 * [isRejected](claim.md#isrejected)
 * [issuedToken](claim.md#issuedtoken)
-* [parentNamespace](claim.md#parentnamespace)
+* [namespace](claim.md#namespace)
+* [onChainProof](claim.md#onchainproof)
+* [registrationTypes](claim.md#registrationtypes)
 * [requester](claim.md#requester)
-* [subject](claim.md#subject)
+* [subjectAgreement](claim.md#subjectagreement)
 * [token](claim.md#token)
-* [uid](claim.md#uid)
 
 ## Properties
 
@@ -44,9 +45,9 @@ ___
 
 ___
 
-### createdAt
+### claimTypeVersion
 
-•  **createdAt**: string
+•  **claimTypeVersion**: string
 
 ___
 
@@ -74,9 +75,21 @@ ___
 
 ___
 
-### parentNamespace
+### namespace
 
-•  **parentNamespace**: string
+•  **namespace**: string
+
+___
+
+### onChainProof
+
+• `Optional` **onChainProof**: undefined \| string
+
+___
+
+### registrationTypes
+
+•  **registrationTypes**: [RegistrationTypes](../enums/registrationtypes.md)[]
 
 ___
 
@@ -86,18 +99,12 @@ ___
 
 ___
 
-### subject
+### subjectAgreement
 
-•  **subject**: string
+• `Optional` **subjectAgreement**: undefined \| string
 
 ___
 
 ### token
 
 •  **token**: string
-
-___
-
-### uid
-
-•  **uid**: string
