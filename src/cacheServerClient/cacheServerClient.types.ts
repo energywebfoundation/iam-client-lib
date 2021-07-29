@@ -40,6 +40,7 @@ export enum RegistrationTypes {
 export interface Claim {
   id: string;
   requester: string;
+  subject: string;
   claimIssuer: string[];
   claimType: string;
   claimTypeVersion: string;
