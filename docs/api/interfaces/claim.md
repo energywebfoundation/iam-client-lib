@@ -22,6 +22,7 @@
 * [onChainProof](claim.md#onchainproof)
 * [registrationTypes](claim.md#registrationtypes)
 * [requester](claim.md#requester)
+* [subject](claim.md#subject)
 * [subjectAgreement](claim.md#subjectagreement)
 * [token](claim.md#token)
 
@@ -96,6 +97,12 @@ ___
 ### requester
 
 •  **requester**: string
+
+___
+
+### subject
+
+•  **subject**: string
 
 ___
 
