@@ -55,6 +55,7 @@ the connection. See [MYEN-625](https://energyweb.atlassian.net/browse/MYEN-625)
 * [createInstantRequest](controllablewalletconnect.md#createinstantrequest)
 * [createSession](controllablewalletconnect.md#createsession)
 * [killSession](controllablewalletconnect.md#killsession)
+* [off](controllablewalletconnect.md#off)
 * [on](controllablewalletconnect.md#on)
 * [rejectRequest](controllablewalletconnect.md#rejectrequest)
 * [rejectSession](controllablewalletconnect.md#rejectsession)
@@ -64,6 +65,7 @@ the connection. See [MYEN-625](https://energyweb.atlassian.net/browse/MYEN-625)
 * [signPersonalMessage](controllablewalletconnect.md#signpersonalmessage)
 * [signTransaction](controllablewalletconnect.md#signtransaction)
 * [signTypedData](controllablewalletconnect.md#signtypeddata)
+* [transportClose](controllablewalletconnect.md#transportclose)
 * [unsafeSend](controllablewalletconnect.md#unsafesend)
 * [updateChain](controllablewalletconnect.md#updatechain)
 * [updateSession](controllablewalletconnect.md#updatesession)
@@ -570,6 +572,22 @@ Name | Type |
 
 ___
 
+### off
+
+▸ **off**(`event`: string): void
+
+*Inherited from [ControllableWalletConnect](controllablewalletconnect.md).[off](controllablewalletconnect.md#off)*
+
+#### Parameters:
+
+Name | Type |
+------ | ------ |
+`event` | string |
+
+**Returns:** void
+
+___
+
 ### on
 
 ▸ **on**(`event`: string, `callback`: (error: [Error](cacheclientnotprovidederror.md#error) \| null, payload: any \| null) => void): void
@@ -713,6 +731,16 @@ Name | Type |
 `params` | any[] |
 
 **Returns:** Promise\<any>
+
+___
+
+### transportClose
+
+▸ **transportClose**(): void
+
+*Inherited from [ControllableWalletConnect](controllablewalletconnect.md).[transportClose](controllablewalletconnect.md#transportclose)*
+
+**Returns:** void
 
 ___
 

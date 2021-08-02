@@ -59,19 +59,30 @@ export const stakingTests = (): void => {
     it("Full staking workflow", async () => {
       const provider = new JsonRpcProvider("https://volta-rpc-vkn5r5zx4ke71f9hcu0c.energyweb.org/");
       const orgOwner = new Wallet("1aec3458500362c0a0f1772ab724a71b0f9d7da418a2d86d5954ab3f4b58ec4e").connect(provider);
-      const org = "dmitryfesenko.iam.ewc";
-
+      const org = "energyweb.iam.ewc";
+      const MIN_STAKING_PERIOD = 1;
+      const stakingService = await StakingPoolService.init(orgOwner);
+      // let pool = await stakingService.getPool(org);
+      // if (!pool) {
+      //   const patronRewardPortion = 1000;
+      //   await stakingService.launchStakingPool({
+      //     org,
+      //     minStakingPeriod: MIN_STAKING_PERIOD,
+      //     patronRewardPortion,
+      //     patronRoles: [],
+      //     principal: parseEther("100")
+      //   });
+      // await (await orgOwner.sendTransaction({ to: VOLTA_REWARD_POOL_ADDRESS, value: parseEther("20") })).wait();
+      // }
       const factory = new StakingPoolFactory__factory(orgOwner).attach(chainConfigs[VOLTA_CHAIN_ID].stakingPoolFactoryAddress);
       /**
        * Predeployed test pool
        */
       const poolContract = new StakingPool__factory(orgOwner).attach((await factory.services(namehash(org))).pool);
       expect(poolContract).not.toBeNull;
-      const MIN_STAKING_PERIOD = 1;
       const WITHDRAW_DELAY = 5;
       expect((await poolContract.minStakingPeriod()).eq(MIN_STAKING_PERIOD)).toBe(true);
       expect((await poolContract.withdrawDelay()).eq(WITHDRAW_DELAY));
-      const stakingService = await StakingPoolService.init(orgOwner);
 
       const pool = await stakingService.getPool(org);
       expect(pool).not.toBeNull();
