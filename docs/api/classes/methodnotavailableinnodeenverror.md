@@ -59,6 +59,8 @@ ___
 
 *Inherited from [CacheClientNotProvidedError](cacheclientnotprovidederror.md).[stack](cacheclientnotprovidederror.md#stack)*
 
+*Overrides [CacheClientNotProvidedError](cacheclientnotprovidederror.md).[stack](cacheclientnotprovidederror.md#stack)*
+
 ___
 
 ### Error
