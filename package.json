@@ -99,6 +99,7 @@
         "jest": "^26.4.2",
         "jest-config": "^26.4.2",
         "jest-environment-jsdom": "^26.6.2",
+        "lint-staged": "^11.1.1",
         "prettier": "^2.3.2",
         "rimraf": "^3.0.2",
         "rollup-plugin-typescript2": "^0.27.2",
