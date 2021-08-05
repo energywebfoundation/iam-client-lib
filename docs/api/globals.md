@@ -315,7 +315,7 @@ ___
 
 ### erc712\_type\_hash
 
-• `Const` **erc712\_type\_hash**: string = utils.id("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
+• `Const` **erc712\_type\_hash**: string = utils.id( "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)",)
 
 ___
 
@@ -363,7 +363,7 @@ ___
 
 ### proof\_type\_hash
 
-• `Const` **proof\_type\_hash**: string = utils.id("Proof(address subject,bytes32 role,uint256 version,uint256 expiry,address issuer)")
+• `Const` **proof\_type\_hash**: string = utils.id( "Proof(address subject,bytes32 role,uint256 version,uint256 expiry,address issuer)",)
 
 ___
 
