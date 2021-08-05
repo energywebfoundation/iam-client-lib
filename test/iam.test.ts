@@ -1,19 +1,19 @@
 import { utils, Wallet } from "ethers";
 import { IAM, ENSNamespaceTypes } from "../src/iam";
 import {
-  deployDidRegistry,
-  ensRegistry,
-  ensResolver,
-  didContract,
-  rpcUrl,
-  assetsManager,
-  domainNotifer,
-  claimManager,
-  replenish,
-  deployEns,
-  provider,
-  deployIdentityManager,
-  deployClaimManager
+    deployDidRegistry,
+    ensRegistry,
+    ensResolver,
+    didContract,
+    rpcUrl,
+    assetsManager,
+    domainNotifer,
+    claimManager,
+    replenish,
+    deployEns,
+    provider,
+    deployIdentityManager,
+    deployClaimManager,
 } from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
@@ -32,77 +32,77 @@ export const rootOwner = Wallet.createRandom();
 export const root = "root";
 export let rootOwnerIam: IAM;
 
-export const createIam = async (privateKey: string, { initDID = false, initCacheServer = false } = {}) => {
-  const iam = new IAM({
-    rpcUrl,
-    privateKey
-  });
-  try {
-    await iam.initializeConnection({
-      reinitializeMetamask: false,
-      initCacheServer,
-      initDID
+export const createIam = async (privateKey: string, { createDocument = false, initCacheServer = false } = {}) => {
+    const iam = new IAM({
+        rpcUrl,
+        privateKey,
     });
-  } catch (e) {
-    console.error(">>> Error initializing connection:", e);
-  }
-  return iam;
+    try {
+        await iam.initializeConnection({
+            reinitializeMetamask: false,
+            initCacheServer,
+            createDocument,
+        });
+    } catch (e) {
+        console.error(">>> Error initializing connection:", e);
+    }
+    return iam;
 };
 
 beforeAll(async () => {
-  // sometimes transaction is taking more then default 5000 ms jest timeout
-  jest.setTimeout(60000);
-  const deployer = rootOwner.connect(provider);
-  await replenish(deployer.address);
-  await deployDidRegistry();
-  await deployEns();
-  await deployIdentityManager();
-  await deployClaimManager();
-  const { chainId } = await provider.getNetwork();
-  setChainConfig(chainId, {
-    rpcUrl,
-    ensRegistryAddress: ensRegistry.address,
-    ensResolverAddress: ensResolver.address,
-    didContractAddress: didContract.address,
-    assetManagerAddress: assetsManager.address,
-    domainNotifierAddress: domainNotifer.address,
-    claimManagerAddress: claimManager.address
-  });
-  setCacheClientOptions(chainId, { url: "" });
+    // sometimes transaction is taking more then default 5000 ms jest timeout
+    jest.setTimeout(60000);
+    const deployer = rootOwner.connect(provider);
+    await replenish(deployer.address);
+    await deployDidRegistry();
+    await deployEns();
+    await deployIdentityManager();
+    await deployClaimManager();
+    const { chainId } = await provider.getNetwork();
+    setChainConfig(chainId, {
+        rpcUrl,
+        ensRegistryAddress: ensRegistry.address,
+        ensResolverAddress: ensResolver.address,
+        didContractAddress: didContract.address,
+        assetManagerAddress: assetsManager.address,
+        domainNotifierAddress: domainNotifer.address,
+        claimManagerAddress: claimManager.address,
+    });
+    setCacheClientOptions(chainId, { url: "" });
 
-  await replenish(rootOwner.address);
-  rootOwnerIam = await createIam(rootOwner.privateKey);
+    await replenish(rootOwner.address);
+    rootOwnerIam = await createIam(rootOwner.privateKey);
 });
 
 /**
-   * @todo should be refactored because some tests depends on 'create root node'
-   */
+ * @todo should be refactored because some tests depends on 'create root node'
+ */
 describe("IAM tests", () => {
-  test("can create root node", async () => {
-    const tx = await ensRegistry.setSubnodeRecord(
-      namehash(""),
-      labelhash(root),
-      rootOwner.address,
-      ensResolver.address,
-      bigNumberify(0)
-    );
-    await tx.wait();
+    test("can create root node", async () => {
+        const tx = await ensRegistry.setSubnodeRecord(
+            namehash(""),
+            labelhash(root),
+            rootOwner.address,
+            ensResolver.address,
+            bigNumberify(0),
+        );
+        await tx.wait();
 
-    expect(await rootOwnerIam.checkExistenceOfDomain({ domain: root })).toBe(true);
-    expect(await rootOwnerIam.isOwner({ domain: root, user: rootOwner.address }));
-    expect(
-      await rootOwnerIam.isOwner({
-        domain: `${ENSNamespaceTypes.Application}.${root}`,
-        user: rootOwner.address
-      })
-    );
-    expect(
-      await rootOwnerIam.isOwner({
-        domain: `${ENSNamespaceTypes.Roles}.${root}`,
-        user: rootOwner.address
-      })
-    );
-  });
+        expect(await rootOwnerIam.checkExistenceOfDomain({ domain: root })).toBe(true);
+        expect(await rootOwnerIam.isOwner({ domain: root, user: rootOwner.address }));
+        expect(
+            await rootOwnerIam.isOwner({
+                domain: `${ENSNamespaceTypes.Application}.${root}`,
+                user: rootOwner.address,
+            }),
+        );
+        expect(
+            await rootOwnerIam.isOwner({
+                domain: `${ENSNamespaceTypes.Roles}.${root}`,
+                user: rootOwner.address,
+            }),
+        );
+    });
 });
 
 describe("Organization tests", orgTests);
