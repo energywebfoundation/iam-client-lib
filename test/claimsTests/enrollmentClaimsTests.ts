@@ -2,7 +2,7 @@ import { PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { Wallet, utils } from "ethers";
-import { Codec } from "nats.ws";
+import { Codec } from "../../node_modules/nats.ws/lib/src/mod.js";
 import { IAM, RegistrationTypes, IRoleDefinition, NATS_EXCHANGE_TOPIC } from "../../src/iam-client-lib";
 import { createIam, root, rootOwner } from "../iam.test";
 import { claimManager, replenish } from "../setup_contracts";

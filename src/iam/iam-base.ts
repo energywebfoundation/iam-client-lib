@@ -19,7 +19,7 @@ import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
-import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+import { connect, NatsConnection, JSONCodec, Codec } from "../../node_modules/nats.ws/lib/src/mod.js";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
