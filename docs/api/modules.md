@@ -1,0 +1,36 @@
+# iam-client-lib
+
+## Table of contents
+
+### Modules
+
+- [GnosisIam](modules/GnosisIam.md)
+- [cacheServerClient/ICacheServerClient](modules/cacheServerClient_ICacheServerClient.md)
+- [cacheServerClient/cacheServerClient](modules/cacheServerClient_cacheServerClient.md)
+- [cacheServerClient/cacheServerClient.types](modules/cacheServerClient_cacheServerClient_types.md)
+- [errors](modules/errors.md)
+- [errors/CacheClientNotProvided](modules/errors_CacheClientNotProvided.md)
+- [errors/ChangeOwnershipNotPossibleError](modules/errors_ChangeOwnershipNotPossibleError.md)
+- [errors/DeletingNamespaceNotPossibleError](modules/errors_DeletingNamespaceNotPossibleError.md)
+- [errors/ENSRegistryNotInitializedError](modules/errors_ENSRegistryNotInitializedError.md)
+- [errors/ENSResolverNotInitializedError](modules/errors_ENSResolverNotInitializedError.md)
+- [errors/ENSTypeNOtSupportedError](modules/errors_ENSTypeNOtSupportedError.md)
+- [errors/ErrorMessages](modules/errors_ErrorMessages.md)
+- [errors/MethodNotAvailableInNodeError](modules/errors_MethodNotAvailableInNodeError.md)
+- [errors/NatsConnectionNotEstablishedError](modules/errors_NatsConnectionNotEstablishedError.md)
+- [iam](modules/iam.md)
+- [iam-client-lib](modules/iam_client_lib.md)
+- [iam/chainConfig](modules/iam_chainConfig.md)
+- [iam/iam-base](modules/iam_iam_base.md)
+- [signer/Owner](modules/signer_Owner.md)
+- [staking](modules/staking.md)
+- [types/WalletProvider](modules/types_WalletProvider.md)
+- [utils/ENS\_hash](modules/utils_ENS_hash.md)
+- [utils/change\_resolver](modules/utils_change_resolver.md)
+- [utils/constants](modules/utils_constants.md)
+- [utils/did](modules/utils_did.md)
+- [utils/enrollment](modules/utils_enrollment.md)
+- [utils/getPublicKeyAndIdentityToken](modules/utils_getPublicKeyAndIdentityToken.md)
+- [utils/isBrowser](modules/utils_isBrowser.md)
+- [walletconnect/ControllableWalletConnect](modules/walletconnect_ControllableWalletConnect.md)
+- [walletconnect/WalletConnectService](modules/walletconnect_WalletConnectService.md)

@@ -62,12 +62,12 @@ export function enrollmentClaimsTests() {
 
     beforeAll(async () => {
         await replenish(roleCreator.address);
-        roleCreatorIam = await createIam(roleCreator.privateKey, { initDID: true });
-        userIam = await createIam(user.privateKey, { initDID: true });
+        roleCreatorIam = await createIam(roleCreator.privateKey, { createDocument: true });
+        userIam = await createIam(user.privateKey, { createDocument: true });
         await replenish(staticIssuer.address);
-        staticIssuerIam = await createIam(staticIssuer.privateKey, { initDID: true });
+        staticIssuerIam = await createIam(staticIssuer.privateKey, { createDocument: true });
         await replenish(dynamicIssuer.address);
-        dynamicIssuerIam = await createIam(dynamicIssuer.privateKey, { initDID: true });
+        dynamicIssuerIam = await createIam(dynamicIssuer.privateKey, { createDocument: true });
 
         await roleCreatorIam.createRole({
             roleName: roleName1,

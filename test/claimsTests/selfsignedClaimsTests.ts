@@ -5,7 +5,7 @@ export const selfsignedClaimsTests = function () {
     let rootOwnerIam: IAM;
 
     beforeAll(async () => {
-        rootOwnerIam = await createIam(rootOwner.privateKey, { initDID: true });
+        rootOwnerIam = await createIam(rootOwner.privateKey, { createDocument: true });
     });
 
     const namespace = "daniel.iam.ewc";
