@@ -1,5 +1,3 @@
-**[iam-client-lib](README.md)**
-
 <p align="center">
   <img src="https://github.com/energywebfoundation/iam-client-lib/actions/workflows/deploy.yml/badge.svg" />
 </p>
