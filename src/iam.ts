@@ -211,7 +211,7 @@ export class IAM extends IAMBase {
                     realtimeExchangeConnected: false,
                 };
             }
-            throw new Error(err);
+            throw new Error(err.message);
         }
 
         return {
