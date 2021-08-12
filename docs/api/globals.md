@@ -87,6 +87,7 @@
 * [defaultClaimExpiry](globals.md#defaultclaimexpiry)
 * [emptyAddress](globals.md#emptyaddress)
 * [erc712\_type\_hash](globals.md#erc712_type_hash)
+* [formatBytes32String](globals.md#formatbytes32string)
 * [getAddress](globals.md#getaddress)
 * [hashMessage](globals.md#hashmessage)
 * [hexlify](globals.md#hexlify)
@@ -315,6 +316,12 @@ ___
 ### erc712\_type\_hash
 
 • `Const` **erc712\_type\_hash**: string = utils.id("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
+
+___
+
+### formatBytes32String
+
+•  **formatBytes32String**: formatBytes32String
 
 ___
 

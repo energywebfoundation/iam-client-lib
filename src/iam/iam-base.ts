@@ -1,6 +1,6 @@
-import { providers, Signer, utils, errors, Wallet } from "ethers";
+import { providers, Signer, utils, errors, Wallet, Contract } from "ethers";
 import { DomainReader, DomainTransactionFactory, DomainHierarchy, ResolverContractType, ClaimManager__factory } from "@energyweb/iam-contracts";
-import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Operator, Resolver, VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
@@ -39,9 +39,9 @@ import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory"
 import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
-import EKC from '@energyweb/ekc';
+import EKC from "@energyweb/ekc";
 
-const { hexlify, bigNumberify } = utils;
+const { hexlify, bigNumberify, formatBytes32String } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
@@ -155,7 +155,7 @@ export class IAMBase {
   protected async init({
     initializeMetamask,
     walletProvider: walletProvider,
-    proxyURL
+    proxyURL = "http://localhost:5000/api/v1"
   }: {
     initializeMetamask?: boolean;
     walletProvider?: WalletProvider;
@@ -257,7 +257,7 @@ export class IAMBase {
       try {
         // proxyURL should be 
         await EKC.init({ proxyUrl: proxyURL as string });
-        await EKC.login({ mode: 'popup' });
+        await EKC.login({ mode: "popup" });
       } catch (error) {
         throw new Error(ERROR_MESSAGES.ERROR_IN_AZURE_PROVIDER);
       }
@@ -378,7 +378,7 @@ export class IAMBase {
    */
   async closeConnection() {
     if (this._providerType === WalletProvider.EKC) {
-      await EKC.logout({ mode: 'popup' });
+      await EKC.logout({ mode: "popup" });
     }
     await this._walletConnectService.closeConnection();
     this.clearSession();
@@ -428,7 +428,18 @@ export class IAMBase {
   }
 
   private async setDocument() {
-    if (this._did && this._didSigner) {
+    if (this._did && this._didSigner && this._signer) {
+      const didRegistry = new Contract(VoltaAddress1056, abi1056, this._signer);
+      const signerAddress = await this._signer.getAddress();
+      const signerOwner = await didRegistry.identityOwner(signerAddress);
+      if (signerAddress !== signerOwner) {
+        throw new Error("Signer does not own his document");
+      }
+      try {
+        await (await didRegistry.setAttribute(this._address, formatBytes32String("test"), "0x1", 10)).wait();
+      } catch (e) {
+        throw new Error("Signer can not update his document");
+      }
       this._document = new DIDDocumentFull(
         this._did,
         new Operator(this._didSigner, this._registrySetting)
