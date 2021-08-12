@@ -63,6 +63,7 @@ import {
     proof_type_hash,
     typedMsgPrefix,
 } from "./utils/constants";
+// https://github.com/nats-io/nats.ws/issues/100
 import { Subscription } from "../node_modules/nats.ws/lib/src/mod.js";
 import { AxiosError } from "axios";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
