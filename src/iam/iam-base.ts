@@ -19,6 +19,7 @@ import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
+// https://github.com/nats-io/nats.ws/issues/100
 import { connect, NatsConnection, JSONCodec, Codec } from "../../node_modules/nats.ws/lib/src/mod.js";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
