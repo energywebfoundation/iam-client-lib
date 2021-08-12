@@ -7,7 +7,7 @@ nav:
   - "Guides":
       - "Authentication": guides/authentication.md
       - "Authorization": guides/authorization.md
-  - API: api/globals.md
+  - API: api/modules.md
 theme: readthedocs
 
 docs_dir: docs
