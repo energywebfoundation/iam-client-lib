@@ -45,6 +45,7 @@ import { OfferableIdentity__factory } from "../../ethers/factories/OfferableIden
 import { IdentityManager__factory } from "../../ethers/factories/IdentityManager__factory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
@@ -240,8 +241,8 @@ export class IAMBase {
             };
             await this._walletConnectService.initialize(walletProvider);
             const wcProvider = this._walletConnectService.getProvider();
-            this._signer = new providers.Web3Provider(wcProvider).getSigner();
-            this._provider = this._signer.provider as providers.Web3Provider;
+            this._provider = new providers.Web3Provider(wcProvider);
+            this._signer = this._provider.getSigner();
             this._providerType = walletProvider;
             return;
         }
@@ -278,7 +279,19 @@ export class IAMBase {
             this._publicKey = publicKey;
             this._identityToken = identityToken;
         }
-        this._didSigner = new Owner(this._signer, this._provider, this._publicKey);
+        const { privateKey, rpcUrl } = this._connectionOptions;
+        if (privateKey && rpcUrl) {
+            this._didSigner = IdentityOwner.fromPrivateKeySigner(
+                new EwPrivateKeySigner(privateKey, { type: ProviderTypes.HTTP, uriOrInfo: rpcUrl }),
+            );
+        } else if (this._provider instanceof WalletConnectProvider) {
+            this._didSigner = IdentityOwner.fromJsonRpcSigner(
+                new EwJsonRpcSigner(this._provider as WalletConnectProvider),
+                this._publicKey,
+            );
+        } else {
+            throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
+        }
         await this.setDocument();
         this.setClaims();
     }
@@ -627,7 +640,6 @@ export class IAMBase {
 
         this._registrySetting = {
             address: didContractAddress,
-            abi: abi1056,
             method: Methods.Erc1056,
         };
 
