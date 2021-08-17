@@ -14,46 +14,35 @@
 //
 // @authors: Kim Honoridez
 
-import { IAM, ENSNamespaceTypes } from "./iam";
-import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
+import { IAM } from "./iam";
+import { ICacheClient } from "./modules/cacheClient/ICacheClient";
 import { ERROR_MESSAGES } from "./errors";
-import { WalletProvider } from "./types/WalletProvider";
+import { MessagingMethod, NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID } from "./utils/constants";
 import {
-  MessagingMethod,
-  NATS_EXCHANGE_TOPIC,
-  VOLTA_CHAIN_ID
-} from "./utils/constants";
-import {
-  IApp,
-  IOrganization,
-  IRole,
-  Asset,
-  AssetHistory,
-  AssetHistoryEventType,
-  Order,
-  ClaimData,
-  Profile,
-  AssetProfiles,
-  AssetProfile,
-  RegistrationTypes
-} from "./cacheServerClient/cacheServerClient.types";
+    IApp,
+    IOrganization,
+    IRole,
+    Asset,
+    AssetHistory,
+    AssetHistoryEventType,
+    Order,
+    ClaimData,
+    Profile,
+    AssetProfiles,
+    AssetProfile,
+    RegistrationTypes,
+} from "./modules/cacheClient/cacheClient.types";
 
-import {
-  DIDAttribute,
-  Encoding,
-  Algorithms,
-  PubKeyType
-} from "@ew-did-registry/did-resolver-interface";
+import { DIDAttribute, Encoding, Algorithms, PubKeyType } from "@ew-did-registry/did-resolver-interface";
 
-import { setCacheClientOptions, setChainConfig, setMessagingOptions } from "./iam/chainConfig";
-
+export { initWithPrivateKeySigner } from "./init";
 export {
-  IRoleDefinition,
-  IAppDefinition,
-  IOrganizationDefinition,
-  PreconditionType as PreconditionTypes,
-  WITHDRAW_DELAY,
-  PRINCIPAL_THRESHOLD
+    IRoleDefinition,
+    IAppDefinition,
+    IOrganizationDefinition,
+    PreconditionType as PreconditionTypes,
+    WITHDRAW_DELAY,
+    PRINCIPAL_THRESHOLD,
 } from "@energyweb/iam-contracts";
 
 // MAIN
@@ -65,37 +54,32 @@ export { NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID };
 
 // UTILS
 
-export { setCacheClientOptions, setChainConfig, setMessagingOptions };
-
 // ENUMS
 export {
-  DIDAttribute,
-  Encoding,
-  Algorithms,
-  PubKeyType,
-  ENSNamespaceTypes,
-  MessagingMethod,
-  ERROR_MESSAGES,
-  WalletProvider,
-  Order,
-  AssetHistoryEventType,
-  RegistrationTypes
+    DIDAttribute,
+    Encoding,
+    Algorithms,
+    PubKeyType,
+    MessagingMethod,
+    ERROR_MESSAGES,
+    Order,
+    AssetHistoryEventType,
+    RegistrationTypes,
 };
+export { SignerService } from "../src/modules/signer/signer.service";
 
 // TYPES
 export {
-  ICacheServerClient,
-  IApp,
-  IOrganization,
-  IRole,
-  Asset,
-  AssetHistory,
-  ClaimData,
-  Profile,
-  AssetProfiles,
-  AssetProfile
+    ICacheClient as ICacheServerClient,
+    IApp,
+    IOrganization,
+    IRole,
+    Asset,
+    AssetHistory,
+    ClaimData,
+    Profile,
+    AssetProfiles,
+    AssetProfile,
 };
 
-export { GnosisIam as SafeIam } from "./GnosisIam";
 export * from "./utils/did";
-export * from "./staking";

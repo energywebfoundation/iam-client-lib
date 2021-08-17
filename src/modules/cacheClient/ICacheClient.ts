@@ -1,7 +1,7 @@
 import { IAppDefinition, IOrganizationDefinition, IRoleDefinition } from "@energyweb/iam-contracts";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
-import { IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../../iam";
+import { IPubKeyAndIdentityToken } from "../../utils/getPublicKeyAndIdentityToken";
 import {
     Asset,
     AssetHistory,
@@ -11,9 +11,9 @@ import {
     IOrganization,
     IRole,
     Order,
-} from "./cacheServerClient.types";
+} from "./cacheClient.types";
 
-export interface ICacheServerClient {
+export interface ICacheClient {
     pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
     testLogin: () => Promise<void>;
     login: () => Promise<{ pubKeyAndIdentityToken: IPubKeyAndIdentityToken; token: string; refreshToken: string }>;

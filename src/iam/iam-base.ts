@@ -1,38 +1,29 @@
 import { providers, Signer, utils, errors, Wallet } from "ethers";
-import {
-    DomainReader,
-    DomainTransactionFactory,
-    DomainHierarchy,
-    ResolverContractType,
-    ClaimManager__factory,
-} from "@energyweb/iam-contracts";
+import { DomainReader, DomainTransactionFactory, DomainHierarchy } from "@energyweb/iam-contracts";
 import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
-import { labelhash, namehash } from "../utils/ENS_hash";
+import { namehash } from "../utils/ENS_hash";
 import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
 import { ClaimManager } from "@energyweb/iam-contracts/dist";
-import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { JWT } from "@ew-did-registry/jwt";
-import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
+import { ICacheClient } from "../modules/cacheClient/ICacheClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
-import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
+import { ClaimData } from "../modules/cacheClient/cacheClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
-import { Owner as IdentityOwner, Owner } from "../signer/Owner";
+import { Owner as IdentityOwner, Owner } from "../modules/didRegistry/Owner";
 import { WalletProvider } from "../types/WalletProvider";
-import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
-import { cacheServerClientOptions, chainConfigs, messagingOptions, MessagingOptions } from "./chainConfig";
+import { CacheClient } from "../modules/cacheClient/cacheClient.service";
+import { MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
+import { cacheServerClientOptions, MessagingOptions } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
-import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
-import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 
@@ -48,17 +39,6 @@ export type ConnectionOptions = {
     bridgeUrl?: string;
     privateKey?: string;
     ewKeyManagerUrl?: string;
-};
-
-export type EncodedCall = {
-    to: string;
-    data: string;
-    value?: string;
-};
-
-export type Transaction = {
-    calls: EncodedCall[];
-    from: string;
 };
 
 /**
@@ -100,13 +80,11 @@ export class IAMBase {
     protected _assetManager: IdentityManager;
     protected _claimManager: ClaimManager;
 
-    protected _cacheClient: ICacheServerClient;
+    protected _cacheClient: ICacheClient;
 
     protected _messagingOptions: MessagingOptions;
     protected _natsConnection: NatsConnection | undefined;
     protected _jsonCodec: Codec<any> | undefined;
-
-    private ttl = bigNumberify(0);
 
     /**
      * IAM Constructor
@@ -154,7 +132,6 @@ export class IAMBase {
         await this.initSigner({ walletProvider, initializeMetamask });
         await this.setAddress();
         this.setDid();
-        await this.initChain();
         this.initEventHandlers();
 
         if (this._runningInBrowser) {
@@ -164,99 +141,6 @@ export class IAMBase {
         this.setResolver();
         this.setJWT();
         this.storeSession();
-    }
-
-    private async initSigner({
-        initializeMetamask,
-        walletProvider,
-    }: {
-        useMetamask?: boolean;
-        initializeMetamask?: boolean;
-        walletProvider?: WalletProvider;
-    }) {
-        const { privateKey, rpcUrl } = this._connectionOptions;
-
-        if (!this._runningInBrowser) {
-            if (!privateKey) {
-                throw new Error(ERROR_MESSAGES.NO_PRIVATE_KEY);
-            }
-            if (!rpcUrl) {
-                throw new Error(ERROR_MESSAGES.NO_RPC_URL);
-            }
-        }
-
-        if (privateKey && rpcUrl) {
-            this._provider = new JsonRpcProvider({ url: rpcUrl });
-            this._signer = new Wallet(privateKey, this._provider);
-            return;
-        }
-
-        if (walletProvider === WalletProvider.MetaMask) {
-            const metamaskProvider: any = await detectMetamask({
-                mustBeMetaMask: true,
-            });
-            if (!metamaskProvider) {
-                throw new Error(ERROR_MESSAGES.METAMASK_EXTENSION_NOT_AVAILABLE);
-            }
-            this._metamaskProvider = metamaskProvider;
-            const requestObject = {
-                method: initializeMetamask ? "wallet_requestPermissions" : "eth_accounts",
-                params: [
-                    {
-                        eth_accounts: {},
-                    },
-                ],
-            };
-            const accounts: string[] = await metamaskProvider.request(requestObject);
-
-            if (!initializeMetamask && accounts.length < 1) {
-                await metamaskProvider.request({
-                    method: "wallet_requestPermissions",
-                    params: [
-                        {
-                            eth_accounts: {},
-                        },
-                    ],
-                });
-            }
-            this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
-
-            this._providerType = walletProvider;
-            this._provider = this._signer.provider as providers.Web3Provider;
-            console.log("metamask chain id:", (await this._provider.getNetwork()).chainId);
-            return;
-        }
-        if (walletProvider && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)) {
-            this._transactionOverrides = {
-                gasLimit: hexlify(4900000),
-                gasPrice: hexlify(0.1),
-            };
-            await this._walletConnectService.initialize(walletProvider);
-            const wcProvider = this._walletConnectService.getProvider();
-            this._signer = new providers.Web3Provider(wcProvider).getSigner();
-            this._provider = this._signer.provider as providers.Web3Provider;
-            this._providerType = walletProvider;
-            return;
-        }
-        throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
-    }
-
-    /**
-     * @description established connection to cache server and logins in signing authentication token
-     */
-    async connectToCacheServer() {
-        const { chainId } = await this._provider.getNetwork();
-        const cacheOptions = cacheServerClientOptions[chainId];
-        if (!this._signer) {
-            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-        }
-        if (!cacheOptions.url) {
-            throw new Error(ERROR_MESSAGES.CACHE_SERVER_NOT_REGISTERED);
-        }
-        this._cacheClient = new CacheServerClient(cacheOptions, this._signer);
-        const fromCacheLogin = await this.loginToCacheServer();
-        this._publicKey = fromCacheLogin?.publicKey ?? this._publicKey;
-        this._identityToken = fromCacheLogin?.identityToken;
     }
 
     /**
@@ -468,53 +352,6 @@ export class IAMBase {
         );
     }
 
-    protected createSubdomainTx({
-        domain,
-        nodeName,
-        owner = this._address as string,
-    }: {
-        domain: string;
-        nodeName: string;
-        owner?: string;
-    }): EncodedCall {
-        return {
-            to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
-                namehash(domain),
-                labelhash(nodeName),
-                owner,
-                this._ensResolverAddress,
-                this.ttl,
-            ]),
-        };
-    }
-
-    protected changeSubdomainOwnerTx({
-        newOwner,
-        label,
-        namespace,
-    }: {
-        newOwner: string;
-        namespace: string;
-        label: string;
-    }): EncodedCall {
-        return {
-            to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeOwner.encode([
-                namehash(namespace),
-                labelhash(label),
-                newOwner,
-            ]),
-        };
-    }
-
-    protected changeDomainOwnerTx({ newOwner, namespace }: { newOwner: string; namespace: string }): EncodedCall {
-        return {
-            to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setOwner.encode([namehash(namespace), newOwner]),
-        };
-    }
-
     protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
         const roleHash = namehash(namespace);
         const definition = await this._domainDefinitionReader.read({ node: roleHash });
@@ -527,172 +364,5 @@ export class IAMBase {
         }
     }
 
-    protected deleteSubdomainTx({ namespace }: { namespace: string }): EncodedCall {
-        const namespaceArray = namespace.split(".");
-        const node = namespaceArray.slice(1).join(".");
-        const label = namespaceArray[0];
-        return {
-            to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
-                namehash(node),
-                labelhash(label),
-                emptyAddress,
-                emptyAddress,
-                this.ttl,
-            ]),
-        };
-    }
-
-    protected async deleteDomain({ namespace }: { namespace: string }) {
-        if (!this._signer) {
-            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-        }
-        await this.send({
-            calls: [this.deleteDomainTx({ namespace })],
-            from: await this.getOwner({ namespace }),
-        });
-    }
-
-    protected async getOwner({ namespace }: { namespace: string }) {
-        const node = namehash(namespace);
-        return this._ensRegistry.owner(node);
-    }
-
-    protected async send(tx: Transaction) {
-        if (!this._signer) {
-            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-        }
-        for await (const call of tx.calls) {
-            await (await this._signer.sendTransaction({ ...call, ...this._transactionOverrides })).wait();
-        }
-    }
-
-    protected deleteDomainTx({ namespace }: { namespace: string }): EncodedCall {
-        return {
-            to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setRecord.encode([
-                namehash(namespace),
-                emptyAddress,
-                emptyAddress,
-                this.ttl,
-            ]),
-        };
-    }
-
-    protected async deleteSubdomain({ namespace }: { namespace: string }) {
-        if (!this._signer) {
-            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-        }
-        await this.send({
-            calls: [this.deleteSubdomainTx({ namespace })],
-            from: await this.getOwner({
-                namespace: namespace.split(".").slice(1).join(""),
-            }),
-        });
-    }
-
-    private async initChain() {
-        const { chainId } = await this._provider.getNetwork();
-        const {
-            ensRegistryAddress,
-            ensResolverAddress,
-            ensPublicResolverAddress,
-            domainNotifierAddress,
-            didContractAddress,
-            assetManagerAddress,
-            claimManagerAddress,
-        } = chainConfigs[chainId];
-
-        if (!ensRegistryAddress)
-            throw new Error(`Chain config for chainId: ${chainId} does not contain ensRegistryAddress`);
-        if (!ensResolverAddress)
-            throw new Error(`Chain config for chainId: ${chainId} does not contain ensResolverAddress`);
-        if (!didContractAddress)
-            throw new Error(`Chain config for chainId: ${chainId} does not contain didContractAddress`);
-        if (!assetManagerAddress)
-            throw new Error(`Chain config for chainId: ${chainId} does not contain assetManagerContractAddress`);
-        if (!claimManagerAddress) {
-            throw new Error(`Chain config for chainId: ${chainId} does not contain claimManagerAddress`);
-        }
-        if (!this._signer) {
-            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
-        }
-
-        this._registrySetting = {
-            address: didContractAddress,
-            abi: abi1056,
-            method: Methods.Erc1056,
-        };
-
-        this._ensRegistryAddress = ensRegistryAddress;
-        this._ensResolverAddress = ensResolverAddress;
-        this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
-        this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
-        this._domainDefinitionReader = new DomainReader({ ensRegistryAddress, provider: this._provider });
-        ensPublicResolverAddress &&
-            this._domainDefinitionReader.addKnownResolver({
-                chainId,
-                address: ensPublicResolverAddress,
-                type: ResolverContractType.PublicResolver,
-            });
-        ensResolverAddress &&
-            this._domainDefinitionReader.addKnownResolver({
-                chainId,
-                address: ensResolverAddress,
-                type: ResolverContractType.RoleDefinitionResolver_v1,
-            });
-        this._domainDefinitionTransactionFactory = new DomainTransactionFactory({
-            domainResolverAddress: ensResolverAddress,
-        });
-        this._domainHierarchy = new DomainHierarchy({
-            domainReader: this._domainDefinitionReader,
-            ensRegistry: this._ensRegistry,
-            provider: this._provider,
-            domainNotifierAddress: domainNotifierAddress,
-            publicResolverAddress: ensPublicResolverAddress,
-        });
-        this._claimManager = ClaimManager__factory.connect(claimManagerAddress, this._signer);
-
-        this._messagingOptions = messagingOptions[chainId];
-    }
-
     // ### ASSETS ###
-
-    protected offerAssetTx({
-        offerTo,
-        assetContractAddress,
-    }: {
-        offerTo: string;
-        assetContractAddress: string;
-    }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
-        return {
-            data: asset.interface.functions.offer.encode([offerTo]),
-            to: assetContractAddress,
-        };
-    }
-
-    protected acceptOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
-        return {
-            data: asset.interface.functions.acceptOffer.encode([]),
-            to: assetContractAddress,
-        };
-    }
-
-    protected rejectOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
-        return {
-            data: asset.interface.functions.rejectOffer.encode([]),
-            to: assetContractAddress,
-        };
-    }
-
-    protected cancelOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
-        return {
-            data: asset.interface.functions.cancelOffer.encode([]),
-            to: assetContractAddress,
-        };
-    }
 }

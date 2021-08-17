@@ -6,10 +6,12 @@ import {
 } from "@energyweb/iam-contracts";
 import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
 import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
+import { Injectable } from "@nestjs/common";
 import { Signer, utils } from "ethers";
-import { ERROR_MESSAGES } from "../errors";
-import { chainConfigs } from "../iam/chainConfig";
-import { emptyAddress } from "../utils/constants";
+import { ERROR_MESSAGES } from "../../errors";
+import { chainConfigs } from "../../iam/chainConfig";
+import { emptyAddress } from "../../utils/constants";
+import { SignerService } from "../signer/signer.service";
 
 const { namehash, BigNumber, parseUnits } = utils;
 
@@ -42,7 +44,8 @@ export type Stake = {
 /**
  * Inteneded for staking pools management
  */
-export class StakingPoolService {
+@Injectable()
+export class StakingService {
     private constructor(
         private _stakingPoolFactory: StakingPoolFactory,
         private _domainReader: DomainReader,
@@ -53,7 +56,8 @@ export class StakingPoolService {
      * @description Connects to the same chain as `signer`. The signer must be connected
      * @param signer Signer with connected provider
      */
-    static async init(signer: Signer) {
+    static async init(signerService: SignerService) {
+        const signer = signerService.getSigner();
         if (!signer.provider) {
             throw new Error("StakingPoolService.init: Signer is not connected to provider");
         }
@@ -74,7 +78,7 @@ export class StakingPoolService {
                 address: ensResolverAddress,
                 type: ResolverContractType.RoleDefinitionResolver_v1,
             });
-        return new StakingPoolService(stakingPoolFactory, domainReader, signer as Required<Signer>);
+        return new StakingService(stakingPoolFactory, domainReader, signer as Required<Signer>);
     }
 
     /**
