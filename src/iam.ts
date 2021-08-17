@@ -593,7 +593,7 @@ export class IAM extends IAMBase {
         if (currentResolverAddress === ensPublicResolverAddress) {
             const updateResolverTransaction: EncodedCall = {
                 to: ensRegistryAddress,
-                data: this._ensRegistry.interface.functions.setResolver.encode([node, ensResolverAddress]),
+                data: this._ensRegistry.interface.encodeFunctionData("setResolver", [node, ensResolverAddress]),
             };
             // Need to use newRole/newDomain as need to set reverse domain name
             const updateDomain = DomainReader.isRoleDefinition(data)

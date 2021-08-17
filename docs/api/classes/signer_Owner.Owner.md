@@ -23,12 +23,15 @@
 - [privateKey](signer_Owner.Owner.md#privatekey)
 - [provider](signer_Owner.Owner.md#provider)
 - [publicKey](signer_Owner.Owner.md#publickey)
+- [signer](signer_Owner.Owner.md#signer)
 
 ### Methods
 
+- [connect](signer_Owner.Owner.md#connect)
 - [getAddress](signer_Owner.Owner.md#getaddress)
 - [sendTransaction](signer_Owner.Owner.md#sendtransaction)
 - [signMessage](signer_Owner.Owner.md#signmessage)
+- [signTransaction](signer_Owner.Owner.md#signtransaction)
 
 ## Constructors
 
@@ -83,7 +86,41 @@ ___
 
 IdentityOwner.publicKey
 
+___
+
+### signer
+
+• **signer**: `Signer`
+
+#### Implementation of
+
+IdentityOwner.signer
+
 ## Methods
+
+### connect
+
+▸ **connect**(`provider`): `Signer`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `provider` | `Provider` |
+
+#### Returns
+
+`Signer`
+
+#### Implementation of
+
+IdentityOwner.connect
+
+#### Overrides
+
+Signer.connect
+
+___
 
 ### getAddress
 
@@ -135,7 +172,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `message` | `Arrayish` |
+| `message` | `string` \| `Bytes` |
 
 #### Returns
 
@@ -148,3 +185,27 @@ IdentityOwner.signMessage
 #### Overrides
 
 Signer.signMessage
+
+___
+
+### signTransaction
+
+▸ **signTransaction**(`transaction`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `transaction` | `Deferrable`<`TransactionRequest`\> |
+
+#### Returns
+
+`Promise`<`string`\>
+
+#### Implementation of
+
+IdentityOwner.signTransaction
+
+#### Overrides
+
+Signer.signTransaction

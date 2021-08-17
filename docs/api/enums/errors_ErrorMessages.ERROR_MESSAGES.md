@@ -11,6 +11,7 @@
 - [CACHE\_SERVER\_NOT\_REGISTERED](errors_ErrorMessages.ERROR_MESSAGES.md#cache_server_not_registered)
 - [CLAIMS\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#claims_not_initialized)
 - [CLAIM\_PUBLISHER\_NOT\_REQUESTER](errors_ErrorMessages.ERROR_MESSAGES.md#claim_publisher_not_requester)
+- [CONNECTION\_OPTIONS\_IN\_NODE\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#connection_options_in_node_not_provided)
 - [DID\_DOCUMENT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#did_document_not_initialized)
 - [ENS\_REGISTRY\_CONTRACT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_registry_contract_not_initialized)
 - [ENS\_REGISTRY\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_registry_not_initialized)
@@ -21,7 +22,6 @@
 - [METAMASK\_EXTENSION\_NOT\_AVAILABLE](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_extension_not_available)
 - [NATS\_NOT\_CONNECTED](errors_ErrorMessages.ERROR_MESSAGES.md#nats_not_connected)
 - [NOT\_CONNECTED\_TO\_VOLTA](errors_ErrorMessages.ERROR_MESSAGES.md#not_connected_to_volta)
-- [NO\_PRIVATE\_KEY](errors_ErrorMessages.ERROR_MESSAGES.md#no_private_key)
 - [NO\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#no_provider)
 - [NO\_RPC\_URL](errors_ErrorMessages.ERROR_MESSAGES.md#no_rpc_url)
 - [ONCHAIN\_ROLE\_VERSION\_NOT\_SPECIFIED](errors_ErrorMessages.ERROR_MESSAGES.md#onchain_role_version_not_specified)
@@ -68,6 +68,12 @@ ___
 ### CLAIM\_PUBLISHER\_NOT\_REQUESTER
 
 • **CLAIM\_PUBLISHER\_NOT\_REQUESTER** = `"Claim subject is not controlled by publisher"`
+
+___
+
+### CONNECTION\_OPTIONS\_IN\_NODE\_NOT\_PROVIDED
+
+• **CONNECTION\_OPTIONS\_IN\_NODE\_NOT\_PROVIDED** = `"IAM can not be initialized in Node.js environment without private key or rpc url"`
 
 ___
 
@@ -128,12 +134,6 @@ ___
 ### NOT\_CONNECTED\_TO\_VOLTA
 
 • **NOT\_CONNECTED\_TO\_VOLTA** = `"Not connected to volta network"`
-
-___
-
-### NO\_PRIVATE\_KEY
-
-• **NO\_PRIVATE\_KEY** = `"Initialization of signer not possible in nodejs env without private key"`
 
 ___
 

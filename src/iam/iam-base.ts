@@ -479,7 +479,7 @@ export class IAMBase {
     }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setSubnodeRecord", [
                 namehash(domain),
                 labelhash(nodeName),
                 owner,
@@ -500,7 +500,7 @@ export class IAMBase {
     }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeOwner.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setSubnodeOwner", [
                 namehash(namespace),
                 labelhash(label),
                 newOwner,
@@ -511,7 +511,7 @@ export class IAMBase {
     protected changeDomainOwnerTx({ newOwner, namespace }: { newOwner: string; namespace: string }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setOwner.encode([namehash(namespace), newOwner]),
+            data: this._ensRegistry.interface.encodeFunctionData("setOwner", [namehash(namespace), newOwner]),
         };
     }
 
@@ -533,7 +533,7 @@ export class IAMBase {
         const label = namespaceArray[0];
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setSubnodeRecord", [
                 namehash(node),
                 labelhash(label),
                 emptyAddress,
@@ -570,7 +570,7 @@ export class IAMBase {
     protected deleteDomainTx({ namespace }: { namespace: string }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setRecord.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setRecord", [
                 namehash(namespace),
                 emptyAddress,
                 emptyAddress,
@@ -667,7 +667,7 @@ export class IAMBase {
     }): EncodedCall {
         const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.offer.encode([offerTo]),
+            data: asset.interface.encodeFunctionData("offer", [offerTo]),
             to: assetContractAddress,
         };
     }
@@ -675,7 +675,7 @@ export class IAMBase {
     protected acceptOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
         const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.acceptOffer.encode([]),
+            data: asset.interface.encodeFunctionData("acceptOffer"),
             to: assetContractAddress,
         };
     }
@@ -683,7 +683,7 @@ export class IAMBase {
     protected rejectOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
         const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.rejectOffer.encode([]),
+            data: asset.interface.encodeFunctionData("rejectOffer"),
             to: assetContractAddress,
         };
     }
@@ -691,7 +691,7 @@ export class IAMBase {
     protected cancelOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
         const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.cancelOffer.encode([]),
+            data: asset.interface.encodeFunctionData("cancelOffer"),
             to: assetContractAddress,
         };
     }
