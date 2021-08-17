@@ -188,11 +188,8 @@ export class IAMBase {
         const { privateKey, rpcUrl } = this._connectionOptions;
 
         if (!this._runningInBrowser) {
-            if (!privateKey) {
-                throw new Error(ERROR_MESSAGES.NO_PRIVATE_KEY);
-            }
-            if (!rpcUrl) {
-                throw new Error(ERROR_MESSAGES.NO_RPC_URL);
+            if (!privateKey || !rpcUrl) {
+                throw new Error(ERROR_MESSAGES.CONNECTION_OPTIONS_IN_NODE_NOT_PROVIDED);
             }
         }
 

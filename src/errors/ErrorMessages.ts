@@ -8,7 +8,7 @@ export enum ERROR_MESSAGES {
     ENS_TYPE_NOT_SUPPORTED = "ENS type not supported",
     USER_NOT_LOGGED_IN = "User not logged in",
     NO_PROVIDER = "Initialization of singer failed due to no provider",
-    NO_PRIVATE_KEY = "Initialization of signer not possible in nodejs env without private key",
+    CONNECTION_OPTIONS_IN_NODE_NOT_PROVIDED = "IAM can not be initialized in Node.js environment without private key or rpc url",
     NO_RPC_URL = "Rpc url needed to initialize provider in node js environment",
     CACHE_CLIENT_NOT_PROVIDED = "Cache client not provided",
     ENS_REGISTRY_NOT_INITIALIZED = "ENS registry not initialized",
