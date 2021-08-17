@@ -44,7 +44,7 @@ export async function changeResolver({
         await migrate(parentNode);
         const childNodes = await domainHierarchy.getSubdomainsUsingResolver({ domain: parentNode, mode: "FIRSTLEVEL" });
         for (const node of childNodes) {
-            const owner = await registry.functions.owner(utils.namehash(node));
+            const owner = await registry.owner(utils.namehash(node));
             owners[node] = owner;
             await registry.setSubnodeOwner(utils.namehash(parentNode), labelhash(node.split(".")[0]), rootOwner);
             await migrate(node);

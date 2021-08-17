@@ -1,4 +1,4 @@
-import { providers, Signer, utils, errors, Wallet } from "ethers";
+import { providers, Signer, utils, Wallet, BigNumber, ethers } from "ethers";
 import {
     DomainReader,
     DomainTransactionFactory,
@@ -6,9 +6,21 @@ import {
     ResolverContractType,
     ClaimManager__factory,
 } from "@energyweb/iam-contracts";
-import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import {
+    EwJsonRpcSigner,
+    EwPrivateKeySigner,
+    IdentityOwner,
+    Operator,
+    Resolver,
+} from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
-import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
+import {
+    IServiceEndpoint,
+    RegistrySettings,
+    KeyTags,
+    IPublicKey,
+    ProviderTypes,
+} from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
@@ -23,9 +35,7 @@ import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
-import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
-import { Owner as IdentityOwner, Owner } from "../signer/Owner";
 import { WalletProvider } from "../types/WalletProvider";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
 import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
@@ -36,7 +46,7 @@ import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 
-const { hexlify, bigNumberify } = utils;
+const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
@@ -77,7 +87,7 @@ export class IAMBase {
     protected _safeAddress: string | undefined;
     protected _didSigner: IdentityOwner | undefined;
     protected _identityToken: string | undefined;
-    protected _transactionOverrides: TransactionOverrides = {};
+    protected _transactionOverrides: utils.Deferrable<providers.TransactionRequest> = {};
     protected _providerType: WalletProvider | undefined;
     protected _publicKey: string | undefined | null;
 
@@ -106,7 +116,7 @@ export class IAMBase {
     protected _natsConnection: NatsConnection | undefined;
     protected _jsonCodec: Codec<any> | undefined;
 
-    private ttl = bigNumberify(0);
+    private ttl = BigNumber.from(0);
 
     /**
      * IAM Constructor
@@ -121,7 +131,8 @@ export class IAMBase {
         ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new",
     }: ConnectionOptions = {}) {
         this._runningInBrowser = isBrowser();
-        errors.setLogLevel("error");
+
+        ethers.utils.Logger.setLogLevel(utils.Logger.levels.ERROR);
 
         this._connectionOptions = {
             privateKey,
@@ -228,8 +239,8 @@ export class IAMBase {
         }
         if (walletProvider && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)) {
             this._transactionOverrides = {
-                gasLimit: hexlify(4900000),
-                gasPrice: hexlify(0.1),
+                gasLimit: BigNumber.from(4900000),
+                gasPrice: parseUnits("0.01", "gwei"),
             };
             await this._walletConnectService.initialize(walletProvider);
             const wcProvider = this._walletConnectService.getProvider();

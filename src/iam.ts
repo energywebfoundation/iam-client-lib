@@ -1769,15 +1769,21 @@ export class IAM extends IAMBase {
     }
 
     // ### ASSETS ###
-    public async registerAsset() {
+    public async registerAsset(): Promise<string> {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
         }
         try {
-            const event = (await (await this._assetManager.createIdentity(this._address)).wait()).events?.find(
-                (e) => e.event === this._assetManager.interface.events.IdentityCreated.name,
+            const waitForIdentityCreated = new Promise<string>((resolve) =>
+                this._assetManager.once(
+                    this._assetManager.filters.IdentityCreated(null, this._address as string, null),
+                    (identity) => resolve(identity),
+                ),
             );
-            const identity = (event?.args as string[])[0];
+
+            await (await this._assetManager.createIdentity(this._address)).wait();
+
+            const identity = await waitForIdentityCreated;
 
             if (this._cacheClient) {
                 let asset = await this.getAssetById({ id: `did:ethr:${identity}` });

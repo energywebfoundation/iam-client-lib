@@ -24,12 +24,12 @@ import { createIam, root, rootOwner } from "./iam.test";
 import { mockJsonCodec, mockNats } from "./testUtils/mocks";
 import { chainConfigs } from "../src/iam/chainConfig";
 
-const { parseEther, namehash, BigNumber } = utils;
+const { parseEther, namehash } = utils;
 const { JsonRpcProvider } = providers;
 
 export const waitFor = (filter: EventFilter, contract: Contract): Promise<any> =>
     new Promise<any>((resolve) => {
-        contract.addListener(filter, (...args) => {
+        contract.on(filter, (...args) => {
             resolve(args);
         });
     }).then((args) => {
@@ -57,19 +57,19 @@ export const stakingTests = (): void => {
     const minStakingPeriod = 5;
 
     const calculateReward = (
-        stakeAmount: utils.BigNumber,
-        depositPeriod: utils.BigNumber,
-        patronRewardPortion: utils.BigNumber,
-    ): utils.BigNumber => {
-        const dailyInterestNumerator = new BigNumber(1000312);
-        const dailyInterestDenominator = new BigNumber(1000000);
-        const secInDay = new BigNumber(60 * 60 * 24);
+        stakeAmount: BigNumber,
+        depositPeriod: BigNumber,
+        patronRewardPortion: BigNumber,
+    ): BigNumber => {
+        const dailyInterestNumerator = BigNumber.from(1000312);
+        const dailyInterestDenominator = BigNumber.from(1000000);
+        const secInDay = BigNumber.from(60 * 60 * 24);
         const depositPeriodInterest = dailyInterestNumerator
             .div(dailyInterestDenominator)
             .pow(depositPeriod.div(secInDay));
         const accumulatedStake = stakeAmount.mul(depositPeriodInterest);
         const totalReward = accumulatedStake.sub(stakeAmount);
-        return totalReward.mul(patronRewardPortion).div(new BigNumber(1000));
+        return totalReward.mul(patronRewardPortion).div(BigNumber.from(1000));
     };
 
     xdescribe("Test scenario on VOLTA", () => {
@@ -103,9 +103,11 @@ export const stakingTests = (): void => {
                 (await factory.services(namehash(org))).pool,
             );
             expect(poolContract).not.toBeNull;
+            const MIN_STAKING_PERIOD = 1;
             const WITHDRAW_DELAY = 5;
             expect((await poolContract.minStakingPeriod()).eq(MIN_STAKING_PERIOD)).toBe(true);
             expect((await poolContract.withdrawDelay()).eq(WITHDRAW_DELAY));
+            const stakingService = await StakingPoolService.init(orgOwner);
 
             const pool = await stakingService.getPool(org);
             expect(pool).not.toBeNull();
@@ -457,7 +459,7 @@ export const stakingTests = (): void => {
                 const expectedReward = calculateReward(
                     stake,
                     depositEnd.sub(depositStart),
-                    new BigNumber(patronRewardPortion),
+                    BigNumber.from(patronRewardPortion),
                 );
                 expect(await pool.checkReward()).toEqual(expectedReward);
 

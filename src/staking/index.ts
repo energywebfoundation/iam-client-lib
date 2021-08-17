@@ -11,7 +11,7 @@ import { ERROR_MESSAGES } from "../errors";
 import { chainConfigs } from "../iam/chainConfig";
 import { emptyAddress } from "../utils/constants";
 
-const { namehash, BigNumber, parseUnits } = utils;
+const { namehash, parseUnits } = utils;
 
 export enum StakeStatus {
     NONSTAKING = 0,
@@ -33,9 +33,9 @@ export type Service = {
 };
 
 export type Stake = {
-    amount: utils.BigNumber;
-    depositStart: utils.BigNumber;
-    depositEnd: utils.BigNumber;
+    amount: BigNumber;
+    depositStart: BigNumber;
+    depositEnd: BigNumber;
     status: StakeStatus;
 };
 
@@ -91,13 +91,13 @@ export class StakingPoolService {
         /** organization ENS name */
         org: string;
         /** minimum staking period in seconds */
-        minStakingPeriod: number | utils.BigNumber;
+        minStakingPeriod: number | BigNumber;
         /** patron's part of the reward in fractions of thousandth */
         patronRewardPortion: number;
         /** roles required to stake */
         patronRoles: string[];
         /** stake put by service provider when pool is launched */
-        principal: utils.BigNumber;
+        principal: BigNumber;
     }): Promise<void> {
         await (
             await this._stakingPoolFactory.launchStakingPool(
@@ -160,11 +160,11 @@ export class StakingPool {
      */
     async putStake(
         /** stake amount */
-        stake: utils.BigNumber | number,
+        stake: BigNumber | number,
         transactionSpeed = TransactionSpeed.FAST,
     ): Promise<void> {
         if (typeof stake === "number") {
-            stake = new BigNumber(stake);
+            stake = BigNumber.from(stake);
         }
         if ((await this.getBalance()).lt(stake)) {
             throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
@@ -197,7 +197,7 @@ export class StakingPool {
     /**
      * Accumulated reward
      */
-    async checkReward(): Promise<utils.BigNumber> {
+    async checkReward(): Promise<BigNumber> {
         return this.pool.checkReward();
     }
 
@@ -263,12 +263,12 @@ export class StakingPool {
         return new StakingPool(signer as Required<Signer>, this.pool.address);
     }
 
-    private async now(): Promise<utils.BigNumber> {
+    private async now(): Promise<BigNumber> {
         const lastBlock = await this.pool.provider.getBlockNumber();
-        return new BigNumber((await this.pool.provider.getBlock(lastBlock)).timestamp);
+        return BigNumber.from((await this.pool.provider.getBlock(lastBlock)).timestamp);
     }
 
-    private async getBalance(): Promise<utils.BigNumber> {
+    private async getBalance(): Promise<BigNumber> {
         return await this.patron.provider.getBalance(await this.patron.getAddress());
     }
 }
