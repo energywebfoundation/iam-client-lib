@@ -14,6 +14,7 @@ import {
     StakeStatus,
     StakingPool,
     StakingPoolService,
+    WITHDRAW_DELAY,
 } from "../src/iam-client-lib";
 import { claimManager, ensRegistry, replenish, provider, deployer } from "./setup_contracts";
 import { createIam, root, rootOwner } from "./iam.test";
@@ -99,11 +100,8 @@ export const stakingTests = (): void => {
                 (await factory.services(namehash(org))).pool,
             );
             expect(poolContract).not.toBeNull;
-            const MIN_STAKING_PERIOD = 1;
-            const WITHDRAW_DELAY = 5;
             expect((await poolContract.minStakingPeriod()).eq(MIN_STAKING_PERIOD)).toBe(true);
             expect((await poolContract.withdrawDelay()).eq(WITHDRAW_DELAY));
-            const stakingService = await StakingPoolService.init(orgOwner);
 
             const pool = await stakingService.getPool(org);
             expect(pool).not.toBeNull();

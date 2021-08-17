@@ -20,7 +20,7 @@
         "build:typechain:roles": " npm run build:typechain:claimManager && npm run build:typechain:roledefinitionresolver && npm run build:typechain:domainnotifier && npm run build:typechain:publicresolver",
         "build:typechain:staking": "npm run build:typechain:rewardpool && npm run build:typechain:stakingpool",
         "build:typechain:offerableIdentity": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@ew-did-registry/proxyidentity/build/contracts/OfferableIdentity.json\"",
-        "build:typechain:identityManager": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/IdentityManager.json\"",
+        "build:typechain:identityManager": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@ew-did-registry/proxyidentity/build/contracts/IdentityManager.json\"",
         "build:typechain:claimManager": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/ClaimManager.json\"",
         "build:typechain:roledefinitionresolver": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/RoleDefinitionResolver.json\"",
         "build:typechain:domainnotifier": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/DomainNotifier.json\"",
@@ -58,7 +58,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.12.5",
-        "@energyweb/iam-contracts": "1.17.1",
+        "@energyweb/iam-contracts": "2.0.0",
         "@ensdomains/ens": "^0.4.5",
         "@ew-did-registry/claims": "0.5.2-alpha.57.0",
         "@ew-did-registry/did": "0.5.2-alpha.57.0",
@@ -108,8 +108,6 @@
         "jest": "^26.4.2",
         "jest-config": "^26.4.2",
         "jest-environment-jsdom": "^26.6.2",
-        "lint-staged": "^11.1.1",
-        "prettier": "^2.3.2",
         "rimraf": "^3.0.2",
         "rollup-plugin-typescript2": "^0.27.2",
         "run-with-testrpc": "0.3.1",
@@ -118,7 +116,9 @@
         "typechain": "^5.0.0",
         "typedoc": "^0.21.5",
         "typedoc-plugin-markdown": "~3.10.4",
-        "typescript": "^4.0.2"
+        "typescript": "^4.0.2",
+        "lint-staged": "^11.1.1",
+        "prettier": "^2.3.2"
     },
     "husky": {
         "hooks": {
