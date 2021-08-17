@@ -1,14 +1,10 @@
-import {
-    StakingPoolFactory__factory,
-    IRoleDefinition,
-    RewardPool__factory,
-    StakingPool__factory,
-    VOLTA_CHAIN_ID,
-    VOLTA_REWARD_POOL_ADDRESS,
-} from "@energyweb/iam-contracts";
-import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
-import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
-import { EventFilter, Contract, Wallet, utils, providers } from "ethers";
+import { IRoleDefinition, VOLTA_CHAIN_ID, VOLTA_REWARD_POOL_ADDRESS } from "@energyweb/iam-contracts";
+import { StakingPoolFactory__factory } from "../ethers/factories/StakingPoolFactory__factory";
+import { RewardPool__factory } from "../ethers/factories/RewardPool__factory";
+import { StakingPool__factory } from "../ethers/factories/StakingPool__factory";
+import { StakingPoolFactory } from "../ethers/StakingPoolFactory";
+import { StakingPool as StakingPoolContract } from "../ethers/StakingPool";
+import { EventFilter, Contract, Wallet, utils, providers, BigNumber } from "ethers";
 import { Methods } from "@ew-did-registry/did";
 import {
     ERROR_MESSAGES,

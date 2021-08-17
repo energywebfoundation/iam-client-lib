@@ -4,7 +4,6 @@ import {
     DomainTransactionFactory,
     DomainHierarchy,
     ResolverContractType,
-    ClaimManager__factory,
 } from "@energyweb/iam-contracts";
 import {
     EwJsonRpcSigner,
@@ -25,9 +24,10 @@ import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
-import { ClaimManager } from "@energyweb/iam-contracts/dist";
-import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
-import { EnsRegistry } from "../../ethers/EnsRegistry";
+import { ENSRegistry__factory } from "../../ethers/factories/ENSRegistry__factory";
+import { ENSRegistry } from "../../ethers/ENSRegistry";
+import { ClaimManager__factory } from "../../ethers/factories/ClaimManager__factory";
+import { ClaimManager } from "../../ethers/ClaimManager";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { isBrowser } from "../utils/isBrowser";
@@ -41,14 +41,13 @@ import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
 import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 import { cacheServerClientOptions, chainConfigs, messagingOptions, MessagingOptions } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
-import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
-import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
+import { OfferableIdentity__factory } from "../../ethers/factories/OfferableIdentity__factory";
+import { IdentityManager__factory } from "../../ethers/factories/IdentityManager__factory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 
 const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
-const { abi: abi1056 } = ethrReg;
 
 export type ConnectionOptions = {
     /** only required in node env */
@@ -100,7 +99,7 @@ export class IAMBase {
     protected _ipfsStore: DidStore;
     protected _jwt: JWT | undefined;
 
-    protected _ensRegistry: EnsRegistry;
+    protected _ensRegistry: ENSRegistry;
     protected _domainDefinitionTransactionFactory: DomainTransactionFactory;
     protected _domainDefinitionReader: DomainReader;
     protected _domainHierarchy: DomainHierarchy;
@@ -634,8 +633,8 @@ export class IAMBase {
 
         this._ensRegistryAddress = ensRegistryAddress;
         this._ensResolverAddress = ensResolverAddress;
-        this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
-        this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
+        this._assetManager = IdentityManager__factory.connect(assetManagerAddress, this._signer);
+        this._ensRegistry = ENSRegistry__factory.connect(ensRegistryAddress, this._provider);
         this._domainDefinitionReader = new DomainReader({ ensRegistryAddress, provider: this._provider });
         ensPublicResolverAddress &&
             this._domainDefinitionReader.addKnownResolver({
@@ -673,7 +672,7 @@ export class IAMBase {
         offerTo: string;
         assetContractAddress: string;
     }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
             data: asset.interface.encodeFunctionData("offer", [offerTo]),
             to: assetContractAddress,
@@ -681,7 +680,7 @@ export class IAMBase {
     }
 
     protected acceptOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
             data: asset.interface.encodeFunctionData("acceptOffer"),
             to: assetContractAddress,
@@ -689,7 +688,7 @@ export class IAMBase {
     }
 
     protected rejectOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
             data: asset.interface.encodeFunctionData("rejectOffer"),
             to: assetContractAddress,
@@ -697,7 +696,7 @@ export class IAMBase {
     }
 
     protected cancelOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
             data: asset.interface.encodeFunctionData("cancelOffer"),
             to: assetContractAddress,

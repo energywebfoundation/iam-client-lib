@@ -1,6 +1,7 @@
-import { DomainHierarchy, PublicResolver__factory } from "@energyweb/iam-contracts";
+import { DomainHierarchy } from "@energyweb/iam-contracts";
 import { Wallet, providers, utils } from "ethers";
-import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
+import { ENSRegistry__factory } from "../../ethers/factories/ENSRegistry__factory";
+import { PublicResolver__factory } from "../../ethers/factories/PublicResolver__factory";
 import { NODE_FIELDS_KEY } from "./constants";
 import { labelhash } from "./ENS_hash";
 
@@ -36,7 +37,7 @@ export async function changeResolver({
 
     const provider = new JsonRpcProvider(rpcUrl);
     const wallet = new Wallet(privateKey, provider);
-    const registry = EnsRegistryFactory.connect(registryAddr, wallet);
+    const registry = ENSRegistry__factory.connect(registryAddr, wallet);
     const resolver = PublicResolver__factory.connect(resolverAddr, wallet);
     const newResolver = PublicResolver__factory.connect(newResolverAddr, wallet);
 

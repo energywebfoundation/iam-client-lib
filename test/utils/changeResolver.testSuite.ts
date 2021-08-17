@@ -1,10 +1,6 @@
-import {
-    DomainHierarchy,
-    DomainReader,
-    RoleDefinitionResolver__factory,
-    DomainNotifier__factory,
-    ResolverContractType,
-} from "@energyweb/iam-contracts";
+import { DomainHierarchy, DomainReader, ResolverContractType } from "@energyweb/iam-contracts";
+import { RoleDefinitionResolver__factory } from "../../ethers/factories/RoleDefinitionResolver__factory";
+import { DomainNotifier__factory } from "../../ethers/factories/DomainNotifier__factory";
 import { changeResolver, ChangeResolverParams } from "../../src/utils/change_resolver";
 import { rpcUrl } from "../setup_contracts";
 import { root, rootOwner } from "../iam.test";

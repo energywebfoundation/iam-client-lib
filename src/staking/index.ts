@@ -1,12 +1,9 @@
-import {
-    DomainReader,
-    ResolverContractType,
-    StakingPoolFactory__factory,
-    StakingPool__factory,
-} from "@energyweb/iam-contracts";
-import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
-import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
-import { Signer, utils } from "ethers";
+import { DomainReader, ResolverContractType } from "@energyweb/iam-contracts";
+import { StakingPool as StakingPoolContract } from "../../ethers/StakingPool";
+import { StakingPool__factory } from "../../ethers/factories/StakingPool__factory";
+import { StakingPoolFactory } from "../../ethers/StakingPoolFactory";
+import { StakingPoolFactory__factory } from "../../ethers/factories/StakingPoolFactory__factory";
+import { Signer, utils, BigNumber } from "ethers";
 import { ERROR_MESSAGES } from "../errors";
 import { chainConfigs } from "../iam/chainConfig";
 import { emptyAddress } from "../utils/constants";
