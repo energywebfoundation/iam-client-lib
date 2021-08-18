@@ -163,7 +163,6 @@ export class IAMBase {
 
         this.setResolver();
         this.setJWT();
-        this.storeSession();
     }
 
     private async initSigner({
@@ -274,6 +273,7 @@ export class IAMBase {
         this._didSigner = new Owner(this._signer, this._provider, this._publicKey);
         await this.setDocument();
         this.setClaims();
+        this.storeSession();
     }
 
     /**
