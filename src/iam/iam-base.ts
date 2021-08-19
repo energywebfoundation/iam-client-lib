@@ -159,6 +159,7 @@ export class IAMBase {
         await this.setAddress();
         this.setDid();
         await this.initChain();
+        await this.checkBalanceForConnection();
         this.initEventHandlers();
 
         if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
@@ -167,6 +168,13 @@ export class IAMBase {
 
         this.setResolver();
         this.setJWT();
+    }
+
+    private async checkBalanceForConnection() {
+        const balance = await this._signer?.provider?.getBalance(await this._signer?.getAddress());
+        if (balance?.toString() === "0") {
+            throw new Error(ERROR_MESSAGES.LOGIN_NOT_ENOUGHT_TOKENS);
+        }
     }
 
     private async initSigner({
