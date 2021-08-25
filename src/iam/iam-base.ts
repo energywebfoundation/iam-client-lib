@@ -170,9 +170,13 @@ export class IAMBase {
         this.setJWT();
     }
 
-    private async checkBalanceForConnection() {
-        const balance = await this._signer?.provider?.getBalance(await this._signer?.getAddress());
-        if (balance?.toString() === "0") {
+    private async checkBalanceForConnection(): Promise<void> {
+        const gasPrice = await this._provider.getGasPrice();
+        const gas = await this._provider.estimateGas(this._transactionOverrides);
+        const balance =
+            (await this._signer?.provider?.getBalance(await this._signer?.getAddress())) || BigNumber.from(0);
+        const fee = gasPrice.mul(gas).mul(2);
+        if (balance.lte(fee)) {
             throw new Error(ERROR_MESSAGES.LOGIN_NOT_ENOUGHT_TOKENS);
         }
     }
