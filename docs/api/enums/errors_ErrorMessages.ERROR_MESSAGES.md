@@ -11,7 +11,6 @@
 - [CACHE\_SERVER\_NOT\_REGISTERED](errors_ErrorMessages.ERROR_MESSAGES.md#cache_server_not_registered)
 - [CLAIMS\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#claims_not_initialized)
 - [CLAIM\_PUBLISHER\_NOT\_REQUESTER](errors_ErrorMessages.ERROR_MESSAGES.md#claim_publisher_not_requester)
-- [CONNECTION\_OPTIONS\_IN\_NODE\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#connection_options_in_node_not_provided)
 - [DID\_DOCUMENT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#did_document_not_initialized)
 - [ENS\_REGISTRY\_CONTRACT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_registry_contract_not_initialized)
 - [ENS\_REGISTRY\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_registry_not_initialized)
@@ -27,10 +26,12 @@
 - [ONCHAIN\_ROLE\_VERSION\_NOT\_SPECIFIED](errors_ErrorMessages.ERROR_MESSAGES.md#onchain_role_version_not_specified)
 - [ORG\_WITH\_APPS](errors_ErrorMessages.ERROR_MESSAGES.md#org_with_apps)
 - [ORG\_WITH\_ROLES](errors_ErrorMessages.ERROR_MESSAGES.md#org_with_roles)
+- [PRIVATE\_KEY\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#private_key_not_provided)
 - [PROVIDER\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#provider_not_initialized)
 - [PUBLIC\_KEY\_NOT\_RECOVERED](errors_ErrorMessages.ERROR_MESSAGES.md#public_key_not_recovered)
 - [ROLE\_NOT\_EXISTS](errors_ErrorMessages.ERROR_MESSAGES.md#role_not_exists)
 - [ROLE\_PREREQUISITES\_NOT\_MET](errors_ErrorMessages.ERROR_MESSAGES.md#role_prerequisites_not_met)
+- [RPC\_URL\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#rpc_url_not_provided)
 - [SIGNER\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#signer_not_initialized)
 - [STAKE\_WAS\_NOT\_PUT](errors_ErrorMessages.ERROR_MESSAGES.md#stake_was_not_put)
 - [UNABLE\_TO\_OBTAIN\_PUBLIC\_KEY](errors_ErrorMessages.ERROR_MESSAGES.md#unable_to_obtain_public_key)
@@ -68,12 +69,6 @@ ___
 ### CLAIM\_PUBLISHER\_NOT\_REQUESTER
 
 • **CLAIM\_PUBLISHER\_NOT\_REQUESTER** = `"Claim subject is not controlled by publisher"`
-
-___
-
-### CONNECTION\_OPTIONS\_IN\_NODE\_NOT\_PROVIDED
-
-• **CONNECTION\_OPTIONS\_IN\_NODE\_NOT\_PROVIDED** = `"IAM can not be initialized in Node.js environment without private key or rpc url"`
 
 ___
 
@@ -167,6 +162,12 @@ ___
 
 ___
 
+### PRIVATE\_KEY\_NOT\_PROVIDED
+
+• **PRIVATE\_KEY\_NOT\_PROVIDED** = `"IAM can not be initialized in Node.js environment without private key"`
+
+___
+
 ### PROVIDER\_NOT\_INITIALIZED
 
 • **PROVIDER\_NOT\_INITIALIZED** = `"Provider not initialized"`
@@ -188,6 +189,12 @@ ___
 ### ROLE\_PREREQUISITES\_NOT\_MET
 
 • **ROLE\_PREREQUISITES\_NOT\_MET** = `"Enrolment subject doesn't have required roles"`
+
+___
+
+### RPC\_URL\_NOT\_PROVIDED
+
+• **RPC\_URL\_NOT\_PROVIDED** = `"IAM can not be initialized in Node.js environment without rpc url"`
 
 ___
 

@@ -30,7 +30,7 @@ import { ClaimManager__factory } from "../../ethers/factories/ClaimManager__fact
 import { ClaimManager } from "../../ethers/ClaimManager";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
-import { isBrowser } from "../utils/isBrowser";
+import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
@@ -75,7 +75,7 @@ export type Transaction = {
  * @class
  */
 export class IAMBase {
-    protected _runningInBrowser: boolean;
+    protected _executionEnvironment: ExecutionEnvironment;
     protected _connectionOptions: ConnectionOptions;
 
     protected _did: string | undefined;
@@ -130,7 +130,7 @@ export class IAMBase {
         privateKey,
         ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new",
     }: ConnectionOptions = {}) {
-        this._runningInBrowser = isBrowser();
+        this._executionEnvironment = detectExecutionEnvironment();
 
         ethers.utils.Logger.setLogLevel(utils.Logger.levels.ERROR);
 
@@ -145,7 +145,7 @@ export class IAMBase {
 
         // Need to get providerType and publicKey in constructor because they are used
         // to infer if the session is active.
-        if (this._runningInBrowser) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
             this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
             this._publicKey = localStorage.getItem(PUBLIC_KEY);
         }
@@ -168,7 +168,7 @@ export class IAMBase {
         await this.initChain();
         this.initEventHandlers();
 
-        if (this._runningInBrowser) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
             await this.setupMessaging();
         }
 
@@ -187,9 +187,12 @@ export class IAMBase {
     }) {
         const { privateKey, rpcUrl } = this._connectionOptions;
 
-        if (!this._runningInBrowser) {
-            if (!privateKey || !rpcUrl) {
-                throw new Error(ERROR_MESSAGES.CONNECTION_OPTIONS_IN_NODE_NOT_PROVIDED);
+        if (this._executionEnvironment === ExecutionEnvironment.NODE) {
+            if (!privateKey) {
+                throw new Error(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
+            }
+            if (!rpcUrl) {
+                throw new Error(ERROR_MESSAGES.RPC_URL_NOT_PROVIDED);
             }
         }
 
@@ -306,14 +309,14 @@ export class IAMBase {
     }
 
     private storeSession() {
-        if (this._runningInBrowser && this._didSigner) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER && this._didSigner) {
             this._providerType && localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
             this._didSigner.publicKey && localStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
         }
     }
 
     protected clearSession() {
-        if (this._runningInBrowser) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
             localStorage.removeItem(WALLET_PROVIDER);
             localStorage.removeItem(PUBLIC_KEY);
         }
