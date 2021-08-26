@@ -1,10 +1,13 @@
 # Overview
 
-The iam-client-library provides high-level functions related to the identity and access management domain of the Energy Web Stack. 
+The iam-client-library provides high-level functions related to the identity and access management domain of the Energy Web Stack. It allows you to anchor assets on the Energy Web Chain and managing their participation in and access to utility packages and applications built on top of the blockchain. This includes:
+
+- Creating and managing digital identities, which are the primary form of identification in EW-DOS
+- Facilitating claim(credential) requests and issuance for digital identities
+- Creating and managing Organizations, Assets and Applicationss 
+
 
 ## Identity
-
-The library manages the fetching, updating and revoking of digital identities. 
 
 Identity in EW_DOS is established through a [Decentralized Identity (DID)](https://www.w3.org/TR/did-core/). A DID is a digital, verifiable identity that is user-generated and not coupled to any centralized institution. It can be used to identify any subject, such as a non-tangible asset, a customer, or an organization.
 
@@ -12,6 +15,7 @@ Identity in EW_DOS is established through a [Decentralized Identity (DID)](https
 
 Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-use-cases/#dfn-did-documents). The DID Document contains information on the DID subject such as its public keys and authentication mechanisms, attributes and claims. Only the owner of the DID can update this information. 
 
+The iam-client-lib manages the DID lifecycle:
 [getDidDocument](../api/classes/iam.md#getdiddocument)
 [updateDidDocument](../api/classes/iam.md#updatediddocument)
 [revokeDidDocument](../api/classes/iam.md#revokediddocument)
