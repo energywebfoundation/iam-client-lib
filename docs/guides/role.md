@@ -8,7 +8,7 @@ TO DO:
 */
 
 ## Public APIs:
-[createOrganization](../api/classes/iam.md#createorganization),
-[createApplication](../api/classes/iam.md#createapplication) and 
-[createRole](../api/classes/iam.md#createrole) functions.
+- [createOrganization](../api/classes/iam.md#createorganization),
+- [createApplication](../api/classes/iam.md#createapplication) and 
+- [createRole](../api/classes/iam.md#createrole) functions.
 

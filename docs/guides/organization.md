@@ -12,5 +12,5 @@ TO DO:
 
 ## Public APIs:
 - [createOrganization](../api/classes/iam.md#createorganization)
-- [deleteOrganization](../api/classes/iam.md#deleteorganization
+- [deleteOrganization](../api/classes/iam.md#deleteorganization)
 - [getOrgHierarchy](../api/classes/iam.md#getorghierarchy)

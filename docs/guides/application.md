@@ -7,8 +7,8 @@ TO DO:
 */
 
 ## Public APIs
-- [getAppsByOrgNamespace](../api/classes/iam.md#createorganization), 
-- [createApplication](../api/classes/iam.md#getorghierarchy),
-- [deleteApplication](../api/classes/iam.md#deleteorganization,
+- [getAppsByOrgNamespace](../api/classes/iam.md#createorganization)
+- [createApplication](../api/classes/iam.md#getorghierarchy)
+- [deleteApplication](../api/classes/iam.md#deleteorganization)
 
 
