@@ -381,7 +381,7 @@ export class IAM extends IAMBase {
      * publishPublicClaim
      *
      * @description store claim data in ipfs and save url to DID document services
-     * @returns ulr to ipfs //WE NEVER EXPLAIN IPFS
+     * @returns ulr to ipfs
      *
      */
     async publishPublicClaim({ token }: { token: string }) {
@@ -444,7 +444,7 @@ export class IAM extends IAMBase {
      * createProofClaim
      *
      * @description creates a proof of a claim
-     * @returns proof token //WHAT IS A PROOF TOKEN?
+     * @returns proof token
      *
      */
     async createProofClaim({ claimUrl, saltedFields }: { claimUrl: string; saltedFields: ISaltedFields }) {
@@ -494,7 +494,7 @@ export class IAM extends IAMBase {
      * verifyPublicClaim
      *
      * @description verifies issued token of claim
-     * @returns public claim data //WHY DO WE HAVE RETURNS HERE AND NOWHERE ELSE?
+     * @returns public claim data
      *
      */
     async verifyPublicClaim({ issuedToken }: { issuedToken: string }) {
@@ -521,7 +521,7 @@ export class IAM extends IAMBase {
     /**
      * getUserClaims
      *
-     * @description get user claims *** FROM DID DOCUMENT'S SERVICE ENDPOINT
+     * @description get user claims
      *
      */
     async getUserClaims({ did = this._did }: { did?: string } | undefined = {}) {
@@ -593,7 +593,7 @@ export class IAM extends IAMBase {
         if (currentResolverAddress === ensPublicResolverAddress) {
             const updateResolverTransaction: EncodedCall = {
                 to: ensRegistryAddress,
-                data: this._ensRegistry.interface.functions.setResolver.encode([node, ensResolverAddress]),
+                data: this._ensRegistry.interface.encodeFunctionData("setResolver", [node, ensResolverAddress]),
             };
             // Need to use newRole/newDomain as need to set reverse domain name
             const updateDomain = DomainReader.isRoleDefinition(data)
@@ -1144,7 +1144,7 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description Get all applications for a given organization namespace CHECK THIS ONE!!!!
+     * getENSTypesBySearchPhrase
      */
     getENSTypesBySearchPhrase({ types, search }: { types?: ("App" | "Org" | "Role")[]; search: string }) {
         if (!this._cacheClient) {
@@ -1155,8 +1155,11 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description Get all applications for a given organization namespace
-     * @returns If applications, an array of applications; else []
+     * getENSTypesByOwner
+     *
+     * @description get all applications for organization namespace
+     * @returns array of subdomains or empty array when there is no subdomains
+     *
      */
     getAppsByOrgNamespace({ namespace }: { namespace: string }) {
         if (!this._cacheClient) {
@@ -1166,8 +1169,11 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description Get all sub-organizations for a given organization namespace
-     * @returns If sub-organizations, an array of subdomains; else []
+     * getSubOrgsByOrgNamespace
+     *
+     * @description get all sub organizations for organization namespace
+     * @returns array of subdomains or empty array when there is no subdomains
+     *
      */
     getSubOrgsByOrgNamespace({ namespace }: { namespace: string }) {
         if (!this._cacheClient) {
@@ -1177,8 +1183,11 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description Get the hierarchy of an organization (20 levels deep)
-     * @returns Organization with all nested sub-organizations
+     * getOrgHierarchy
+     *
+     * @description get all hierarchy of an organization (20 levels deep)
+     * @returns organization with all nested subOrgs
+     *
      */
     async getOrgHierarchy({ namespace }: { namespace: string }): Promise<IOrganization> {
         if (!this._cacheClient) {
@@ -1192,8 +1201,11 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description Get all users who have a specified role
-     * @returns Array of DIDs
+     * getRoleDIDs
+     *
+     * @description get all users did which have certain role
+     * @returns array of did's
+     *
      */
     getRoleDIDs({ namespace }: { namespace: string }) {
         if (!this._cacheClient) {
@@ -1205,8 +1217,8 @@ export class IAM extends IAMBase {
     /**
      * getSubdomains
      *
-     * @description Get all subdomains for a domain
-     * @returns If subdomains, an array of subdomains; else an empty array
+     * @description get all subdomains for certain domain
+     * @returns array of subdomains or empty array when there is no subdomains
      *
      */
     async getSubdomains({
@@ -1223,8 +1235,11 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description Verify existence of a domain in ENS registry
-     * @returns boolean
+     * checkExistenceOfDomain
+     *
+     * @description check existence of domain in ENS registry
+     * @returns true or false whatever the domain is present
+     *
      */
     async checkExistenceOfDomain({ domain }: { domain: string }) {
         if (this._ensRegistry) {
@@ -1244,9 +1259,9 @@ export class IAM extends IAMBase {
     /**
      * isOwner
      *
-     * @description Check if a domain is owned by the user
+     * @description check ownership of the domain
      * @default if user is not specified it will check the current logged user
-     * @returns boolean
+     * @returns true or false whatever the passed is user is a owner of domain
      *
      */
     async isOwner({ domain, user = this._address }: { domain: string; user?: string }) {
@@ -1259,8 +1274,11 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description Check the ownership of the domain and subdomains of an organization, application or role
-     * @returns boolean whatever the passed is user is a owner of an organization, application or role
+     * validateOwnership
+     *
+     * @description check ownership of the domain and subdomains of org, app or role
+     * @returns true or false whatever the passed is user is a owner of org, app or role
+     *
      */
     async validateOwnership({ namespace, type }: { namespace: string; type: ENSNamespaceTypes }) {
         return this.nonOwnedNodesOf({ namespace, type, owner: this._address as string });
@@ -1438,9 +1456,7 @@ export class IAM extends IAMBase {
 
         return canonizeSig(await this._signer.signMessage(arrayify(proofHash)));
     }
-     /**
-     * @description - Create a request for an on-chain or off-chain public claim
-     */
+
     async createClaimRequest({
         claim,
         subject,
@@ -1490,9 +1506,7 @@ export class IAM extends IAMBase {
             throw new NATSConnectionNotEstablishedError();
         }
     }
-    /**
-     * @description - Issue a public claim request or an on-chain of off-chain public request (might be good to distinguis between the Registration types)
-     */
+
     async issueClaimRequest({
         requester,
         token,
@@ -1566,9 +1580,7 @@ export class IAM extends IAMBase {
             throw new NATSConnectionNotEstablishedError();
         }
     }
-    /**
-     * @description - Allows user to reject an issued claim request
-     */
+
     async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
         if (!this._did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1591,9 +1603,7 @@ export class IAM extends IAMBase {
         const dataToSend = this._jsonCodec?.encode(preparedData);
         this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
     }
-     /**
-     * @description - Deletes a claim
-     */
+
     async deleteClaim({ id }: { id: string }) {
         if (this._cacheClient) {
             await this._cacheClient.deleteClaim({ claimId: id });
@@ -1657,15 +1667,13 @@ export class IAM extends IAMBase {
     }
 
     // CLAIMS
-     /**
-     * @description - Returns claims for given subject.
-     */
+
     async getClaimsBySubjects(subjects: string[]) {
         return this._cacheClient.getClaimsBySubjects(subjects);
     }
 
     /**
-     * @description - Returns all claims for a given claim requester. Allows for filtering by claim status (accepted and non-accepted) and parent namespace
+     * @description - Returns claims for given requester. Allows filtering by status and parent namespace
      */
     async getClaimsByRequester({
         did,
@@ -1683,7 +1691,7 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description - Returns all claims for given claim issuer. Allows for filtering by claim status (accepted and non-accepted) and parent namespace
+     * @description - Returns claims for given issuer. Allows filtering by status and parent namespace
      */
     async getClaimsByIssuer({
         did,
@@ -1701,7 +1709,7 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * @description - Returns all claims for given subject. Allows for filtering by claim status (accepted and non-accepted) and parent namespace
+     * @description - Returns claims for given subject. Allows filtering by status and parent namespace
      */
     async getClaimsBySubject({
         did,
@@ -1761,15 +1769,21 @@ export class IAM extends IAMBase {
     }
 
     // ### ASSETS ###
-    public async registerAsset() {
+    public async registerAsset(): Promise<string> {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
         }
         try {
-            const event = (await (await this._assetManager.createIdentity(this._address)).wait()).events?.find(
-                (e) => e.event === this._assetManager.interface.events.IdentityCreated.name,
+            const waitForIdentityCreated = new Promise<string>((resolve) =>
+                this._assetManager.once(
+                    this._assetManager.filters.IdentityCreated(null, this._address as string, null),
+                    (identity) => resolve(identity),
+                ),
             );
-            const identity = (event?.args as string[])[0];
+
+            await (await this._assetManager.createIdentity(this._address)).wait();
+
+            const identity = await waitForIdentityCreated;
 
             if (this._cacheClient) {
                 let asset = await this.getAssetById({ id: `did:ethr:${identity}` });
