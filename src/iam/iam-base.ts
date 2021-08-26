@@ -48,7 +48,7 @@ import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const { parseUnits } = utils;
-const { JsonRpcProvider } = providers;
+const { JsonRpcProvider, Web3Provider } = providers;
 
 export type ConnectionOptions = {
     /** only required in node env */
@@ -193,9 +193,6 @@ export class IAMBase {
             if (!rpcUrl) {
                 throw new Error(ERROR_MESSAGES.RPC_URL_NOT_PROVIDED);
             }
-        }
-
-        if (privateKey && rpcUrl) {
             this._provider = new JsonRpcProvider({ url: rpcUrl });
             this._signer = new Wallet(privateKey, this._provider);
             return;
@@ -229,10 +226,10 @@ export class IAMBase {
                     ],
                 });
             }
-            this._signer = new providers.Web3Provider(metamaskProvider).getSigner();
-
             this._providerType = walletProvider;
-            this._provider = this._signer.provider as providers.Web3Provider;
+            this._provider = new providers.Web3Provider(metamaskProvider);
+            this._signer = this._provider.getSigner();
+
             console.log("metamask chain id:", (await this._provider.getNetwork()).chainId);
             return;
         }
@@ -287,8 +284,10 @@ export class IAMBase {
                 new EwPrivateKeySigner(privateKey, { type: ProviderTypes.HTTP, uriOrInfo: rpcUrl }),
             );
         } else if (this._provider instanceof WalletConnectProvider) {
+            this._didSigner = IdentityOwner.fromJsonRpcSigner(new EwJsonRpcSigner(this._provider), this._publicKey);
+        } else if (this._provider instanceof Web3Provider) {
             this._didSigner = IdentityOwner.fromJsonRpcSigner(
-                new EwJsonRpcSigner(this._provider as WalletConnectProvider),
+                new EwJsonRpcSigner(this._provider.jsonRpcFetchFunc),
                 this._publicKey,
             );
         } else {
