@@ -1,12 +1,10 @@
 import SafeAppSdk from "@gnosis.pm/safe-apps-sdk";
-import { utils } from "ethers";
+import { BigNumber } from "ethers";
 import { IApp, IOrganization, IRole } from "./cacheServerClient/cacheServerClient.types";
 import { CacheClientNotProvidedError, ERROR_MESSAGES } from "./errors";
 import { ENSNamespaceTypes, IAM } from "./iam";
 import { ConnectionOptions, Transaction } from "./iam/iam-base";
 import { emptyAddress } from "./utils/constants";
-
-const { bigNumberify } = utils;
 
 /**
  * @class GnosisIam
@@ -23,7 +21,7 @@ export class GnosisIam extends IAM {
     }
 
     protected async send(tx: Transaction) {
-        const safeTxGas = bigNumberify((await this._transactionOverrides.gasLimit) || "").toNumber();
+        const safeTxGas = BigNumber.from((await this._transactionOverrides.gasLimit) || "").toNumber();
 
         if (tx.from === this._safeAddress) {
             await this.safeAppSdk.txs.send({

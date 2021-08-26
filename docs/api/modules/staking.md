@@ -41,7 +41,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `amount` | `utils.BigNumber` |
-| `depositEnd` | `utils.BigNumber` |
-| `depositStart` | `utils.BigNumber` |
+| `amount` | `BigNumber` |
+| `depositEnd` | `BigNumber` |
+| `depositStart` | `BigNumber` |
 | `status` | [`StakeStatus`](../enums/staking.StakeStatus.md) |
