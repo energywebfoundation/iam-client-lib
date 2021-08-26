@@ -6,11 +6,16 @@ Currently the iam-client library supports two domains: **[Organization](../guide
 
 ![Domain Hierarchy](../images/domainHierarchy.png)
 
-Organization is the top-level domain. It can have an unlimited number of sub-organizations underneath of it. 
+1. **Organization** is the top-level domain. It can have an unlimited number of sub-organizations underneath of it. 
 
-An Application is nested under an Organization or a Sub-organization. An Organization or Sub Organization can have an unlimited number of Applications. 
+2. An **Application** is nested under an Organization or a Sub-organization. An Organization or Sub-organization can have an unlimited number of Applications. 
 
-**A [Role](../guides/roles.md)** is nested under an Organization or an Application. A Role is used to determine an actor within an organization or an application, and criteria for participation. A user can submit claims (verifiable credentials) to prove that they meet the criteria that the Role requires. Other parties can verify these claims.
+**A [Role](../guides/roles.md)** is nested under an Organization or an Application. A Role is used to define an actor within an Organization or an Application, and criteria for participation. A user can submit claims (verifiable credentials) to prove that they meet the criteria that the Role requires. Other parties can verify these claims.
+
+### Example:
+- Energy Web Foundation is an **Organization**,
+- Decentralized Service Bus is an **Application** belonging to Energy Web Foundation.
+- Message Broker is a **Role** within the Decentralized Service Bus. A user must have a DID from a pre-defined list in order to take on the role of 
 
 
 
