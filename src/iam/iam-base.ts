@@ -1,44 +1,54 @@
-import { providers, Signer, utils, errors, Wallet } from "ethers";
+import { providers, Signer, utils, Wallet, BigNumber, ethers } from "ethers";
 import {
     DomainReader,
     DomainTransactionFactory,
     DomainHierarchy,
     ResolverContractType,
-    ClaimManager__factory,
 } from "@energyweb/iam-contracts";
-import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import {
+    EwJsonRpcSigner,
+    EwPrivateKeySigner,
+    IdentityOwner,
+    Operator,
+    Resolver,
+} from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
-import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
+import {
+    IServiceEndpoint,
+    RegistrySettings,
+    KeyTags,
+    IPublicKey,
+    ProviderTypes,
+} from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
-import { ClaimManager } from "@energyweb/iam-contracts/dist";
-import { EnsRegistryFactory } from "../../ethers/EnsRegistryFactory";
-import { EnsRegistry } from "../../ethers/EnsRegistry";
+import { ENSRegistry__factory } from "../../ethers/factories/ENSRegistry__factory";
+import { ENSRegistry } from "../../ethers/ENSRegistry";
+import { ClaimManager__factory } from "../../ethers/factories/ClaimManager__factory";
+import { ClaimManager } from "../../ethers/ClaimManager";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
-import { isBrowser } from "../utils/isBrowser";
+import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
-import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
-import { Owner as IdentityOwner, Owner } from "../signer/Owner";
 import { WalletProvider } from "../types/WalletProvider";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
 import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 import { cacheServerClientOptions, chainConfigs, messagingOptions, MessagingOptions } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
-import { OfferableIdentityFactory } from "../../ethers/OfferableIdentityFactory";
-import { IdentityManagerFactory } from "../../ethers/IdentityManagerFactory";
+import { OfferableIdentity__factory } from "../../ethers/factories/OfferableIdentity__factory";
+import { IdentityManager__factory } from "../../ethers/factories/IdentityManager__factory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
-const { hexlify, bigNumberify } = utils;
+const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
-const { abi: abi1056 } = ethrReg;
 
 export type ConnectionOptions = {
     /** only required in node env */
@@ -65,7 +75,7 @@ export type Transaction = {
  * @class
  */
 export class IAMBase {
-    protected _runningInBrowser: boolean;
+    protected _executionEnvironment: ExecutionEnvironment;
     protected _connectionOptions: ConnectionOptions;
 
     protected _did: string | undefined;
@@ -77,7 +87,7 @@ export class IAMBase {
     protected _safeAddress: string | undefined;
     protected _didSigner: IdentityOwner | undefined;
     protected _identityToken: string | undefined;
-    protected _transactionOverrides: TransactionOverrides = {};
+    protected _transactionOverrides: utils.Deferrable<providers.TransactionRequest> = {};
     protected _providerType: WalletProvider | undefined;
     protected _publicKey: string | undefined | null;
 
@@ -90,7 +100,7 @@ export class IAMBase {
     protected _ipfsStore: DidStore;
     protected _jwt: JWT | undefined;
 
-    protected _ensRegistry: EnsRegistry;
+    protected _ensRegistry: ENSRegistry;
     protected _domainDefinitionTransactionFactory: DomainTransactionFactory;
     protected _domainDefinitionReader: DomainReader;
     protected _domainHierarchy: DomainHierarchy;
@@ -106,7 +116,7 @@ export class IAMBase {
     protected _natsConnection: NatsConnection | undefined;
     protected _jsonCodec: Codec<any> | undefined;
 
-    private ttl = bigNumberify(0);
+    private ttl = BigNumber.from(0);
 
     /**
      * IAM Constructor
@@ -120,8 +130,9 @@ export class IAMBase {
         privateKey,
         ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new",
     }: ConnectionOptions = {}) {
-        this._runningInBrowser = isBrowser();
-        errors.setLogLevel("error");
+        this._executionEnvironment = detectExecutionEnvironment();
+
+        ethers.utils.Logger.setLogLevel(utils.Logger.levels.ERROR);
 
         this._connectionOptions = {
             privateKey,
@@ -134,7 +145,7 @@ export class IAMBase {
 
         // Need to get providerType and publicKey in constructor because they are used
         // to infer if the session is active.
-        if (this._runningInBrowser) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
             this._providerType = localStorage.getItem(WALLET_PROVIDER) as WalletProvider;
             this._publicKey = localStorage.getItem(PUBLIC_KEY);
         }
@@ -157,7 +168,7 @@ export class IAMBase {
         await this.initChain();
         this.initEventHandlers();
 
-        if (this._runningInBrowser) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
             await this.setupMessaging();
         }
 
@@ -175,12 +186,12 @@ export class IAMBase {
     }) {
         const { privateKey, rpcUrl } = this._connectionOptions;
 
-        if (!this._runningInBrowser) {
+        if (this._executionEnvironment === ExecutionEnvironment.NODE) {
             if (!privateKey) {
-                throw new Error(ERROR_MESSAGES.NO_PRIVATE_KEY);
+                throw new Error(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
             }
             if (!rpcUrl) {
-                throw new Error(ERROR_MESSAGES.NO_RPC_URL);
+                throw new Error(ERROR_MESSAGES.RPC_URL_NOT_PROVIDED);
             }
         }
 
@@ -227,13 +238,13 @@ export class IAMBase {
         }
         if (walletProvider && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)) {
             this._transactionOverrides = {
-                gasLimit: hexlify(4900000),
-                gasPrice: hexlify(0.1),
+                gasLimit: BigNumber.from(4900000),
+                gasPrice: parseUnits("0.01", "gwei"),
             };
             await this._walletConnectService.initialize(walletProvider);
             const wcProvider = this._walletConnectService.getProvider();
-            this._signer = new providers.Web3Provider(wcProvider).getSigner();
-            this._provider = this._signer.provider as providers.Web3Provider;
+            this._provider = new providers.Web3Provider(wcProvider);
+            this._signer = this._provider.getSigner();
             this._providerType = walletProvider;
             return;
         }
@@ -270,7 +281,19 @@ export class IAMBase {
             this._publicKey = publicKey;
             this._identityToken = identityToken;
         }
-        this._didSigner = new Owner(this._signer, this._provider, this._publicKey);
+        const { privateKey, rpcUrl } = this._connectionOptions;
+        if (privateKey && rpcUrl) {
+            this._didSigner = IdentityOwner.fromPrivateKeySigner(
+                new EwPrivateKeySigner(privateKey, { type: ProviderTypes.HTTP, uriOrInfo: rpcUrl }),
+            );
+        } else if (this._provider instanceof WalletConnectProvider) {
+            this._didSigner = IdentityOwner.fromJsonRpcSigner(
+                new EwJsonRpcSigner(this._provider as WalletConnectProvider),
+                this._publicKey,
+            );
+        } else {
+            throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
+        }
         await this.setDocument();
         this.setClaims();
         this.storeSession();
@@ -286,14 +309,14 @@ export class IAMBase {
     }
 
     private storeSession() {
-        if (this._runningInBrowser && this._didSigner) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER && this._didSigner) {
             this._providerType && localStorage.setItem(WALLET_PROVIDER, this._providerType as string);
             this._didSigner.publicKey && localStorage.setItem(PUBLIC_KEY, this._didSigner.publicKey);
         }
     }
 
     protected clearSession() {
-        if (this._runningInBrowser) {
+        if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
             localStorage.removeItem(WALLET_PROVIDER);
             localStorage.removeItem(PUBLIC_KEY);
         }
@@ -479,7 +502,7 @@ export class IAMBase {
     }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setSubnodeRecord", [
                 namehash(domain),
                 labelhash(nodeName),
                 owner,
@@ -500,7 +523,7 @@ export class IAMBase {
     }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeOwner.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setSubnodeOwner", [
                 namehash(namespace),
                 labelhash(label),
                 newOwner,
@@ -511,7 +534,7 @@ export class IAMBase {
     protected changeDomainOwnerTx({ newOwner, namespace }: { newOwner: string; namespace: string }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setOwner.encode([namehash(namespace), newOwner]),
+            data: this._ensRegistry.interface.encodeFunctionData("setOwner", [namehash(namespace), newOwner]),
         };
     }
 
@@ -533,7 +556,7 @@ export class IAMBase {
         const label = namespaceArray[0];
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setSubnodeRecord.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setSubnodeRecord", [
                 namehash(node),
                 labelhash(label),
                 emptyAddress,
@@ -570,7 +593,7 @@ export class IAMBase {
     protected deleteDomainTx({ namespace }: { namespace: string }): EncodedCall {
         return {
             to: this._ensRegistryAddress,
-            data: this._ensRegistry.interface.functions.setRecord.encode([
+            data: this._ensRegistry.interface.encodeFunctionData("setRecord", [
                 namehash(namespace),
                 emptyAddress,
                 emptyAddress,
@@ -620,14 +643,13 @@ export class IAMBase {
 
         this._registrySetting = {
             address: didContractAddress,
-            abi: abi1056,
             method: Methods.Erc1056,
         };
 
         this._ensRegistryAddress = ensRegistryAddress;
         this._ensResolverAddress = ensResolverAddress;
-        this._assetManager = IdentityManagerFactory.connect(assetManagerAddress, this._signer);
-        this._ensRegistry = EnsRegistryFactory.connect(ensRegistryAddress, this._provider);
+        this._assetManager = IdentityManager__factory.connect(assetManagerAddress, this._signer);
+        this._ensRegistry = ENSRegistry__factory.connect(ensRegistryAddress, this._provider);
         this._domainDefinitionReader = new DomainReader({ ensRegistryAddress, provider: this._provider });
         ensPublicResolverAddress &&
             this._domainDefinitionReader.addKnownResolver({
@@ -665,33 +687,33 @@ export class IAMBase {
         offerTo: string;
         assetContractAddress: string;
     }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.offer.encode([offerTo]),
+            data: asset.interface.encodeFunctionData("offer", [offerTo]),
             to: assetContractAddress,
         };
     }
 
     protected acceptOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.acceptOffer.encode([]),
+            data: asset.interface.encodeFunctionData("acceptOffer"),
             to: assetContractAddress,
         };
     }
 
     protected rejectOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.rejectOffer.encode([]),
+            data: asset.interface.encodeFunctionData("rejectOffer"),
             to: assetContractAddress,
         };
     }
 
     protected cancelOfferTx({ assetContractAddress }: { assetContractAddress: string }): EncodedCall {
-        const asset = OfferableIdentityFactory.connect(assetContractAddress, this._provider);
+        const asset = OfferableIdentity__factory.connect(assetContractAddress, this._provider);
         return {
-            data: asset.interface.functions.cancelOffer.encode([]),
+            data: asset.interface.encodeFunctionData("cancelOffer"),
             to: assetContractAddress,
         };
     }

@@ -1,4 +1,4 @@
-import { utils, Wallet } from "ethers";
+import { BigNumber, utils, Wallet } from "ethers";
 import { IAM, ENSNamespaceTypes } from "../src/iam";
 import {
     deployDidRegistry,
@@ -25,7 +25,7 @@ import { utilsTests } from "./utils/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
 import { stakingTests } from "./staking";
 
-const { namehash, bigNumberify } = utils;
+const { namehash } = utils;
 
 export const rootOwner = Wallet.createRandom();
 
@@ -84,7 +84,7 @@ describe("IAM tests", () => {
             labelhash(root),
             rootOwner.address,
             ensResolver.address,
-            bigNumberify(0),
+            BigNumber.from(0),
         );
         await tx.wait();
 

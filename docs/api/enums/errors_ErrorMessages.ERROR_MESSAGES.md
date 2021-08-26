@@ -21,16 +21,17 @@
 - [METAMASK\_EXTENSION\_NOT\_AVAILABLE](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_extension_not_available)
 - [NATS\_NOT\_CONNECTED](errors_ErrorMessages.ERROR_MESSAGES.md#nats_not_connected)
 - [NOT\_CONNECTED\_TO\_VOLTA](errors_ErrorMessages.ERROR_MESSAGES.md#not_connected_to_volta)
-- [NO\_PRIVATE\_KEY](errors_ErrorMessages.ERROR_MESSAGES.md#no_private_key)
 - [NO\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#no_provider)
 - [NO\_RPC\_URL](errors_ErrorMessages.ERROR_MESSAGES.md#no_rpc_url)
 - [ONCHAIN\_ROLE\_VERSION\_NOT\_SPECIFIED](errors_ErrorMessages.ERROR_MESSAGES.md#onchain_role_version_not_specified)
 - [ORG\_WITH\_APPS](errors_ErrorMessages.ERROR_MESSAGES.md#org_with_apps)
 - [ORG\_WITH\_ROLES](errors_ErrorMessages.ERROR_MESSAGES.md#org_with_roles)
+- [PRIVATE\_KEY\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#private_key_not_provided)
 - [PROVIDER\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#provider_not_initialized)
 - [PUBLIC\_KEY\_NOT\_RECOVERED](errors_ErrorMessages.ERROR_MESSAGES.md#public_key_not_recovered)
 - [ROLE\_NOT\_EXISTS](errors_ErrorMessages.ERROR_MESSAGES.md#role_not_exists)
 - [ROLE\_PREREQUISITES\_NOT\_MET](errors_ErrorMessages.ERROR_MESSAGES.md#role_prerequisites_not_met)
+- [RPC\_URL\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#rpc_url_not_provided)
 - [SIGNER\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#signer_not_initialized)
 - [STAKE\_WAS\_NOT\_PUT](errors_ErrorMessages.ERROR_MESSAGES.md#stake_was_not_put)
 - [UNABLE\_TO\_OBTAIN\_PUBLIC\_KEY](errors_ErrorMessages.ERROR_MESSAGES.md#unable_to_obtain_public_key)
@@ -131,12 +132,6 @@ ___
 
 ___
 
-### NO\_PRIVATE\_KEY
-
-• **NO\_PRIVATE\_KEY** = `"Initialization of signer not possible in nodejs env without private key"`
-
-___
-
 ### NO\_PROVIDER
 
 • **NO\_PROVIDER** = `"Initialization of singer failed due to no provider"`
@@ -167,6 +162,12 @@ ___
 
 ___
 
+### PRIVATE\_KEY\_NOT\_PROVIDED
+
+• **PRIVATE\_KEY\_NOT\_PROVIDED** = `"IAM can not be initialized in Node.js environment without private key"`
+
+___
+
 ### PROVIDER\_NOT\_INITIALIZED
 
 • **PROVIDER\_NOT\_INITIALIZED** = `"Provider not initialized"`
@@ -188,6 +189,12 @@ ___
 ### ROLE\_PREREQUISITES\_NOT\_MET
 
 • **ROLE\_PREREQUISITES\_NOT\_MET** = `"Enrolment subject doesn't have required roles"`
+
+___
+
+### RPC\_URL\_NOT\_PROVIDED
+
+• **RPC\_URL\_NOT\_PROVIDED** = `"IAM can not be initialized in Node.js environment without rpc url"`
 
 ___
 

@@ -20,4 +20,4 @@ export const agreement_type_hash = utils.id("Agreement(address subject,bytes32 r
 export const proof_type_hash = utils.id(
     "Proof(address subject,bytes32 role,uint256 version,uint256 expiry,address issuer)",
 );
-export const defaultClaimExpiry = Number.MAX_SAFE_INTEGER;
+export const defaultClaimExpiry = Number.MAX_SAFE_INTEGER - 1; // Maximum value allowed by BigNumber

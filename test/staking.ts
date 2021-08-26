@@ -1,14 +1,10 @@
-import {
-    StakingPoolFactory__factory,
-    IRoleDefinition,
-    RewardPool__factory,
-    StakingPool__factory,
-    VOLTA_CHAIN_ID,
-    VOLTA_REWARD_POOL_ADDRESS,
-} from "@energyweb/iam-contracts";
-import { StakingPoolFactory } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPoolFactory";
-import { StakingPool as StakingPoolContract } from "@energyweb/iam-contracts/dist/ethers-v4/StakingPool";
-import { EventFilter, Contract, Wallet, utils, providers } from "ethers";
+import { IRoleDefinition, VOLTA_CHAIN_ID, VOLTA_REWARD_POOL_ADDRESS } from "@energyweb/iam-contracts";
+import { StakingPoolFactory__factory } from "../ethers/factories/StakingPoolFactory__factory";
+import { RewardPool__factory } from "../ethers/factories/RewardPool__factory";
+import { StakingPool__factory } from "../ethers/factories/StakingPool__factory";
+import { StakingPoolFactory } from "../ethers/StakingPoolFactory";
+import { StakingPool as StakingPoolContract } from "../ethers/StakingPool";
+import { EventFilter, Contract, Wallet, utils, providers, BigNumber } from "ethers";
 import { Methods } from "@ew-did-registry/did";
 import {
     ERROR_MESSAGES,
@@ -18,18 +14,19 @@ import {
     StakeStatus,
     StakingPool,
     StakingPoolService,
+    WITHDRAW_DELAY,
 } from "../src/iam-client-lib";
 import { claimManager, ensRegistry, replenish, provider, deployer } from "./setup_contracts";
 import { createIam, root, rootOwner } from "./iam.test";
 import { mockJsonCodec, mockNats } from "./testUtils/mocks";
 import { chainConfigs } from "../src/iam/chainConfig";
 
-const { parseEther, namehash, BigNumber } = utils;
+const { parseEther, namehash } = utils;
 const { JsonRpcProvider } = providers;
 
 export const waitFor = (filter: EventFilter, contract: Contract): Promise<any> =>
     new Promise<any>((resolve) => {
-        contract.addListener(filter, (...args) => {
+        contract.on(filter, (...args) => {
             resolve(args);
         });
     }).then((args) => {
@@ -57,19 +54,19 @@ export const stakingTests = (): void => {
     const minStakingPeriod = 5;
 
     const calculateReward = (
-        stakeAmount: utils.BigNumber,
-        depositPeriod: utils.BigNumber,
-        patronRewardPortion: utils.BigNumber,
-    ): utils.BigNumber => {
-        const dailyInterestNumerator = new BigNumber(1000312);
-        const dailyInterestDenominator = new BigNumber(1000000);
-        const secInDay = new BigNumber(60 * 60 * 24);
+        stakeAmount: BigNumber,
+        depositPeriod: BigNumber,
+        patronRewardPortion: BigNumber,
+    ): BigNumber => {
+        const dailyInterestNumerator = BigNumber.from(1000312);
+        const dailyInterestDenominator = BigNumber.from(1000000);
+        const secInDay = BigNumber.from(60 * 60 * 24);
         const depositPeriodInterest = dailyInterestNumerator
             .div(dailyInterestDenominator)
             .pow(depositPeriod.div(secInDay));
         const accumulatedStake = stakeAmount.mul(depositPeriodInterest);
         const totalReward = accumulatedStake.sub(stakeAmount);
-        return totalReward.mul(patronRewardPortion).div(new BigNumber(1000));
+        return totalReward.mul(patronRewardPortion).div(BigNumber.from(1000));
     };
 
     xdescribe("Test scenario on VOLTA", () => {
@@ -103,7 +100,6 @@ export const stakingTests = (): void => {
                 (await factory.services(namehash(org))).pool,
             );
             expect(poolContract).not.toBeNull;
-            const WITHDRAW_DELAY = 5;
             expect((await poolContract.minStakingPeriod()).eq(MIN_STAKING_PERIOD)).toBe(true);
             expect((await poolContract.withdrawDelay()).eq(WITHDRAW_DELAY));
 
@@ -457,7 +453,7 @@ export const stakingTests = (): void => {
                 const expectedReward = calculateReward(
                     stake,
                     depositEnd.sub(depositStart),
-                    new BigNumber(patronRewardPortion),
+                    BigNumber.from(patronRewardPortion),
                 );
                 expect(await pool.checkReward()).toEqual(expectedReward);
 

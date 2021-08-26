@@ -1,5 +1,5 @@
 import { Keys } from "@ew-did-registry/keys";
-import { OfferableIdentityFactory } from "../ethers/OfferableIdentityFactory";
+import { OfferableIdentity__factory } from "../ethers/factories/OfferableIdentity__factory";
 import { IAM } from "../src/iam";
 import { emptyAddress } from "../src/utils/constants";
 import { rootOwner, createIam } from "./iam.test";
@@ -17,7 +17,7 @@ export const assetsTests = () => {
 
     test("asset should be created", async () => {
         const assetAddress = await rootOwnerIam.registerAsset();
-        const assetContract = OfferableIdentityFactory.connect(assetAddress, provider);
+        const assetContract = OfferableIdentity__factory.connect(assetAddress, provider);
         const owner = await assetContract.owner();
         expect(owner).toBe(rootOwner.address);
     });
@@ -28,7 +28,7 @@ export const assetsTests = () => {
             assetDID: `did:ethr:${assetAddress}`,
             offerTo: `did:ethr:${newOwner.getAddress()}`,
         });
-        const assetContract = OfferableIdentityFactory.connect(assetAddress, provider);
+        const assetContract = OfferableIdentity__factory.connect(assetAddress, provider);
         const offered = await assetContract.offeredTo();
         expect(offered).toBe(newOwner.getAddress());
     });
@@ -40,7 +40,7 @@ export const assetsTests = () => {
             assetDID,
             offerTo: `did:ethr:${newOwner.getAddress()}`,
         });
-        const assetContract = OfferableIdentityFactory.connect(assetAddress, provider);
+        const assetContract = OfferableIdentity__factory.connect(assetAddress, provider);
         const offered = await assetContract.offeredTo();
         expect(offered).toBe(newOwner.getAddress());
         await rootOwnerIam.cancelAssetOffer({ assetDID });
@@ -61,7 +61,7 @@ export const assetsTests = () => {
         await newOwnerIAM.acceptAssetOffer({
             assetDID,
         });
-        const assetContract = OfferableIdentityFactory.connect(assetAddress, provider);
+        const assetContract = OfferableIdentity__factory.connect(assetAddress, provider);
         const owner = await assetContract.owner();
         const offeredTo = await assetContract.offeredTo();
         expect(owner).toBe(newOwner.getAddress());
@@ -82,7 +82,7 @@ export const assetsTests = () => {
         await newOwnerIAM.rejectAssetOffer({
             assetDID,
         });
-        const assetContract = OfferableIdentityFactory.connect(assetAddress, provider);
+        const assetContract = OfferableIdentity__factory.connect(assetAddress, provider);
         const owner = await assetContract.owner();
         const offeredTo = await assetContract.offeredTo();
         expect(owner).toBe(rootOwner.address);
