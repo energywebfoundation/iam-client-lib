@@ -10,7 +10,7 @@ Currently the iam-client library supports two domains: **[Organization](../guide
 
 2. An **Application** is nested under an Organization or a Sub-organization. An Organization or Sub-organization can have an unlimited number of Applications. 
 
-**A [Role](../guides/roles.md)** is nested under an Organization or an Application. A Role is used to define an actor within an Organization or an Application, and criteria for participation. A user can submit claims (verifiable credentials) to prove that they meet the criteria that the Role requires. Other parties can verify these claims.
+**A [Role](../guides/role.md)** is nested under an Organization or an Application. A Role is used to define an actor within an Organization or an Application, and criteria for participation. A user can submit claims (verifiable credentials) to prove that they meet the criteria that the Role requires. Other parties can verify these claims.
 
 ### Example:
 - Energy Web Foundation is an **Organization**,
