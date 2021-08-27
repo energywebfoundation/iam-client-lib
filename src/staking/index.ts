@@ -131,7 +131,9 @@ export class StakingPoolService {
         if (pool === emptyAddress) {
             return null;
         }
-        return new StakingPool(this._signer, pool);
+        const stakingPool = new StakingPool(this._signer, pool);
+        await stakingPool.init();
+        return stakingPool;
     }
 }
 
@@ -146,9 +148,26 @@ export class StakingPool {
             gasLimit: 490000,
         },
     };
+    public principal: BigNumber;
+    public totalStake: BigNumber;
+    public minStakingPeriod: number;
+    public withdrawDelay: number;
+    public patronRoles: string[];
+    public patronRewardPortion: number;
     private pool: StakingPoolContract;
+
     constructor(private patron: Required<Signer>, address: string) {
         this.pool = new StakingPool__factory(patron).attach(address);
+    }
+
+    async init(): Promise<void> {
+        this.principal = await this.pool.principal();
+        this.totalStake = await this.pool.totalStake();
+        this.minStakingPeriod = (await this.pool.minStakingPeriod()).toNumber();
+        this.withdrawDelay = (await this.pool.withdrawDelay()).toNumber();
+        // TODO: map role hashes to role names
+        this.patronRoles = await this.pool.getPatronRoles();
+        this.patronRewardPortion = (await this.pool.patronRewardPortion()).toNumber();
     }
 
     /**
@@ -160,6 +179,9 @@ export class StakingPool {
         stake: BigNumber | number,
         transactionSpeed = TransactionSpeed.FAST,
     ): Promise<void> {
+        if (!(await this.isAuthorizedToStake())) {
+            throw new Error(ERROR_MESSAGES.NOT_AUTHTORIZED_TO_STAKE);
+        }
         if (typeof stake === "number") {
             stake = BigNumber.from(stake);
         }
@@ -177,12 +199,12 @@ export class StakingPool {
     /**
      * @description Returns time left to enable request withdraw
      */
-    async requestWithdrawDelay(): Promise<number> {
+    async remainingRequestWithdrawDelay(): Promise<number> {
         const { depositStart, status } = await this.getStake();
         if (status !== StakeStatus.STAKING) {
             throw new Error(ERROR_MESSAGES.STAKE_WAS_NOT_PUT);
         }
-        const requestAvailableFrom = depositStart.add(await this.pool.minStakingPeriod());
+        const requestAvailableFrom = depositStart.add(this.minStakingPeriod);
         const now = await this.now();
         if (requestAvailableFrom.lte(now)) {
             return 0;
@@ -224,12 +246,12 @@ export class StakingPool {
     /**
      * @description Returns time left to enable withdraw
      */
-    async withdrawalDelay(): Promise<number> {
+    async remainingWithdrawDelay(): Promise<number> {
         const { depositEnd, status } = await this.getStake();
         if (status !== StakeStatus.WITHDRAWING) {
             throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
         }
-        const withdrawAvailableFrom = depositEnd.add(await this.pool.withdrawDelay());
+        const withdrawAvailableFrom = depositEnd.add(this.withdrawDelay);
         const now = await this.now();
         if (withdrawAvailableFrom.lte(now)) {
             return 0;
@@ -267,5 +289,13 @@ export class StakingPool {
 
     private async getBalance(): Promise<BigNumber> {
         return await this.patron.provider.getBalance(await this.patron.getAddress());
+    }
+
+    private async isAuthorizedToStake(): Promise<boolean> {
+        // TODO: inject did from didRegistry module and cacheClient from CacheClient module
+        /** const patronRoles = cacheClient.getClaimsBySubject({ did, isAccepted: true, });
+         * return patronRoles.some((r) => this.requiredRoles.include(r))    *
+         */
+        return true;
     }
 }

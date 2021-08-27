@@ -14,7 +14,6 @@ import {
     StakeStatus,
     StakingPool,
     StakingPoolService,
-    WITHDRAW_DELAY,
 } from "../src/iam-client-lib";
 import { claimManager, ensRegistry, replenish, provider, deployer } from "./setup_contracts";
 import { createIam, root, rootOwner } from "./iam.test";
@@ -100,6 +99,7 @@ export const stakingTests = (): void => {
                 (await factory.services(namehash(org))).pool,
             );
             expect(poolContract).not.toBeNull;
+            const WITHDRAW_DELAY = 5;
             expect((await poolContract.minStakingPeriod()).eq(MIN_STAKING_PERIOD)).toBe(true);
             expect((await poolContract.withdrawDelay()).eq(WITHDRAW_DELAY));
 
@@ -110,7 +110,7 @@ export const stakingTests = (): void => {
                 let stake = await pool.getStake();
                 if (stake.status === StakeStatus.NONSTAKING) {
                     await pool.putStake(amount);
-                    const requestWithdrawDelay = await pool.requestWithdrawDelay();
+                    const requestWithdrawDelay = await pool.remainingRequestWithdrawDelay();
                     expect(requestWithdrawDelay === MIN_STAKING_PERIOD);
                     stake = await pool.getStake();
                 }
@@ -118,17 +118,17 @@ export const stakingTests = (): void => {
                 if (stake.status === StakeStatus.STAKING) {
                     let minStakingPeriodIsExpired = false;
                     while (!minStakingPeriodIsExpired) {
-                        minStakingPeriodIsExpired = (await pool.requestWithdrawDelay()) === 0;
+                        minStakingPeriodIsExpired = (await pool.remainingRequestWithdrawDelay()) === 0;
                     }
                     await pool.requestWithdraw();
-                    expect((await pool.withdrawalDelay()) === WITHDRAW_DELAY);
+                    expect((await pool.remainingWithdrawDelay()) === WITHDRAW_DELAY);
                     stake = await pool.getStake();
                 }
 
                 if (stake.status === StakeStatus.WITHDRAWING) {
                     let withdrawDelayIsExpired = false;
                     while (!withdrawDelayIsExpired) {
-                        withdrawDelayIsExpired = (await pool.withdrawalDelay()) === 0;
+                        withdrawDelayIsExpired = (await pool.remainingWithdrawDelay()) === 0;
                     }
 
                     const reward = await pool.checkReward();
@@ -340,6 +340,7 @@ export const stakingTests = (): void => {
         });
 
         describe("StakingPool tests", () => {
+            const patronRoles = [`${patronRole}.${root}`];
             let pool: StakingPool;
             let poolContract: StakingPoolContract;
 
@@ -349,7 +350,7 @@ export const stakingTests = (): void => {
                     org: domain,
                     minStakingPeriod,
                     patronRewardPortion,
-                    patronRoles: [`${patronRole}.${root}`],
+                    patronRoles,
                     principal: principalThreshold,
                 });
                 const patronStakingService = await StakingPoolService.init(patron);
@@ -361,6 +362,7 @@ export const stakingTests = (): void => {
             });
 
             it("patron should be able to stake", async () => {
+                expect(pool.patronRoles).toStrictEqual(patronRoles);
                 const stake = parseEther("0.1");
                 const stakePut = waitFor(poolContract.filters.StakePut(patron.address, stake, null), poolContract);
 
@@ -398,7 +400,7 @@ export const stakingTests = (): void => {
 
             it("staker should be able to request withdraw", async () => {
                 await pool.putStake(parseEther("0.1"));
-                const requestDelay = await pool.requestWithdrawDelay();
+                const requestDelay = await pool.remainingRequestWithdrawDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
 
                 const withdrawRequested = waitFor(
@@ -417,7 +419,7 @@ export const stakingTests = (): void => {
 
             it("can't request withdraw until minimum staking period is last", async () => {
                 await pool.putStake(parseEther("0.1"));
-                const requestDelay = await pool.requestWithdrawDelay();
+                const requestDelay = await pool.remainingRequestWithdrawDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * (requestDelay / 2)));
 
                 return expect(pool.requestWithdraw()).rejects.toThrow(
@@ -427,7 +429,7 @@ export const stakingTests = (): void => {
 
             it("withdraw can't be rquested twice", async () => {
                 await pool.putStake(parseEther("0.1"));
-                const requestDelay = await pool.requestWithdrawDelay();
+                const requestDelay = await pool.remainingRequestWithdrawDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
 
                 await pool.requestWithdraw();
@@ -440,7 +442,7 @@ export const stakingTests = (): void => {
                 const stakePut = waitFor(poolContract.filters.StakePut(patron.address, null, null), poolContract);
                 await pool.putStake(stake);
                 const depositStart = (await stakePut)[2];
-                const requestDelay = await pool.requestWithdrawDelay();
+                const requestDelay = await pool.remainingRequestWithdrawDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
 
                 const stakeWithdrawalRequested = waitFor(
@@ -457,7 +459,7 @@ export const stakingTests = (): void => {
                 );
                 expect(await pool.checkReward()).toEqual(expectedReward);
 
-                const withdrawalDelay = await pool.withdrawalDelay();
+                const withdrawalDelay = await pool.remainingWithdrawDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * withdrawalDelay));
 
                 const stakeWithdrawn = waitFor(poolContract.filters.StakeWithdrawn(patron.address, null), poolContract);

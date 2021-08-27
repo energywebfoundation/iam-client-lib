@@ -32,4 +32,5 @@ export enum ERROR_MESSAGES {
     WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested",
     STAKE_WAS_NOT_PUT = "Stake was not put",
     INSUFFICIENT_BALANCE = "Signer has insufficient balance",
+    NOT_AUTHTORIZED_TO_STAKE = "Patron not authorized to stake",
 }

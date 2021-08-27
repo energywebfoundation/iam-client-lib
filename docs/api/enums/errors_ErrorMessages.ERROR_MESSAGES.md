@@ -20,6 +20,7 @@
 - [JWT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#jwt_not_initialized)
 - [METAMASK\_EXTENSION\_NOT\_AVAILABLE](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_extension_not_available)
 - [NATS\_NOT\_CONNECTED](errors_ErrorMessages.ERROR_MESSAGES.md#nats_not_connected)
+- [NOT\_AUTHTORIZED\_TO\_STAKE](errors_ErrorMessages.ERROR_MESSAGES.md#not_authtorized_to_stake)
 - [NOT\_CONNECTED\_TO\_VOLTA](errors_ErrorMessages.ERROR_MESSAGES.md#not_connected_to_volta)
 - [NO\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#no_provider)
 - [NO\_RPC\_URL](errors_ErrorMessages.ERROR_MESSAGES.md#no_rpc_url)
@@ -123,6 +124,12 @@ ___
 ### NATS\_NOT\_CONNECTED
 
 • **NATS\_NOT\_CONNECTED** = `"NATS connection not established"`
+
+___
+
+### NOT\_AUTHTORIZED\_TO\_STAKE
+
+• **NOT\_AUTHTORIZED\_TO\_STAKE** = `"Patron not authorized to stake"`
 
 ___
 

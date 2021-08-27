@@ -10,16 +10,26 @@ Abstraction over staking pool smart contract
 
 - [constructor](staking.StakingPool.md#constructor)
 
+### Properties
+
+- [minStakingPeriod](staking.StakingPool.md#minstakingperiod)
+- [patronRewardPortion](staking.StakingPool.md#patronrewardportion)
+- [patronRoles](staking.StakingPool.md#patronroles)
+- [principal](staking.StakingPool.md#principal)
+- [totalStake](staking.StakingPool.md#totalstake)
+- [withdrawDelay](staking.StakingPool.md#withdrawdelay)
+
 ### Methods
 
 - [checkReward](staking.StakingPool.md#checkreward)
 - [connect](staking.StakingPool.md#connect)
 - [getStake](staking.StakingPool.md#getstake)
+- [init](staking.StakingPool.md#init)
 - [putStake](staking.StakingPool.md#putstake)
+- [remainingRequestWithdrawDelay](staking.StakingPool.md#remainingrequestwithdrawdelay)
+- [remainingWithdrawDelay](staking.StakingPool.md#remainingwithdrawdelay)
 - [requestWithdraw](staking.StakingPool.md#requestwithdraw)
-- [requestWithdrawDelay](staking.StakingPool.md#requestwithdrawdelay)
 - [withdraw](staking.StakingPool.md#withdraw)
-- [withdrawalDelay](staking.StakingPool.md#withdrawaldelay)
 
 ## Constructors
 
@@ -33,6 +43,42 @@ Abstraction over staking pool smart contract
 | :------ | :------ |
 | `patron` | `Required`<`Signer`\> |
 | `address` | `string` |
+
+## Properties
+
+### minStakingPeriod
+
+• **minStakingPeriod**: `number`
+
+___
+
+### patronRewardPortion
+
+• **patronRewardPortion**: `number`
+
+___
+
+### patronRoles
+
+• **patronRoles**: `string`[]
+
+___
+
+### principal
+
+• **principal**: `BigNumber`
+
+___
+
+### totalStake
+
+• **totalStake**: `BigNumber`
+
+___
+
+### withdrawDelay
+
+• **withdrawDelay**: `number`
 
 ## Methods
 
@@ -82,6 +128,16 @@ Stake
 
 ___
 
+### init
+
+▸ **init**(): `Promise`<`void`\>
+
+#### Returns
+
+`Promise`<`void`\>
+
+___
+
 ### putStake
 
 ▸ **putStake**(`stake`, `transactionSpeed?`): `Promise`<`void`\>
@@ -100,6 +156,30 @@ ___
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### remainingRequestWithdrawDelay
+
+▸ **remainingRequestWithdrawDelay**(): `Promise`<`number`\>
+
+**`description`** Returns time left to enable request withdraw
+
+#### Returns
+
+`Promise`<`number`\>
+
+___
+
+### remainingWithdrawDelay
+
+▸ **remainingWithdrawDelay**(): `Promise`<`number`\>
+
+**`description`** Returns time left to enable withdraw
+
+#### Returns
+
+`Promise`<`number`\>
 
 ___
 
@@ -122,18 +202,6 @@ Withdraw request unavailable until minimum staking period ends
 
 ___
 
-### requestWithdrawDelay
-
-▸ **requestWithdrawDelay**(): `Promise`<`number`\>
-
-**`description`** Returns time left to enable request withdraw
-
-#### Returns
-
-`Promise`<`number`\>
-
-___
-
 ### withdraw
 
 ▸ **withdraw**(`transactionSpeed?`): `Promise`<`void`\>
@@ -151,15 +219,3 @@ ___
 #### Returns
 
 `Promise`<`void`\>
-
-___
-
-### withdrawalDelay
-
-▸ **withdrawalDelay**(): `Promise`<`number`\>
-
-**`description`** Returns time left to enable withdraw
-
-#### Returns
-
-`Promise`<`number`\>
