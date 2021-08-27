@@ -1,5 +1,5 @@
 # Roles
-
+[Role Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IRole.md)
 /*
 TO DO: 
 //Define Role in context of iam-client-lib/Switchboard
@@ -8,7 +8,7 @@ TO DO:
 */
 
 ## Public APIs:
-[createOrganization](../api/classes/iam.md#createorganization),
-[createApplication](../api/classes/iam.md#createapplication) and 
-[createRole](../api/classes/iam.md#createrole) functions.
+- [createOrganization](../api/modules/iam.md#createorganization)
+- [createApplication](../api/modules/iam.md#createapplication)
+- [createRole](../api/modules/iam.md#createrole)
 

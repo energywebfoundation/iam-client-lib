@@ -15,7 +15,7 @@ The IAM Base class is the main class of the iam-client-library. It initializes c
 [connectToDIDRegistry](../api/classes/iam_iam_base.IAMBase.md#connecttodidregistry)
 
 
-## [IAM Class](../api/classes/iam.IAM.md)
+## [IAM Class](../api/modules/iam.md)
 The IAM Class extends the IAM Base class. Methods on this class perform CRUD operations for DID Documents, Claims (Credentials), [Roles](./roles.md), [Organizations](./organization.md), and [Applications](./applications.md).
 
 //Placeholder - expalanation of where data is stored

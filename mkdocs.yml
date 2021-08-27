@@ -3,7 +3,7 @@ nav:
   - Home: index.md
   - "Introduction":
       - "Overview": intro/overview.md
-      - "Architecture": intro/architeecture.md
+      - "Architecture": intro/architecture.md
       - "Domain Hierarchy": intro/domainhierarchy.md
   - "Guides":
       - "Authentication": guides/authentication.md
