@@ -18,7 +18,7 @@ import {
 } from "../src/iam-client-lib";
 import { claimManager, ensRegistry, replenish, provider, deployer } from "./setup_contracts";
 import { createIam, root, rootOwner } from "./iam.test";
-import { mockJsonCodec, mockNats } from "./testUtils/mocks";
+import { mockJsonCodec, mockNats, restoreJsonCodec, restoreNats } from "./testUtils/mocks";
 import { chainConfigs } from "../src/iam/chainConfig";
 
 const { parseEther, namehash } = utils;
@@ -221,6 +221,11 @@ export const stakingTests = (): void => {
             });
         });
 
+        afterAll(() => {
+            restoreNats();
+            restoreJsonCodec();
+        });
+
         beforeEach(async () => {
             await setupStakingPoolFactory();
             providerStakingService = await StakingPoolService.init(serviceProvider);
@@ -246,7 +251,7 @@ export const stakingTests = (): void => {
                 expect(await stakingPoolFactory.services(namehash(domain))).toMatchObject({
                     provider: serviceProvider.address,
                 });
-                return expect(poolIsLaunched).resolves;
+                await poolIsLaunched;
             });
 
             it("should be able to get all services", async () => {
@@ -365,7 +370,7 @@ export const stakingTests = (): void => {
                 const stakePut = waitFor(poolContract.filters.StakePut(patron.address, stake, null), poolContract);
 
                 await pool.putStake(stake);
-                return expect(stakePut).resolves;
+                expect(await stakePut).toEqual(expect.arrayContaining([patron.address, stake]));
             });
 
             it("should not be able to stake without having patron role", async () => {
@@ -408,7 +413,7 @@ export const stakingTests = (): void => {
 
                 await pool.requestWithdraw();
 
-                return expect(withdrawRequested).resolves;
+                expect((await withdrawRequested)[0]).toEqual(patron.address);
             });
 
             it("can't request withdraw when no stake", async () => {
@@ -469,7 +474,7 @@ export const stakingTests = (): void => {
                 const balanceAfterWithdraw = await patron.getBalance();
 
                 expect(balanceAfterWithdraw.eq(balanceBeforeWithdraw.add(stake).add(expectedReward)));
-                return expect(stakeWithdrawn).resolves;
+                expect((await stakeWithdrawn)[0]).toEqual(patron.address);
             });
         });
     });
