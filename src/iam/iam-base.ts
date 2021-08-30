@@ -278,10 +278,12 @@ export class IAMBase {
             this._publicKey = publicKey;
             this._identityToken = identityToken;
         }
-        const { privateKey, rpcUrl } = this._connectionOptions;
-        if (privateKey && rpcUrl) {
+        if (this._signer instanceof Wallet) {
             this._didSigner = IdentityOwner.fromPrivateKeySigner(
-                new EwPrivateKeySigner(privateKey, { type: ProviderTypes.HTTP, uriOrInfo: rpcUrl }),
+                new EwPrivateKeySigner(this._signer.privateKey, {
+                    type: ProviderTypes.HTTP,
+                    uriOrInfo: this._provider.connection.url,
+                }),
             );
         } else if (this._provider instanceof WalletConnectProvider) {
             this._didSigner = IdentityOwner.fromJsonRpcSigner(new EwJsonRpcSigner(this._provider), this._publicKey);
