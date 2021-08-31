@@ -14,7 +14,7 @@ import { ICacheClient } from "../modules/cacheClient/ICacheClient";
 import { isBrowser } from "../utils/isBrowser";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
-import { ClaimData } from "../modules/cacheClient/cacheClient.types";
+  import { ClaimData } from "../modules/cacheClient/cacheClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
 import detectMetamask from "@metamask/detect-provider";
@@ -271,25 +271,9 @@ export class IAMBase {
         }
     }
 
-    private setDid() {
-        if (this._address) {
-            this._did = `did:${Methods.Erc1056}:${this._address}`;
-        }
-    }
+    
 
-    private async setDocument() {
-        if (this._did && this._didSigner) {
-            this._document = new DIDDocumentFull(this._did, new Operator(this._didSigner, this._registrySetting));
-            let pubKey: IPublicKey | undefined;
-            if (this._cacheClient) {
-                const cachedDoc = await this._cacheClient.getDidDocument({ did: this._did });
-                pubKey = cachedDoc.publicKey.find((pk) => pk.id.endsWith(KeyTags.OWNER));
-            }
-            if (!pubKey) {
-                await this._document.create();
-            }
-        }
-    }
+    
 
     private setClaims() {
         if (this._didSigner && this._document) {
@@ -335,22 +319,7 @@ export class IAMBase {
         }
     }
 
-    protected async downloadClaims({ services }: { services: IServiceEndpoint[] }) {
-        return Promise.all(
-            services.map(async ({ serviceEndpoint, ...rest }) => {
-                const data = await this._ipfsStore.get(serviceEndpoint);
-                const { claimData, ...claimRest } = this._jwt?.decode(data) as {
-                    claimData: ClaimData;
-                };
-                return {
-                    serviceEndpoint,
-                    ...rest,
-                    ...claimData,
-                    ...claimRest,
-                } as IServiceEndpoint & ClaimData;
-            }),
-        );
-    }
+    
 
     protected async validateIssuers({ issuer, namespace }: { issuer: string[]; namespace: string }) {
         const roleHash = namehash(namespace);
