@@ -51,7 +51,7 @@ export const createIam = async (privateKey: string, { createDocument = false, in
 
 beforeAll(async () => {
     // sometimes transaction is taking more then default 5000 ms jest timeout
-    jest.setTimeout(60000);
+    jest.setTimeout(100000);
     const deployer = rootOwner.connect(provider);
     await replenish(deployer.address);
     await deployDidRegistry();

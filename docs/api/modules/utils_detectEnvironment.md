@@ -14,8 +14,8 @@
 
 ### detectExecutionEnvironment
 
-▸ `Const` **detectExecutionEnvironment**(): [`ExecutionEnvironment`](../enums/utils_detectEnvironment.ExecutionEnvironment.md)
+▸ `Const` **detectExecutionEnvironment**(): `any`
 
 #### Returns
 
-[`ExecutionEnvironment`](../enums/utils_detectEnvironment.ExecutionEnvironment.md)
+`any`
