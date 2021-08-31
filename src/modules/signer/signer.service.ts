@@ -1,16 +1,22 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import detectMetamask from "@metamask/detect-provider";
-import { providers, Signer, utils, Wallet } from "ethers";
+import { BigNumber, providers, Signer, utils, Wallet } from "ethers";
+import { parseUnits } from "@ethersproject/units";
+import base64url from "base64url";
+import { EventEmitter } from "events";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { IWalletConnectProviderOptions } from "@walletconnect/types";
 import { ERROR_MESSAGES } from "../../errors";
-import { WalletConnectService } from "./WalletConnectService";
+import { connectWithKmsClient, connectWithMetamaskClient } from "./walletConnect";
 import { WalletProviderType } from "./provider.types";
 import { ConfigService } from "@nestjs/config";
 import { TransactionOverrides } from "./signer.types";
 import { IPubKeyAndIdentityToken } from "../../utils/getPublicKeyAndIdentityToken";
-import base64url from "base64url";
+import { ChainConfig } from "../../config/chain.config";
+import { detectExecutionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
+import { PUBLIC_KEY, WALLET_PROVIDER } from "../../utils/constants";
 
-const { hexlify, arrayify, keccak256, recoverPublicKey, computeAddress, computePublicKey, getAddress, hashMessage } =
-    utils;
+const { arrayify, keccak256, recoverPublicKey, computeAddress, computePublicKey, getAddress, hashMessage } = utils;
 const { JsonRpcProvider } = providers;
 
 export type EncodedCall = {
@@ -25,13 +31,47 @@ export type Transaction = {
 };
 
 @Injectable()
-export class SignerService {
+export class SignerService implements OnModuleInit, OnModuleDestroy {
     private _publicKey: string;
+    private _chainId: number;
 
     constructor(private _signer: Required<Signer>, private transactionOverrides?: TransactionOverrides) {}
 
+    async onModuleInit() {
+        this.initEventHandlers();
+        this._chainId = (await this._signer.provider.getNetwork()).chainId;
+    }
+
+    /**
+     * Add event handler for certain events
+     * @requires to be called after the connection to wallet was initialized
+     */
+    on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
+        const provider = this._signer.provider;
+        if (provider instanceof EventEmitter) {
+            (event === "accountChanged" && provider.on("accountsChanged", eventHandler)) ||
+                (event === "networkChanged" && provider.on("networkChanged", eventHandler));
+        } else if (provider instanceof WalletConnectProvider) {
+            (event === "accountChanged" && provider.wc.on("session_update", eventHandler)) ||
+                (event === "disconnected" && provider.wc.on("disconnect", eventHandler)) ||
+                (event === "networkChanged" && provider.wc.on("session_update", eventHandler));
+        }
+    }
+
+    async onModuleDestroy() {
+        const provider = this._signer.provider;
+        if (provider instanceof WalletConnectProvider) {
+            await provider.close();
+        }
+        this._clearSession();
+    }
+
     get signer() {
         return this._signer;
+    }
+
+    get chainId() {
+        return this._chainId;
     }
 
     async send(tx: Transaction) {
@@ -96,6 +136,25 @@ export class SignerService {
         throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
 
+    private initEventHandlers() {
+        this.on("accountChanged", () => {
+            this.closeConnection();
+        });
+        this.on("disconnected", () => {
+            this.closeConnection();
+        });
+        this.on("networkChanged", () => {
+            this.closeConnection();
+        });
+    }
+
+    private _clearSession() {
+        if (detectExecutionEnvironment() === ExecutionEnvironment.BROWSER) {
+            localStorage.removeItem(WALLET_PROVIDER);
+            localStorage.removeItem(PUBLIC_KEY);
+        }
+    }
+
     static async initPrivateKeySigner(configService: ConfigService, privateKey: string) {
         const provider = new JsonRpcProvider({ url: configService.get("rpcUrl") as string });
         return new SignerService(new Wallet(privateKey, provider));
@@ -134,25 +193,29 @@ export class SignerService {
         return new SignerService(signer);
     }
 
-    static async initWalletConnectSigner({
-        bridgeUrl = "https://walletconnect.energyweb.org",
-        infuraId,
-        ewKeyManagerUrl,
-        walletProvider,
-    }: {
-        bridgeUrl?: string;
-        infuraId: string;
-        ewKeyManagerUrl?: string;
-        walletProvider: WalletProviderType;
-    }) {
+    static async initWalletConnectSigner(
+        walletConnectOpts: IWalletConnectProviderOptions = {
+            bridge: "https://walletconnect.energyweb.org",
+        },
+        walletProvider: WalletProviderType,
+        ewKeyManagerUrl: string,
+        configService: ConfigService,
+    ) {
         const transactionOverrides = {
-            gasLimit: hexlify(4900000),
-            gasPrice: hexlify(0.1),
+            gasLimit: BigNumber.from(4900000),
+            gasPrice: parseUnits("0.1", "gwei"),
         };
-        const walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
-        await walletConnectService.initialize(walletProvider);
-        const wcProvider = walletConnectService.getProvider();
-        const signer = new providers.Web3Provider(wcProvider).getSigner();
+        const chainConfigs = configService.get("chainConfiguration") as Record<number, ChainConfig>;
+        const rpc = Object.entries(chainConfigs).reduce((urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }), {});
+        let provider: WalletConnectProvider;
+        if (walletProvider === WalletProviderType.WalletConnect) {
+            provider = await connectWithMetamaskClient({ ...walletConnectOpts, rpc });
+        } else if (walletProvider === WalletProviderType.EwKeyManager && ewKeyManagerUrl) {
+            provider = await connectWithKmsClient({ ...walletConnectOpts, rpc }, ewKeyManagerUrl);
+        } else {
+            throw new Error("Can not connect to Wallet Connect client");
+        }
+        const signer = new providers.Web3Provider(provider).getSigner();
         return new SignerService(signer, transactionOverrides);
     }
 

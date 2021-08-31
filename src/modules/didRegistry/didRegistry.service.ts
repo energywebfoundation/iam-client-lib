@@ -52,7 +52,7 @@ export class DidRegistry {
     private async _setOperator() {
         const signer = this._signerService.signer;
         const provider = signer.provider;
-        const publicKey = this._signerService.publicKey;
+        const publicKey = await this._signerService.getPublicKey();
         if (signer instanceof Wallet && provider instanceof JsonRpcProvider) {
             this._identityOwner = IdentityOwner.fromPrivateKeySigner(
                 new EwPrivateKeySigner(signer.privateKey, {

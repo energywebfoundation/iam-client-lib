@@ -16,23 +16,12 @@
 // @authors: Daniel Wojno
 
 import { providers, Signer } from "ethers";
-import {
-    Algorithms,
-    DIDAttribute,
-    Encoding,
-    IDIDDocument,
-    IServiceEndpoint,
-    IUpdateData,
-} from "@ew-did-registry/did-resolver-interface";
-import { ProxyOperator } from "@ew-did-registry/proxyidentity";
+import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import { IAMBase } from "./iam/iam-base";
-import { ERROR_MESSAGES } from "./errors";
-import { ClaimData, RegistrationTypes } from "./modules/cacheClient/cacheClient.types";
+import { RegistrationTypes } from "./modules/cacheClient/cacheClient.types";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { NATS_EXCHANGE_TOPIC } from "./utils/constants";
 import { Subscription } from "nats.ws";
-import { AxiosError } from "axios";
-import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 
 export type InitializeData = {
     did: string | undefined;
@@ -118,8 +107,6 @@ export class IAM extends IAMBase {
     }
 
     // DID DOCUMENT
-
-    
 
     /// ROLES
 

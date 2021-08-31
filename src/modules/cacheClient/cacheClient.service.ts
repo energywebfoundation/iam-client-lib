@@ -15,7 +15,7 @@ import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 
 import { ICacheClient } from "./ICacheClient";
-import { isBrowser } from "../../utils/isBrowser";
+import { isBrowser } from "../../utils/detectEnvironment";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../../utils/getPublicKeyAndIdentityToken";
 import { Signer } from "ethers";
 import { Injectable } from "@nestjs/common";

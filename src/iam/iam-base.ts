@@ -1,9 +1,8 @@
-import { providers, Signer, utils, errors, Wallet } from "ethers";
+import { providers, Signer, errors } from "ethers";
 import { DomainReader, DomainTransactionFactory, DomainHierarchy } from "@energyweb/iam-contracts";
-import { ethrReg, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
+import { ethrReg, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { namehash } from "../utils/ENS_hash";
-import { IServiceEndpoint, RegistrySettings, KeyTags, IPublicKey } from "@ew-did-registry/did-resolver-interface";
-import { Methods } from "@ew-did-registry/did";
+import { RegistrySettings } from "@ew-did-registry/did-resolver-interface";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
@@ -11,23 +10,19 @@ import { ClaimManager } from "@energyweb/iam-contracts/dist";
 import { EnsRegistry } from "../../ethers/EnsRegistry";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheClient } from "../modules/cacheClient/ICacheClient";
-import { isBrowser } from "../utils/isBrowser";
+import { isBrowser } from "../utils/detectEnvironment";
 import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
-  import { ClaimData } from "../modules/cacheClient/cacheClient.types";
 import difference from "lodash.difference";
 import { TransactionOverrides } from "../../ethers";
-import detectMetamask from "@metamask/detect-provider";
 import { Owner as IdentityOwner, Owner } from "../modules/didRegistry/Owner";
 import { WalletProvider } from "../types/WalletProvider";
-import { CacheClient } from "../modules/cacheClient/cacheClient.service";
 import { MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
-import { cacheServerClientOptions, MessagingOptions } from "./chainConfig";
+import { MessagingOptions } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
 import { IdentityManager } from "../../ethers/IdentityManager";
-import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import { getPublicKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 
-const { hexlify, bigNumberify } = utils;
 const { JsonRpcProvider } = providers;
 const { abi: abi1056 } = ethrReg;
 
@@ -176,12 +171,7 @@ export class IAMBase {
         }
     }
 
-    protected clearSession() {
-        if (this._runningInBrowser) {
-            localStorage.removeItem(WALLET_PROVIDER);
-            localStorage.removeItem(PUBLIC_KEY);
-        }
-    }
+    
 
     /**
      * Add event handler for certain events
@@ -237,23 +227,6 @@ export class IAMBase {
         this._signer = undefined;
     }
 
-    private async loginToCacheServer(): Promise<IPubKeyAndIdentityToken | undefined> {
-        if (this._signer && this._cacheClient && this._cacheClient.isAuthEnabled()) {
-            // If session isn't active then assume that user has never signed in or has signed out
-            if (!this.isSessionActive()) {
-                const { pubKeyAndIdentityToken } = await this._cacheClient.login();
-                return pubKeyAndIdentityToken;
-            }
-            // session is active so maybe user has signed in before.
-            // Test cache-server login to confirm that their tokens are still valid
-            else {
-                await this._cacheClient.testLogin();
-                // Expect that if login generated pubKey&IdToken, then will be accessible as property of cacheClient
-                return this._cacheClient.pubKeyAndIdentityToken;
-            }
-        }
-        return undefined;
-    }
 
     protected async setAddress() {
         if (this._signer) {
