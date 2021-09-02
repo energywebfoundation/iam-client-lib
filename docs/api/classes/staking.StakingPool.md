@@ -86,7 +86,7 @@ ___
 
 ▸ **putStake**(`stake`, `transactionSpeed?`): `Promise`<`void`\>
 
-**`description`** Locks stake and starts accumulating reward
+**`description`** Locks stake and starts accumulating reward. If needed stake will be reduced to be able to pay fee
 
 **`emits`** StakingPool.StakePut
 

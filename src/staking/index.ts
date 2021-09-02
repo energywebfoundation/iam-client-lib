@@ -152,7 +152,7 @@ export class StakingPool {
     }
 
     /**
-     * @description Locks stake and starts accumulating reward
+     * @description Locks stake and starts accumulating reward. If needed stake will be reduced to be able to pay fee
      * @emits StakingPool.StakePut
      */
     async putStake(
@@ -169,19 +169,18 @@ export class StakingPool {
             ...this.overrides[transactionSpeed],
         };
 
+        const gasPrice = this.overrides[transactionSpeed].gasPrice || (await this.patron.provider.getGasPrice());
+        const gas = this.overrides[transactionSpeed].gasLimit || (await this.patron.provider.estimateGas(tx));
+        const fee = gasPrice.mul(gas).mul(2);
+
         const balance = await this.getBalance();
-        if (balance.lt(stake)) {
+        // multiplier 2 chosen arbitrarily because it is not known how reasonably to choose it
+        const maxStake = balance.sub(fee);
+
+        if (maxStake.lte(0)) {
             throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
-        } else if (balance.eq(stake)) {
-            const gasPrice = this.overrides[transactionSpeed].gasPrice || (await this.patron.provider.getGasPrice());
-            const gas = this.overrides[transactionSpeed].gasLimit || (await this.patron.provider.estimateGas(tx));
-            // multiplier 2 chosen arbitrarily because it is not known how reasonably to choose it
-            const fee = gasPrice.mul(gas).mul(2);
-            if (balance.lte(fee)) {
-                throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
-            }
-            tx.value = balance.sub(fee);
         }
+        tx.value = stake.lt(maxStake) ? stake : maxStake;
         await (await this.patron.sendTransaction(tx)).wait();
     }
 
