@@ -56,9 +56,7 @@ IAM Constructor
 
 ▸ **closeConnection**(): `Promise`<`void`\>
 
-Close connection to wallet
-
-**`description`** closes the connection between dApp and the wallet
+**`description`** Closes the connection between application and the signer's wallet
 
 #### Returns
 
@@ -70,7 +68,7 @@ ___
 
 ▸ **connectToCacheServer**(): `Promise`<`void`\>
 
-**`description`** established connection to cache server and logins in signing authentication token
+**`description`** Establishes connection to the cache serverand sets public key and identity token
 
 #### Returns
 
@@ -82,7 +80,7 @@ ___
 
 ▸ **connectToDIDRegistry**(): `Promise`<`void`\>
 
-**`description`** creates users DID document if it is not yet exist
+**`description`** Creates the signer's DID document if it does not exist
 
 #### Returns
 
@@ -94,7 +92,7 @@ ___
 
 ▸ **isSessionActive**(): `boolean`
 
-Check if session is active
+**`description`** Checks if the session is active
 
 #### Returns
 
@@ -108,7 +106,7 @@ ___
 
 ▸ **on**(`event`, `eventHandler`): `void`
 
-Add event handler for certain events
+**`description`** Defines event handlers for change of account, change of network, disconnection
 
 **`requires`** to be called after the connection to wallet was initialized
 
