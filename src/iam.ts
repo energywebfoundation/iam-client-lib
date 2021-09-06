@@ -201,7 +201,8 @@ export class IAM extends IAMBase {
             if (createDocument) {
                 await this.connectToDIDRegistry();
             }
-        } catch (err) {
+        } catch (error) {
+            const err: Error = error as Error;
             if (err.message === "User closed modal") {
                 return {
                     did: undefined,
@@ -1799,8 +1800,9 @@ export class IAM extends IAMBase {
                 }
             }
             return identity;
-        } catch (e) {
-            throw new Error(e);
+        } catch (err) {
+            const error: Error = err as Error;
+            throw error;
         }
     }
 
