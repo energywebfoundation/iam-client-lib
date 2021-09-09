@@ -10,7 +10,7 @@
 
 ## Implements
 
-- `IdentityOwner`
+- `EwSigner`
 
 ## Table of contents
 
@@ -60,7 +60,7 @@ Signer.constructor
 
 #### Implementation of
 
-IdentityOwner.privateKey
+EwSigner.privateKey
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Implementation of
 
-IdentityOwner.provider
+EwSigner.provider
 
 #### Inherited from
 
@@ -84,7 +84,7 @@ ___
 
 #### Implementation of
 
-IdentityOwner.publicKey
+EwSigner.publicKey
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Implementation of
 
-IdentityOwner.signer
+EwSigner.signer
 
 ## Methods
 
@@ -114,7 +114,7 @@ IdentityOwner.signer
 
 #### Implementation of
 
-IdentityOwner.connect
+EwSigner.connect
 
 #### Overrides
 
@@ -132,7 +132,7 @@ ___
 
 #### Implementation of
 
-IdentityOwner.getAddress
+EwSigner.getAddress
 
 #### Overrides
 
@@ -156,7 +156,7 @@ ___
 
 #### Implementation of
 
-IdentityOwner.sendTransaction
+EwSigner.sendTransaction
 
 #### Overrides
 
@@ -180,7 +180,7 @@ ___
 
 #### Implementation of
 
-IdentityOwner.signMessage
+EwSigner.signMessage
 
 #### Overrides
 
@@ -204,7 +204,7 @@ ___
 
 #### Implementation of
 
-IdentityOwner.signTransaction
+EwSigner.signTransaction
 
 #### Overrides
 
