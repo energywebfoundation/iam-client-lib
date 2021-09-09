@@ -5,13 +5,7 @@ import {
     DomainHierarchy,
     ResolverContractType,
 } from "@energyweb/iam-contracts";
-import {
-    EwJsonRpcSigner,
-    EwPrivateKeySigner,
-    IdentityOwner,
-    Operator,
-    Resolver,
-} from "@ew-did-registry/did-ethr-resolver";
+import { EwSigner, Operator, Resolver } from "@ew-did-registry/did-ethr-resolver";
 import { labelhash, namehash } from "../utils/ENS_hash";
 import {
     IServiceEndpoint,
@@ -45,10 +39,9 @@ import { OfferableIdentity__factory } from "../../ethers/factories/OfferableIden
 import { IdentityManager__factory } from "../../ethers/factories/IdentityManager__factory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const { parseUnits } = utils;
-const { JsonRpcProvider, Web3Provider } = providers;
+const { JsonRpcProvider } = providers;
 
 export type ConnectionOptions = {
     /** only required in node env */
@@ -85,7 +78,7 @@ export class IAMBase {
     protected _address: string | undefined;
     protected _signer: Signer | undefined;
     protected _safeAddress: string | undefined;
-    protected _didSigner: IdentityOwner | undefined;
+    protected _didSigner: EwSigner | undefined;
     protected _identityToken: string | undefined;
     protected _transactionOverrides: utils.Deferrable<providers.TransactionRequest> = {};
     protected _providerType: WalletProvider | undefined;
@@ -279,19 +272,12 @@ export class IAMBase {
             this._identityToken = identityToken;
         }
         if (this._signer instanceof Wallet) {
-            this._didSigner = IdentityOwner.fromPrivateKeySigner(
-                new EwPrivateKeySigner(this._signer.privateKey, {
-                    type: ProviderTypes.HTTP,
-                    uriOrInfo: this._provider.connection.url,
-                }),
-            );
-        } else if (this._provider instanceof WalletConnectProvider) {
-            this._didSigner = IdentityOwner.fromJsonRpcSigner(new EwJsonRpcSigner(this._provider), this._publicKey);
-        } else if (this._provider instanceof Web3Provider) {
-            this._didSigner = IdentityOwner.fromJsonRpcSigner(
-                new EwJsonRpcSigner(this._provider.jsonRpcFetchFunc),
-                this._publicKey,
-            );
+            this._didSigner = EwSigner.fromPrivateKey(this._signer.privateKey, {
+                type: ProviderTypes.HTTP,
+                uriOrInfo: this._provider.connection.url,
+            });
+        } else if (this._signer instanceof providers.JsonRpcSigner) {
+            this._didSigner = EwSigner.fromEthersProvider(this._signer.provider, this._publicKey);
         } else {
             throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
         }

@@ -1,7 +1,7 @@
-import { IdentityOwner } from "@ew-did-registry/did-ethr-resolver";
+import { EwSigner } from "@ew-did-registry/did-ethr-resolver";
 import { Signer, providers, utils } from "ethers";
 
-export class Owner extends Signer implements IdentityOwner {
+export class Owner extends Signer implements EwSigner {
     constructor(
         public signer: Signer,
         public provider: providers.Provider,
