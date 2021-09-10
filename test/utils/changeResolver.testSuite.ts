@@ -40,7 +40,7 @@ export const changeResolverTests = () => {
         });
         domainHierarchy = new DomainHierarchy({
             domainReader,
-            ensRegistry,
+            ensRegistryAddress: ensRegistry.address,
             provider,
             domainNotifierAddress: domainNotifer.address,
         });

@@ -58,7 +58,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.12.5",
-        "@energyweb/iam-contracts": "2.0.0",
+        "@energyweb/iam-contracts": "^3.0.0",
         "@ensdomains/ens": "^0.4.5",
         "@ew-did-registry/claims": "0.5.2-alpha.84.0",
         "@ew-did-registry/did": "0.5.2-alpha.84.0",

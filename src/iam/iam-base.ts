@@ -18,8 +18,8 @@ import { Methods } from "@ew-did-registry/did";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { ClaimsIssuer, ClaimsUser, ClaimsVerifier } from "@ew-did-registry/claims";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
-import { ENSRegistry__factory } from "../../ethers/factories/ENSRegistry__factory";
 import { ENSRegistry } from "../../ethers/ENSRegistry";
+import { ENSRegistry__factory } from "../../ethers/factories/ENSRegistry__factory";
 import { ClaimManager__factory } from "../../ethers/factories/ClaimManager__factory";
 import { ClaimManager } from "../../ethers/ClaimManager";
 import { JWT } from "@ew-did-registry/jwt";
@@ -652,7 +652,7 @@ export class IAMBase {
         });
         this._domainHierarchy = new DomainHierarchy({
             domainReader: this._domainDefinitionReader,
-            ensRegistry: this._ensRegistry,
+            ensRegistryAddress: this._ensRegistry.address,
             provider: this._provider,
             domainNotifierAddress: domainNotifierAddress,
             publicResolverAddress: ensPublicResolverAddress,

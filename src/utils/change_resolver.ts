@@ -1,5 +1,5 @@
-import { DomainHierarchy } from "@energyweb/iam-contracts";
 import { Wallet, providers, utils } from "ethers";
+import { DomainHierarchy } from "@energyweb/iam-contracts";
 import { ENSRegistry__factory } from "../../ethers/factories/ENSRegistry__factory";
 import { PublicResolver__factory } from "../../ethers/factories/PublicResolver__factory";
 import { NODE_FIELDS_KEY } from "./constants";
