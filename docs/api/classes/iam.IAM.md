@@ -1441,12 +1441,14 @@ verifyPublicClaim
 
 **`description`** verifies issued token of claim
 
+**`throws`** if the proof failed
+
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.issuedToken` | `string` |
+| `__namedParameters.claimUrl` | `string` |
 
 #### Returns
 

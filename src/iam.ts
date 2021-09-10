@@ -494,12 +494,13 @@ export class IAM extends IAMBase {
      * verifyPublicClaim
      *
      * @description verifies issued token of claim
-     * @returns public claim data
+     * @returns { Promise<IPublicClaim> } public claim data
+     * @throws if the proof failed
      *
      */
-    async verifyPublicClaim({ issuedToken }: { issuedToken: string }) {
+    async verifyPublicClaim({ claimUrl }: { claimUrl: string }) {
         if (this._verifierClaims) {
-            return this._verifierClaims.verifyPublicProof(issuedToken);
+            return this._verifierClaims.verifyPublicProof(claimUrl);
         }
         throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
     }
