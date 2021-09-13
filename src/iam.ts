@@ -202,7 +202,7 @@ export class IAM extends IAMBase {
                 await this.connectToDIDRegistry();
             }
         } catch (err) {
-            if (err.message === "User closed modal") {
+            if ((err as Error).message === "User closed modal") {
                 return {
                     did: undefined,
                     connected: false,
@@ -211,7 +211,7 @@ export class IAM extends IAMBase {
                     realtimeExchangeConnected: false,
                 };
             }
-            throw new Error(err.message);
+            throw err as Error;
         }
 
         return {
@@ -1800,8 +1800,8 @@ export class IAM extends IAMBase {
                 }
             }
             return identity;
-        } catch (e) {
-            throw new Error(e);
+        } catch (err) {
+            throw err as Error;
         }
     }
 

@@ -837,7 +837,7 @@ ___
 
 ### getDefinition
 
-▸ **getDefinition**(`__namedParameters`): `Promise`<`IAppDefinition` \| `IRoleDefinition` \| `IOrganizationDefinition`\>
+▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
 getRoleDefinition
 
@@ -853,7 +853,7 @@ getRoleDefinition
 
 #### Returns
 
-`Promise`<`IAppDefinition` \| `IRoleDefinition` \| `IOrganizationDefinition`\>
+`Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
 metadata string or empty string when there is no metadata
 
@@ -1565,7 +1565,7 @@ setRoleDefinition
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IAppDefinition` \| `IRoleDefinition` \| `IOrganizationDefinition` |
+| `__namedParameters.data` | `IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition` |
 | `__namedParameters.domain` | `string` |
 
 #### Returns
