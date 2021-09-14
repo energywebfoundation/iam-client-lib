@@ -26,7 +26,7 @@ export const assetsTests = () => {
         const newOwner = new Keys();
         await rootOwnerIam.offerAsset({
             assetDID: `did:ethr:${assetAddress}`,
-            offerTo: `did:ethr:${newOwner.getAddress()}`,
+            offerTo: `${newOwner.getAddress()}`,
         });
         const assetContract = OfferableIdentity__factory.connect(assetAddress, provider);
         const offered = await assetContract.offeredTo();
@@ -38,7 +38,7 @@ export const assetsTests = () => {
         const assetDID = `did:ethr:${assetAddress}`;
         await rootOwnerIam.offerAsset({
             assetDID,
-            offerTo: `did:ethr:${newOwner.getAddress()}`,
+            offerTo: `${newOwner.getAddress()}`,
         });
         const assetContract = OfferableIdentity__factory.connect(assetAddress, provider);
         const offered = await assetContract.offeredTo();
@@ -52,7 +52,7 @@ export const assetsTests = () => {
         const newOwner = new Keys();
         await replenish(newOwner.getAddress());
         const assetDID = `did:ethr:${assetAddress}`;
-        await rootOwnerIam.offerAsset({ assetDID, offerTo: `did:ethr:${newOwner.getAddress()}` });
+        await rootOwnerIam.offerAsset({ assetDID, offerTo: `${newOwner.getAddress()}` });
         const newOwnerIAM = new IAM({
             privateKey: newOwner.privateKey,
             rpcUrl,
@@ -73,7 +73,7 @@ export const assetsTests = () => {
         const newOwner = new Keys();
         await replenish(newOwner.getAddress());
         const assetDID = `did:ethr:${assetAddress}`;
-        await rootOwnerIam.offerAsset({ assetDID, offerTo: `did:ethr:${newOwner.getAddress()}` });
+        await rootOwnerIam.offerAsset({ assetDID, offerTo: `${newOwner.getAddress()}` });
         const newOwnerIAM = new IAM({
             privateKey: newOwner.privateKey,
             rpcUrl,

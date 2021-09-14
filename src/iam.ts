@@ -1809,9 +1809,8 @@ export class IAM extends IAMBase {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
         }
-        const [, , offerToAddress] = offerTo.split(":");
         const [, , assetContractAddress] = assetDID.split(":");
-        const tx = this.offerAssetTx({ assetContractAddress, offerTo: offerToAddress });
+        const tx = this.offerAssetTx({ assetContractAddress, offerTo });
         await this.send({
             calls: [tx],
             from: this._address,
