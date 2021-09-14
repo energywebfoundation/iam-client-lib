@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import { providers, Signer, utils } from "ethers";
+import { providers, Signer, utils, Wallet } from "ethers";
 import {
     IRoleDefinition,
     IAppDefinition,
@@ -71,6 +71,7 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
+import { JWT } from "@ew-did-registry/jwt";
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
@@ -547,6 +548,27 @@ export class IAM extends IAMBase {
             });
         }
         throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
+    }
+
+    async createIdentityProofWithDelegate(
+        secp256k1PrivateKey: string,
+        rpcUrl: string,
+        identityProofDid: string,
+    ): Promise<string> {
+        const provider = new providers.JsonRpcProvider(rpcUrl);
+        const wallet = new Wallet(secp256k1PrivateKey, provider);
+
+        const blockNumber = (await provider.getBlockNumber()).toString();
+
+        const payload: { iss: string; claimData: { blockNumber: string } } = {
+            iss: identityProofDid,
+            claimData: {
+                blockNumber,
+            },
+        };
+        const jwt = new JWT(wallet);
+        const identityToken = jwt.sign(payload);
+        return identityToken;
     }
 
     /// ROLES

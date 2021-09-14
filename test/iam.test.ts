@@ -49,6 +49,14 @@ export const createIam = async (privateKey: string, { createDocument = false, in
     return iam;
 };
 
+// const identityTests = () => {
+//     test("Can create identityToken", async () => {
+//         const identityToken = await rootOwnerIam.createIdentityProof();
+//         console.log("Identity created ==> ", identityToken);
+//         expect(identityToken).toBeDefined;
+//     })
+// }
+
 beforeAll(async () => {
     // sometimes transaction is taking more then default 5000 ms jest timeout
     jest.setTimeout(100000);
@@ -112,3 +120,4 @@ describe("Claim tests", claimsTests);
 describe("Utils tests", utilsTests);
 describe("Assets tests", assetsTests);
 describe("Staking tests", stakingTests);
+// describe("Identity creation tests", identityTests)
