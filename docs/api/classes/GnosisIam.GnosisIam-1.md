@@ -38,6 +38,7 @@ The domain ownership functionality has been redefined accordingly.
 - [createApplication](GnosisIam.GnosisIam-1.md#createapplication)
 - [createClaimRequest](GnosisIam.GnosisIam-1.md#createclaimrequest)
 - [createIdentityProof](GnosisIam.GnosisIam-1.md#createidentityproof)
+- [createIdentityProofWithDelegate](GnosisIam.GnosisIam-1.md#createidentityproofwithdelegate)
 - [createOrganization](GnosisIam.GnosisIam-1.md#createorganization)
 - [createProofClaim](GnosisIam.GnosisIam-1.md#createproofclaim)
 - [createPublicClaim](GnosisIam.GnosisIam-1.md#createpublicclaim)
@@ -403,6 +404,28 @@ ___
 #### Inherited from
 
 [IAM](iam.IAM.md).[createIdentityProof](iam.IAM.md#createidentityproof)
+
+___
+
+### createIdentityProofWithDelegate
+
+▸ **createIdentityProofWithDelegate**(`secp256k1PrivateKey`, `rpcUrl`, `identityProofDid`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `secp256k1PrivateKey` | `string` |
+| `rpcUrl` | `string` |
+| `identityProofDid` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[createIdentityProofWithDelegate](iam.IAM.md#createidentityproofwithdelegate)
 
 ___
 

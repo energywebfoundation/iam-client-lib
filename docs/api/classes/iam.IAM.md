@@ -36,6 +36,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [createApplication](iam.IAM.md#createapplication)
 - [createClaimRequest](iam.IAM.md#createclaimrequest)
 - [createIdentityProof](iam.IAM.md#createidentityproof)
+- [createIdentityProofWithDelegate](iam.IAM.md#createidentityproofwithdelegate)
 - [createOrganization](iam.IAM.md#createorganization)
 - [createProofClaim](iam.IAM.md#createproofclaim)
 - [createPublicClaim](iam.IAM.md#createpublicclaim)
@@ -350,6 +351,24 @@ ___
 ### createIdentityProof
 
 ▸ **createIdentityProof**(): `Promise`<`string`\>
+
+#### Returns
+
+`Promise`<`string`\>
+
+___
+
+### createIdentityProofWithDelegate
+
+▸ **createIdentityProofWithDelegate**(`secp256k1PrivateKey`, `rpcUrl`, `identityProofDid`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `secp256k1PrivateKey` | `string` |
+| `rpcUrl` | `string` |
+| `identityProofDid` | `string` |
 
 #### Returns
 
