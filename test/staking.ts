@@ -350,6 +350,7 @@ export const stakingTests = (): void => {
 
             beforeEach(async () => {
                 await replenish(serviceProvider.address, principalThreshold);
+                await replenish(patron.address, parseEther("1"));
                 await providerStakingService.launchStakingPool({
                     org: domain,
                     minStakingPeriod,
@@ -388,9 +389,18 @@ export const stakingTests = (): void => {
             });
 
             it("should not be able to stake with insufficient balance", async () => {
-                const balance = await patron.getBalance();
+                const patron = Wallet.createRandom().connect(provider);
+                expect(await patron.getBalance()).toEqual(BigNumber.from(0));
 
-                return expect(pool.putStake(balance.add(1))).rejects.toThrow(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
+                return expect(pool.connect(patron).putStake(1)).rejects.toThrow(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
+            });
+
+            it("should be able to stake whole balance", async () => {
+                const stake = await patron.getBalance();
+                const stakePut = waitFor(poolContract.filters.StakePut(patron.address, null, null), poolContract);
+
+                await pool.putStake(stake);
+                expect(await stakePut).toEqual(expect.arrayContaining([patron.address]));
             });
 
             it("stake should not be replenished", async () => {

@@ -139,11 +139,11 @@ export class StakingPoolService {
  * Abstraction over staking pool smart contract
  */
 export class StakingPool {
-    private overrides = {
+    private overrides: Record<TransactionSpeed, { gasPrice?: BigNumber; gasLimit?: BigNumber }> = {
         [TransactionSpeed.BASE]: {},
         [TransactionSpeed.FAST]: {
             gasPrice: parseUnits("0.01", "gwei"),
-            gasLimit: 490000,
+            gasLimit: BigNumber.from(490000),
         },
     };
     private pool: StakingPoolContract;
@@ -152,7 +152,7 @@ export class StakingPool {
     }
 
     /**
-     * @description Locks stake and starts accumulating reward
+     * @description Locks stake and starts accumulating reward. If needed stake will be reduced to be able to pay fee
      * @emits StakingPool.StakePut
      */
     async putStake(
@@ -160,18 +160,28 @@ export class StakingPool {
         stake: BigNumber | number,
         transactionSpeed = TransactionSpeed.FAST,
     ): Promise<void> {
-        if (typeof stake === "number") {
-            stake = BigNumber.from(stake);
-        }
-        if ((await this.getBalance()).lt(stake)) {
+        stake = BigNumber.from(stake);
+        const tx = {
+            to: this.pool.address,
+            from: await this.patron.getAddress(),
+            data: this.pool.interface.encodeFunctionData("putStake"),
+            value: stake,
+            ...this.overrides[transactionSpeed],
+        };
+
+        const gasPrice = this.overrides[transactionSpeed].gasPrice || (await this.patron.provider.getGasPrice());
+        const gas = this.overrides[transactionSpeed].gasLimit || (await this.patron.provider.estimateGas(tx));
+        const fee = gasPrice.mul(gas).mul(2);
+
+        const balance = await this.getBalance();
+        // multiplier 2 chosen arbitrarily because it is not known how reasonably to choose it
+        const maxStake = balance.sub(fee);
+
+        if (maxStake.lte(0)) {
             throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
         }
-        await (
-            await this.pool.putStake({
-                value: stake,
-                ...this.overrides[transactionSpeed],
-            })
-        ).wait();
+        tx.value = stake.lt(maxStake) ? stake : maxStake;
+        await (await this.patron.sendTransaction(tx)).wait();
     }
 
     /**
