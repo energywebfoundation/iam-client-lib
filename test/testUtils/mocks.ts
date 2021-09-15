@@ -57,3 +57,11 @@ export const mockJsonCodec = () => {
 export const restoreJsonCodec = () => {
     Reflect.set(IAM.prototype, "_jsonCodec", _jsonCodec);
 };
+let _ipfsStore;
+export const mockIpfs = () => {
+    ({ _ipfsStore } = Reflect.get(IAM, "prototype"));
+    Reflect.set(IAM.prototype, "_ipfsStore", { save: (token: string) => Promise.resolve(token) });
+};
+export const restoreIpfs = () => {
+    Reflect.set(IAM.prototype, "_ipfsStore", _ipfsStore);
+};
