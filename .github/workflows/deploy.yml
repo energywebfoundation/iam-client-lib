@@ -59,7 +59,6 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: codfish/semantic-release-action@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Commit to develop branch and merge to master branch
