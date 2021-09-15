@@ -397,9 +397,15 @@ ___
 
 ▸ **createIdentityProof**(): `Promise`<`string`\>
 
+createIdentityProof
+
+**`description`** create a public claim to prove identity
+
 #### Returns
 
 `Promise`<`string`\>
+
+JWT token of created identity
 
 #### Inherited from
 
@@ -410,6 +416,10 @@ ___
 ### createIdentityProofWithDelegate
 
 ▸ **createIdentityProofWithDelegate**(`secp256k1PrivateKey`, `rpcUrl`, `identityProofDid`): `Promise`<`string`\>
+
+createIdentityProofWithDelegate
+
+**`description`** create a raw identity proof for a delegate
 
 #### Parameters
 
@@ -422,6 +432,8 @@ ___
 #### Returns
 
 `Promise`<`string`\>
+
+JWT token of created identity
 
 #### Inherited from
 

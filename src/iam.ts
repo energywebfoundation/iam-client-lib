@@ -548,6 +548,13 @@ export class IAM extends IAMBase {
         return this._jwt.decode(token);
     }
 
+    /**
+     * createIdentityProof
+     *
+     * @description create a public claim to prove identity
+     * @returns JWT token of created identity
+     *
+     */
     async createIdentityProof() {
         if (this._provider) {
             const blockNumber = await this._provider.getBlockNumber();
@@ -560,6 +567,13 @@ export class IAM extends IAMBase {
         throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
     }
 
+    /**
+     * createIdentityProofWithDelegate
+     *
+     * @description create a raw identity proof for a delegate
+     * @returns JWT token of created identity
+     *
+     */
     async createIdentityProofWithDelegate(
         secp256k1PrivateKey: string,
         rpcUrl: string,
