@@ -86,8 +86,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `__namedParameters` | [`AddDIDToWatchListParams`](../interfaces/cacheServerClient_ICacheServerClient.AddDIDToWatchListParams.md) |
 
 #### Returns
 
@@ -123,8 +122,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claimId` | `string` |
+| `__namedParameters` | [`DeleteClaimParams`](../interfaces/cacheServerClient_ICacheServerClient.DeleteClaimParams.md) |
 
 #### Returns
 
@@ -144,8 +142,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetAppDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetAppDefinitionParams.md) |
 
 #### Returns
 
@@ -165,8 +162,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetApplicationRolesParams`](../interfaces/cacheServerClient_ICacheServerClient.GetApplicationRolesParams.md) |
 
 #### Returns
 
@@ -186,8 +182,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetApplicationsByOrganizationParams`](../interfaces/cacheServerClient_ICacheServerClient.GetApplicationsByOrganizationParams.md) |
 
 #### Returns
 
@@ -207,8 +202,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | [`GetApplicationsByOwnerParams`](../interfaces/cacheServerClient_ICacheServerClient.GetApplicationsByOwnerParams.md) |
 
 #### Returns
 
@@ -228,8 +222,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
+| `__namedParameters` | [`GetAssetByIdParams`](../interfaces/cacheServerClient_ICacheServerClient.GetAssetByIdParams.md) |
 
 #### Returns
 
@@ -249,12 +242,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
-| `__namedParameters.order?` | [`Order`](../enums/cacheServerClient_cacheServerClient_types.Order.md) |
-| `__namedParameters.skip?` | `number` |
-| `__namedParameters.take?` | `number` |
-| `__namedParameters.type?` | [`AssetHistoryEventType`](../enums/cacheServerClient_cacheServerClient_types.AssetHistoryEventType.md) |
+| `__namedParameters` | [`GetAssetHistoryParams`](../interfaces/cacheServerClient_ICacheServerClient.GetAssetHistoryParams.md) |
 
 #### Returns
 
@@ -274,10 +262,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.namespace?` | `string` |
+| `__namedParameters` | [`GetClaimsByIssuerParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsByIssuerParams.md) |
 
 #### Returns
 
@@ -297,10 +282,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.namespace?` | `string` |
+| `__namedParameters` | [`GetClaimsByRequesterParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsByRequesterParams.md) |
 
 #### Returns
 
@@ -320,10 +302,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.namespace?` | `string` |
+| `__namedParameters` | [`GetClaimsBySubjectParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsBySubjectParams.md) |
 
 #### Returns
 
@@ -363,8 +342,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetDIDsForRoleParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDIDsForRoleParams.md) |
 
 #### Returns
 
@@ -384,9 +362,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.includeClaims?` | `boolean` |
+| `__namedParameters` | [`GetDidDocumentParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDidDocumentParams.md) |
 
 #### Returns
 
@@ -406,9 +382,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.search` | `string` |
-| `__namedParameters.types?` | (``"App"`` \| ``"Org"`` \| ``"Role"``)[] |
+| `__namedParameters` | [`GetNamespaceBySearchPhraseParams`](../interfaces/cacheServerClient_ICacheServerClient.GetNamespaceBySearchPhraseParams.md) |
 
 #### Returns
 
@@ -428,8 +402,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `__namedParameters` | [`GetOfferedAssetsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOfferedAssetsParams.md) |
 
 #### Returns
 
@@ -449,8 +422,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetOrgDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOrgDefinitionParams.md) |
 
 #### Returns
 
@@ -470,8 +442,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetOrgHierarchyParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOrgHierarchyParams.md) |
 
 #### Returns
 
@@ -491,8 +462,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetOrganizationRolesParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOrganizationRolesParams.md) |
 
 #### Returns
 
@@ -512,9 +482,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.excludeSubOrgs` | `boolean` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | [`GetOrganizationsByOwnerParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOrganizationsByOwnerParams.md) |
 
 #### Returns
 
@@ -534,8 +502,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `__namedParameters` | [`GetOwnedAssetsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOwnedAssetsParams.md) |
 
 #### Returns
 
@@ -555,8 +522,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | [`GetPreviouslyOwnedAssetsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetPreviouslyOwnedAssetsParams.md) |
 
 #### Returns
 
@@ -576,8 +542,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetRoleDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetRoleDefinitionParams.md) |
 
 #### Returns
 
@@ -597,8 +562,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | [`GetRolesByOwnerParams`](../interfaces/cacheServerClient_ICacheServerClient.GetRolesByOwnerParams.md) |
 
 #### Returns
 
@@ -618,8 +582,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | [`GetetSubOrganizationsByOrganizationParams`](../interfaces/cacheServerClient_ICacheServerClient.GetetSubOrganizationsByOrganizationParams.md) |
 
 #### Returns
 
@@ -679,9 +642,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimIssuance`](../interfaces/iam.IClaimIssuance.md) |
+| `__namedParameters` | [`IssueClaimParams`](../interfaces/cacheServerClient_ICacheServerClient.IssueClaimParams.md) |
 
 #### Returns
 
@@ -715,9 +676,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimRejection`](../interfaces/iam.IClaimRejection.md) |
+| `__namedParameters` | [`RejectClaimParams`](../interfaces/cacheServerClient_ICacheServerClient.RejectClaimParams.md) |
 
 #### Returns
 
@@ -737,9 +696,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimRequest`](../interfaces/iam.IClaimRequest.md) |
+| `__namedParameters` | [`RequestClaimParams`](../interfaces/cacheServerClient_ICacheServerClient.RequestClaimParams.md) |
 
 #### Returns
 

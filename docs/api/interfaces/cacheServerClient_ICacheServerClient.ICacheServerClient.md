@@ -56,14 +56,13 @@
 
 ### addDIDToWatchList
 
-▸ **addDIDToWatchList**(`__namedParameters`): `Promise`<`void`\>
+▸ **addDIDToWatchList**(`params`): `Promise`<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `params` | [`AddDIDToWatchListParams`](cacheServerClient_ICacheServerClient.AddDIDToWatchListParams.md) |
 
 #### Returns
 
@@ -73,14 +72,13 @@ ___
 
 ### deleteClaim
 
-▸ **deleteClaim**(`__namedParameters`): `Promise`<`void`\>
+▸ **deleteClaim**(`params`): `Promise`<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claimId` | `string` |
+| `params` | [`DeleteClaimParams`](cacheServerClient_ICacheServerClient.DeleteClaimParams.md) |
 
 #### Returns
 
@@ -90,14 +88,13 @@ ___
 
 ### getAppDefinition
 
-▸ **getAppDefinition**(`__namedParameters`): `Promise`<`IAppDefinition`\>
+▸ **getAppDefinition**(`params`): `Promise`<`IAppDefinition`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetAppDefinitionParams`](cacheServerClient_ICacheServerClient.GetAppDefinitionParams.md) |
 
 #### Returns
 
@@ -107,14 +104,13 @@ ___
 
 ### getApplicationRoles
 
-▸ **getApplicationRoles**(`__namedParameters`): `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
+▸ **getApplicationRoles**(`params`): `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetApplicationRolesParams`](cacheServerClient_ICacheServerClient.GetApplicationRolesParams.md) |
 
 #### Returns
 
@@ -124,14 +120,13 @@ ___
 
 ### getApplicationsByOrganization
 
-▸ **getApplicationsByOrganization**(`__namedParameters`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
+▸ **getApplicationsByOrganization**(`params`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetApplicationsByOrganizationParams`](cacheServerClient_ICacheServerClient.GetApplicationsByOrganizationParams.md) |
 
 #### Returns
 
@@ -141,14 +136,13 @@ ___
 
 ### getApplicationsByOwner
 
-▸ **getApplicationsByOwner**(`__namedParameters`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
+▸ **getApplicationsByOwner**(`params`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `params` | [`GetApplicationsByOwnerParams`](cacheServerClient_ICacheServerClient.GetApplicationsByOwnerParams.md) |
 
 #### Returns
 
@@ -158,14 +152,13 @@ ___
 
 ### getAssetById
 
-▸ **getAssetById**(`__namedParameters`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)\>
+▸ **getAssetById**(`params`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
+| `params` | [`GetAssetByIdParams`](cacheServerClient_ICacheServerClient.GetAssetByIdParams.md) |
 
 #### Returns
 
@@ -175,18 +168,13 @@ ___
 
 ### getAssetHistory
 
-▸ **getAssetHistory**(`__namedParameters`): `Promise`<[`AssetHistory`](cacheServerClient_cacheServerClient_types.AssetHistory.md)[]\>
+▸ **getAssetHistory**(`params`): `Promise`<[`AssetHistory`](cacheServerClient_cacheServerClient_types.AssetHistory.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
-| `__namedParameters.order?` | [`Order`](../enums/cacheServerClient_cacheServerClient_types.Order.md) |
-| `__namedParameters.skip?` | `number` |
-| `__namedParameters.take?` | `number` |
-| `__namedParameters.type?` | [`AssetHistoryEventType`](../enums/cacheServerClient_cacheServerClient_types.AssetHistoryEventType.md) |
+| `params` | [`GetAssetHistoryParams`](cacheServerClient_ICacheServerClient.GetAssetHistoryParams.md) |
 
 #### Returns
 
@@ -196,16 +184,13 @@ ___
 
 ### getClaimsByIssuer
 
-▸ **getClaimsByIssuer**(`__namedParameters`): `Promise`<[`Claim`](cacheServerClient_cacheServerClient_types.Claim.md)[]\>
+▸ **getClaimsByIssuer**(`params`): `Promise`<[`Claim`](cacheServerClient_cacheServerClient_types.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.parentNamespace?` | `string` |
+| `params` | [`GetClaimsByIssuerParams`](cacheServerClient_ICacheServerClient.GetClaimsByIssuerParams.md) |
 
 #### Returns
 
@@ -215,16 +200,13 @@ ___
 
 ### getClaimsByRequester
 
-▸ **getClaimsByRequester**(`__namedParameters`): `Promise`<[`Claim`](cacheServerClient_cacheServerClient_types.Claim.md)[]\>
+▸ **getClaimsByRequester**(`params`): `Promise`<[`Claim`](cacheServerClient_cacheServerClient_types.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.parentNamespace?` | `string` |
+| `params` | [`GetClaimsByRequesterParams`](cacheServerClient_ICacheServerClient.GetClaimsByRequesterParams.md) |
 
 #### Returns
 
@@ -234,16 +216,13 @@ ___
 
 ### getClaimsBySubject
 
-▸ **getClaimsBySubject**(`__namedParameters`): `Promise`<[`Claim`](cacheServerClient_cacheServerClient_types.Claim.md)[]\>
+▸ **getClaimsBySubject**(`params`): `Promise`<[`Claim`](cacheServerClient_cacheServerClient_types.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.parentNamespace?` | `string` |
+| `params` | [`GetClaimsBySubjectParams`](cacheServerClient_ICacheServerClient.GetClaimsBySubjectParams.md) |
 
 #### Returns
 
@@ -269,14 +248,13 @@ ___
 
 ### getDIDsForRole
 
-▸ **getDIDsForRole**(`__namedParameters`): `Promise`<`string`[]\>
+▸ **getDIDsForRole**(`params`): `Promise`<`string`[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetDIDsForRoleParams`](cacheServerClient_ICacheServerClient.GetDIDsForRoleParams.md) |
 
 #### Returns
 
@@ -286,15 +264,13 @@ ___
 
 ### getDidDocument
 
-▸ **getDidDocument**(`__namedParameters`): `Promise`<`IDIDDocument`\>
+▸ **getDidDocument**(`params`): `Promise`<`IDIDDocument`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.includeClaims?` | `boolean` |
+| `params` | [`GetDidDocumentParams`](cacheServerClient_ICacheServerClient.GetDidDocumentParams.md) |
 
 #### Returns
 
@@ -304,15 +280,13 @@ ___
 
 ### getNamespaceBySearchPhrase
 
-▸ **getNamespaceBySearchPhrase**(`__namedParameters`): `Promise`<([`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](cacheServerClient_cacheServerClient_types.IRole.md))[]\>
+▸ **getNamespaceBySearchPhrase**(`params`): `Promise`<([`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](cacheServerClient_cacheServerClient_types.IRole.md))[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.search` | `string` |
-| `__namedParameters.types?` | (``"App"`` \| ``"Org"`` \| ``"Role"``)[] |
+| `params` | [`GetNamespaceBySearchPhraseParams`](cacheServerClient_ICacheServerClient.GetNamespaceBySearchPhraseParams.md) |
 
 #### Returns
 
@@ -322,14 +296,13 @@ ___
 
 ### getOfferedAssets
 
-▸ **getOfferedAssets**(`__namedParameters`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)[]\>
+▸ **getOfferedAssets**(`params`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `params` | [`GetOfferedAssetsParams`](cacheServerClient_ICacheServerClient.GetOfferedAssetsParams.md) |
 
 #### Returns
 
@@ -339,14 +312,13 @@ ___
 
 ### getOrgDefinition
 
-▸ **getOrgDefinition**(`__namedParameters`): `Promise`<`IOrganizationDefinition`\>
+▸ **getOrgDefinition**(`params`): `Promise`<`IOrganizationDefinition`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetOrgDefinitionParams`](cacheServerClient_ICacheServerClient.GetOrgDefinitionParams.md) |
 
 #### Returns
 
@@ -356,14 +328,13 @@ ___
 
 ### getOrgHierarchy
 
-▸ **getOrgHierarchy**(`__namedParameters`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)\>
+▸ **getOrgHierarchy**(`params`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetOrgHierarchyParams`](cacheServerClient_ICacheServerClient.GetOrgHierarchyParams.md) |
 
 #### Returns
 
@@ -373,14 +344,13 @@ ___
 
 ### getOrganizationRoles
 
-▸ **getOrganizationRoles**(`__namedParameters`): `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
+▸ **getOrganizationRoles**(`params`): `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetOrganizationRolesParams`](cacheServerClient_ICacheServerClient.GetOrganizationRolesParams.md) |
 
 #### Returns
 
@@ -390,15 +360,13 @@ ___
 
 ### getOrganizationsByOwner
 
-▸ **getOrganizationsByOwner**(`__namedParameters`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
+▸ **getOrganizationsByOwner**(`params`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.excludeSubOrgs` | `boolean` |
-| `__namedParameters.owner` | `string` |
+| `params` | [`GetOrganizationsByOwnerParams`](cacheServerClient_ICacheServerClient.GetOrganizationsByOwnerParams.md) |
 
 #### Returns
 
@@ -408,14 +376,13 @@ ___
 
 ### getOwnedAssets
 
-▸ **getOwnedAssets**(`__namedParameters`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)[]\>
+▸ **getOwnedAssets**(`params`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `params` | [`GetOwnedAssetsParams`](cacheServerClient_ICacheServerClient.GetOwnedAssetsParams.md) |
 
 #### Returns
 
@@ -425,14 +392,13 @@ ___
 
 ### getPreviouslyOwnedAssets
 
-▸ **getPreviouslyOwnedAssets**(`__namedParameters`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)[]\>
+▸ **getPreviouslyOwnedAssets**(`params`): `Promise`<[`Asset`](cacheServerClient_cacheServerClient_types.Asset.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `params` | [`GetPreviouslyOwnedAssetsParams`](cacheServerClient_ICacheServerClient.GetPreviouslyOwnedAssetsParams.md) |
 
 #### Returns
 
@@ -442,14 +408,13 @@ ___
 
 ### getRoleDefinition
 
-▸ **getRoleDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition`\>
+▸ **getRoleDefinition**(`params`): `Promise`<`IRoleDefinition`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetRoleDefinitionParams`](cacheServerClient_ICacheServerClient.GetRoleDefinitionParams.md) |
 
 #### Returns
 
@@ -459,14 +424,13 @@ ___
 
 ### getRolesByOwner
 
-▸ **getRolesByOwner**(`__namedParameters`): `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
+▸ **getRolesByOwner**(`params`): `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `params` | [`GetRolesByOwnerParams`](cacheServerClient_ICacheServerClient.GetRolesByOwnerParams.md) |
 
 #### Returns
 
@@ -476,14 +440,13 @@ ___
 
 ### getSubOrganizationsByOrganization
 
-▸ **getSubOrganizationsByOrganization**(`__namedParameters`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
+▸ **getSubOrganizationsByOrganization**(`params`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `params` | [`GetetSubOrganizationsByOrganizationParams`](cacheServerClient_ICacheServerClient.GetetSubOrganizationsByOrganizationParams.md) |
 
 #### Returns
 
@@ -503,15 +466,13 @@ ___
 
 ### issueClaim
 
-▸ **issueClaim**(`__namedParameters`): `Promise`<`void`\>
+▸ **issueClaim**(`params`): `Promise`<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimIssuance`](iam.IClaimIssuance.md) |
+| `params` | [`IssueClaimParams`](cacheServerClient_ICacheServerClient.IssueClaimParams.md) |
 
 #### Returns
 
@@ -531,15 +492,13 @@ ___
 
 ### rejectClaim
 
-▸ **rejectClaim**(`__namedParameters`): `Promise`<`void`\>
+▸ **rejectClaim**(`params`): `Promise`<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimRejection`](iam.IClaimRejection.md) |
+| `params` | [`RejectClaimParams`](cacheServerClient_ICacheServerClient.RejectClaimParams.md) |
 
 #### Returns
 
@@ -549,15 +508,13 @@ ___
 
 ### requestClaim
 
-▸ **requestClaim**(`__namedParameters`): `Promise`<`void`\>
+▸ **requestClaim**(`params`): `Promise`<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimRequest`](iam.IClaimRequest.md) |
+| `params` | [`RequestClaimParams`](cacheServerClient_ICacheServerClient.RequestClaimParams.md) |
 
 #### Returns
 
