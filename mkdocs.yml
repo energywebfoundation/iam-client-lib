@@ -13,6 +13,7 @@ nav:
       - "Organization": guides/organization.md
       - "Role": guides/role.md
   - API: api/modules.md
+  - CHANGELOG: CHANGELOG.md
 theme: readthedocs
 
 docs_dir: docs
