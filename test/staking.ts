@@ -51,7 +51,7 @@ export const stakingTests = (): void => {
     let stakingPoolFactory: StakingPoolFactory;
     const patronRewardPortion = 800;
     const patronRole = "patronRole";
-    const minStakingPeriod = 5;
+    const minStakingPeriod = 1;
 
     const calculateReward = (
         stakeAmount: BigNumber,
