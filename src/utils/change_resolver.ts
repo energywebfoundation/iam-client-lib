@@ -48,7 +48,6 @@ export async function changeResolver({
             const owner = await registry.owner(utils.namehash(node));
             owners[node] = owner;
             await registry.setSubnodeOwner(utils.namehash(parentNode), labelhash(node.split(".")[0]), rootOwner);
-            await migrate(node);
             await changeDomainResolver(node);
         }
     };
