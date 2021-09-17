@@ -3,8 +3,7 @@ import { StakingPoolFactory__factory } from "../ethers/factories/StakingPoolFact
 import { RewardPool__factory } from "../ethers/factories/RewardPool__factory";
 import { StakingPool__factory } from "../ethers/factories/StakingPool__factory";
 import { StakingPoolFactory } from "../ethers/StakingPoolFactory";
-import { StakingPool as StakingPoolContract } from "../ethers/StakingPool";
-import { EventFilter, Contract, Wallet, utils, providers, BigNumber } from "ethers";
+import { Wallet, utils, providers, BigNumber } from "ethers";
 import { Methods } from "@ew-did-registry/did";
 import {
     ERROR_MESSAGES,
@@ -24,16 +23,6 @@ import { chainConfigs } from "../src/iam/chainConfig";
 const { parseEther, namehash } = utils;
 const { JsonRpcProvider } = providers;
 
-export const waitFor = (filter: EventFilter, contract: Contract): Promise<any> =>
-    new Promise<any>((resolve) => {
-        contract.on(filter, (...args) => {
-            resolve(args);
-        });
-    }).then((args) => {
-        contract.removeAllListeners(filter);
-        return args;
-    });
-
 export const stakingTests = (): void => {
     const serviceProvider = Wallet.createRandom().connect(provider);
     const patron = Wallet.createRandom().connect(provider);
@@ -47,11 +36,11 @@ export const stakingTests = (): void => {
     let rootOwnerIam: IAM;
 
     const principalThreshold = parseEther("0.1");
-    const withdrawDelay = 1;
+    const defaultWithdrawDelay = 1;
     let stakingPoolFactory: StakingPoolFactory;
     const patronRewardPortion = 800;
     const patronRole = "patronRole";
-    const minStakingPeriod = 5;
+    const defaultMinStakingPeriod = 1;
 
     const calculateReward = (
         stakeAmount: BigNumber,
@@ -148,7 +137,7 @@ export const stakingTests = (): void => {
     });
 
     describe("tests on ganache", () => {
-        async function setupStakingPoolFactory() {
+        async function setupStakingPoolFactory(withdrawDelay = defaultWithdrawDelay) {
             stakingPoolFactory = await (
                 await new StakingPoolFactory__factory(deployer).deploy(
                     principalThreshold,
@@ -162,8 +151,6 @@ export const stakingTests = (): void => {
         }
 
         beforeAll(async () => {
-            await setupStakingPoolFactory();
-
             await replenish(serviceProvider.address);
             serviceProviderIam = await createIam(serviceProvider.privateKey, { createDocument: true });
 
@@ -233,15 +220,10 @@ export const stakingTests = (): void => {
 
         describe("StakingPoolFactory tests", () => {
             it("organization owner should be able to launch pool", async () => {
-                const poolIsLaunched = waitFor(
-                    stakingPoolFactory.filters.StakingPoolLaunched(namehash(domain), null),
-                    stakingPoolFactory,
-                );
-
                 await replenish(serviceProvider.address, principalThreshold);
                 await providerStakingService.launchStakingPool({
                     org: domain,
-                    minStakingPeriod,
+                    minStakingPeriod: defaultMinStakingPeriod,
                     patronRewardPortion,
                     patronRoles: [`${patronRole}.${root}`],
                     principal: principalThreshold,
@@ -251,7 +233,6 @@ export const stakingTests = (): void => {
                 expect(await stakingPoolFactory.services(namehash(domain))).toMatchObject({
                     provider: serviceProvider.address,
                 });
-                await poolIsLaunched;
             });
 
             it("should be able to get all services", async () => {
@@ -269,14 +250,14 @@ export const stakingTests = (): void => {
 
                 await providerStakingService.launchStakingPool({
                     org: domain,
-                    minStakingPeriod,
+                    minStakingPeriod: defaultMinStakingPeriod,
                     patronRewardPortion,
                     patronRoles: [`${patronRole}.${root}`],
                     principal: principalThreshold,
                 });
                 await providerStakingService.launchStakingPool({
                     org: `${orgName2}.${root}`,
-                    minStakingPeriod,
+                    minStakingPeriod: defaultMinStakingPeriod,
                     patronRewardPortion,
                     patronRoles: [`${patronRole}.${root}`],
                     principal: principalThreshold,
@@ -299,7 +280,7 @@ export const stakingTests = (): void => {
                 return expect(
                     nonOwnerServicePool.launchStakingPool({
                         org: domain,
-                        minStakingPeriod,
+                        minStakingPeriod: defaultMinStakingPeriod,
                         patronRewardPortion,
                         patronRoles: [`${patronRole}.${root}`],
                         principal: principalThreshold,
@@ -313,7 +294,7 @@ export const stakingTests = (): void => {
                 return expect(
                     providerStakingService.launchStakingPool({
                         org: domain,
-                        minStakingPeriod,
+                        minStakingPeriod: defaultMinStakingPeriod,
                         patronRewardPortion,
                         patronRoles: [`${patronRole}.${root}`],
                         principal: principalThreshold.div(2),
@@ -326,7 +307,7 @@ export const stakingTests = (): void => {
 
                 await providerStakingService.launchStakingPool({
                     org: domain,
-                    minStakingPeriod,
+                    minStakingPeriod: defaultMinStakingPeriod,
                     patronRewardPortion,
                     patronRoles: [`${patronRole}.${root}`],
                     principal: principalThreshold,
@@ -335,7 +316,7 @@ export const stakingTests = (): void => {
                 return expect(
                     providerStakingService.launchStakingPool({
                         org: domain,
-                        minStakingPeriod,
+                        minStakingPeriod: defaultMinStakingPeriod,
                         patronRewardPortion,
                         patronRoles: [`${patronRole}.${root}`],
                         principal: principalThreshold,
@@ -345,10 +326,7 @@ export const stakingTests = (): void => {
         });
 
         describe("StakingPool tests", () => {
-            let pool: StakingPool;
-            let poolContract: StakingPoolContract;
-
-            beforeEach(async () => {
+            async function launchPool(minStakingPeriod = defaultMinStakingPeriod) {
                 await replenish(serviceProvider.address, principalThreshold);
                 await replenish(patron.address, parseEther("1"));
                 await providerStakingService.launchStakingPool({
@@ -360,18 +338,19 @@ export const stakingTests = (): void => {
                 });
                 const patronStakingService = await StakingPoolService.init(patron);
                 const launchedPool = await patronStakingService.getPool(domain);
-                expect(launchedPool).not.toBeNull;
                 pool = launchedPool as StakingPool;
-                const poolAddress = (await stakingPoolFactory.services(namehash(domain))).pool;
-                poolContract = new StakingPool__factory(patron).attach(poolAddress);
+            }
+            let pool: StakingPool;
+
+            beforeEach(async () => {
+                await launchPool();
             });
 
             it("patron should be able to stake", async () => {
                 const stake = parseEther("0.1");
-                const stakePut = waitFor(poolContract.filters.StakePut(patron.address, stake, null), poolContract);
 
                 await pool.putStake(stake);
-                expect(await stakePut).toEqual(expect.arrayContaining([patron.address, stake]));
+                expect((await pool.getStake()).status).toEqual(StakeStatus.STAKING);
             });
 
             it("should not be able to stake without having patron role", async () => {
@@ -397,10 +376,9 @@ export const stakingTests = (): void => {
 
             it("should be able to stake whole balance", async () => {
                 const stake = await patron.getBalance();
-                const stakePut = waitFor(poolContract.filters.StakePut(patron.address, null, null), poolContract);
 
                 await pool.putStake(stake);
-                expect(await stakePut).toEqual(expect.arrayContaining([patron.address]));
+                expect((await pool.getStake()).status).toEqual(StakeStatus.STAKING);
             });
 
             it("stake should not be replenished", async () => {
@@ -416,14 +394,9 @@ export const stakingTests = (): void => {
                 const requestDelay = await pool.requestWithdrawDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
 
-                const withdrawRequested = waitFor(
-                    poolContract.filters.StakeWithdrawalRequested(patron.address, null),
-                    poolContract,
-                );
-
                 await pool.requestWithdraw();
-
-                expect((await withdrawRequested)[0]).toEqual(patron.address);
+                const status = (await pool.getStake()).status;
+                expect(status).toBe(StakeStatus.WITHDRAWING);
             });
 
             it("can't request withdraw when no stake", async () => {
@@ -431,10 +404,10 @@ export const stakingTests = (): void => {
             });
 
             it("can't request withdraw until minimum staking period is last", async () => {
+                await setupStakingPoolFactory();
+                providerStakingService = await StakingPoolService.init(serviceProvider);
+                await launchPool(10);
                 await pool.putStake(parseEther("0.1"));
-                const requestDelay = await pool.requestWithdrawDelay();
-                await new Promise((resolve) => setTimeout(resolve, 1000 * (requestDelay / 2)));
-
                 return expect(pool.requestWithdraw()).rejects.toThrow(
                     "StakingPool: Minimum staking period is not expired yet",
                 );
@@ -452,18 +425,13 @@ export const stakingTests = (): void => {
 
             it("stake can be withdrawn", async () => {
                 const stake = parseEther("0.1");
-                const stakePut = waitFor(poolContract.filters.StakePut(patron.address, null, null), poolContract);
                 await pool.putStake(stake);
-                const depositStart = (await stakePut)[2];
+                const depositStart = (await pool.getStake()).depositStart;
                 const requestDelay = await pool.requestWithdrawDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
 
-                const stakeWithdrawalRequested = waitFor(
-                    poolContract.filters.StakeWithdrawalRequested(patron.address, null),
-                    poolContract,
-                );
                 await pool.requestWithdraw();
-                const depositEnd = (await stakeWithdrawalRequested)[1];
+                const depositEnd = (await pool.getStake()).depositEnd;
 
                 const expectedReward = calculateReward(
                     stake,
@@ -475,7 +443,6 @@ export const stakingTests = (): void => {
                 const withdrawalDelay = await pool.withdrawalDelay();
                 await new Promise((resolve) => setTimeout(resolve, 1000 * withdrawalDelay));
 
-                const stakeWithdrawn = waitFor(poolContract.filters.StakeWithdrawn(patron.address, null), poolContract);
                 const balanceBeforeWithdraw = await patron.getBalance();
                 const rewardPool = new RewardPool__factory(patron).attach(await stakingPoolFactory.rewardPool());
                 await replenish(rewardPool.address, expectedReward);
@@ -484,7 +451,6 @@ export const stakingTests = (): void => {
                 const balanceAfterWithdraw = await patron.getBalance();
 
                 expect(balanceAfterWithdraw.eq(balanceBeforeWithdraw.add(stake).add(expectedReward)));
-                expect((await stakeWithdrawn)[0]).toEqual(patron.address);
             });
         });
     });
