@@ -1,3 +1,16 @@
+# [3.0.0-alpha.53](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.0-alpha.52...v3.0.0-alpha.53) (2021-09-17)
+
+
+### Bug Fixes
+
+* double node migration ([101e4d2](https://github.com/energywebfoundation/iam-client-lib/commit/101e4d2b8fd6e29cb95343a018ef9d95b297566c))
+
+
+### Performance Improvements
+
+* decrease staking delay ([4eb64ad](https://github.com/energywebfoundation/iam-client-lib/commit/4eb64ad31a2a35343cc7d7ef6d8e7c88d689fe3e))
+* remove listeners in tests ([3122275](https://github.com/energywebfoundation/iam-client-lib/commit/3122275c7bffb01285658c16f46d7b4b29f817ff))
+
 # [3.0.0-alpha.52](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.0-alpha.51...v3.0.0-alpha.52) (2021-09-16)
 
 
