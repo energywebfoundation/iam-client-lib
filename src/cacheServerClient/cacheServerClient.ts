@@ -23,6 +23,7 @@ export interface CacheServerClientOptions {
     url: string;
     cacheServerSupportsAuth?: boolean;
 }
+
 export class CacheServerClient implements ICacheServerClient {
     public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
     private httpClient: AxiosInstance;
