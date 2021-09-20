@@ -2,6 +2,12 @@
 
 [cacheServerClient/ICacheServerClient](../modules/cacheServerClient_ICacheServerClient.md).RejectClaimParams
 
+## Hierarchy
+
+- [`GetDidParam`](cacheServerClient_ICacheServerClient.GetDidParam.md)
+
+  ↳ **`RejectClaimParams`**
+
 ## Table of contents
 
 ### Properties
@@ -14,6 +20,10 @@
 ### did
 
 • **did**: `string`
+
+#### Inherited from
+
+[GetDidParam](cacheServerClient_ICacheServerClient.GetDidParam.md).[did](cacheServerClient_ICacheServerClient.GetDidParam.md#did)
 
 ___
 

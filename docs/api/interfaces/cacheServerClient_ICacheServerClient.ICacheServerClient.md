@@ -62,7 +62,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`AddDIDToWatchListParams`](cacheServerClient_ICacheServerClient.AddDIDToWatchListParams.md) |
+| `params` | [`GetDidParam`](cacheServerClient_ICacheServerClient.GetDidParam.md) |
 
 #### Returns
 
@@ -94,7 +94,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetAppDefinitionParams`](cacheServerClient_ICacheServerClient.GetAppDefinitionParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -110,7 +110,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetApplicationRolesParams`](cacheServerClient_ICacheServerClient.GetApplicationRolesParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -126,7 +126,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetApplicationsByOrganizationParams`](cacheServerClient_ICacheServerClient.GetApplicationsByOrganizationParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -142,7 +142,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetApplicationsByOwnerParams`](cacheServerClient_ICacheServerClient.GetApplicationsByOwnerParams.md) |
+| `params` | [`GetOwnerParam`](cacheServerClient_ICacheServerClient.GetOwnerParam.md) |
 
 #### Returns
 
@@ -190,7 +190,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetClaimsByIssuerParams`](cacheServerClient_ICacheServerClient.GetClaimsByIssuerParams.md) |
+| `params` | [`GetClaimsParams`](cacheServerClient_ICacheServerClient.GetClaimsParams.md) |
 
 #### Returns
 
@@ -206,7 +206,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetClaimsByRequesterParams`](cacheServerClient_ICacheServerClient.GetClaimsByRequesterParams.md) |
+| `params` | [`GetClaimsParams`](cacheServerClient_ICacheServerClient.GetClaimsParams.md) |
 
 #### Returns
 
@@ -222,7 +222,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetClaimsBySubjectParams`](cacheServerClient_ICacheServerClient.GetClaimsBySubjectParams.md) |
+| `params` | [`GetClaimsParams`](cacheServerClient_ICacheServerClient.GetClaimsParams.md) |
 
 #### Returns
 
@@ -254,7 +254,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetDIDsForRoleParams`](cacheServerClient_ICacheServerClient.GetDIDsForRoleParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -302,7 +302,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetOfferedAssetsParams`](cacheServerClient_ICacheServerClient.GetOfferedAssetsParams.md) |
+| `params` | [`GetDidParam`](cacheServerClient_ICacheServerClient.GetDidParam.md) |
 
 #### Returns
 
@@ -318,7 +318,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetOrgDefinitionParams`](cacheServerClient_ICacheServerClient.GetOrgDefinitionParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -334,7 +334,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetOrgHierarchyParams`](cacheServerClient_ICacheServerClient.GetOrgHierarchyParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -350,7 +350,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetOrganizationRolesParams`](cacheServerClient_ICacheServerClient.GetOrganizationRolesParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -382,7 +382,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetOwnedAssetsParams`](cacheServerClient_ICacheServerClient.GetOwnedAssetsParams.md) |
+| `params` | [`GetDidParam`](cacheServerClient_ICacheServerClient.GetDidParam.md) |
 
 #### Returns
 
@@ -398,7 +398,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetPreviouslyOwnedAssetsParams`](cacheServerClient_ICacheServerClient.GetPreviouslyOwnedAssetsParams.md) |
+| `params` | [`GetOwnerParam`](cacheServerClient_ICacheServerClient.GetOwnerParam.md) |
 
 #### Returns
 
@@ -414,7 +414,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetRoleDefinitionParams`](cacheServerClient_ICacheServerClient.GetRoleDefinitionParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -430,7 +430,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetRolesByOwnerParams`](cacheServerClient_ICacheServerClient.GetRolesByOwnerParams.md) |
+| `params` | [`GetOwnerParam`](cacheServerClient_ICacheServerClient.GetOwnerParam.md) |
 
 #### Returns
 
@@ -446,7 +446,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`GetetSubOrganizationsByOrganizationParams`](cacheServerClient_ICacheServerClient.GetetSubOrganizationsByOrganizationParams.md) |
+| `params` | [`GetDefinitionParams`](cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 

@@ -18,75 +18,50 @@ export interface ICacheServerClient {
     testLogin: () => Promise<void>;
     login: () => Promise<{ pubKeyAndIdentityToken: IPubKeyAndIdentityToken; token: string; refreshToken: string }>;
     isAuthEnabled: () => boolean;
-    getRoleDefinition: (params: GetRoleDefinitionParams) => Promise<IRoleDefinition>;
-    getOrgDefinition: (params: GetOrgDefinitionParams) => Promise<IOrganizationDefinition>;
-    getAppDefinition: (params: GetAppDefinitionParams) => Promise<IAppDefinition>;
-    getApplicationRoles: (params: GetApplicationRolesParams) => Promise<IRole[]>;
-    getOrganizationRoles: (params: GetOrganizationRolesParams) => Promise<IRole[]>;
+    getRoleDefinition: (params: GetDefinitionParams) => Promise<IRoleDefinition>;
+    getOrgDefinition: (params: GetDefinitionParams) => Promise<IOrganizationDefinition>;
+    getAppDefinition: (params: GetDefinitionParams) => Promise<IAppDefinition>;
+    getApplicationRoles: (params: GetDefinitionParams) => Promise<IRole[]>;
+    getOrganizationRoles: (params: GetDefinitionParams) => Promise<IRole[]>;
     getOrganizationsByOwner: (params: GetOrganizationsByOwnerParams) => Promise<IOrganization[]>;
-    getApplicationsByOwner: (params: GetApplicationsByOwnerParams) => Promise<IApp[]>;
-    getApplicationsByOrganization: (params: GetApplicationsByOrganizationParams) => Promise<IApp[]>;
-    getSubOrganizationsByOrganization: (params: GetetSubOrganizationsByOrganizationParams) => Promise<IOrganization[]>;
-    getOrgHierarchy: (params: GetOrgHierarchyParams) => Promise<IOrganization>;
+    getApplicationsByOwner: (params: GetOwnerParam) => Promise<IApp[]>;
+    getApplicationsByOrganization: (params: GetDefinitionParams) => Promise<IApp[]>;
+    getSubOrganizationsByOrganization: (params: GetDefinitionParams) => Promise<IOrganization[]>;
+    getOrgHierarchy: (params: GetDefinitionParams) => Promise<IOrganization>;
     getNamespaceBySearchPhrase: (params: GetNamespaceBySearchPhraseParams) => Promise<(IOrganization | IApp | IRole)[]>;
-    getRolesByOwner: (params: GetRolesByOwnerParams) => Promise<IRole[]>;
+    getRolesByOwner: (params: GetOwnerParam) => Promise<IRole[]>;
     getClaimsBySubjects: (subjects: string[]) => Promise<Claim[]>;
-    getClaimsByIssuer: (params: GetClaimsByIssuerParams) => Promise<Claim[]>;
-    getClaimsByRequester: (params: GetClaimsByRequesterParams) => Promise<Claim[]>;
-    getClaimsBySubject: (params: GetClaimsBySubjectParams) => Promise<Claim[]>;
+    getClaimsByIssuer: (params: GetClaimsParams) => Promise<Claim[]>;
+    getClaimsByRequester: (params: GetClaimsParams) => Promise<Claim[]>;
+    getClaimsBySubject: (params: GetClaimsParams) => Promise<Claim[]>;
     requestClaim: (params: RequestClaimParams) => Promise<void>;
     issueClaim: (params: IssueClaimParams) => Promise<void>;
     rejectClaim: (params: RejectClaimParams) => Promise<void>;
     deleteClaim: (params: DeleteClaimParams) => Promise<void>;
-    getDIDsForRole: (params: GetDIDsForRoleParams) => Promise<string[]>;
+    getDIDsForRole: (params: GetDefinitionParams) => Promise<string[]>;
     getDidDocument: (params: GetDidDocumentParams) => Promise<IDIDDocument>;
-    addDIDToWatchList: (params: AddDIDToWatchListParams) => Promise<void>;
-    getOwnedAssets: (params: GetOwnedAssetsParams) => Promise<Asset[]>;
-    getOfferedAssets: (params: GetOfferedAssetsParams) => Promise<Asset[]>;
+    addDIDToWatchList: (params: GetDidParam) => Promise<void>;
+    getOwnedAssets: (params: GetDidParam) => Promise<Asset[]>;
+    getOfferedAssets: (params: GetDidParam) => Promise<Asset[]>;
     getAssetById: (params: GetAssetByIdParams) => Promise<Asset>;
-    getPreviouslyOwnedAssets: (params: GetPreviouslyOwnedAssetsParams) => Promise<Asset[]>;
+    getPreviouslyOwnedAssets: (params: GetOwnerParam) => Promise<Asset[]>;
     getAssetHistory: (params: GetAssetHistoryParams) => Promise<AssetHistory[]>;
 }
 
-export interface GetRoleDefinitionParams {
+export interface GetDefinitionParams {
     namespace: string;
 }
 
-export interface GetOrgDefinitionParams {
-    namespace: string;
-}
-
-export interface GetAppDefinitionParams {
-    namespace: string;
-}
-
-export interface GetApplicationRolesParams {
-    namespace: string;
-}
-
-export interface GetOrganizationRolesParams {
-    namespace: string;
-}
-
-export interface GetOrganizationsByOwnerParams {
+export interface GetOwnerParam {
     owner: string;
+}
+
+export interface GetDidParam {
+    did: string;
+}
+
+export interface GetOrganizationsByOwnerParams extends GetOwnerParam {
     excludeSubOrgs: boolean;
-}
-
-export interface GetApplicationsByOwnerParams {
-    owner: string;
-}
-
-export interface GetApplicationsByOrganizationParams {
-    namespace: string;
-}
-
-export interface GetetSubOrganizationsByOrganizationParams {
-    namespace: string;
-}
-
-export interface GetOrgHierarchyParams {
-    namespace: string;
 }
 
 export interface GetNamespaceBySearchPhraseParams {
@@ -94,74 +69,32 @@ export interface GetNamespaceBySearchPhraseParams {
     types?: ("App" | "Org" | "Role")[];
 }
 
-export interface GetClaimsByIssuerParams {
-    did: string;
-    isAccepted?: boolean;
+export interface GetClaimsParams extends Partial<Pick<Claim, "isAccepted">>, GetDidParam {
     parentNamespace?: string;
 }
 
-export interface GetRolesByOwnerParams {
-    owner: string;
-}
-
-export interface GetClaimsByRequesterParams {
-    did: string;
-    isAccepted?: boolean;
-    parentNamespace?: string;
-}
-
-export interface GetClaimsBySubjectParams {
-    did: string;
-    isAccepted?: boolean;
-    parentNamespace?: string;
-}
-
-export interface RequestClaimParams {
+export interface RequestClaimParams extends GetDidParam {
     message: IClaimRequest;
-    did: string;
 }
 
-export interface IssueClaimParams {
+export interface IssueClaimParams extends GetDidParam {
     message: IClaimIssuance;
-    did: string;
 }
 
-export interface RejectClaimParams {
+export interface RejectClaimParams extends GetDidParam {
     message: IClaimRejection;
-    did: string;
 }
 
 export interface DeleteClaimParams {
     claimId: string;
 }
 
-export interface GetDIDsForRoleParams {
-    namespace: string;
-}
-
-export interface GetDidDocumentParams {
-    did: string;
+export interface GetDidDocumentParams extends GetDidParam {
     includeClaims?: boolean;
-}
-
-export interface AddDIDToWatchListParams {
-    did: string;
-}
-
-export interface GetOwnedAssetsParams {
-    did: string;
 }
 
 export interface GetAssetByIdParams {
     id: string;
-}
-
-export interface GetOfferedAssetsParams {
-    did: string;
-}
-
-export interface GetPreviouslyOwnedAssetsParams {
-    owner: string;
 }
 
 export interface GetAssetHistoryParams {

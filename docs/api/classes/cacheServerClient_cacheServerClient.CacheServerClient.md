@@ -86,7 +86,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`AddDIDToWatchListParams`](../interfaces/cacheServerClient_ICacheServerClient.AddDIDToWatchListParams.md) |
+| `__namedParameters` | [`GetDidParam`](../interfaces/cacheServerClient_ICacheServerClient.GetDidParam.md) |
 
 #### Returns
 
@@ -142,7 +142,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetAppDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetAppDefinitionParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -162,7 +162,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetApplicationRolesParams`](../interfaces/cacheServerClient_ICacheServerClient.GetApplicationRolesParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -182,7 +182,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetApplicationsByOrganizationParams`](../interfaces/cacheServerClient_ICacheServerClient.GetApplicationsByOrganizationParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -202,7 +202,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetApplicationsByOwnerParams`](../interfaces/cacheServerClient_ICacheServerClient.GetApplicationsByOwnerParams.md) |
+| `__namedParameters` | [`GetOwnerParam`](../interfaces/cacheServerClient_ICacheServerClient.GetOwnerParam.md) |
 
 #### Returns
 
@@ -262,7 +262,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetClaimsByIssuerParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsByIssuerParams.md) |
+| `__namedParameters` | [`GetClaimsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsParams.md) |
 
 #### Returns
 
@@ -282,7 +282,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetClaimsByRequesterParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsByRequesterParams.md) |
+| `__namedParameters` | [`GetClaimsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsParams.md) |
 
 #### Returns
 
@@ -302,7 +302,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetClaimsBySubjectParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsBySubjectParams.md) |
+| `__namedParameters` | [`GetClaimsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetClaimsParams.md) |
 
 #### Returns
 
@@ -342,7 +342,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetDIDsForRoleParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDIDsForRoleParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -402,7 +402,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetOfferedAssetsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOfferedAssetsParams.md) |
+| `__namedParameters` | [`GetDidParam`](../interfaces/cacheServerClient_ICacheServerClient.GetDidParam.md) |
 
 #### Returns
 
@@ -422,7 +422,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetOrgDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOrgDefinitionParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -442,7 +442,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetOrgHierarchyParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOrgHierarchyParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -462,7 +462,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetOrganizationRolesParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOrganizationRolesParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -502,7 +502,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetOwnedAssetsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetOwnedAssetsParams.md) |
+| `__namedParameters` | [`GetDidParam`](../interfaces/cacheServerClient_ICacheServerClient.GetDidParam.md) |
 
 #### Returns
 
@@ -522,7 +522,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetPreviouslyOwnedAssetsParams`](../interfaces/cacheServerClient_ICacheServerClient.GetPreviouslyOwnedAssetsParams.md) |
+| `__namedParameters` | [`GetOwnerParam`](../interfaces/cacheServerClient_ICacheServerClient.GetOwnerParam.md) |
 
 #### Returns
 
@@ -542,7 +542,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetRoleDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetRoleDefinitionParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
@@ -562,7 +562,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetRolesByOwnerParams`](../interfaces/cacheServerClient_ICacheServerClient.GetRolesByOwnerParams.md) |
+| `__namedParameters` | [`GetOwnerParam`](../interfaces/cacheServerClient_ICacheServerClient.GetOwnerParam.md) |
 
 #### Returns
 
@@ -582,7 +582,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`GetetSubOrganizationsByOrganizationParams`](../interfaces/cacheServerClient_ICacheServerClient.GetetSubOrganizationsByOrganizationParams.md) |
+| `__namedParameters` | [`GetDefinitionParams`](../interfaces/cacheServerClient_ICacheServerClient.GetDefinitionParams.md) |
 
 #### Returns
 
