@@ -1,5 +1,6 @@
-**[iam-client-lib](README.md)**
-
+<p align="center">
+  <img src="https://github.com/energywebfoundation/iam-client-lib/actions/workflows/deploy.yml/badge.svg" />
+</p>
 # Identity and Access Management (IAM) Client Library
 
 TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
@@ -25,20 +26,22 @@ For development purposes, please follow below steps to integrate the library wit
 ### Prerequisites
 
 `iam-client-lib` is written in TypeScript. Make sure to have Node.js (>= v10) installed.
-Create a folder named ***iam-client-lib*** and clone this GIT project.
+Create a folder named **_iam-client-lib_** and clone this GIT project.
+
+Also note that having a DID document with a public key is a prerequisite for using iam-client-lib and during initialization the library with attempt to add a public key to the DID document if one doesn't exist. This addition of the public key requires the account to be funded.
 
 ### Install
 
 Latest stable version
 
-``` sh
-$ npm i iam-client-lib 
+```sh
+npm i iam-client-lib
 ```
 
 Prerelease version
 
-``` sh
-$ npm i iam-client-lib@canary
+```sh
+npm i iam-client-lib@canary
 ```
 
 ### Sample Config for browsers (TypeScript)
@@ -58,7 +61,7 @@ export class App {
 
     constructor() {
       // IAM has builtin default settings for VOLTA CHAIN
-      
+
       // If you want to change default cache server config or add config for your network
       setCacheClientOptions(1111, {
         url: 'https://some-cache-server.com/',
@@ -105,7 +108,7 @@ export class App {
 
     constructor() {
      // IAM has builtin default settings for VOLTA CHAIN
-      
+
       // If you want to change default cache server config or add config for your network
       setCacheClientOptions(1111, {
         url: 'https://some-cache-server.com/',
@@ -140,29 +143,37 @@ export class App {
 
 ## Development
 
-For testing use ```npm run test:watch```
+For testing use `npm run test:watch`
 
 ### Installing Dependencies
 
 Using `npm` to install dependencies:
 
-``` sh
-$ npm install
+```sh
+npm install ./energyweb-km-utils-v1.0.0.tgz
+```
+
+```sh
+npm install ./energyweb-km-crypto-v1.0.0.tgz
+```
+
+```sh
+npm install
 ```
 
 ### Compile & Build
 
-To generate bundled JS files and types, use the following command. Generated files are located in the ***dist*** folder.
+To generate bundled JS files and types, use the following command. Generated files are located in the **_dist_** folder.
 
-``` sh
-$ npm run build
+```sh
+npm run build
 ```
 
 ## Active Maintainers
 
- - [Kim Honoridez](https://github.com/kim-energyweb)
- - [Daniel Wojno](https://github.com/dwojno)
- - [Dmitry Fesenko](https://github.com/JGiter)
+- [Ahmed Ibrahim](https://github.com/ahmedolaibrahim)
+- [John Henderson](https://github.com/jrhender)
+- [Dmitry Fesenko](https://github.com/JGiter)
 
 ## Contributing
 

@@ -9,13 +9,13 @@ import { DeletingNamespaceNotPossibleError } from "./DeletingNamespaceNotPossibl
 import { ERROR_MESSAGES } from "./ErrorMessages";
 
 export {
-  CacheClientNotProvidedError,
-  ENSTypeNotSupportedError,
-  MethodNotAvailableInNodeEnvError,
-  NATSConnectionNotEstablishedError,
-  ENSRegistryNotInitializedError,
-  ENSResolverNotInitializedError,
-  ChangeOwnershipNotPossibleError,
-  DeletingNamespaceNotPossibleError,
-  ERROR_MESSAGES
+    CacheClientNotProvidedError,
+    ENSTypeNotSupportedError,
+    MethodNotAvailableInNodeEnvError,
+    NATSConnectionNotEstablishedError,
+    ENSRegistryNotInitializedError,
+    ENSResolverNotInitializedError,
+    ChangeOwnershipNotPossibleError,
+    DeletingNamespaceNotPossibleError,
+    ERROR_MESSAGES,
 };

@@ -1,5 +1,5 @@
-import { ENSNamespaceTypes, IAM } from "../src/iam";
-import { iam, root, rootOwner } from "./iam.test";
+import { ENSNamespaceTypes } from "../src/iam";
+import { createIam, rootOwnerIam, root, rootOwner } from "./iam.test";
 import { org1 } from "./organization.testSuite";
 import { ensResolver, replenish } from "./setup_contracts";
 import { utils } from "ethers";
@@ -12,58 +12,55 @@ export const appsTests = () => {
   const appNode = `${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`;
 
   test("application can be created", async () => {
-    await iam.createApplication({
+    const appDefinition = { appName: "Application 1" };
+    await rootOwnerIam.createApplication({
       appName: app,
-      data: { appName: "Application 1" },
+      data: appDefinition,
       namespace: `${ENSNamespaceTypes.Application}.${org1}.${root}`
     });
 
-    expect(await iam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
+    expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
     expect(
-      await iam.checkExistenceOfDomain({ domain: `${ENSNamespaceTypes.Roles}.${appNode}` })
+      await rootOwnerIam.checkExistenceOfDomain({ domain: `${ENSNamespaceTypes.Roles}.${appNode}` })
     ).toBe(true);
     expect(await ensResolver.name(namehash(appNode))).toBe(appNode);
     expect(
-      await iam.getSubdomains({ domain: `${ENSNamespaceTypes.Application}.${org1}.${root}` })
+      await rootOwnerIam.getSubdomains({ domain: `${ENSNamespaceTypes.Application}.${org1}.${root}` })
     ).toContain(`${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`);
+
+    const readAppDefinition = await rootOwnerIam.getDefinition({ type: ENSNamespaceTypes.Application, namespace: appNode });
+    expect(readAppDefinition).toMatchObject(appDefinition);
   });
 
   test("application owner can be changed", async () => {
     const newOwner = new Keys();
     await replenish(newOwner.getAddress());
-    const newOwnerIam = new IAM({
-      rpcUrl: "http://localhost:8544/",
-      privateKey: newOwner.privateKey
-    });
-    await newOwnerIam.initializeConnection({
-      reinitializeMetamask: false,
-      walletProvider: undefined
-    });
+    const newOwnerIam = await createIam(newOwner.privateKey);
 
-    expect(await iam.isOwner({ domain: appNode, user: rootOwner.getAddress() }));
+    expect(await rootOwnerIam.isOwner({ domain: appNode, user: rootOwner.address }));
 
-    await iam.changeAppOwnership({
+    await rootOwnerIam.changeAppOwnership({
       namespace: appNode,
       newOwner: newOwner.getAddress()
     });
 
-    expect(await iam.isOwner({ domain: appNode, user: newOwner.getAddress() }));
+    expect(await rootOwnerIam.isOwner({ domain: appNode, user: newOwner.getAddress() }));
 
     await newOwnerIam.changeAppOwnership({
       namespace: appNode,
-      newOwner: rootOwner.getAddress()
+      newOwner: rootOwner.address
     });
 
-    expect(await iam.isOwner({ domain: appNode, user: rootOwner.getAddress() }));
+    expect(await rootOwnerIam.isOwner({ domain: appNode, user: rootOwner.address }));
   });
 
   test("application can be deleted", async () => {
-    expect(await iam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
+    expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
 
-    await iam.deleteApplication({
+    await rootOwnerIam.deleteApplication({
       namespace: appNode
     });
 
-    expect(await iam.checkExistenceOfDomain({ domain: appNode })).toBe(false);
+    expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(false);
   });
 };

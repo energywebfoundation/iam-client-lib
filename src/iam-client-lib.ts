@@ -18,31 +18,34 @@ import { IAM, ENSNamespaceTypes } from "./iam";
 import { ICacheServerClient } from "./cacheServerClient/ICacheServerClient";
 import { ERROR_MESSAGES } from "./errors";
 import { WalletProvider } from "./types/WalletProvider";
+import { MessagingMethod, NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID } from "./utils/constants";
 import {
-  MessagingMethod,
-  NATS_EXCHANGE_TOPIC,
-  PreconditionTypes,
-  VOLTA_CHAIN_ID
-} from "./utils/constants";
-import {
-  IApp,
-  IAppDefinition,
-  IOrganization,
-  IOrganizationDefinition,
-  IRole,
-  IRoleDefinition
+    IApp,
+    IOrganization,
+    IRole,
+    Asset,
+    AssetHistory,
+    AssetHistoryEventType,
+    Order,
+    ClaimData,
+    Profile,
+    AssetProfiles,
+    AssetProfile,
+    RegistrationTypes,
 } from "./cacheServerClient/cacheServerClient.types";
 
-import {
-  DIDAttribute,
-  Encoding,
-  Algorithms,
-  PubKeyType
-} from "@ew-did-registry/did-resolver-interface";
+import { DIDAttribute, Encoding, Algorithms, PubKeyType } from "@ew-did-registry/did-resolver-interface";
 
 import { setCacheClientOptions, setChainConfig, setMessagingOptions } from "./iam/chainConfig";
 
-import { getSubdomains } from "./utils/getSubDomains";
+export {
+    IRoleDefinition,
+    IAppDefinition,
+    IOrganizationDefinition,
+    PreconditionType as PreconditionTypes,
+    WITHDRAW_DELAY,
+    PRINCIPAL_THRESHOLD,
+} from "@energyweb/iam-contracts";
 
 // MAIN
 export { IAM };
@@ -53,30 +56,37 @@ export { NATS_EXCHANGE_TOPIC, VOLTA_CHAIN_ID };
 
 // UTILS
 
-export { getSubdomains, setCacheClientOptions, setChainConfig, setMessagingOptions };
+export { setCacheClientOptions, setChainConfig, setMessagingOptions };
 
 // ENUMS
 export {
-  DIDAttribute,
-  Encoding,
-  Algorithms,
-  PubKeyType,
-  ENSNamespaceTypes,
-  MessagingMethod,
-  ERROR_MESSAGES,
-  WalletProvider,
-  PreconditionTypes
+    DIDAttribute,
+    Encoding,
+    Algorithms,
+    PubKeyType,
+    ENSNamespaceTypes,
+    MessagingMethod,
+    ERROR_MESSAGES,
+    WalletProvider,
+    Order,
+    AssetHistoryEventType,
+    RegistrationTypes,
 };
 
 // TYPES
 export {
-  ICacheServerClient,
-  IApp,
-  IAppDefinition,
-  IOrganization,
-  IOrganizationDefinition,
-  IRole,
-  IRoleDefinition
+    ICacheServerClient,
+    IApp,
+    IOrganization,
+    IRole,
+    Asset,
+    AssetHistory,
+    ClaimData,
+    Profile,
+    AssetProfiles,
+    AssetProfile,
 };
 
 export { GnosisIam as SafeIam } from "./GnosisIam";
+export * from "./utils/did";
+export * from "./staking";

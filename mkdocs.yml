@@ -3,11 +3,17 @@ nav:
   - Home: index.md
   - "Introduction":
       - "Overview": intro/overview.md
-      - "Roles": intro/roles.md
+      - "Architecture": intro/architecture.md
+      - "Domain Hierarchy": intro/domainhierarchy.md
   - "Guides":
       - "Authentication": guides/authentication.md
       - "Authorization": guides/authorization.md
-  - API: api/globals.md
+      - "Application": guides/application.md
+      - "Asset": guides/asset.md
+      - "Organization": guides/organization.md
+      - "Role": guides/role.md
+  - API: api/modules.md
+  - CHANGELOG: CHANGELOG.md
 theme: readthedocs
 
 docs_dir: docs
