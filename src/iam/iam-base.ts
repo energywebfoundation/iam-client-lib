@@ -161,9 +161,9 @@ export class IAMBase {
         await this.initChain();
         this.initEventHandlers();
 
-        if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
-            await this.setupMessaging();
-        }
+        //if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
+        await this.setupMessaging();
+        //}
 
         this.setResolver();
         this.setJWT();
