@@ -19,9 +19,24 @@
 
 ### Type aliases
 
+- [AccountInfo](iam.md#accountinfo)
 - [InitializeData](iam.md#initializedata)
 
 ## Type aliases
+
+### AccountInfo
+
+Ƭ **AccountInfo**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `account` | `string` |
+| `chainId` | `number` |
+| `chainName` | `string` |
+
+___
 
 ### InitializeData
 
@@ -31,6 +46,7 @@
 
 | Name | Type |
 | :------ | :------ |
+| `accountInfo` | [`AccountInfo`](iam.md#accountinfo) \| `undefined` |
 | `connected` | `boolean` |
 | `did` | `string` \| `undefined` |
 | `didDocument` | `IDIDDocument` \| ``null`` |

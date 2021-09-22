@@ -39,6 +39,7 @@ import { OfferableIdentity__factory } from "../../ethers/factories/OfferableIden
 import { IdentityManager__factory } from "../../ethers/factories/IdentityManager__factory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import { AccountInfo } from "../iam";
 
 const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
@@ -154,8 +155,8 @@ export class IAMBase {
     }: {
         initializeMetamask?: boolean;
         walletProvider?: WalletProvider;
-    }) {
-        await this.initSigner({ walletProvider, initializeMetamask });
+    }): Promise<AccountInfo | undefined> {
+        const accountInfo = await this.initSigner({ walletProvider, initializeMetamask });
         await this.setAddress();
         this.setDid();
         await this.initChain();
@@ -167,6 +168,7 @@ export class IAMBase {
 
         this.setResolver();
         this.setJWT();
+        return accountInfo;
     }
 
     private async initSigner({
@@ -176,9 +178,8 @@ export class IAMBase {
         useMetamask?: boolean;
         initializeMetamask?: boolean;
         walletProvider?: WalletProvider;
-    }) {
+    }): Promise<AccountInfo | undefined> {
         const { privateKey, rpcUrl } = this._connectionOptions;
-
         if (this._executionEnvironment === ExecutionEnvironment.NODE) {
             if (!privateKey) {
                 throw new Error(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
@@ -223,8 +224,14 @@ export class IAMBase {
             this._provider = new providers.Web3Provider(metamaskProvider);
             this._signer = this._provider.getSigner();
 
-            console.log("metamask chain id:", (await this._provider.getNetwork()).chainId);
-            return;
+            const { chainId } = await this._provider.getNetwork();
+            console.log("metamask chain id:", chainId);
+
+            return {
+                account: accounts[0],
+                chainId: chainId,
+                chainName: chainConfigs[chainId].chainName,
+            };
         }
         if (walletProvider && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)) {
             this._transactionOverrides = {

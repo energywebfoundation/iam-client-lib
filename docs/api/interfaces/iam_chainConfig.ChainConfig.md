@@ -7,6 +7,7 @@
 ### Properties
 
 - [assetManagerAddress](iam_chainConfig.ChainConfig.md#assetmanageraddress)
+- [chainName](iam_chainConfig.ChainConfig.md#chainname)
 - [claimManagerAddress](iam_chainConfig.ChainConfig.md#claimmanageraddress)
 - [didContractAddress](iam_chainConfig.ChainConfig.md#didcontractaddress)
 - [domainNotifierAddress](iam_chainConfig.ChainConfig.md#domainnotifieraddress)
@@ -21,6 +22,12 @@
 ### assetManagerAddress
 
 • **assetManagerAddress**: `string`
+
+___
+
+### chainName
+
+• **chainName**: `string`
 
 ___
 
