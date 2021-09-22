@@ -32,5 +32,4 @@ export enum ERROR_MESSAGES {
     WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested",
     STAKE_WAS_NOT_PUT = "Stake was not put",
     INSUFFICIENT_BALANCE = "Signer has insufficient balance",
-    LOGIN_NOT_ENOUGHT_TOKENS = "You are not able to login because you do not have any tokens",
 }

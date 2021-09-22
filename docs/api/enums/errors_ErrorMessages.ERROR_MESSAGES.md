@@ -18,7 +18,6 @@
 - [ENS\_TYPE\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_type_not_supported)
 - [INSUFFICIENT\_BALANCE](errors_ErrorMessages.ERROR_MESSAGES.md#insufficient_balance)
 - [JWT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#jwt_not_initialized)
-- [LOGIN\_NOT\_ENOUGHT\_TOKENS](errors_ErrorMessages.ERROR_MESSAGES.md#login_not_enought_tokens)
 - [METAMASK\_EXTENSION\_NOT\_AVAILABLE](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_extension_not_available)
 - [NATS\_NOT\_CONNECTED](errors_ErrorMessages.ERROR_MESSAGES.md#nats_not_connected)
 - [NOT\_CONNECTED\_TO\_VOLTA](errors_ErrorMessages.ERROR_MESSAGES.md#not_connected_to_volta)
@@ -112,12 +111,6 @@ ___
 ### JWT\_NOT\_INITIALIZED
 
 • **JWT\_NOT\_INITIALIZED** = `"JWT was not initialized"`
-
-___
-
-### LOGIN\_NOT\_ENOUGHT\_TOKENS
-
-• **LOGIN\_NOT\_ENOUGHT\_TOKENS** = `"You are not able to login because you do not have any tokens"`
 
 ___
 

@@ -175,9 +175,10 @@ export class IAMBase {
         const gas = await this._provider.estimateGas(this._transactionOverrides);
         const balance =
             (await this._signer?.provider?.getBalance(await this._signer?.getAddress())) || BigNumber.from(0);
+        // multiplier 2 chosen arbitrarily because it is not known how reasonably to choose it
         const fee = gasPrice.mul(gas).mul(2);
         if (balance.lte(fee)) {
-            throw new Error(ERROR_MESSAGES.LOGIN_NOT_ENOUGHT_TOKENS);
+            throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
         }
     }
 
