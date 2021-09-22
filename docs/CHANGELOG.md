@@ -75,11 +75,7 @@
 ### Code Refactoring
 
 * **asset:** drop support for DID format when offering asset. Use address instead ([8e2836f](https://github.com/energywebfoundation/iam-client-lib/commit/8e2836fa7899f0926d1f4bf8f88b71ac1c949c38))
-* rename initDID to createDocument ([585a4ee](https://github.com/energywebfoundation/iam-client-lib/commit/585a4ee012b7e3b16d4839d8f903c9aeec760665))
-* rename initDID to createDocument ([bc86ec1](https://github.com/energywebfoundation/iam-client-lib/commit/bc86ec15d17151065f9a6875f4b17eeb1ff6150e))
-* rename initDID to createDocument ([9a895ab](https://github.com/energywebfoundation/iam-client-lib/commit/9a895ab8c1e4616f9c7724d9bff7e6e191670cfb))
-* rename initDID to createDocument ([b08a68a](https://github.com/energywebfoundation/iam-client-lib/commit/b08a68ad334d19e8ba60fbf30b437999ae751ec2))
-
+* rename initDID to createDocument ([585a4ee](https://github.com/energywebfoundation/iam-client-lib/commit/
 
 ### Features
 
@@ -114,9 +110,6 @@
 * transferring asset do not allow anymore to use DID format. Allowed is address.
 * **asset:** transferring asset do not allow anymore to use DID format. Allowed is address.
 * Rename the prop name from `issuedToken` to `claimUrl` in method `verifyPublicClaim` in `IAM` class.
-* change initialization API
-* change initialization API
-* change initialization API
 * change initialization API
 * signature of unsubscribe and subscribe changed
 
