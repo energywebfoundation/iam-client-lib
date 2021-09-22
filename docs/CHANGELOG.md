@@ -1,3 +1,5 @@
+## [3.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.0...v3.0.1-alpha.1) (2021-09-22)
+
 # [3.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v2.2.0...v3.0.0) (2021-09-21)
 
 
