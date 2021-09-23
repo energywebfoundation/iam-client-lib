@@ -8,59 +8,62 @@ import { Keys } from "@ew-did-registry/keys";
 const { namehash } = utils;
 
 export const appsTests = () => {
-  const app = "app1";
-  const appNode = `${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`;
+    const app = "app1";
+    const appNode = `${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`;
 
-  test("application can be created", async () => {
-    const appDefinition = { appName: "Application 1" };
-    await rootOwnerIam.createApplication({
-      appName: app,
-      data: appDefinition,
-      namespace: `${ENSNamespaceTypes.Application}.${org1}.${root}`
+    test("application can be created", async () => {
+        const appDefinition = { appName: "Application 1" };
+        await rootOwnerIam.createApplication({
+            appName: app,
+            data: appDefinition,
+            namespace: `${ENSNamespaceTypes.Application}.${org1}.${root}`,
+        });
+
+        expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
+        expect(await rootOwnerIam.checkExistenceOfDomain({ domain: `${ENSNamespaceTypes.Roles}.${appNode}` })).toBe(
+            true,
+        );
+        expect(await ensResolver.name(namehash(appNode))).toBe(appNode);
+        expect(
+            await rootOwnerIam.getSubdomains({ domain: `${ENSNamespaceTypes.Application}.${org1}.${root}` }),
+        ).toContain(`${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`);
+
+        const readAppDefinition = await rootOwnerIam.getDefinition({
+            type: ENSNamespaceTypes.Application,
+            namespace: appNode,
+        });
+        expect(readAppDefinition).toMatchObject(appDefinition);
     });
 
-    expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
-    expect(
-      await rootOwnerIam.checkExistenceOfDomain({ domain: `${ENSNamespaceTypes.Roles}.${appNode}` })
-    ).toBe(true);
-    expect(await ensResolver.name(namehash(appNode))).toBe(appNode);
-    expect(
-      await rootOwnerIam.getSubdomains({ domain: `${ENSNamespaceTypes.Application}.${org1}.${root}` })
-    ).toContain(`${app}.${ENSNamespaceTypes.Application}.${org1}.${root}`);
+    test("application owner can be changed", async () => {
+        const newOwner = new Keys();
+        await replenish(newOwner.getAddress());
+        const newOwnerIam = await createIam(newOwner.privateKey);
 
-    const readAppDefinition = await rootOwnerIam.getDefinition({ type: ENSNamespaceTypes.Application, namespace: appNode });
-    expect(readAppDefinition).toMatchObject(appDefinition);
-  });
+        expect(await rootOwnerIam.isOwner({ domain: appNode, user: rootOwner.address }));
 
-  test("application owner can be changed", async () => {
-    const newOwner = new Keys();
-    await replenish(newOwner.getAddress());
-    const newOwnerIam = await createIam(newOwner.privateKey);
+        await rootOwnerIam.changeAppOwnership({
+            namespace: appNode,
+            newOwner: newOwner.getAddress(),
+        });
 
-    expect(await rootOwnerIam.isOwner({ domain: appNode, user: rootOwner.address }));
+        expect(await rootOwnerIam.isOwner({ domain: appNode, user: newOwner.getAddress() }));
 
-    await rootOwnerIam.changeAppOwnership({
-      namespace: appNode,
-      newOwner: newOwner.getAddress()
+        await newOwnerIam.changeAppOwnership({
+            namespace: appNode,
+            newOwner: rootOwner.address,
+        });
+
+        expect(await rootOwnerIam.isOwner({ domain: appNode, user: rootOwner.address }));
     });
 
-    expect(await rootOwnerIam.isOwner({ domain: appNode, user: newOwner.getAddress() }));
+    test("application can be deleted", async () => {
+        expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
 
-    await newOwnerIam.changeAppOwnership({
-      namespace: appNode,
-      newOwner: rootOwner.address
+        await rootOwnerIam.deleteApplication({
+            namespace: appNode,
+        });
+
+        expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(false);
     });
-
-    expect(await rootOwnerIam.isOwner({ domain: appNode, user: rootOwner.address }));
-  });
-
-  test("application can be deleted", async () => {
-    expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(true);
-
-    await rootOwnerIam.deleteApplication({
-      namespace: appNode
-    });
-
-    expect(await rootOwnerIam.checkExistenceOfDomain({ domain: appNode })).toBe(false);
-  });
 };

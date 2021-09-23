@@ -49,7 +49,7 @@ export const chainConfigs: Record<number, ChainConfig> = {
 
 export const cacheServerClientOptions: Record<number, CacheServerClientOptions> = {
     [VOLTA_CHAIN_ID]: {
-        url: "https://volta-identitycache.energyweb.org/",
+        url: "https://volta-identitycache.energyweb.org/v1",
         cacheServerSupportsAuth: true,
     },
 };
