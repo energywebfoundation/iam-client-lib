@@ -1,4 +1,6 @@
 import { providers, Signer, utils, Wallet, BigNumber, ethers } from "ethers";
+import difference from "lodash.difference";
+
 import {
     DomainReader,
     DomainTransactionFactory,
@@ -25,20 +27,19 @@ import { ClaimManager } from "../../ethers/ClaimManager";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
-import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
-import difference from "lodash.difference";
 import detectMetamask from "@metamask/detect-provider";
 import { WalletProvider } from "../types/WalletProvider";
 import { CacheServerClient } from "../cacheServerClient/cacheServerClient";
-import { emptyAddress, MessagingMethod, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
+import { emptyAddress, PUBLIC_KEY, WALLET_PROVIDER } from "../utils/constants";
 import { cacheServerClientOptions, chainConfigs, messagingOptions, MessagingOptions } from "./chainConfig";
 import { WalletConnectService } from "../walletconnect/WalletConnectService";
 import { OfferableIdentity__factory } from "../../ethers/factories/OfferableIdentity__factory";
 import { IdentityManager__factory } from "../../ethers/factories/IdentityManager__factory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import { IMessagesHandler, MessagingFactory } from "../messaging/messaging_factory";
 
 const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
@@ -105,9 +106,8 @@ export class IAMBase {
 
     protected _cacheClient: ICacheServerClient;
 
-    protected _messagingOptions: MessagingOptions;
-    protected _natsConnection: NatsConnection | undefined;
-    protected _jsonCodec: Codec<any> | undefined;
+    private _messagingOptions: MessagingOptions;
+    protected _messagesHandler: IMessagesHandler;
 
     private ttl = BigNumber.from(0);
 
@@ -160,11 +160,7 @@ export class IAMBase {
         this.setDid();
         await this.initChain();
         this.initEventHandlers();
-
-        //if (this._executionEnvironment === ExecutionEnvironment.BROWSER) {
-        await this.setupMessaging();
-        //}
-
+        this._messagesHandler = await MessagingFactory.build(this._messagingOptions);
         this.setResolver();
         this.setJWT();
     }
@@ -430,33 +426,33 @@ export class IAMBase {
         throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
     }
 
-    private async setupMessaging() {
-        const { messagingMethod, natsServerUrl } = this._messagingOptions || {};
-        if (natsServerUrl && messagingMethod === MessagingMethod.Nats) {
-            this._jsonCodec = JSONCodec();
-            try {
-                let protocol = "ws";
-                if (natsServerUrl.indexOf("https://") === 0) {
-                    protocol = "wss";
-                }
-                const timeout = 3000;
-                // this race condition duplicate timeout is there because unable to catch the error that occurs when NATS.ws timeouts
-                const connection = await Promise.race<NatsConnection | undefined>([
-                    connect({
-                        servers: `${protocol}://${natsServerUrl}`,
-                        timeout,
-                        pingInterval: 50 * 1000,
-                    }),
-                    new Promise<undefined>((resolve) => setTimeout(resolve, timeout)),
-                ]);
+    // public async setupMessaging() {
+    //     const { messagingMethod, natsServerUrl } = this._messagingOptions || {};
+    //     console.log("setupMessaging entered1", this._messagingOptions);
 
-                if (!connection) return;
-                this._natsConnection = connection;
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    }
+    //     if (natsServerUrl && messagingMethod === MessagingMethod.Nats) {
+    //         this._jsonCodec = JSONCodec();
+    //         try {
+    //             const protocol = natsServerUrl.startsWith("https://") ? "wss" : "ws";
+    //             const timeout = 3000;
+    //             // this race condition duplicate timeout is there because unable to catch the error that occurs when NATS.ws timeouts
+    //             const connection = await Promise.race<NatsConnection | undefined>([
+    //                 connect({
+    //                     servers: `${protocol}://${natsServerUrl}`,
+    //                     timeout,
+    //                     pingInterval: 50 * 1000,
+    //                 }),
+    //                 new Promise<undefined>((resolve) => setTimeout(resolve, timeout)),
+    //             ]);
+    //             console.log(`setupMessaging entered2, connection is ${connection}`);
+    //             if (!connection) return;
+    //             this._natsConnection = connection;
+    //         } catch (err) {
+    //             console.log(`setupMessaging entered3`);
+    //             console.log(err);
+    //         }
+    //     }
+    // }
 
     protected async downloadClaims({ services }: { services: IServiceEndpoint[] }) {
         return Promise.all(
@@ -658,7 +654,6 @@ export class IAMBase {
             publicResolverAddress: ensPublicResolverAddress,
         });
         this._claimManager = ClaimManager__factory.connect(claimManagerAddress, this._signer);
-
         this._messagingOptions = messagingOptions[chainId];
     }
 

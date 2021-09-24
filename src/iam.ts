@@ -220,7 +220,7 @@ export class IAM extends IAMBase {
             userClosedModal: false,
             didDocument: await this.getDidDocument(),
             identityToken: this._identityToken,
-            realtimeExchangeConnected: Boolean(this._natsConnection),
+            realtimeExchangeConnected: Boolean(this._messagesHandler.isConnected()),
         };
     }
 
@@ -1497,10 +1497,8 @@ export class IAM extends IAMBase {
             message.subjectAgreement = await this.approveRolePublishing({ subject, role, version });
         }
 
-        if (this._natsConnection) {
-            issuer.map((issuerDID) =>
-                this._natsConnection?.publish(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`, this._jsonCodec?.encode(message)),
-            );
+        if (this._messagesHandler.isConnected()) {
+            issuer.map((issuerDID) => this._messagesHandler.publish(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`, message));
         } else if (this._cacheClient) {
             await this._cacheClient.requestClaim({ did: subject, message });
         } else {
@@ -1572,9 +1570,8 @@ export class IAM extends IAMBase {
             message.onChainProof = onChainProof;
         }
 
-        if (this._natsConnection) {
-            const dataToSend = this._jsonCodec?.encode(message);
-            this._natsConnection.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        if (this._messagesHandler.isConnected()) {
+            this._messagesHandler.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, message);
         } else if (this._cacheClient) {
             return this._cacheClient.issueClaim({ did: this._did, message });
         } else {
@@ -1594,15 +1591,10 @@ export class IAM extends IAMBase {
             isRejected: true,
         };
 
-        if (!this._natsConnection) {
-            if (this._cacheClient) {
-                return this._cacheClient.rejectClaim({ did: this._did, message: preparedData });
-            }
-            throw new NATSConnectionNotEstablishedError();
-        }
-
-        const dataToSend = this._jsonCodec?.encode(preparedData);
-        this._natsConnection.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        if (this._messagesHandler.isConnected())
+            this._messagesHandler.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, preparedData);
+        else if (this._cacheClient) return this._cacheClient.rejectClaim({ did: this._did, message: preparedData });
+        else throw new NATSConnectionNotEstablishedError();
     }
 
     async deleteClaim({ id }: { id: string }) {
@@ -1643,19 +1635,8 @@ export class IAM extends IAMBase {
         subject?: string;
         messageHandler: (data: IMessage) => void;
     }) {
-        if (!this._natsConnection) {
-            return;
-        }
-        const subscription = this._natsConnection.subscribe(subject, {
-            callback: (err, msg) => {
-                if (err) {
-                    console.error(`Nats error:${err.message}`);
-                    return;
-                }
-                const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
-                messageHandler(decodedMessage);
-            },
-        });
+        const subscription = this._messagesHandler.subscribe<IMessage>(subject, messageHandler);
+        if (!subscription) return;
         this._subscriptions.push(subscription);
         return subscription.getID();
     }

@@ -24,6 +24,7 @@ import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
 import { utilsTests } from "./utils/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
 import { stakingTests } from "./staking";
+import { messagingTests } from "./messaging.testSuite";
 
 const { namehash } = utils;
 
@@ -106,6 +107,7 @@ describe("IAM tests", () => {
 });
 
 describe("Organization tests", orgTests);
+describe("Messaging tests", messagingTests);
 describe("Application tests", appsTests);
 describe("InitializeConnection tests", initializeConnectionTests);
 describe("Claim tests", claimsTests);
