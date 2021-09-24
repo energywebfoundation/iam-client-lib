@@ -3,19 +3,19 @@ import { JSONCodec } from "nats.ws";
 import { Claim } from "../../src/cacheServerClient/cacheServerClient.types";
 import { IAM } from "../../src/iam";
 
-let _natsConnection;
+let _messagesHandler;
 export const mockNats = () => {
-    ({ _natsConnection } = Reflect.get(IAM, "prototype"));
+    ({ _messagesHandler } = Reflect.get(IAM, "prototype"));
     const mockedNatsConnection = {
         publish: jest.fn().mockImplementation(),
         subscribe: jest.fn().mockImplementation(),
         isConnected: jest.fn().mockImplementation(() => true),
     };
-    Reflect.set(IAM.prototype, "_natsConnection", mockedNatsConnection);
+    Reflect.set(IAM.prototype, "_messagesHandler", mockedNatsConnection);
     return mockedNatsConnection;
 };
 export const restoreNats = () => {
-    Reflect.set(IAM.prototype, "_natsConnection", _natsConnection);
+    Reflect.set(IAM.prototype, "_messagesHandler", _messagesHandler);
 };
 
 let _cacheClient;
