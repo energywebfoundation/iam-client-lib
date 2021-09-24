@@ -13,6 +13,7 @@ import { MessagingMethod } from "../utils/constants";
 
 const VOLTA_CHAIN_ID = 73799;
 export interface ChainConfig {
+    chainName: string;
     rpcUrl: string;
     ensRegistryAddress: string;
     ensResolverAddress: string;
@@ -35,6 +36,7 @@ export interface MessagingOptions {
  */
 export const chainConfigs: Record<number, ChainConfig> = {
     [VOLTA_CHAIN_ID]: {
+        chainName: "Energy Web Volta Testnet",
         rpcUrl: "https://volta-rpc.energyweb.org",
         ensRegistryAddress: VOLTA_ENS_REGISTRY_ADDRESS,
         ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
