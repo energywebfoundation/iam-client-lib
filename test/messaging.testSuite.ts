@@ -16,7 +16,7 @@ export const messagingTests = () => {
             messageHandler?.publish("testchannel", { message: "NATS IS WORKING ON NODE.JS" }),
         ]);
         await expect(results[0]).toEqual({ message: "NATS IS WORKING ON NODE.JS" });
-    });
+    }, 5000);
 
     test("nats - no handler returned if messaging options missing", async () => {
         const messageHandler = await MessagingFactory.build(undefined);
