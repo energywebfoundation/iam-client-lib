@@ -8,6 +8,8 @@ export const mockNats = () => {
     ({ _natsConnection } = Reflect.get(IAM, "prototype"));
     const mockedNatsConnection = {
         publish: jest.fn().mockImplementation(),
+        subscribe: jest.fn().mockImplementation(),
+        isConnected: () => true,
     };
     Reflect.set(IAM.prototype, "_natsConnection", mockedNatsConnection);
     return mockedNatsConnection;
