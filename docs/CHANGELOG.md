@@ -1,3 +1,17 @@
+# [3.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.1-alpha.2...v3.1.0-alpha.1) (2021-09-23)
+
+
+### Features
+
+* **core:** expose chain and account on initializeConnection ([038fed6](https://github.com/energywebfoundation/iam-client-lib/commit/038fed677d83ff87173ef70701aa16fd2f686aaa))
+
+## [3.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.1-alpha.1...v3.0.1-alpha.2) (2021-09-23)
+
+
+### Bug Fixes
+
+* **packaging:** update of nats.ws package to latest version ([d739480](https://github.com/energywebfoundation/iam-client-lib/commit/d73948069c1eba4c4098f55415305d0370f16dcd))
+
 ## [3.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.0...v3.0.1-alpha.1) (2021-09-22)
 
 # [3.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v2.2.0...v3.0.0) (2021-09-21)
