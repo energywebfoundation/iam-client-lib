@@ -41,6 +41,7 @@ import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 import { IMessagesHandler, MessagingFactory } from "../messaging/messaging_factory";
 import { AccountInfo } from "../iam";
+import { NoHandler } from "../messaging/no_handler";
 
 const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
@@ -108,7 +109,7 @@ export class IAMBase {
     protected _cacheClient: ICacheServerClient;
 
     private _messagingOptions: MessagingOptions;
-    protected _messagesHandler: IMessagesHandler;
+    protected _messagesHandler: IMessagesHandler = new NoHandler();
 
     private ttl = BigNumber.from(0);
 
