@@ -48,12 +48,20 @@ export const restoreCacheClient = () => {
 };
 
 let _jsonCodec;
-export const mockJsonCodec = () => {
+export const mockJsonCodec = <T = any>() => {
     ({ _jsonCodec } = Reflect.get(IAM, "prototype"));
-    const jsonCodec = JSONCodec();
+    const jsonCodec = JSONCodec<T>();
     Reflect.set(IAM.prototype, "_jsonCodec", jsonCodec);
     return jsonCodec;
 };
 export const restoreJsonCodec = () => {
     Reflect.set(IAM.prototype, "_jsonCodec", _jsonCodec);
+};
+let _ipfsStore;
+export const mockIpfs = () => {
+    ({ _ipfsStore } = Reflect.get(IAM, "prototype"));
+    Reflect.set(IAM.prototype, "_ipfsStore", { save: (token: string) => Promise.resolve(token) });
+};
+export const restoreIpfs = () => {
+    Reflect.set(IAM.prototype, "_ipfsStore", _ipfsStore);
 };

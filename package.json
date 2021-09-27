@@ -32,8 +32,7 @@
         "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --chainId 1337 --accounts 20 --gasLimit=10000000",
         "test:watch": "npm run start-rpc -- \"jest --coverage --env=./test/env.js --watchAll\"",
         "test:prod": "npm run start-rpc -- \"jest --no-cache --env=./test/env.js\"",
-        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./test/env.js --watchAll\"",
-        "change_resolver": "ts-node -O '{\"module\": \"commonjs\"}' ./scripts/change-resolver.ts"
+        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./test/env.js --watchAll\""
     },
     "keywords": [
         "decentralized",
@@ -79,7 +78,7 @@
         "js-sha3": "^0.8.0",
         "jsonwebtoken": "^8.5.1",
         "lodash.difference": "^4.5.0",
-        "nats.ws": "1.0.0-111",
+        "nats.ws": "^1.3.0",
         "qs": "^6.9.4",
         "tslib": "^2.0.3",
         "uuid": "^7.0.3"
@@ -91,6 +90,7 @@
         "@energyweb/km-crypto": "file:energyweb-km-crypto-v1.0.0.tgz",
         "@energyweb/km-utils": "file:energyweb-km-utils-v1.0.0.tgz",
         "@semantic-release/changelog": "^5.0.1",
+        "@semantic-release/git": "^9.0.1",
         "@typechain/ethers-v5": "^7.0.1",
         "@types/jest": "^26.0.13",
         "@types/lodash.difference": "^4.5.6",

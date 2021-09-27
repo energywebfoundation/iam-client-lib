@@ -81,8 +81,14 @@ export type InitializeData = {
     didDocument: IDIDDocument | null;
     identityToken?: string;
     realtimeExchangeConnected: boolean;
+    accountInfo: AccountInfo | undefined;
 };
 
+export type AccountInfo = {
+    chainName: string;
+    chainId: number;
+    account: string;
+};
 export interface IMessage {
     id: string;
     requester: string;
@@ -183,6 +189,7 @@ export class IAM extends IAMBase {
         createDocument?: boolean;
     } = {}): Promise<InitializeData> {
         const { privateKey } = this._connectionOptions;
+        let accountInfo: AccountInfo | undefined = undefined;
 
         if (!walletProvider && !privateKey) {
             throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
@@ -191,10 +198,11 @@ export class IAM extends IAMBase {
             throw new Error(ERROR_MESSAGES.WALLET_PROVIDER_NOT_SUPPORTED);
         }
         try {
-            await this.init({
+            accountInfo = await this.init({
                 initializeMetamask: reinitializeMetamask,
                 walletProvider,
             });
+
             if (initCacheServer) {
                 await this.connectToCacheServer();
             }
@@ -209,6 +217,7 @@ export class IAM extends IAMBase {
                     userClosedModal: true,
                     didDocument: null,
                     realtimeExchangeConnected: false,
+                    accountInfo: undefined,
                 };
             }
             throw err as Error;
@@ -221,6 +230,7 @@ export class IAM extends IAMBase {
             didDocument: await this.getDidDocument(),
             identityToken: this._identityToken,
             realtimeExchangeConnected: Boolean(this._natsConnection),
+            accountInfo: accountInfo,
         };
     }
 
