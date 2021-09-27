@@ -35,8 +35,8 @@ Decentralized Identity and Access Management (IAM) Type
 - [connectToDIDRegistry](iam.IAM.md#connecttodidregistry)
 - [createApplication](iam.IAM.md#createapplication)
 - [createClaimRequest](iam.IAM.md#createclaimrequest)
+- [createDelegateProof](iam.IAM.md#createdelegateproof)
 - [createIdentityProof](iam.IAM.md#createidentityproof)
-- [createIdentityProofWithDelegate](iam.IAM.md#createidentityproofwithdelegate)
 - [createOrganization](iam.IAM.md#createorganization)
 - [createProofClaim](iam.IAM.md#createproofclaim)
 - [createPublicClaim](iam.IAM.md#createpublicclaim)
@@ -348,37 +348,33 @@ ___
 
 ___
 
-### createIdentityProof
+### createDelegateProof
 
-▸ **createIdentityProof**(): `Promise`<`string`\>
+▸ **createDelegateProof**(`delegateKey`, `rpcUrl`, `identity`): `Promise`<`string`\>
 
-createIdentityProof
-
-**`description`** create a public claim to prove identity
-
-#### Returns
-
-`Promise`<`string`\>
-
-JWT token of created identity
-
-___
-
-### createIdentityProofWithDelegate
-
-▸ **createIdentityProofWithDelegate**(`secp256k1PrivateKey`, `rpcUrl`, `identityProofDid`): `Promise`<`string`\>
-
-createIdentityProofWithDelegate
-
-**`description`** create a raw identity proof for a delegate
+**`description`** create a proof of identity delegate
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `secp256k1PrivateKey` | `string` |
+| `delegateKey` | `string` |
 | `rpcUrl` | `string` |
-| `identityProofDid` | `string` |
+| `identity` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+token of delegate
+
+___
+
+### createIdentityProof
+
+▸ **createIdentityProof**(): `Promise`<`string`\>
+
+**`description`** create a public claim to prove identity
 
 #### Returns
 
