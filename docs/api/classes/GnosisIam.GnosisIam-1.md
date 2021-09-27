@@ -37,8 +37,8 @@ The domain ownership functionality has been redefined accordingly.
 - [connectToDIDRegistry](GnosisIam.GnosisIam-1.md#connecttodidregistry)
 - [createApplication](GnosisIam.GnosisIam-1.md#createapplication)
 - [createClaimRequest](GnosisIam.GnosisIam-1.md#createclaimrequest)
+- [createDelegateProof](GnosisIam.GnosisIam-1.md#createdelegateproof)
 - [createIdentityProof](GnosisIam.GnosisIam-1.md#createidentityproof)
-- [createIdentityProofWithDelegate](GnosisIam.GnosisIam-1.md#createidentityproofwithdelegate)
 - [createOrganization](GnosisIam.GnosisIam-1.md#createorganization)
 - [createProofClaim](GnosisIam.GnosisIam-1.md#createproofclaim)
 - [createPublicClaim](GnosisIam.GnosisIam-1.md#createpublicclaim)
@@ -393,11 +393,35 @@ ___
 
 ___
 
+### createDelegateProof
+
+▸ **createDelegateProof**(`delegateKey`, `rpcUrl`, `identity`): `Promise`<`string`\>
+
+**`description`** create a proof of identity delegate
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `delegateKey` | `string` |
+| `rpcUrl` | `string` |
+| `identity` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+token of delegate
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[createDelegateProof](iam.IAM.md#createdelegateproof)
+
+___
+
 ### createIdentityProof
 
 ▸ **createIdentityProof**(): `Promise`<`string`\>
-
-createIdentityProof
 
 **`description`** create a public claim to prove identity
 
@@ -410,34 +434,6 @@ JWT token of created identity
 #### Inherited from
 
 [IAM](iam.IAM.md).[createIdentityProof](iam.IAM.md#createidentityproof)
-
-___
-
-### createIdentityProofWithDelegate
-
-▸ **createIdentityProofWithDelegate**(`secp256k1PrivateKey`, `rpcUrl`, `identityProofDid`): `Promise`<`string`\>
-
-createIdentityProofWithDelegate
-
-**`description`** create a raw identity proof for a delegate
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `secp256k1PrivateKey` | `string` |
-| `rpcUrl` | `string` |
-| `identityProofDid` | `string` |
-
-#### Returns
-
-`Promise`<`string`\>
-
-JWT token of created identity
-
-#### Inherited from
-
-[IAM](iam.IAM.md).[createIdentityProofWithDelegate](iam.IAM.md#createidentityproofwithdelegate)
 
 ___
 

@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import { providers, Signer, utils, Wallet } from "ethers";
+import { providers, Signer, utils } from "ethers";
 import {
     IRoleDefinition,
     IAppDefinition,
@@ -71,8 +71,7 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
-import { JWT } from "@ew-did-registry/jwt";
-
+import jwt from "jsonwebtoken";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -549,11 +548,8 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * createIdentityProof
-     *
      * @description create a public claim to prove identity
      * @returns JWT token of created identity
-     *
      */
     async createIdentityProof() {
         if (this._provider) {
@@ -568,30 +564,20 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * createIdentityProofWithDelegate
-     *
-     * @description create a raw identity proof for a delegate
-     * @returns JWT token of created identity
-     *
+     * @description create a proof of identity delegate
+     * @returns token of delegate
      */
-    async createIdentityProofWithDelegate(
-        secp256k1PrivateKey: string,
-        rpcUrl: string,
-        identityProofDid: string,
-    ): Promise<string> {
+    async createDelegateProof(delegateKey: string, rpcUrl: string, identity: string): Promise<string> {
         const provider = new providers.JsonRpcProvider(rpcUrl);
-        const wallet = new Wallet(secp256k1PrivateKey, provider);
-
         const blockNumber = (await provider.getBlockNumber()).toString();
 
         const payload: { iss: string; claimData: { blockNumber: string } } = {
-            iss: identityProofDid,
+            iss: identity,
             claimData: {
                 blockNumber,
             },
         };
-        const jwt = new JWT(wallet);
-        const identityToken = jwt.sign(payload);
+        const identityToken = jwt.sign(payload, delegateKey);
         return identityToken;
     }
 
