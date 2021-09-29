@@ -1,3 +1,10 @@
+# [3.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.1...v3.1.0-alpha.2) (2021-09-29)
+
+
+### Bug Fixes
+
+* **nats:** change in the way nats is referenced ([b4fd123](https://github.com/energywebfoundation/iam-client-lib/commit/b4fd1234d59fb78b99a128cd7ec4f8fc57e83487))
+
 # [3.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.1-alpha.2...v3.1.0-alpha.1) (2021-09-23)
 
 
