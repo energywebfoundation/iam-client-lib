@@ -6,14 +6,14 @@ import {
     IRole,
     Claim,
     Asset,
-    Order,
-    AssetHistoryEventType,
     AssetHistory,
+    ClaimsQueryParams,
+    RejectClaim,
+    IssueClaim,
+    RequestClaim,
 } from "./cacheServerClient.types";
 
-import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-
 import { ICacheServerClient } from "./ICacheServerClient";
 import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
@@ -138,49 +138,49 @@ export class CacheServerClient implements ICacheServerClient {
         }
     }
 
-    async getRoleDefinition({ namespace }: { namespace: string }) {
+    async getRoleDefinition({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
         return data?.definition;
     }
 
-    async getOrgDefinition({ namespace }: { namespace: string }) {
+    async getOrgDefinition({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
         return data?.definition;
     }
 
-    async getAppDefinition({ namespace }: { namespace: string }) {
+    async getAppDefinition({ namespace }) {
         const { data } = await this.httpClient.get<IApp>(`/app/${namespace}`);
         return data?.definition;
     }
 
-    async getApplicationRoles({ namespace }: { namespace: string }) {
+    async getApplicationRoles({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IRole[]>(`/app/${namespace}/roles`);
         return data;
     }
 
-    async getOrganizationRoles({ namespace }: { namespace: string }) {
+    async getOrganizationRoles({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IRole[]>(`/org/${namespace}/roles`);
         return data;
     }
 
-    async getOrganizationsByOwner({ owner, excludeSubOrgs }: { owner: string; excludeSubOrgs: boolean }) {
+    async getOrganizationsByOwner({ owner, excludeSubOrgs }: Pick<ClaimsQueryParams, "owner" | "excludeSubOrgs">) {
         const { data } = await this.httpClient.get<IOrganization[]>(
             `/org/owner/${owner}?excludeSubOrgs=${excludeSubOrgs}`,
         );
         return data;
     }
 
-    async getSubOrganizationsByOrganization({ namespace }: { namespace: string }) {
+    async getSubOrganizationsByOrganization({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IOrganization[]>(`/org/${namespace}/suborgs`);
         return data;
     }
 
-    async getOrgHierarchy({ namespace }: { namespace: string }) {
+    async getOrgHierarchy({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
         return data;
     }
 
-    async getNamespaceBySearchPhrase({ types, search }: { types?: ("App" | "Org" | "Role")[]; search: string }) {
+    async getNamespaceBySearchPhrase({ types, search }: Pick<ClaimsQueryParams, "types" | "search">) {
         if (types && types.length > 0) {
             const { data } = await this.httpClient.get<(IOrganization | IApp | IRole)[]>(`/search/${search}`, {
                 params: {
@@ -196,17 +196,17 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
-    async getApplicationsByOwner({ owner }: { owner: string }) {
+    async getApplicationsByOwner({ owner }: Pick<ClaimsQueryParams, "owner">) {
         const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}`);
         return data;
     }
 
-    async getApplicationsByOrganization({ namespace }: { namespace: string }) {
+    async getApplicationsByOrganization({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IApp[]>(`/org/${namespace}/apps`);
         return data;
     }
 
-    async getRolesByOwner({ owner }: { owner: string }) {
+    async getRolesByOwner({ owner }: Pick<ClaimsQueryParams, "owner">) {
         const { data } = await this.httpClient.get<IRole[]>(`/role/owner/${owner}`);
         return data;
     }
@@ -218,11 +218,15 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
-    async getClaimsByIssuer({ did, isAccepted, namespace }: { did: string; isAccepted?: boolean; namespace?: string }) {
+    async getClaimsByIssuer({
+        did,
+        isAccepted,
+        parentNamespace,
+    }: Pick<ClaimsQueryParams, "did" | "isAccepted" | "parentNamespace">) {
         const { data } = await this.httpClient.get<Claim[]>(`/claim/issuer/${did}`, {
             params: {
                 isAccepted,
-                namespace,
+                parentNamespace,
             },
         });
         return data;
@@ -231,16 +235,12 @@ export class CacheServerClient implements ICacheServerClient {
     async getClaimsByRequester({
         did,
         isAccepted,
-        namespace,
-    }: {
-        did: string;
-        isAccepted?: boolean;
-        namespace?: string;
-    }) {
+        parentNamespace,
+    }: Pick<ClaimsQueryParams, "did" | "isAccepted" | "parentNamespace">) {
         const { data } = await this.httpClient.get<Claim[]>(`/claim/requester/${did}`, {
             params: {
                 isAccepted,
-                namespace,
+                parentNamespace,
             },
         });
         return data;
@@ -249,67 +249,63 @@ export class CacheServerClient implements ICacheServerClient {
     async getClaimsBySubject({
         did,
         isAccepted,
-        namespace,
-    }: {
-        did: string;
-        isAccepted?: boolean;
-        namespace?: string;
-    }) {
+        parentNamespace,
+    }: Pick<ClaimsQueryParams, "did" | "isAccepted" | "parentNamespace">) {
         const { data } = await this.httpClient.get<Claim[]>(`/claim/subject/${did}`, {
             params: {
                 isAccepted,
-                namespace,
+                parentNamespace,
             },
         });
         return data;
     }
 
-    async requestClaim({ message, did }: { message: IClaimRequest; did: string }) {
+    async requestClaim({ message, did }: RequestClaim) {
         await this.httpClient.post<void>(`/claim/request/${did}`, message);
     }
 
-    async issueClaim({ message, did }: { message: IClaimIssuance; did: string }) {
+    async issueClaim({ message, did }: IssueClaim) {
         await this.httpClient.post<void>(`/claim/issue/${did}`, message);
     }
 
-    async rejectClaim({ message, did }: { message: IClaimRejection; did: string }) {
+    async rejectClaim({ message, did }: RejectClaim) {
         await this.httpClient.post<void>(`/claim/reject/${did}`, message);
     }
 
-    async deleteClaim({ claimId }: { claimId: string }) {
+    async deleteClaim({ claimId }: Pick<ClaimsQueryParams, "claimId">) {
         await this.httpClient.delete<void>(`/claim/${claimId}`);
     }
 
-    async getDIDsForRole({ namespace }: { namespace: string }) {
+    async getDIDsForRole({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<string[]>(`/claim/did/${namespace}?accepted=true`);
         return data;
     }
 
-    async getDidDocument({ did, includeClaims }: { did: string; includeClaims?: boolean }) {
+    async getDidDocument({ did, includeClaims }: Pick<ClaimsQueryParams, "did" | "includeClaims">) {
         const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
         return data;
     }
 
-    async addDIDToWatchList({ did }: { did: string }) {
+    async addDIDToWatchList({ did }: Pick<ClaimsQueryParams, "did">) {
         await this.httpClient.post(`/DID/${did}`);
     }
 
-    async getOwnedAssets({ did }: { did: string }) {
+    async getOwnedAssets({ did }: Pick<ClaimsQueryParams, "did">) {
         const { data } = await this.httpClient.get<Asset[]>(`/assets/owner/${did}`);
         return data;
     }
 
-    async getOfferedAssets({ did }: { did: string }) {
+    async getOfferedAssets({ did }: Pick<ClaimsQueryParams, "did">) {
         const { data } = await this.httpClient.get<Asset[]>(`/assets/offered_to/${did}`);
         return data;
     }
 
-    async getAssetById({ id }: { id: string }) {
+    async getAssetById({ id }: Pick<ClaimsQueryParams, "id">) {
         const { data } = await this.httpClient.get<Asset>(`/assets/${id}`);
         return data;
     }
 
-    async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
+    async getPreviouslyOwnedAssets({ owner }: Pick<ClaimsQueryParams, "owner">) {
         const { data } = await this.httpClient.get<Asset[]>(`/assets/owner/history/${owner}`);
         return data;
     }
@@ -320,13 +316,7 @@ export class CacheServerClient implements ICacheServerClient {
         take,
         skip,
         type,
-    }: {
-        id: string;
-        order?: Order;
-        take?: number;
-        skip?: number;
-        type?: AssetHistoryEventType;
-    }) {
+    }: Pick<ClaimsQueryParams, "id" | "order" | "take" | "skip" | "type">) {
         const query = stringify({ order, take, skip, type }, { skipNulls: true });
         const { data } = await this.httpClient.get<AssetHistory[]>(`/assets/history/${id}?${query}`);
         return data;
