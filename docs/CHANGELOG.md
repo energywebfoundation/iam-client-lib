@@ -1,3 +1,10 @@
+# [3.1.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.2...v3.1.0-alpha.3) (2021-09-29)
+
+
+### Bug Fixes
+
+* update ew-did to fix invalid signature ([867ecf2](https://github.com/energywebfoundation/iam-client-lib/commit/867ecf276a242c971b63b36b00af5e5593bb65fa))
+
 # [3.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.1...v3.1.0-alpha.2) (2021-09-29)
 
 
