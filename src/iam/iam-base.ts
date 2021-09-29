@@ -284,7 +284,7 @@ export class IAMBase {
                 uriOrInfo: this._provider.connection.url,
             });
         } else if (this._signer instanceof providers.JsonRpcSigner) {
-            this._didSigner = EwSigner.fromEthersProvider(this._signer.provider, this._publicKey);
+            this._didSigner = EwSigner.fromEthersSigner(this._signer, this._publicKey);
         } else {
             throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
         }
