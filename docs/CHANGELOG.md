@@ -1,3 +1,10 @@
+# [3.1.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.3...v3.1.0-alpha.4) (2021-09-29)
+
+
+### Bug Fixes
+
+* **nats:** changed path to nats.ws from absolute to relative ([4671db9](https://github.com/energywebfoundation/iam-client-lib/commit/4671db99f20ae92846bb1ac2fcbab14150dc1156))
+
 # [3.1.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.2...v3.1.0-alpha.3) (2021-09-29)
 
 
