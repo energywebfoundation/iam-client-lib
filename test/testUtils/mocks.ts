@@ -1,5 +1,5 @@
 import { IRoleDefinition } from "@energyweb/iam-contracts";
-import { JSONCodec } from "../../node_modules/nats.ws/lib/src/mod.js";
+import { JSONCodec } from "nats.ws/lib/src/mod.js";
 import { Claim } from "../../src/cacheServerClient/cacheServerClient.types";
 import { IAM } from "../../src/iam";
 
