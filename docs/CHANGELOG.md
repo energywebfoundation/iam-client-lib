@@ -1,3 +1,10 @@
+# [3.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.5...v3.1.0-alpha.6) (2021-09-30)
+
+
+### Bug Fixes
+
+* revert change initialization order ([1a49f65](https://github.com/energywebfoundation/iam-client-lib/commit/1a49f65184aff675a74be01a67356a30393c19a6))
+
 # [3.1.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.4...v3.1.0-alpha.5) (2021-09-30)
 
 
