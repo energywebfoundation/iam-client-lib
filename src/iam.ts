@@ -202,12 +202,11 @@ export class IAM extends IAMBase {
                 initializeMetamask: reinitializeMetamask,
                 walletProvider,
             });
-
-            if (initCacheServer) {
-                await this.connectToCacheServer();
-            }
             if (createDocument) {
                 await this.connectToDIDRegistry();
+            }
+            if (initCacheServer) {
+                await this.connectToCacheServer();
             }
         } catch (err) {
             if ((err as Error).message === "User closed modal") {
