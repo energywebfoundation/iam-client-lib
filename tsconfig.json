@@ -32,5 +32,5 @@
     "suppressImplicitAnyIndexErrors": true,
     "target": "es6"
   },
-  "include": ["src/**/*", "ethers/**/*", "test/staking.service.e2e.ts", "test/**/*"]
+  "include": ["src/**/*", "ethers/**/*", "test/**/*"]
 }
