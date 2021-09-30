@@ -1,3 +1,10 @@
+# [3.1.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.4...v3.1.0-alpha.5) (2021-09-30)
+
+
+### Bug Fixes
+
+* create DID before loging to cache server ([bda3296](https://github.com/energywebfoundation/iam-client-lib/commit/bda32968f5f7f3018a899568c2acefebb6073429))
+
 # [3.1.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.3...v3.1.0-alpha.4) (2021-09-29)
 
 
