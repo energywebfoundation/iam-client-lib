@@ -1,3 +1,10 @@
+# [3.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.6...v3.1.0-alpha.7) (2021-09-30)
+
+
+### Bug Fixes
+
+* **nats:** revert nats to non cjs version due to imcompatibilities ([68ab4b7](https://github.com/energywebfoundation/iam-client-lib/commit/68ab4b776c5f204a83c2107a21cfd9ecd2498f96))
+
 # [3.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.5...v3.1.0-alpha.6) (2021-09-30)
 
 
