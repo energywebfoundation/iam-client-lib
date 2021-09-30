@@ -2,7 +2,7 @@
     "name": "iam-client-lib",
     "version": "1.0.6",
     "description": "Library for Decentralized Identity and Access Management",
-    "main": "dist/iam-client-lib.js",
+    "main": "dist/index.js",
     "module": "dist/iam-client-lib.esm.js",
     "types": "dist/src/iam-client-lib.d.ts",
     "files": [
@@ -28,11 +28,11 @@
         "build:typechain:rewardpool": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/RewardPool.json\"",
         "build:typechain:stakingpool": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/Staking*.json\"",
         "prepare": "npm run build",
-        "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --chainId 1337 --accounts 20 --gasLimit=10000000",
-        "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" --port 8544 --chainId 1337 --accounts 20 --gasLimit=10000000",
-        "test:watch": "npm run start-rpc -- \"jest --coverage --env=./test/env.js --watchAll\"",
-        "test:prod": "npm run start-rpc -- \"jest --no-cache --env=./test/env.js\"",
-        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./test/env.js --watchAll\""
+        "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 1000 -l=10000000",
+        "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 1000 -l=10000000",
+        "test:watch": "npm run start-rpc -- \"jest --coverage --env=jest.env.js --watchAll\"",
+        "test:prod": "npm run start-rpc -- \"jest --no-cache --env=./jest.env.js\"",
+        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=jest.env.js --watchAll\""
     },
     "keywords": [
         "decentralized",
@@ -67,7 +67,8 @@
         "@ew-did-registry/jwt": "0.5.2-alpha.101.0",
         "@ew-did-registry/keys": "0.5.2-alpha.101.0",
         "@ew-did-registry/proxyidentity": "0.5.2-alpha.101.0",
-        "@gnosis.pm/safe-apps-sdk": "1.0.3",
+        "@gnosis.pm/safe-apps-provider": "0.8.0",
+        "@gnosis.pm/safe-apps-sdk": "4.3.0",
         "@metamask/detect-provider": "^1.2.0",
         "@walletconnect/web3-provider": "1.0.0-rc.4",
         "axios": "^0.21.1",
@@ -97,6 +98,7 @@
         "@types/uuid": "^8.3.0",
         "@typescript-eslint/eslint-plugin": "^4.0.1",
         "@typescript-eslint/parser": "^4.0.1",
+        "@walletconnect/types": "1.6.5",
         "babel-jest": "26.6.3",
         "bili": "^5.0.5",
         "copyfiles": "^2.4.0",

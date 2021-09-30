@@ -10,7 +10,7 @@ const config: Config = {
     },
     // include tslib for clients using older version of tslib
     bundleNodeModules: ["tslib"],
-    input: "src/iam-client-lib.ts",
+    input: "src/index.ts",
     output: {
         format: ["cjs", "esm"],
         minify: false,
