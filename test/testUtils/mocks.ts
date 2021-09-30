@@ -1,5 +1,5 @@
 import { IRoleDefinition } from "@energyweb/iam-contracts";
-import { JSONCodec } from "nats.ws/lib/src/mod.js";
+import { JSONCodec } from "nats.ws";
 import { Claim } from "../../src/cacheServerClient/cacheServerClient.types";
 import { IAM } from "../../src/iam";
 
@@ -48,9 +48,9 @@ export const restoreCacheClient = () => {
 };
 
 let _jsonCodec;
-export const mockJsonCodec = <T = any>() => {
+export const mockJsonCodec = () => {
     ({ _jsonCodec } = Reflect.get(IAM, "prototype"));
-    const jsonCodec = JSONCodec<T>();
+    const jsonCodec = JSONCodec();
     Reflect.set(IAM.prototype, "_jsonCodec", jsonCodec);
     return jsonCodec;
 };
