@@ -63,7 +63,7 @@ import {
     proof_type_hash,
     typedMsgPrefix,
 } from "./utils/constants";
-import { Subscription } from "nats.ws/lib/src/mod.js";
+import { Subscription } from "nats.ws";
 import { AxiosError } from "axios";
 import { DIDDocumentFull } from "@ew-did-registry/did-document";
 import { Methods } from "@ew-did-registry/did";
