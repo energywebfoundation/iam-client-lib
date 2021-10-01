@@ -14,8 +14,8 @@
 
 ### detectExecutionEnvironment
 
-▸ `Const` **detectExecutionEnvironment**(): `any`
+▸ `Const` **detectExecutionEnvironment**(): `ExecutionEnvironment`
 
 #### Returns
 
-`any`
+`ExecutionEnvironment`
