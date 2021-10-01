@@ -1,3 +1,10 @@
+# [3.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.7...v3.1.0-alpha.8) (2021-10-01)
+
+
+### Bug Fixes
+
+* **core:** update cache server interface to latest version and secure types ([7752b45](https://github.com/energywebfoundation/iam-client-lib/commit/7752b451f63a813ce1a574d1fb8e16f54eadcb5b))
+
 # [3.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.6...v3.1.0-alpha.7) (2021-09-30)
 
 
