@@ -62,8 +62,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"``\> |
 
 #### Returns
 
@@ -79,8 +78,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claimId` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"claimId"``\> |
 
 #### Returns
 
@@ -96,8 +94,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -113,8 +110,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -130,8 +126,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -147,8 +142,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"``\> |
 
 #### Returns
 
@@ -164,8 +158,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"id"``\> |
 
 #### Returns
 
@@ -181,12 +174,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
-| `__namedParameters.order?` | [`Order`](../enums/cacheServerClient_cacheServerClient_types.Order.md) |
-| `__namedParameters.skip?` | `number` |
-| `__namedParameters.take?` | `number` |
-| `__namedParameters.type?` | [`AssetHistoryEventType`](../enums/cacheServerClient_cacheServerClient_types.AssetHistoryEventType.md) |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"type"`` \| ``"id"`` \| ``"order"`` \| ``"take"`` \| ``"skip"``\> |
 
 #### Returns
 
@@ -202,10 +190,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.parentNamespace?` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"`` \| ``"isAccepted"`` \| ``"parentNamespace"``\> |
 
 #### Returns
 
@@ -221,10 +206,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.parentNamespace?` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"`` \| ``"isAccepted"`` \| ``"parentNamespace"``\> |
 
 #### Returns
 
@@ -240,10 +222,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.parentNamespace?` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"`` \| ``"isAccepted"`` \| ``"parentNamespace"``\> |
 
 #### Returns
 
@@ -275,8 +254,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -292,9 +270,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.includeClaims?` | `boolean` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"`` \| ``"includeClaims"``\> |
 
 #### Returns
 
@@ -310,9 +286,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.search` | `string` |
-| `__namedParameters.types?` | (``"App"`` \| ``"Org"`` \| ``"Role"``)[] |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"types"`` \| ``"search"``\> |
 
 #### Returns
 
@@ -328,8 +302,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"``\> |
 
 #### Returns
 
@@ -345,8 +318,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -362,8 +334,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -379,8 +350,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -396,9 +366,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.excludeSubOrgs` | `boolean` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"`` \| ``"excludeSubOrgs"``\> |
 
 #### Returns
 
@@ -414,8 +382,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"``\> |
 
 #### Returns
 
@@ -431,8 +398,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"``\> |
 
 #### Returns
 
@@ -448,8 +414,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -465,8 +430,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"``\> |
 
 #### Returns
 
@@ -482,8 +446,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"namespace"``\> |
 
 #### Returns
 
@@ -509,9 +472,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimIssuance`](iam.IClaimIssuance.md) |
+| `__namedParameters` | [`IssueClaim`](../modules/cacheServerClient_cacheServerClient_types.md#issueclaim) |
 
 #### Returns
 
@@ -537,9 +498,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimRejection`](iam.IClaimRejection.md) |
+| `__namedParameters` | [`RejectClaim`](../modules/cacheServerClient_cacheServerClient_types.md#rejectclaim) |
 
 #### Returns
 
@@ -555,9 +514,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.message` | [`IClaimRequest`](iam.IClaimRequest.md) |
+| `__namedParameters` | [`RequestClaim`](../modules/cacheServerClient_cacheServerClient_types.md#requestclaim) |
 
 #### Returns
 
