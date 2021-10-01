@@ -82,7 +82,7 @@ export class IAMBase {
     protected _didSigner: EwSigner | undefined;
     protected _identityToken: string | undefined;
     protected _transactionOverrides: utils.Deferrable<providers.TransactionRequest> = {};
-    protected _providerType: WalletProvider | undefined;
+    protected _providerType: WalletProvider;
     protected _publicKey: string | undefined | null;
 
     protected _registrySetting: RegistrySettings;
@@ -144,6 +144,10 @@ export class IAMBase {
             this._publicKey = localStorage.getItem(PUBLIC_KEY);
         }
 
+        if (this._executionEnvironment === ExecutionEnvironment.NODE) {
+            this._providerType = WalletProvider.PrivateKey;
+        }
+
         this._walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
     }
 
@@ -180,15 +184,10 @@ export class IAMBase {
         walletProvider?: WalletProvider;
     }): Promise<AccountInfo | undefined> {
         const { privateKey, rpcUrl } = this._connectionOptions;
-        if (this._executionEnvironment === ExecutionEnvironment.NODE) {
-            if (!privateKey) {
-                throw new Error(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
-            }
-            if (!rpcUrl) {
-                throw new Error(ERROR_MESSAGES.RPC_URL_NOT_PROVIDED);
-            }
-            this._provider = new JsonRpcProvider({ url: rpcUrl });
-            this._signer = new Wallet(privateKey, this._provider);
+
+        if (walletProvider === WalletProvider.PrivateKey) {
+            this.initWithPrivateKey(privateKey, rpcUrl);
+            this._providerType = walletProvider;
             return;
         }
 
@@ -246,6 +245,17 @@ export class IAMBase {
             return;
         }
         throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
+    }
+
+    private initWithPrivateKey(privateKey, rpcUrl) {
+        if (!privateKey) {
+            throw new Error(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
+        }
+        if (!rpcUrl) {
+            throw new Error(ERROR_MESSAGES.RPC_URL_NOT_PROVIDED);
+        }
+        this._provider = new JsonRpcProvider({ url: rpcUrl });
+        this._signer = new Wallet(privateKey, this._provider);
     }
 
     /**
@@ -320,7 +330,14 @@ export class IAMBase {
      * @requires to be called after the connection to wallet was initialized
      */
     on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
-        if (!this._providerType) return;
+        const providersThatHandleEvents = [
+            WalletProvider.WalletConnect,
+            WalletProvider.EwKeyManager,
+            WalletProvider.MetaMask,
+        ];
+        if (!providersThatHandleEvents.includes(this._providerType)) {
+            return;
+        }
         const isMetamask = this._providerType === WalletProvider.MetaMask;
         switch (event) {
             case "accountChanged": {
