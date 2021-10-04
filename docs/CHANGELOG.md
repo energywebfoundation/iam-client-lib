@@ -1,3 +1,10 @@
+# [3.1.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.10...v3.1.0-alpha.11) (2021-10-04)
+
+
+### Bug Fixes
+
+* **auth:** using private key in browser to login. ([cdb3d20](https://github.com/energywebfoundation/iam-client-lib/commit/cdb3d206aa062ba965d6dc37ad43f8c86ea3a6ab))
+
 # [3.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.9...v3.1.0-alpha.10) (2021-10-04)
 
 
