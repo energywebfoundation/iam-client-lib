@@ -18,6 +18,7 @@ import { ICacheServerClient } from "./ICacheServerClient";
 import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 import { Signer } from "ethers";
+import { IRoleDefinition } from "@energyweb/iam-contracts";
 
 export interface CacheServerClientOptions {
     url: string;
@@ -141,6 +142,14 @@ export class CacheServerClient implements ICacheServerClient {
     async getRoleDefinition({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
         return data?.definition;
+    }
+
+    async getRolesDefinition(namespaces: Array<ClaimsQueryParams["namespace"]>) {
+        const { data } = await this.httpClient.get<IRole[]>(`/role?namespaces=${namespaces.join(",")}`);
+        const rolesWithDefinitions = data?.map((entry) => ({ definition: entry.definition, role: entry.namespace }));
+        return rolesWithDefinitions.reduce((result, { role, definition }) => {
+            return { ...result, [role]: definition };
+        }, {} as Record<string, IRoleDefinition>);
     }
 
     async getOrgDefinition({ namespace }: Pick<ClaimsQueryParams, "namespace">) {

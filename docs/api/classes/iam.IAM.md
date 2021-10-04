@@ -66,6 +66,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [getProviderType](iam.IAM.md#getprovidertype)
 - [getRoleDIDs](iam.IAM.md#getroledids)
 - [getRolesByNamespace](iam.IAM.md#getrolesbynamespace)
+- [getRolesDefinition](iam.IAM.md#getrolesdefinition)
 - [getSigner](iam.IAM.md#getsigner)
 - [getSubOrgsByOrgNamespace](iam.IAM.md#getsuborgsbyorgnamespace)
 - [getSubdomains](iam.IAM.md#getsubdomains)
@@ -749,7 +750,7 @@ ___
 
 ▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
-getRoleDefinition
+getDefinition
 
 **`description`** get role definition form ens domain metadata record
 
@@ -976,6 +977,29 @@ getRolesByNamespace
 `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 array of subdomains or empty array when there is no subdomains
+
+___
+
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`__namedParameters`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+getRolesDefinition
+
+**`description`** get roles definition form ens domain metadata record
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+array of metadata strings
 
 ___
 
