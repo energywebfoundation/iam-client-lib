@@ -1,3 +1,10 @@
+# [3.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.9...v3.1.0-alpha.10) (2021-10-04)
+
+
+### Bug Fixes
+
+* detecting execution environment, when browser have declared global property. ([4d11e58](https://github.com/energywebfoundation/iam-client-lib/commit/4d11e58f2731fa8201e8b3d5e09985c2a4972b7e))
+
 # [3.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.8...v3.1.0-alpha.9) (2021-10-01)
 
 # [3.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.7...v3.1.0-alpha.8) (2021-10-01)
