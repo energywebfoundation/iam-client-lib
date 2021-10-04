@@ -8,6 +8,7 @@
 
 - [EwKeyManager](types_WalletProvider.WalletProvider.md#ewkeymanager)
 - [MetaMask](types_WalletProvider.WalletProvider.md#metamask)
+- [PrivateKey](types_WalletProvider.WalletProvider.md#privatekey)
 - [WalletConnect](types_WalletProvider.WalletProvider.md#walletconnect)
 
 ## Enumeration members
@@ -21,6 +22,12 @@ ___
 ### MetaMask
 
 • **MetaMask** = `"MetaMask"`
+
+___
+
+### PrivateKey
+
+• **PrivateKey** = `"PrivateKey"`
 
 ___
 
