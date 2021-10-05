@@ -44,12 +44,12 @@
                 "changelogFile": "docs/CHANGELOG.md"
             }
         ],
+        "@semantic-release/npm",
         [
             "@semantic-release/git",
             {
-                "assets": ["docs/CHANGELOG.md"]
+                "assets": ["package.json", "docs/CHANGELOG.md"]
             }
-        ],
-        "@semantic-release/npm"
+        ]
     ]
 }
