@@ -163,9 +163,12 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
-    async getOrganizationsByOwner({ owner, excludeSubOrgs }: Pick<ClaimsQueryParams, "owner" | "excludeSubOrgs">) {
+    async getOrganizationsByOwner(
+        owner: ClaimsQueryParams["owner"],
+        { withRelations = true }: { withRelations?: boolean } = {},
+    ) {
         const { data } = await this.httpClient.get<IOrganization[]>(
-            `/org/owner/${owner}?excludeSubOrgs=${excludeSubOrgs}`,
+            `/org/owner/${owner}?withRelations=${withRelations}`,
         );
         return data;
     }
@@ -196,8 +199,11 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
-    async getApplicationsByOwner({ owner }: Pick<ClaimsQueryParams, "owner">) {
-        const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}`);
+    async getApplicationsByOwner(
+        owner: ClaimsQueryParams["owner"],
+        { withRelations = true }: { withRelations?: boolean } = {},
+    ) {
+        const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}?withRelations=${withRelations}`);
         return data;
     }
 
