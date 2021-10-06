@@ -1,5 +1,6 @@
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import { IRoleDefinition, IAppDefinition, IOrganizationDefinition } from "@energyweb/iam-contracts";
+import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../iam";
 
 export interface IRole {
     uid: string;
@@ -105,3 +106,24 @@ export enum AssetHistoryEventType {
     ASSET_TRANSFERRED = "ASSET_TRANSFERRED",
     ASSET_OFFER_REJECTED = "ASSET_OFFER_REJECTED",
 }
+
+export type ClaimsQueryParams = {
+    namespace: string;
+    parentNamespace?: string;
+    id: string;
+    claimId: string;
+    did: string;
+    owner: string;
+    excludeSubOrgs: boolean;
+    includeClaims?: boolean;
+    isAccepted?: boolean;
+    types?: ("App" | "Org" | "Role")[];
+    type?: AssetHistoryEventType;
+    search: string;
+    order?: Order;
+    take?: number;
+    skip?: number;
+};
+export type RequestClaim = Pick<ClaimsQueryParams, "did"> & { message: IClaimRequest };
+export type IssueClaim = Pick<ClaimsQueryParams, "did"> & { message: IClaimIssuance };
+export type RejectClaim = Pick<ClaimsQueryParams, "did"> & { message: IClaimRejection };

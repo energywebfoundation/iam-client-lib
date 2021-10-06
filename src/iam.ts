@@ -202,7 +202,6 @@ export class IAM extends IAMBase {
                 initializeMetamask: reinitializeMetamask,
                 walletProvider,
             });
-
             if (initCacheServer) {
                 await this.connectToCacheServer();
             }

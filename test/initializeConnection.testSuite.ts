@@ -6,8 +6,8 @@ import { WalletProvider } from "../src/types/WalletProvider";
 const iam_withoutKey = new IAM({ rpcUrl });
 
 export const initializeConnectionTests = () => {
-    test("initializeConnection requires privateKey or walletProvider enum", async () => {
-        await expect(iam_withoutKey.initializeConnection()).rejects.toThrow(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
+    test("initializeConnection requires privateKey", async () => {
+        await expect(iam_withoutKey.initializeConnection()).rejects.toThrow(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
     });
 
     test("initializeConnection requires walletProvider to be known value", async () => {

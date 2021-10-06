@@ -48,9 +48,9 @@ export const restoreCacheClient = () => {
 };
 
 let _jsonCodec;
-export const mockJsonCodec = <T = any>() => {
+export const mockJsonCodec = () => {
     ({ _jsonCodec } = Reflect.get(IAM, "prototype"));
-    const jsonCodec = JSONCodec<T>();
+    const jsonCodec = JSONCodec();
     Reflect.set(IAM.prototype, "_jsonCodec", jsonCodec);
     return jsonCodec;
 };

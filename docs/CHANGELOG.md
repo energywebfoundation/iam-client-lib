@@ -1,3 +1,75 @@
+# [3.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.11...v3.1.0-alpha.12) (2021-10-06)
+
+
+### Bug Fixes
+
+* **doc:** package.json with correct version ([ac05bc9](https://github.com/energywebfoundation/iam-client-lib/commit/ac05bc9d13afd47df150332ba51ddf0a30fef456))
+
+# [3.1.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.10...v3.1.0-alpha.11) (2021-10-04)
+
+
+### Bug Fixes
+
+* **auth:** using private key in browser to login. ([cdb3d20](https://github.com/energywebfoundation/iam-client-lib/commit/cdb3d206aa062ba965d6dc37ad43f8c86ea3a6ab))
+
+# [3.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.9...v3.1.0-alpha.10) (2021-10-04)
+
+
+### Bug Fixes
+
+* detecting execution environment, when browser have declared global property. ([4d11e58](https://github.com/energywebfoundation/iam-client-lib/commit/4d11e58f2731fa8201e8b3d5e09985c2a4972b7e))
+
+# [3.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.8...v3.1.0-alpha.9) (2021-10-01)
+
+# [3.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.7...v3.1.0-alpha.8) (2021-10-01)
+
+
+### Bug Fixes
+
+* **core:** update cache server interface to latest version and secure types ([7752b45](https://github.com/energywebfoundation/iam-client-lib/commit/7752b451f63a813ce1a574d1fb8e16f54eadcb5b))
+
+# [3.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.6...v3.1.0-alpha.7) (2021-09-30)
+
+
+### Bug Fixes
+
+* **nats:** revert nats to non cjs version due to imcompatibilities ([68ab4b7](https://github.com/energywebfoundation/iam-client-lib/commit/68ab4b776c5f204a83c2107a21cfd9ecd2498f96))
+
+# [3.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.5...v3.1.0-alpha.6) (2021-09-30)
+
+
+### Bug Fixes
+
+* revert change initialization order ([1a49f65](https://github.com/energywebfoundation/iam-client-lib/commit/1a49f65184aff675a74be01a67356a30393c19a6))
+
+# [3.1.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.4...v3.1.0-alpha.5) (2021-09-30)
+
+
+### Bug Fixes
+
+* create DID before loging to cache server ([bda3296](https://github.com/energywebfoundation/iam-client-lib/commit/bda32968f5f7f3018a899568c2acefebb6073429))
+
+# [3.1.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.3...v3.1.0-alpha.4) (2021-09-29)
+
+
+### Bug Fixes
+
+* **nats:** changed path to nats.ws from absolute to relative ([4671db9](https://github.com/energywebfoundation/iam-client-lib/commit/4671db99f20ae92846bb1ac2fcbab14150dc1156))
+
+# [3.1.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.2...v3.1.0-alpha.3) (2021-09-29)
+
+
+### Bug Fixes
+
+* update ew-did to fix invalid signature ([867ecf2](https://github.com/energywebfoundation/iam-client-lib/commit/867ecf276a242c971b63b36b00af5e5593bb65fa))
+
+# [3.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.1...v3.1.0-alpha.2) (2021-09-29)
+
+
+### Bug Fixes
+
+* **nats:** change in the way nats is referenced ([b4fd123](https://github.com/energywebfoundation/iam-client-lib/commit/b4fd1234d59fb78b99a128cd7ec4f8fc57e83487))
+
 # [3.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.1-alpha.2...v3.1.0-alpha.1) (2021-09-23)
 
 

@@ -1072,13 +1072,13 @@ ___
 
 ### getProviderType
 
-▸ **getProviderType**(): `undefined` \| [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
+▸ **getProviderType**(): [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
 
 Get the current initialized provider type
 
 #### Returns
 
-`undefined` \| [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
+[`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
 
 provider type if the session is active if not undefined
 
