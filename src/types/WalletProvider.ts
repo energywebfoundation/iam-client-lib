@@ -3,4 +3,5 @@ export enum WalletProvider {
     MetaMask = "MetaMask",
     EwKeyManager = "EwKeyManager",
     PrivateKey = "PrivateKey",
+    EKC = "EKC",
 }

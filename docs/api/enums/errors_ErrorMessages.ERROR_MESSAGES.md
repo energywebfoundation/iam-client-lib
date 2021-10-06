@@ -12,10 +12,12 @@
 - [CLAIMS\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#claims_not_initialized)
 - [CLAIM\_PUBLISHER\_NOT\_REQUESTER](errors_ErrorMessages.ERROR_MESSAGES.md#claim_publisher_not_requester)
 - [DID\_DOCUMENT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#did_document_not_initialized)
+- [EKC\_PROXY\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#ekc_proxy_not_provided)
 - [ENS\_REGISTRY\_CONTRACT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_registry_contract_not_initialized)
 - [ENS\_REGISTRY\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_registry_not_initialized)
 - [ENS\_RESOLVER\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_resolver_not_initialized)
 - [ENS\_TYPE\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_type_not_supported)
+- [ERROR\_IN\_AZURE\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#error_in_azure_provider)
 - [INSUFFICIENT\_BALANCE](errors_ErrorMessages.ERROR_MESSAGES.md#insufficient_balance)
 - [JWT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#jwt_not_initialized)
 - [METAMASK\_EXTENSION\_NOT\_AVAILABLE](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_extension_not_available)
@@ -78,6 +80,12 @@ ___
 
 ___
 
+### EKC\_PROXY\_NOT\_PROVIDED
+
+• **EKC\_PROXY\_NOT\_PROVIDED** = `"EKC proxy url is not provided"`
+
+___
+
 ### ENS\_REGISTRY\_CONTRACT\_NOT\_INITIALIZED
 
 • **ENS\_REGISTRY\_CONTRACT\_NOT\_INITIALIZED** = `"ENS Registry contract not initialized"`
@@ -99,6 +107,12 @@ ___
 ### ENS\_TYPE\_NOT\_SUPPORTED
 
 • **ENS\_TYPE\_NOT\_SUPPORTED** = `"ENS type not supported"`
+
+___
+
+### ERROR\_IN\_AZURE\_PROVIDER
+
+• **ERROR\_IN\_AZURE\_PROVIDER** = `"Error in Azure Provider"`
 
 ___
 

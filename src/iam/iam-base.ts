@@ -1,4 +1,5 @@
 import { providers, Signer, utils, Wallet, BigNumber, ethers } from "ethers";
+import EKC from "@energyweb/ekc";
 import {
     DomainReader,
     DomainTransactionFactory,
@@ -52,6 +53,7 @@ export type ConnectionOptions = {
     bridgeUrl?: string;
     privateKey?: string;
     ewKeyManagerUrl?: string;
+    proxyUrl?: string;
 };
 
 export type EncodedCall = {
@@ -183,7 +185,7 @@ export class IAMBase {
         initializeMetamask?: boolean;
         walletProvider?: WalletProvider;
     }): Promise<AccountInfo | undefined> {
-        const { privateKey, rpcUrl } = this._connectionOptions;
+        const { privateKey, rpcUrl, proxyUrl } = this._connectionOptions;
 
         if (walletProvider === WalletProvider.PrivateKey) {
             this.initWithPrivateKey(privateKey, rpcUrl);
@@ -243,6 +245,20 @@ export class IAMBase {
             this._signer = this._provider.getSigner();
             this._providerType = walletProvider;
             return;
+        }
+        if (walletProvider === WalletProvider.EKC) {
+            if (!proxyUrl) {
+                throw new Error(ERROR_MESSAGES.EKC_PROXY_NOT_PROVIDED);
+            }
+            try {
+                // proxyURL should be
+                await EKC.init({ proxyUrl });
+                // await EKC.login({ mode: "popup" });
+            } catch (error) {
+                throw new Error(ERROR_MESSAGES.ERROR_IN_AZURE_PROVIDER);
+            }
+            // this._signer = EKC.getSigner() as Signer;
+            // this._provider = this._signer.provider;
         }
         throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
     }
@@ -377,7 +393,6 @@ export class IAMBase {
      * @description Closes the connection between application and the signer's wallet
      */
     async closeConnection() {
-        await this._walletConnectService.closeConnection();
         this.clearSession();
         this._did = undefined;
         this._address = undefined;
