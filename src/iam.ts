@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import { providers, Signer, utils } from "ethers";
+import { providers, Signer, utils, Wallet } from "ethers";
 import {
     IRoleDefinition,
     IAppDefinition,
@@ -71,7 +71,7 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
-import jwt from "jsonwebtoken";
+import { JWT } from "@ew-did-registry/jwt";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -577,7 +577,8 @@ export class IAM extends IAMBase {
                 blockNumber,
             },
         };
-        const identityToken = jwt.sign(payload, delegateKey);
+        const jwt = new JWT(new Wallet(delegateKey));
+        const identityToken = jwt.sign(payload, { algorithm: "ES256" });
         return identityToken;
     }
 
