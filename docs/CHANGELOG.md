@@ -1,3 +1,23 @@
+# [3.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.12...v3.1.0-alpha.13) (2021-10-06)
+
+
+### Bug Fixes
+
+* **modules:** fixing ethereumjs-abi install ([c095152](https://github.com/energywebfoundation/iam-client-lib/commit/c095152dbd95f6758a9a77f2b5cf84259290bd71))
+* **modules:** fixing ethereumjs-abi install ([ac195a8](https://github.com/energywebfoundation/iam-client-lib/commit/ac195a8966a21bc0f8a68c3e683cd124993f6458))
+* **modules:** fixing packages installation ([3386a8e](https://github.com/energywebfoundation/iam-client-lib/commit/3386a8e345165d069d12a38846c34628b8020e28))
+* **modules:** fixing packages installation ([e2998a3](https://github.com/energywebfoundation/iam-client-lib/commit/e2998a3b97ffdd607ea19b277c793216d279cc11))
+* **packages:** rebasing on dev ([0c557fa](https://github.com/energywebfoundation/iam-client-lib/commit/0c557fa7e307b552a9e18d99a4a4079df518b9a4))
+* **test:** typeCasting decoded args ([1918033](https://github.com/energywebfoundation/iam-client-lib/commit/1918033fa114a7d60e9558af81aa92edbb1354ef))
+
+
+### Features
+
+* **createDelegateProof:** using ew-did-registry/jwt ([db37306](https://github.com/energywebfoundation/iam-client-lib/commit/db37306850301d931f8174355a5cccab319e7b47))
+* **createDelegateProof:** using ew-did-registry/jwt ([706a082](https://github.com/energywebfoundation/iam-client-lib/commit/706a08201a4aeefe6c8a0deb9b72ffba0cff0018))
+* **createDelegateProof:** using ew-did-registry/jwt ([cea0e8d](https://github.com/energywebfoundation/iam-client-lib/commit/cea0e8dcc4850edaf5813e3ca584d1884ccce2ee))
+* **createDelegateProof:** using ew-did-registry/jwt ([a372742](https://github.com/energywebfoundation/iam-client-lib/commit/a3727429624a8179bf8ee503da31ad74d6a3ce71))
+
 # [3.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.11...v3.1.0-alpha.12) (2021-10-06)
 
 
