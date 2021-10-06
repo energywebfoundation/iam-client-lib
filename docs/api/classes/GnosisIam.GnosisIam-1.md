@@ -401,11 +401,11 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `delegateKey` | `string` |
-| `rpcUrl` | `string` |
-| `identity` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `delegateKey` | `string` | private key of the delegate |
+| `rpcUrl` | `string` | the url of the blockchain provider |
+| `identity` | `string` | Did of the delegate |
 
 #### Returns
 
