@@ -127,7 +127,7 @@ export class IAMBase {
         bridgeUrl = "https://walletconnect.energyweb.org",
         privateKey,
         ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new",
-        proxyUrl = "http://localhost:5000/api/v1",
+        proxyUrl = "https://azure-proxy-server.energyweb.org/api/v1",
     }: ConnectionOptions = {}) {
         this._executionEnvironment = detectExecutionEnvironment();
 
