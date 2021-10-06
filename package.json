@@ -56,8 +56,9 @@
         "npm": ">= 6.0.0"
     },
     "dependencies": {
+        "@babel/plugin-transform-runtime": "^7.15.0",
         "@babel/runtime": "^7.12.5",
-        "@energyweb/iam-contracts": "^3.0.0",
+        "@energyweb/iam-contracts": "^3.1.0",
         "@ensdomains/ens": "^0.4.5",
         "@ew-did-registry/claims": "0.5.2-alpha.101.0",
         "@ew-did-registry/did": "0.5.2-alpha.101.0",
@@ -69,7 +70,7 @@
         "@ew-did-registry/proxyidentity": "0.5.2-alpha.101.0",
         "@gnosis.pm/safe-apps-sdk": "1.0.3",
         "@metamask/detect-provider": "^1.2.0",
-        "@walletconnect/web3-provider": "1.0.0-rc.4",
+        "@walletconnect/web3-provider": "^1.6.5",
         "axios": "^0.21.1",
         "base64url": "^3.0.1",
         "concurrently": "^6.1.0",

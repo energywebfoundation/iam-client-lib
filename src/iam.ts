@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import { providers, Signer, utils } from "ethers";
+import { providers, Signer, utils, Wallet } from "ethers";
 import {
     IRoleDefinition,
     IAppDefinition,
@@ -71,7 +71,7 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
-
+import { JWT } from "@ew-did-registry/jwt";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -546,6 +546,10 @@ export class IAM extends IAMBase {
         return this._jwt.decode(token);
     }
 
+    /**
+     * @description create a public claim to prove identity
+     * @returns JWT token of created identity
+     */
     async createIdentityProof() {
         if (this._provider) {
             const blockNumber = await this._provider.getBlockNumber();
@@ -556,6 +560,28 @@ export class IAM extends IAMBase {
             });
         }
         throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
+    }
+
+    /**
+     * @description create a proof of identity delegate
+     * @param delegateKey private key of the delegate
+     * @param rpcUrl the url of the blockchain provider
+     * @param identity Did of the delegate
+     * @returns token of delegate
+     */
+    async createDelegateProof(delegateKey: string, rpcUrl: string, identity: string): Promise<string> {
+        const provider = new providers.JsonRpcProvider(rpcUrl);
+        const blockNumber = (await provider.getBlockNumber()).toString();
+
+        const payload: { iss: string; claimData: { blockNumber: string } } = {
+            iss: identity,
+            claimData: {
+                blockNumber,
+            },
+        };
+        const jwt = new JWT(new Wallet(delegateKey));
+        const identityToken = jwt.sign(payload, { algorithm: "ES256" });
+        return identityToken;
     }
 
     /// ROLES
