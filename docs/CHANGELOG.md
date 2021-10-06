@@ -1,3 +1,10 @@
+# [3.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.11...v3.1.0-alpha.12) (2021-10-06)
+
+
+### Bug Fixes
+
+* **doc:** package.json with correct version ([ac05bc9](https://github.com/energywebfoundation/iam-client-lib/commit/ac05bc9d13afd47df150332ba51ddf0a30fef456))
+
 # [3.1.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.10...v3.1.0-alpha.11) (2021-10-04)
 
 
