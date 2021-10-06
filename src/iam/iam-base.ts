@@ -112,6 +112,8 @@ export class IAMBase {
     protected _natsConnection: NatsConnection | undefined;
     protected _jsonCodec: Codec<any> | undefined;
 
+    private _ekc: EKC | undefined;
+
     private ttl = BigNumber.from(0);
 
     /**
@@ -125,6 +127,7 @@ export class IAMBase {
         bridgeUrl = "https://walletconnect.energyweb.org",
         privateKey,
         ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new",
+        proxyUrl = "http://localhost:5000/api/v1",
     }: ConnectionOptions = {}) {
         this._executionEnvironment = detectExecutionEnvironment();
 
@@ -135,6 +138,7 @@ export class IAMBase {
             rpcUrl,
             bridgeUrl,
             infuraId,
+            proxyUrl,
         };
 
         this._ipfsStore = new DidStore(ipfsUrl);
@@ -251,14 +255,16 @@ export class IAMBase {
                 throw new Error(ERROR_MESSAGES.EKC_PROXY_NOT_PROVIDED);
             }
             try {
-                // proxyURL should be
-                await EKC.init({ proxyUrl });
-                // await EKC.login({ mode: "popup" });
+                // proxyUrl should be
+                this._ekc = await EKC.init({ proxyUrl });
+                await this._ekc.login({ mode: "popup" });
             } catch (error) {
                 throw new Error(ERROR_MESSAGES.ERROR_IN_AZURE_PROVIDER);
             }
-            // this._signer = EKC.getSigner() as Signer;
-            // this._provider = this._signer.provider;
+            this._signer = this._ekc.getSigner() as Signer;
+            this._provider = this._signer.provider as providers.JsonRpcProvider;
+            this._providerType = walletProvider;
+            return;
         }
         throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
     }
@@ -309,7 +315,7 @@ export class IAMBase {
                 type: ProviderTypes.HTTP,
                 uriOrInfo: this._provider.connection.url,
             });
-        } else if (this._signer instanceof providers.JsonRpcSigner) {
+        } else if (this._signer instanceof providers.JsonRpcSigner || this._providerType === WalletProvider.EKC) {
             this._didSigner = EwSigner.fromEthersSigner(this._signer, this._publicKey);
         } else {
             throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
@@ -393,6 +399,9 @@ export class IAMBase {
      * @description Closes the connection between application and the signer's wallet
      */
     async closeConnection() {
+        if (this._providerType === WalletProvider.EKC) {
+            await this._ekc?.logout({ mode: "popup" });
+        }
         this.clearSession();
         this._did = undefined;
         this._address = undefined;

@@ -174,7 +174,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"type"`` \| ``"id"`` \| ``"order"`` \| ``"take"`` \| ``"skip"``\> |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"id"`` \| ``"order"`` \| ``"take"`` \| ``"skip"`` \| ``"type"``\> |
 
 #### Returns
 
@@ -280,7 +280,7 @@ ___
 
 ### getNamespaceBySearchPhrase
 
-▸ **getNamespaceBySearchPhrase**(`__namedParameters`): `Promise`<([`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](cacheServerClient_cacheServerClient_types.IRole.md))[]\>
+▸ **getNamespaceBySearchPhrase**(`__namedParameters`): `Promise`<([`IRole`](cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](cacheServerClient_cacheServerClient_types.IApp.md))[]\>
 
 #### Parameters
 
@@ -290,7 +290,7 @@ ___
 
 #### Returns
 
-`Promise`<([`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](cacheServerClient_cacheServerClient_types.IRole.md))[]\>
+`Promise`<([`IRole`](cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](cacheServerClient_cacheServerClient_types.IApp.md))[]\>
 
 ___
 

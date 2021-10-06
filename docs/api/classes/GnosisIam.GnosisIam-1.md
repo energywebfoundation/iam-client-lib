@@ -837,7 +837,7 @@ ___
 
 ### getDefinition
 
-▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
+▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
 getRoleDefinition
 
@@ -853,7 +853,7 @@ getRoleDefinition
 
 #### Returns
 
-`Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
+`Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
 metadata string or empty string when there is no metadata
 
@@ -907,7 +907,7 @@ ___
 
 ### getENSTypesByOwner
 
-▸ **getENSTypesByOwner**(`__namedParameters`): `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\> \| `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\>
+▸ **getENSTypesByOwner**(`__namedParameters`): `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\> \| `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
 
 getENSTypesByOwner
 
@@ -921,7 +921,7 @@ getENSTypesByOwner
 
 #### Returns
 
-`Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\> \| `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\>
+`Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\> \| `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
 
 #### Overrides
 
@@ -931,7 +931,7 @@ ___
 
 ### getENSTypesBySearchPhrase
 
-▸ **getENSTypesBySearchPhrase**(`__namedParameters`): `Promise`<([`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md))[]\>
+▸ **getENSTypesBySearchPhrase**(`__namedParameters`): `Promise`<([`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md))[]\>
 
 getENSTypesBySearchPhrase
 
@@ -945,7 +945,7 @@ getENSTypesBySearchPhrase
 
 #### Returns
 
-`Promise`<([`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md))[]\>
+`Promise`<([`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md))[]\>
 
 #### Inherited from
 
@@ -1114,13 +1114,13 @@ ___
 
 ### getSigner
 
-▸ **getSigner**(): `undefined` \| `JsonRpcSigner` \| `Signer`
+▸ **getSigner**(): `undefined` \| `Signer` \| `JsonRpcSigner`
 
 Get signer
 
 #### Returns
 
-`undefined` \| `JsonRpcSigner` \| `Signer`
+`undefined` \| `Signer` \| `JsonRpcSigner`
 
 JsonRpcSigner if connected to wallet, if not returns undefined
 
@@ -1565,7 +1565,7 @@ setRoleDefinition
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition` |
+| `__namedParameters.data` | `IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` |
 | `__namedParameters.domain` | `string` |
 
 #### Returns
