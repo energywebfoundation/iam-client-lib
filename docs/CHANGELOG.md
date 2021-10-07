@@ -1,3 +1,10 @@
+# [3.1.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.14...v3.1.0-alpha.15) (2021-10-07)
+
+
+### Features
+
+* **deps:** downgrade `nats.ws` and `@walletconnect/web3-provider` packages ([daf2782](https://github.com/energywebfoundation/iam-client-lib/commit/daf278239fa7821d798b45d729ab4f9087f9c321))
+
 # [3.1.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.13...v3.1.0-alpha.14) (2021-10-07)
 
 # [3.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.12...v3.1.0-alpha.13) (2021-10-06)
