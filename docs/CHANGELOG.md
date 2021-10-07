@@ -1,3 +1,10 @@
+# [3.1.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.15...v3.1.0-alpha.16) (2021-10-07)
+
+
+### Bug Fixes
+
+* **createDelegateProof:** set issuer identity ([77661c6](https://github.com/energywebfoundation/iam-client-lib/commit/77661c664e431684437d496d880d939af7f512ac))
+
 # [3.1.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.14...v3.1.0-alpha.15) (2021-10-07)
 
 
