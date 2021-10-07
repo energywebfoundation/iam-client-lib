@@ -1,3 +1,4 @@
+import jwtDecode, { JwtPayload } from "jwt-decode";
 import { IAM } from "../../src/iam";
 import { createIam, rootOwner } from "../iam.test";
 import { rpcUrl } from "../setup_contracts";
@@ -23,5 +24,7 @@ export const createIdentityTests = () => {
             identityProofDid,
         );
         expect(delegateIdentityToken).toBeDefined;
+        const decoded = jwtDecode<JwtPayload>(delegateIdentityToken);
+        expect(decoded.iss).toEqual(identityProofDid);
     });
 };

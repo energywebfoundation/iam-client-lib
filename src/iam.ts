@@ -580,7 +580,7 @@ export class IAM extends IAMBase {
             },
         };
         const jwt = new JWT(new Wallet(delegateKey));
-        const identityToken = jwt.sign(payload, { algorithm: "ES256" });
+        const identityToken = jwt.sign(payload, { algorithm: "ES256", issuer: identity });
         return identityToken;
     }
 
