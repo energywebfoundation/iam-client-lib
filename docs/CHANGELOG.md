@@ -1,3 +1,10 @@
+# [3.1.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.16...v3.1.0-alpha.17) (2021-10-08)
+
+
+### Features
+
+* update ew-did-reg packages to stable version ([8de8c77](https://github.com/energywebfoundation/iam-client-lib/commit/8de8c779df7b236b13659ab5b13f47647d8302ad))
+
 # [3.1.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.15...v3.1.0-alpha.16) (2021-10-07)
 
 
