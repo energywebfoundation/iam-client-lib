@@ -25,7 +25,7 @@ import { ClaimManager } from "../../ethers/ClaimManager";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
-import { connect, NatsConnection, JSONCodec, Codec } from "nats.ws";
+import { connect, NatsConnection, Codec, JSONCodec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";
@@ -39,6 +39,7 @@ import { OfferableIdentity__factory } from "../../ethers/factories/OfferableIden
 import { IdentityManager__factory } from "../../ethers/factories/IdentityManager__factory";
 import { IdentityManager } from "../../ethers/IdentityManager";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
+import { AccountInfo } from "../iam";
 
 const { parseUnits } = utils;
 const { JsonRpcProvider } = providers;
@@ -81,7 +82,7 @@ export class IAMBase {
     protected _didSigner: EwSigner | undefined;
     protected _identityToken: string | undefined;
     protected _transactionOverrides: utils.Deferrable<providers.TransactionRequest> = {};
-    protected _providerType: WalletProvider | undefined;
+    protected _providerType: WalletProvider;
     protected _publicKey: string | undefined | null;
 
     protected _registrySetting: RegistrySettings;
@@ -143,6 +144,10 @@ export class IAMBase {
             this._publicKey = localStorage.getItem(PUBLIC_KEY);
         }
 
+        if (this._executionEnvironment === ExecutionEnvironment.NODE) {
+            this._providerType = WalletProvider.PrivateKey;
+        }
+
         this._walletConnectService = new WalletConnectService(bridgeUrl, infuraId, ewKeyManagerUrl);
     }
 
@@ -154,8 +159,8 @@ export class IAMBase {
     }: {
         initializeMetamask?: boolean;
         walletProvider?: WalletProvider;
-    }) {
-        await this.initSigner({ walletProvider, initializeMetamask });
+    }): Promise<AccountInfo | undefined> {
+        const accountInfo = await this.initSigner({ walletProvider, initializeMetamask });
         await this.setAddress();
         this.setDid();
         await this.initChain();
@@ -167,6 +172,7 @@ export class IAMBase {
 
         this.setResolver();
         this.setJWT();
+        return accountInfo;
     }
 
     private async initSigner({
@@ -176,18 +182,12 @@ export class IAMBase {
         useMetamask?: boolean;
         initializeMetamask?: boolean;
         walletProvider?: WalletProvider;
-    }) {
+    }): Promise<AccountInfo | undefined> {
         const { privateKey, rpcUrl } = this._connectionOptions;
 
-        if (this._executionEnvironment === ExecutionEnvironment.NODE) {
-            if (!privateKey) {
-                throw new Error(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
-            }
-            if (!rpcUrl) {
-                throw new Error(ERROR_MESSAGES.RPC_URL_NOT_PROVIDED);
-            }
-            this._provider = new JsonRpcProvider({ url: rpcUrl });
-            this._signer = new Wallet(privateKey, this._provider);
+        if (walletProvider === WalletProvider.PrivateKey) {
+            this.initWithPrivateKey(privateKey, rpcUrl);
+            this._providerType = walletProvider;
             return;
         }
 
@@ -223,8 +223,14 @@ export class IAMBase {
             this._provider = new providers.Web3Provider(metamaskProvider);
             this._signer = this._provider.getSigner();
 
-            console.log("metamask chain id:", (await this._provider.getNetwork()).chainId);
-            return;
+            const { chainId } = await this._provider.getNetwork();
+            console.log("metamask chain id:", chainId);
+
+            return {
+                account: accounts[0],
+                chainId: chainId,
+                chainName: chainConfigs[chainId].chainName,
+            };
         }
         if (walletProvider && [WalletProvider.EwKeyManager, WalletProvider.WalletConnect].includes(walletProvider)) {
             this._transactionOverrides = {
@@ -239,6 +245,17 @@ export class IAMBase {
             return;
         }
         throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
+    }
+
+    private initWithPrivateKey(privateKey, rpcUrl) {
+        if (!privateKey) {
+            throw new Error(ERROR_MESSAGES.PRIVATE_KEY_NOT_PROVIDED);
+        }
+        if (!rpcUrl) {
+            throw new Error(ERROR_MESSAGES.RPC_URL_NOT_PROVIDED);
+        }
+        this._provider = new JsonRpcProvider({ url: rpcUrl });
+        this._signer = new Wallet(privateKey, this._provider);
     }
 
     /**
@@ -277,7 +294,7 @@ export class IAMBase {
                 uriOrInfo: this._provider.connection.url,
             });
         } else if (this._signer instanceof providers.JsonRpcSigner) {
-            this._didSigner = EwSigner.fromEthersProvider(this._signer.provider, this._publicKey);
+            this._didSigner = EwSigner.fromEthersSigner(this._signer, this._publicKey);
         } else {
             throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
         }
@@ -313,7 +330,14 @@ export class IAMBase {
      * @requires to be called after the connection to wallet was initialized
      */
     on(event: "accountChanged" | "networkChanged" | "disconnected", eventHandler: () => void) {
-        if (!this._providerType) return;
+        const providersThatHandleEvents = [
+            WalletProvider.WalletConnect,
+            WalletProvider.EwKeyManager,
+            WalletProvider.MetaMask,
+        ];
+        if (!providersThatHandleEvents.includes(this._providerType)) {
+            return;
+        }
         const isMetamask = this._providerType === WalletProvider.MetaMask;
         switch (event) {
             case "accountChanged": {

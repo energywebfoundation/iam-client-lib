@@ -37,6 +37,7 @@ The domain ownership functionality has been redefined accordingly.
 - [connectToDIDRegistry](GnosisIam.GnosisIam-1.md#connecttodidregistry)
 - [createApplication](GnosisIam.GnosisIam-1.md#createapplication)
 - [createClaimRequest](GnosisIam.GnosisIam-1.md#createclaimrequest)
+- [createDelegateProof](GnosisIam.GnosisIam-1.md#createdelegateproof)
 - [createIdentityProof](GnosisIam.GnosisIam-1.md#createidentityproof)
 - [createOrganization](GnosisIam.GnosisIam-1.md#createorganization)
 - [createProofClaim](GnosisIam.GnosisIam-1.md#createproofclaim)
@@ -392,13 +393,43 @@ ___
 
 ___
 
-### createIdentityProof
+### createDelegateProof
 
-▸ **createIdentityProof**(): `Promise`<`string`\>
+▸ **createDelegateProof**(`delegateKey`, `rpcUrl`, `identity`): `Promise`<`string`\>
+
+**`description`** create a proof of identity delegate
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `delegateKey` | `string` | private key of the delegate |
+| `rpcUrl` | `string` | the url of the blockchain provider |
+| `identity` | `string` | Did of the delegate |
 
 #### Returns
 
 `Promise`<`string`\>
+
+token of delegate
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[createDelegateProof](iam.IAM.md#createdelegateproof)
+
+___
+
+### createIdentityProof
+
+▸ **createIdentityProof**(): `Promise`<`string`\>
+
+**`description`** create a public claim to prove identity
+
+#### Returns
+
+`Promise`<`string`\>
+
+JWT token of created identity
 
 #### Inherited from
 
@@ -1041,13 +1072,13 @@ ___
 
 ### getProviderType
 
-▸ **getProviderType**(): `undefined` \| [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
+▸ **getProviderType**(): [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
 
 Get the current initialized provider type
 
 #### Returns
 
-`undefined` \| [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
+[`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
 
 provider type if the session is active if not undefined
 

@@ -35,7 +35,7 @@ export function namehash(inputName: string) {
                 const normalizedLabel = normalize(labels[i]);
                 labelSha = sha3(normalizedLabel);
             }
-            node = sha3(new Buffer(node + labelSha, "hex"));
+            node = sha3(Buffer.from(node + labelSha, "hex"));
         }
     }
 

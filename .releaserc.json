@@ -29,19 +29,27 @@
                 }
             }
         ],
-        "@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                "preset": "angular",
+                "parserOpts": {
+                    "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
+                }
+            }
+        ],
         [
             "@semantic-release/changelog",
             {
                 "changelogFile": "docs/CHANGELOG.md"
             }
         ],
+        "@semantic-release/npm",
         [
             "@semantic-release/git",
             {
-                "assets": ["docs/CHANGELOG.md"]
+                "assets": ["package.json", "docs/CHANGELOG.md"]
             }
-        ],
-        "@semantic-release/npm"
+        ]
     ]
 }

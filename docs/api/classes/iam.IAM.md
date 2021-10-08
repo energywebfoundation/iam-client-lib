@@ -35,6 +35,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [connectToDIDRegistry](iam.IAM.md#connecttodidregistry)
 - [createApplication](iam.IAM.md#createapplication)
 - [createClaimRequest](iam.IAM.md#createclaimrequest)
+- [createDelegateProof](iam.IAM.md#createdelegateproof)
 - [createIdentityProof](iam.IAM.md#createidentityproof)
 - [createOrganization](iam.IAM.md#createorganization)
 - [createProofClaim](iam.IAM.md#createproofclaim)
@@ -347,13 +348,39 @@ ___
 
 ___
 
-### createIdentityProof
+### createDelegateProof
 
-▸ **createIdentityProof**(): `Promise`<`string`\>
+▸ **createDelegateProof**(`delegateKey`, `rpcUrl`, `identity`): `Promise`<`string`\>
+
+**`description`** create a proof of identity delegate
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `delegateKey` | `string` | private key of the delegate |
+| `rpcUrl` | `string` | the url of the blockchain provider |
+| `identity` | `string` | Did of the delegate |
 
 #### Returns
 
 `Promise`<`string`\>
+
+token of delegate
+
+___
+
+### createIdentityProof
+
+▸ **createIdentityProof**(): `Promise`<`string`\>
+
+**`description`** create a public claim to prove identity
+
+#### Returns
+
+`Promise`<`string`\>
+
+JWT token of created identity
 
 ___
 
@@ -893,13 +920,13 @@ ___
 
 ### getProviderType
 
-▸ **getProviderType**(): `undefined` \| [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
+▸ **getProviderType**(): [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
 
 Get the current initialized provider type
 
 #### Returns
 
-`undefined` \| [`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
+[`WalletProvider`](../enums/types_WalletProvider.WalletProvider.md)
 
 provider type if the session is active if not undefined
 

@@ -1,3 +1,134 @@
+# [3.1.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.16...v3.1.0-alpha.17) (2021-10-08)
+
+
+### Features
+
+* update ew-did-reg packages to stable version ([8de8c77](https://github.com/energywebfoundation/iam-client-lib/commit/8de8c779df7b236b13659ab5b13f47647d8302ad))
+
+# [3.1.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.15...v3.1.0-alpha.16) (2021-10-07)
+
+
+### Bug Fixes
+
+* **createDelegateProof:** set issuer identity ([77661c6](https://github.com/energywebfoundation/iam-client-lib/commit/77661c664e431684437d496d880d939af7f512ac))
+
+# [3.1.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.14...v3.1.0-alpha.15) (2021-10-07)
+
+
+### Features
+
+* **deps:** downgrade `nats.ws` and `@walletconnect/web3-provider` packages ([daf2782](https://github.com/energywebfoundation/iam-client-lib/commit/daf278239fa7821d798b45d729ab4f9087f9c321))
+
+# [3.1.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.13...v3.1.0-alpha.14) (2021-10-07)
+
+# [3.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.12...v3.1.0-alpha.13) (2021-10-06)
+
+
+### Bug Fixes
+
+* **modules:** fixing ethereumjs-abi install ([c095152](https://github.com/energywebfoundation/iam-client-lib/commit/c095152dbd95f6758a9a77f2b5cf84259290bd71))
+* **modules:** fixing ethereumjs-abi install ([ac195a8](https://github.com/energywebfoundation/iam-client-lib/commit/ac195a8966a21bc0f8a68c3e683cd124993f6458))
+* **modules:** fixing packages installation ([3386a8e](https://github.com/energywebfoundation/iam-client-lib/commit/3386a8e345165d069d12a38846c34628b8020e28))
+* **modules:** fixing packages installation ([e2998a3](https://github.com/energywebfoundation/iam-client-lib/commit/e2998a3b97ffdd607ea19b277c793216d279cc11))
+* **packages:** rebasing on dev ([0c557fa](https://github.com/energywebfoundation/iam-client-lib/commit/0c557fa7e307b552a9e18d99a4a4079df518b9a4))
+* **test:** typeCasting decoded args ([1918033](https://github.com/energywebfoundation/iam-client-lib/commit/1918033fa114a7d60e9558af81aa92edbb1354ef))
+
+
+### Features
+
+* **createDelegateProof:** using ew-did-registry/jwt ([db37306](https://github.com/energywebfoundation/iam-client-lib/commit/db37306850301d931f8174355a5cccab319e7b47))
+* **createDelegateProof:** using ew-did-registry/jwt ([706a082](https://github.com/energywebfoundation/iam-client-lib/commit/706a08201a4aeefe6c8a0deb9b72ffba0cff0018))
+* **createDelegateProof:** using ew-did-registry/jwt ([cea0e8d](https://github.com/energywebfoundation/iam-client-lib/commit/cea0e8dcc4850edaf5813e3ca584d1884ccce2ee))
+* **createDelegateProof:** using ew-did-registry/jwt ([a372742](https://github.com/energywebfoundation/iam-client-lib/commit/a3727429624a8179bf8ee503da31ad74d6a3ce71))
+
+# [3.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.11...v3.1.0-alpha.12) (2021-10-06)
+
+
+### Bug Fixes
+
+* **doc:** package.json with correct version ([ac05bc9](https://github.com/energywebfoundation/iam-client-lib/commit/ac05bc9d13afd47df150332ba51ddf0a30fef456))
+
+# [3.1.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.10...v3.1.0-alpha.11) (2021-10-04)
+
+
+### Bug Fixes
+
+* **auth:** using private key in browser to login. ([cdb3d20](https://github.com/energywebfoundation/iam-client-lib/commit/cdb3d206aa062ba965d6dc37ad43f8c86ea3a6ab))
+
+# [3.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.9...v3.1.0-alpha.10) (2021-10-04)
+
+
+### Bug Fixes
+
+* detecting execution environment, when browser have declared global property. ([4d11e58](https://github.com/energywebfoundation/iam-client-lib/commit/4d11e58f2731fa8201e8b3d5e09985c2a4972b7e))
+
+# [3.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.8...v3.1.0-alpha.9) (2021-10-01)
+
+# [3.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.7...v3.1.0-alpha.8) (2021-10-01)
+
+
+### Bug Fixes
+
+* **core:** update cache server interface to latest version and secure types ([7752b45](https://github.com/energywebfoundation/iam-client-lib/commit/7752b451f63a813ce1a574d1fb8e16f54eadcb5b))
+
+# [3.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.6...v3.1.0-alpha.7) (2021-09-30)
+
+
+### Bug Fixes
+
+* **nats:** revert nats to non cjs version due to imcompatibilities ([68ab4b7](https://github.com/energywebfoundation/iam-client-lib/commit/68ab4b776c5f204a83c2107a21cfd9ecd2498f96))
+
+# [3.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.5...v3.1.0-alpha.6) (2021-09-30)
+
+
+### Bug Fixes
+
+* revert change initialization order ([1a49f65](https://github.com/energywebfoundation/iam-client-lib/commit/1a49f65184aff675a74be01a67356a30393c19a6))
+
+# [3.1.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.4...v3.1.0-alpha.5) (2021-09-30)
+
+
+### Bug Fixes
+
+* create DID before loging to cache server ([bda3296](https://github.com/energywebfoundation/iam-client-lib/commit/bda32968f5f7f3018a899568c2acefebb6073429))
+
+# [3.1.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.3...v3.1.0-alpha.4) (2021-09-29)
+
+
+### Bug Fixes
+
+* **nats:** changed path to nats.ws from absolute to relative ([4671db9](https://github.com/energywebfoundation/iam-client-lib/commit/4671db99f20ae92846bb1ac2fcbab14150dc1156))
+
+# [3.1.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.2...v3.1.0-alpha.3) (2021-09-29)
+
+
+### Bug Fixes
+
+* update ew-did to fix invalid signature ([867ecf2](https://github.com/energywebfoundation/iam-client-lib/commit/867ecf276a242c971b63b36b00af5e5593bb65fa))
+
+# [3.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0-alpha.1...v3.1.0-alpha.2) (2021-09-29)
+
+
+### Bug Fixes
+
+* **nats:** change in the way nats is referenced ([b4fd123](https://github.com/energywebfoundation/iam-client-lib/commit/b4fd1234d59fb78b99a128cd7ec4f8fc57e83487))
+
+# [3.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.1-alpha.2...v3.1.0-alpha.1) (2021-09-23)
+
+
+### Features
+
+* **core:** expose chain and account on initializeConnection ([038fed6](https://github.com/energywebfoundation/iam-client-lib/commit/038fed677d83ff87173ef70701aa16fd2f686aaa))
+
+## [3.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.1-alpha.1...v3.0.1-alpha.2) (2021-09-23)
+
+
+### Bug Fixes
+
+* **packaging:** update of nats.ws package to latest version ([d739480](https://github.com/energywebfoundation/iam-client-lib/commit/d73948069c1eba4c4098f55415305d0370f16dcd))
+
+## [3.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.0...v3.0.1-alpha.1) (2021-09-22)
+
 # [3.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v2.2.0...v3.0.0) (2021-09-21)
 
 
@@ -75,11 +206,7 @@
 ### Code Refactoring
 
 * **asset:** drop support for DID format when offering asset. Use address instead ([8e2836f](https://github.com/energywebfoundation/iam-client-lib/commit/8e2836fa7899f0926d1f4bf8f88b71ac1c949c38))
-* rename initDID to createDocument ([585a4ee](https://github.com/energywebfoundation/iam-client-lib/commit/585a4ee012b7e3b16d4839d8f903c9aeec760665))
-* rename initDID to createDocument ([bc86ec1](https://github.com/energywebfoundation/iam-client-lib/commit/bc86ec15d17151065f9a6875f4b17eeb1ff6150e))
-* rename initDID to createDocument ([9a895ab](https://github.com/energywebfoundation/iam-client-lib/commit/9a895ab8c1e4616f9c7724d9bff7e6e191670cfb))
-* rename initDID to createDocument ([b08a68a](https://github.com/energywebfoundation/iam-client-lib/commit/b08a68ad334d19e8ba60fbf30b437999ae751ec2))
-
+* rename initDID to createDocument ([585a4ee](https://github.com/energywebfoundation/iam-client-lib/commit/
 
 ### Features
 
@@ -114,9 +241,6 @@
 * transferring asset do not allow anymore to use DID format. Allowed is address.
 * **asset:** transferring asset do not allow anymore to use DID format. Allowed is address.
 * Rename the prop name from `issuedToken` to `claimUrl` in method `verifyPublicClaim` in `IAM` class.
-* change initialization API
-* change initialization API
-* change initialization API
 * change initialization API
 * signature of unsubscribe and subscribe changed
 
