@@ -343,17 +343,17 @@ export class IAMBase {
             case "accountChanged": {
                 isMetamask
                     ? this._metamaskProvider?.on("accountsChanged", eventHandler)
-                    : this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
+                    : this._walletConnectService.getProvider().on("session_update", eventHandler);
                 break;
             }
             case "disconnected": {
-                isMetamask === false && this._walletConnectService.getProvider()?.wc.on("disconnect", eventHandler);
+                isMetamask === false && this._walletConnectService.getProvider()?.on("disconnect", eventHandler);
                 break;
             }
             case "networkChanged": {
                 isMetamask
                     ? this._metamaskProvider?.on("networkChanged", eventHandler)
-                    : this._walletConnectService.getProvider().wc.on("session_update", eventHandler);
+                    : this._walletConnectService.getProvider().on("session_update", eventHandler);
                 break;
             }
             default:
