@@ -1,18 +1,40 @@
+import SafeAppSdk from "@gnosis.pm/safe-apps-sdk";
 import { SignerService } from "./modules/signer/signer.service";
 import { StakingService } from "./modules/staking/staking.service";
 import { detectExecutionEnvironment, ExecutionEnvironment } from "./utils/detectEnvironment";
-import { PUBLIC_KEY, WALLET_PROVIDER } from "./modules/signer";
-import { fromPrivateKey } from "./modules/signer";
+import { fromKms } from "./modules/signer/walletConnectKms";
+import { fromPrivateKey } from "./modules/signer/privateKeySigner";
+import { PUBLIC_KEY, WALLET_PROVIDER } from "./modules/signer/signer.types";
 import { DidRegistry } from "./modules/didRegistry/didRegistry.service";
 import { MessagingService } from "./modules/messaging/messaging.service";
 import { CacheClient } from "./modules/cacheClient/cacheClient.service";
 import { DomainsService } from "./modules/domains/domains.service";
 import { AssetsService } from "./modules/assets/assets.service";
 import { ClaimsService } from "./modules/claims/claims.service";
+import { fromMetaMask } from "./modules/signer/metamaskSigner";
+import { fromWalletConnectMetamask } from "./modules/signer/walletConnectMetamask";
+import { fromGnosis } from "./modules/signer/gnosisSigner";
+import { defaultBridgeUrl, defaultKmsServerUrl } from "./utils/constants";
 
 export async function initWithPrivateKeySigner(privateKey: string, rpcUrl: string) {
     const signerService = await fromPrivateKey(privateKey, rpcUrl);
     return init(signerService);
+}
+
+export async function initWithKms({ bridge = defaultBridgeUrl, kmsServerUrl = defaultKmsServerUrl } = {}) {
+    return init(await fromKms(bridge, kmsServerUrl));
+}
+
+export async function initWithMetamask() {
+    return init(await fromMetaMask());
+}
+
+export async function initWithWalletConnect(bridge = defaultBridgeUrl) {
+    return init(await fromWalletConnectMetamask(bridge));
+}
+
+export async function initWithGnosis(safeAppSdk: SafeAppSdk) {
+    return init(await fromGnosis(safeAppSdk));
 }
 
 export async function init(signerService: SignerService) {

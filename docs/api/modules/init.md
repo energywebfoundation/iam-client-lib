@@ -5,7 +5,11 @@
 ### Functions
 
 - [init](init.md#init)
+- [initWithGnosis](init.md#initwithgnosis)
+- [initWithKms](init.md#initwithkms)
+- [initWithMetamask](init.md#initwithmetamask)
 - [initWithPrivateKeySigner](init.md#initwithprivatekeysigner)
+- [initWithWalletConnect](init.md#initwithwalletconnect)
 
 ## Functions
 
@@ -25,6 +29,50 @@
 
 ___
 
+### initWithGnosis
+
+▸ **initWithGnosis**(`safeAppSdk`): `Promise`<`Object`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `safeAppSdk` | `SafeAppSdk` |
+
+#### Returns
+
+`Promise`<`Object`\>
+
+___
+
+### initWithKms
+
+▸ **initWithKms**(`__namedParameters?`): `Promise`<`Object`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.bridge` |  |
+| `__namedParameters.kmsServerUrl` |  |
+
+#### Returns
+
+`Promise`<`Object`\>
+
+___
+
+### initWithMetamask
+
+▸ **initWithMetamask**(): `Promise`<`Object`\>
+
+#### Returns
+
+`Promise`<`Object`\>
+
+___
+
 ### initWithPrivateKeySigner
 
 ▸ **initWithPrivateKeySigner**(`privateKey`, `rpcUrl`): `Promise`<`Object`\>
@@ -35,6 +83,22 @@ ___
 | :------ | :------ |
 | `privateKey` | `string` |
 | `rpcUrl` | `string` |
+
+#### Returns
+
+`Promise`<`Object`\>
+
+___
+
+### initWithWalletConnect
+
+▸ **initWithWalletConnect**(`bridge?`): `Promise`<`Object`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `bridge` | `string` |
 
 #### Returns
 

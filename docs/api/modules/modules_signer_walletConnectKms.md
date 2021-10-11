@@ -4,21 +4,21 @@
 
 ### Functions
 
-- [connectWithKmsClient](modules_signer_walletConnectKms.md#connectwithkmsclient)
+- [fromKms](modules_signer_walletConnectKms.md#fromkms)
 
 ## Functions
 
-### connectWithKmsClient
+### fromKms
 
-▸ **connectWithKmsClient**(`opts`, `ewKeyManagerUrl`): `Promise`<`WalletConnectProvider`\>
+▸ **fromKms**(`bridge`, `kmsServerUrl`): `Promise`<[`SignerService`](../classes/modules_signer_signer_service.SignerService.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `opts` | `IWalletConnectProviderOptions` |
-| `ewKeyManagerUrl` | `string` |
+| `bridge` | `string` |
+| `kmsServerUrl` | `string` |
 
 #### Returns
 
-`Promise`<`WalletConnectProvider`\>
+`Promise`<[`SignerService`](../classes/modules_signer_signer_service.SignerService.md)\>

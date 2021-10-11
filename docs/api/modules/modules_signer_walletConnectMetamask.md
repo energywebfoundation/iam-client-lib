@@ -10,13 +10,13 @@
 
 ### fromWalletConnectMetamask
 
-▸ `Const` **fromWalletConnectMetamask**(`walletConnectOpts?`): `Promise`<[`SignerService`](../classes/modules_signer_signer_service.SignerService.md)\>
+▸ `Const` **fromWalletConnectMetamask**(`bridge`): `Promise`<[`SignerService`](../classes/modules_signer_signer_service.SignerService.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `walletConnectOpts` | `IWalletConnectProviderOptions` |
+| `bridge` | `string` |
 
 #### Returns
 

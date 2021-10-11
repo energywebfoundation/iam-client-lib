@@ -56,14 +56,18 @@
 - [agreement\_type\_hash](index.md#agreement_type_hash)
 - [cacheConfigs](index.md#cacheconfigs)
 - [chainConfigs](index.md#chainconfigs)
-- [connectWithKmsClient](index.md#connectwithkmsclient)
 - [defaultClaimExpiry](index.md#defaultclaimexpiry)
 - [erc712\_type\_hash](index.md#erc712_type_hash)
+- [fromKms](index.md#fromkms)
 - [fromMetaMask](index.md#frommetamask)
 - [fromPrivateKey](index.md#fromprivatekey)
 - [fromWalletConnectMetamask](index.md#fromwalletconnectmetamask)
 - [init](index.md#init)
+- [initWithGnosis](index.md#initwithgnosis)
+- [initWithKms](index.md#initwithkms)
+- [initWithMetamask](index.md#initwithmetamask)
 - [initWithPrivateKeySigner](index.md#initwithprivatekeysigner)
+- [initWithWalletConnect](index.md#initwithwalletconnect)
 - [messagingConfigs](index.md#messagingconfigs)
 - [proof\_type\_hash](index.md#proof_type_hash)
 - [setCacheConfig](index.md#setcacheconfig)
@@ -385,12 +389,6 @@ Re-exports: [chainConfigs](config_chain_config.md#chainconfigs)
 
 ___
 
-### connectWithKmsClient
-
-Re-exports: [connectWithKmsClient](modules_signer_walletConnectKms.md#connectwithkmsclient)
-
-___
-
 ### defaultClaimExpiry
 
 Re-exports: [defaultClaimExpiry](modules_claims_claims_types.md#defaultclaimexpiry)
@@ -400,6 +398,12 @@ ___
 ### erc712\_type\_hash
 
 Re-exports: [erc712\_type\_hash](modules_claims_claims_types.md#erc712_type_hash)
+
+___
+
+### fromKms
+
+Re-exports: [fromKms](modules_signer_walletConnectKms.md#fromkms)
 
 ___
 
@@ -427,9 +431,33 @@ Re-exports: [init](init.md#init)
 
 ___
 
+### initWithGnosis
+
+Re-exports: [initWithGnosis](init.md#initwithgnosis)
+
+___
+
+### initWithKms
+
+Re-exports: [initWithKms](init.md#initwithkms)
+
+___
+
+### initWithMetamask
+
+Re-exports: [initWithMetamask](init.md#initwithmetamask)
+
+___
+
 ### initWithPrivateKeySigner
 
 Re-exports: [initWithPrivateKeySigner](init.md#initwithprivatekeysigner)
+
+___
+
+### initWithWalletConnect
+
+Re-exports: [initWithWalletConnect](init.md#initwithwalletconnect)
 
 ___
 
