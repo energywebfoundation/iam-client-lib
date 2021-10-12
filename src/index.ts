@@ -25,3 +25,6 @@ export * from "./modules/signer";
 export * from "./modules/staking";
 export * from "./errors";
 export * from "./config";
+export * from "./utils";
+
+export { PreconditionType, IRoleDefinition } from "@energyweb/iam-contracts";

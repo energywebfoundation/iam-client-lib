@@ -46,7 +46,13 @@ export class MessagingService {
         }
     }
 
-    async subscribeTo({ subject, messageHandler }: { subject: string; messageHandler: (data: IMessage) => void }) {
+    async subscribeTo({
+        subject = this._signerService.DID,
+        messageHandler,
+    }: {
+        subject?: string;
+        messageHandler: (data: IMessage) => void;
+    }) {
         if (!this._natsConnection) {
             return;
         }

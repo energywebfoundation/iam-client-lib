@@ -10,6 +10,7 @@
 
 ### Accessors
 
+- [DID](modules_signer_signer_service.SignerService.md#did)
 - [address](modules_signer_signer_service.SignerService.md#address)
 - [chainId](modules_signer_signer_service.SignerService.md#chainid)
 - [provider](modules_signer_signer_service.SignerService.md#provider)
@@ -20,10 +21,12 @@
 
 - [balance](modules_signer_signer_service.SignerService.md#balance)
 - [clearSession](modules_signer_signer_service.SignerService.md#clearsession)
+- [closeConnection](modules_signer_signer_service.SignerService.md#closeconnection)
 - [connect](modules_signer_signer_service.SignerService.md#connect)
 - [destroy](modules_signer_signer_service.SignerService.md#destroy)
 - [init](modules_signer_signer_service.SignerService.md#init)
 - [initEventHandlers](modules_signer_signer_service.SignerService.md#initeventhandlers)
+- [on](modules_signer_signer_service.SignerService.md#on)
 - [onInit](modules_signer_signer_service.SignerService.md#oninit)
 - [publicKey](modules_signer_signer_service.SignerService.md#publickey)
 - [publicKeyAndIdentityToken](modules_signer_signer_service.SignerService.md#publickeyandidentitytoken)
@@ -44,6 +47,16 @@
 | `_providerType` | [`ProviderType`](../enums/modules_signer_signer_types.ProviderType.md) |
 
 ## Accessors
+
+### DID
+
+• `get` **DID**(): `string`
+
+#### Returns
+
+`string`
+
+___
 
 ### address
 
@@ -115,6 +128,16 @@ ___
 
 ___
 
+### closeConnection
+
+▸ **closeConnection**(): `Promise`<`void`\>
+
+#### Returns
+
+`Promise`<`void`\>
+
+___
+
 ### connect
 
 ▸ **connect**(`signer`, `providerType`): `Promise`<`void`\>
@@ -159,6 +182,23 @@ ___
 Add event handler for certain events
 
 **`requires`** to be called after the connection to wallet was initialized
+
+#### Returns
+
+`void`
+
+___
+
+### on
+
+▸ **on**(`event`, `cb`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | [`ProviderEvent`](../enums/modules_signer_signer_types.ProviderEvent.md) |
+| `cb` | `any` |
 
 #### Returns
 

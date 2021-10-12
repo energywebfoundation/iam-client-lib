@@ -66,7 +66,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.subject` | `string` |
+| `__namedParameters.subject?` | `string` |
 | `__namedParameters.messageHandler` | (`data`: [`IMessage`](../interfaces/modules_messaging_messaging_types.IMessage.md)) => `void` |
 
 #### Returns

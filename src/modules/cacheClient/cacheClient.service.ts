@@ -8,7 +8,7 @@ import { Asset } from "../assets/assets.types";
 import { Order } from "./cacheClient.types";
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../claims/claims.types";
 import { ICacheClient } from "./ICacheClient";
-import { detectExecutionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
+import { executionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
 import { SignerService } from "../signer/signer.service";
 import { cacheConfigs } from "../../config/cache.config";
 import { IPubKeyAndIdentityToken } from "../signer/signer.types";
@@ -36,7 +36,7 @@ export class CacheClient implements ICacheClient {
             return response;
         }, this.handleUnauthorized);
         this.authEnabled = cacheServerSupportsAuth;
-        this.isBrowser = detectExecutionEnvironment() === ExecutionEnvironment.BROWSER;
+        this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
     }
 
     isAuthEnabled() {

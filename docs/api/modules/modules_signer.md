@@ -7,6 +7,7 @@
 - [AccountInfo](modules_signer.md#accountinfo)
 - [IPubKeyAndIdentityToken](modules_signer.md#ipubkeyandidentitytoken)
 - [PUBLIC\_KEY](modules_signer.md#public_key)
+- [ProviderEvent](modules_signer.md#providerevent)
 - [ProviderType](modules_signer.md#providertype)
 - [ServiceInitializer](modules_signer.md#serviceinitializer)
 - [SignerService](modules_signer.md#signerservice)
@@ -33,6 +34,12 @@ ___
 ### PUBLIC\_KEY
 
 Re-exports: [PUBLIC\_KEY](modules_signer_signer_types.md#public_key)
+
+___
+
+### ProviderEvent
+
+Re-exports: [ProviderEvent](../enums/modules_signer_signer_types.ProviderEvent.md)
 
 ___
 

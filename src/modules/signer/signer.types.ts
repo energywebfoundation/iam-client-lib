@@ -6,6 +6,13 @@ export enum ProviderType {
     Gnosis = "Gnosis",
 }
 
+export enum ProviderEvent {
+    AccountChanged = "accountChanged",
+    NetworkChanged = "networkChanged",
+    Disconnected = "disconnected",
+    SessionUpdate = "session_update",
+}
+
 export interface IPubKeyAndIdentityToken {
     publicKey: string;
     identityToken: string;

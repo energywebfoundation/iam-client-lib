@@ -45,6 +45,7 @@
 - [modules/signer/walletConnectMetamask](modules/modules_signer_walletConnectMetamask.md)
 - [modules/staking](modules/modules_staking.md)
 - [modules/staking/staking.service](modules/modules_staking_staking_service.md)
+- [utils](modules/utils.md)
 - [utils/ENS\_hash](modules/utils_ENS_hash.md)
 - [utils/change\_resolver](modules/utils_change_resolver.md)
 - [utils/constants](modules/utils_constants.md)

@@ -25,6 +25,7 @@
 - [ENSNamespaceTypes](index.md#ensnamespacetypes)
 - [ENSTypeNotSupportedError](index.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](index.md#error_messages)
+- [ExecutionEnvironment](index.md#executionenvironment)
 - [IApp](index.md#iapp)
 - [ICacheClient](index.md#icacheclient)
 - [IClaimIssuance](index.md#iclaimissuance)
@@ -43,6 +44,7 @@
 - [Order](index.md#order)
 - [PUBLIC\_KEY](index.md#public_key)
 - [Profile](index.md#profile)
+- [ProviderEvent](index.md#providerevent)
 - [ProviderType](index.md#providertype)
 - [RegistrationTypes](index.md#registrationtypes)
 - [Service](index.md#service)
@@ -52,12 +54,18 @@
 - [StakeStatus](index.md#stakestatus)
 - [StakingPool](index.md#stakingpool)
 - [StakingService](index.md#stakingservice)
+- [VOLTA\_CHAIN\_ID](index.md#volta_chain_id)
 - [WALLET\_PROVIDER](index.md#wallet_provider)
+- [addSupportedDID](index.md#addsupporteddid)
 - [agreement\_type\_hash](index.md#agreement_type_hash)
 - [cacheConfigs](index.md#cacheconfigs)
 - [chainConfigs](index.md#chainconfigs)
+- [defaultBridgeUrl](index.md#defaultbridgeurl)
 - [defaultClaimExpiry](index.md#defaultclaimexpiry)
+- [defaultKmsServerUrl](index.md#defaultkmsserverurl)
+- [emptyAddress](index.md#emptyaddress)
 - [erc712\_type\_hash](index.md#erc712_type_hash)
+- [executionEnvironment](index.md#executionenvironment)
 - [fromKms](index.md#fromkms)
 - [fromMetaMask](index.md#frommetamask)
 - [fromPrivateKey](index.md#fromprivatekey)
@@ -68,11 +76,15 @@
 - [initWithMetamask](index.md#initwithmetamask)
 - [initWithPrivateKeySigner](index.md#initwithprivatekeysigner)
 - [initWithWalletConnect](index.md#initwithwalletconnect)
+- [isMetamaskExtensionPresent](index.md#ismetamaskextensionpresent)
+- [isValidDID](index.md#isvaliddid)
 - [messagingConfigs](index.md#messagingconfigs)
+- [parseDID](index.md#parsedid)
 - [proof\_type\_hash](index.md#proof_type_hash)
 - [setCacheConfig](index.md#setcacheconfig)
 - [setChainConfig](index.md#setchainconfig)
 - [setMessagingConfig](index.md#setmessagingconfig)
+- [supportedDIDMethods](index.md#supporteddidmethods)
 - [typedMsgPrefix](index.md#typedmsgprefix)
 
 ## References
@@ -203,6 +215,12 @@ Re-exports: [ERROR\_MESSAGES](../enums/errors_ErrorMessages.ERROR_MESSAGES.md)
 
 ___
 
+### ExecutionEnvironment
+
+Re-exports: [ExecutionEnvironment](../enums/utils_detectEnvironment.ExecutionEnvironment.md)
+
+___
+
 ### IApp
 
 Re-exports: [IApp](../interfaces/modules_domains_domains_types.IApp.md)
@@ -311,6 +329,12 @@ Re-exports: [Profile](../interfaces/modules_didRegistry_did_types.Profile.md)
 
 ___
 
+### ProviderEvent
+
+Re-exports: [ProviderEvent](../enums/modules_signer_signer_types.ProviderEvent.md)
+
+___
+
 ### ProviderType
 
 Re-exports: [ProviderType](../enums/modules_signer_signer_types.ProviderType.md)
@@ -365,9 +389,21 @@ Re-exports: [StakingService](../classes/modules_staking_staking_service.StakingS
 
 ___
 
+### VOLTA\_CHAIN\_ID
+
+Re-exports: [VOLTA\_CHAIN\_ID](utils_constants.md#volta_chain_id)
+
+___
+
 ### WALLET\_PROVIDER
 
 Re-exports: [WALLET\_PROVIDER](modules_signer_signer_types.md#wallet_provider)
+
+___
+
+### addSupportedDID
+
+Re-exports: [addSupportedDID](utils_did.md#addsupporteddid)
 
 ___
 
@@ -389,15 +425,39 @@ Re-exports: [chainConfigs](config_chain_config.md#chainconfigs)
 
 ___
 
+### defaultBridgeUrl
+
+Re-exports: [defaultBridgeUrl](utils_constants.md#defaultbridgeurl)
+
+___
+
 ### defaultClaimExpiry
 
 Re-exports: [defaultClaimExpiry](modules_claims_claims_types.md#defaultclaimexpiry)
 
 ___
 
+### defaultKmsServerUrl
+
+Re-exports: [defaultKmsServerUrl](utils_constants.md#defaultkmsserverurl)
+
+___
+
+### emptyAddress
+
+Re-exports: [emptyAddress](utils_constants.md#emptyaddress)
+
+___
+
 ### erc712\_type\_hash
 
 Re-exports: [erc712\_type\_hash](modules_claims_claims_types.md#erc712_type_hash)
+
+___
+
+### executionEnvironment
+
+Re-exports: [executionEnvironment](utils_detectEnvironment.md#executionenvironment)
 
 ___
 
@@ -461,9 +521,27 @@ Re-exports: [initWithWalletConnect](init.md#initwithwalletconnect)
 
 ___
 
+### isMetamaskExtensionPresent
+
+Re-exports: [isMetamaskExtensionPresent](utils_detectEnvironment.md#ismetamaskextensionpresent)
+
+___
+
+### isValidDID
+
+Re-exports: [isValidDID](utils_did.md#isvaliddid)
+
+___
+
 ### messagingConfigs
 
 Re-exports: [messagingConfigs](config_messaging_config.md#messagingconfigs)
+
+___
+
+### parseDID
+
+Re-exports: [parseDID](utils_did.md#parsedid)
 
 ___
 
@@ -488,6 +566,12 @@ ___
 ### setMessagingConfig
 
 Re-exports: [setMessagingConfig](config_messaging_config.md#setmessagingconfig)
+
+___
+
+### supportedDIDMethods
+
+Re-exports: [supportedDIDMethods](utils_did.md#supporteddidmethods)
 
 ___
 

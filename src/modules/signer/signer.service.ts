@@ -3,9 +3,17 @@ import base64url from "base64url";
 import { EventEmitter } from "events";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
-import { IPubKeyAndIdentityToken, PUBLIC_KEY, WALLET_PROVIDER, ProviderType, AccountInfo } from "./signer.types";
-import { detectExecutionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
+import {
+    IPubKeyAndIdentityToken,
+    PUBLIC_KEY,
+    WALLET_PROVIDER,
+    ProviderType,
+    ProviderEvent,
+    AccountInfo,
+} from "./signer.types";
+import { executionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
 import { chainConfigs } from "../../config/chain.config";
+import { Methods } from "@ew-did-registry/did";
 
 const { arrayify, keccak256, recoverPublicKey, computeAddress, computePublicKey, getAddress, hashMessage } = utils;
 export type ServiceInitializer = () => Promise<void>;
@@ -51,6 +59,15 @@ export class SignerService {
         }
     }
 
+    on(event: ProviderEvent, cb) {
+        const provider = this._signer.provider;
+        if (provider instanceof EventEmitter) {
+            provider.on(event, cb);
+        } else if (provider instanceof WalletConnectProvider) {
+            provider.wc.on(event, cb);
+        }
+    }
+
     /**
      * Add event handler for certain events
      * @requires to be called after the connection to wallet was initialized
@@ -60,15 +77,10 @@ export class SignerService {
             this.clearSession();
             await this.init();
         };
-        const provider = this._signer.provider;
-        if (provider instanceof EventEmitter) {
-            provider.on("accountsChanged", accChangedHandler);
-            provider.on("networkChanged", accChangedHandler);
-        } else if (provider instanceof WalletConnectProvider) {
-            provider.wc.on("session_update", accChangedHandler);
-            provider.wc.on("disconnect", this.clearSession);
-            provider.wc.on("session_update", accChangedHandler);
-        }
+        this.on(ProviderEvent.AccountChanged, accChangedHandler);
+        this.on(ProviderEvent.NetworkChanged, accChangedHandler);
+        this.on(ProviderEvent.Disconnected, this.clearSession);
+        this.on(ProviderEvent.SessionUpdate, accChangedHandler);
     }
 
     get signer() {
@@ -95,6 +107,10 @@ export class SignerService {
         return this._address;
     }
 
+    get DID() {
+        return `did:${Methods}:${this._address}`;
+    }
+
     async send({ to, data, value }: providers.TransactionRequest): Promise<providers.TransactionReceipt> {
         const tx = { to, from: this.address, data, ...(value && { value: BigNumber.from(value) }) };
         const receipt = await (await this._signer.sendTransaction(tx)).wait();
@@ -109,6 +125,13 @@ export class SignerService {
         this._signer = signer;
         this._providerType = providerType;
         await this.init();
+    }
+
+    async closeConnection() {
+        if (this._signer instanceof WalletConnectProvider) {
+            await this._signer.close();
+            this.clearSession();
+        }
     }
 
     async publicKey() {
@@ -161,7 +184,7 @@ export class SignerService {
     }
 
     clearSession() {
-        if (detectExecutionEnvironment() === ExecutionEnvironment.BROWSER) {
+        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
             localStorage.removeItem(WALLET_PROVIDER);
             localStorage.removeItem(PUBLIC_KEY);
         }

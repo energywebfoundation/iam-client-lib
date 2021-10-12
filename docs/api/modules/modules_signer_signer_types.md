@@ -4,6 +4,7 @@
 
 ### Enumerations
 
+- [ProviderEvent](../enums/modules_signer_signer_types.ProviderEvent.md)
 - [ProviderType](../enums/modules_signer_signer_types.ProviderType.md)
 
 ### Interfaces
