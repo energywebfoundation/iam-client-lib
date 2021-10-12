@@ -1,3 +1,10 @@
+# [3.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0...v3.2.0-alpha.1) (2021-10-12)
+
+
+### Features
+
+* improve performance of `registrationTypesOfRoles` function ([8e39e28](https://github.com/energywebfoundation/iam-client-lib/commit/8e39e28070fcb9c5bc97c4b28b7696f0c573d6c6))
+
 # [3.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v3.0.0...v3.1.0) (2021-10-08)
 
 
