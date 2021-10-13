@@ -1,3 +1,10 @@
+# [3.2.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.1...v3.2.0-alpha.2) (2021-10-13)
+
+
+### Bug Fixes
+
+* **nats:** upgraded to latest nats version working with BackEnd and FrontEnd ([8b654dc](https://github.com/energywebfoundation/iam-client-lib/commit/8b654dc81751ec171551513a7b4360b035765a87))
+
 # [3.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0...v3.2.0-alpha.1) (2021-10-12)
 
 
