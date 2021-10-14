@@ -1,0 +1,36 @@
+diff --git a/node_modules/eth-block-tracker/dist/PollingBlockTracker.js b/node_modules/eth-block-tracker/dist/PollingBlockTracker.js
+index 6fab3ef..a1f7bb2 100644
+--- a/node_modules/eth-block-tracker/dist/PollingBlockTracker.js
++++ b/node_modules/eth-block-tracker/dist/PollingBlockTracker.js
+@@ -2772,7 +2772,6 @@ function (_BaseBlockTracker) {
+                   method: 'eth_blockNumber',
+                   params: []
+                 };
+-                if (this._setSkipCacheFlag) req.skipCache = true;
+                 _context4.next = 4;
+                 return pify(function (cb) {
+                   return _this3._provider.sendAsync(req, cb);
+diff --git a/node_modules/eth-block-tracker/dist/es5/polling.js b/node_modules/eth-block-tracker/dist/es5/polling.js
+index d60b8c5..1a9c488 100644
+--- a/node_modules/eth-block-tracker/dist/es5/polling.js
++++ b/node_modules/eth-block-tracker/dist/es5/polling.js
+@@ -225,7 +225,6 @@ function (_BaseBlockTracker) {
+                   method: 'eth_blockNumber',
+                   params: []
+                 };
+-                if (this._setSkipCacheFlag) req.skipCache = true;
+                 _context4.next = 4;
+                 return pify(function (cb) {
+                   return _this3._provider.sendAsync(req, cb);
+diff --git a/node_modules/eth-block-tracker/src/polling.js b/node_modules/eth-block-tracker/src/polling.js
+index 1cc8ba7..67d64b2 100644
+--- a/node_modules/eth-block-tracker/src/polling.js
++++ b/node_modules/eth-block-tracker/src/polling.js
+@@ -67,7 +67,6 @@ class PollingBlockTracker extends BaseBlockTracker {
+ 
+   async _fetchLatestBlock () {
+     const req = { jsonrpc: "2.0", id: 1, method: 'eth_blockNumber', params: [] }
+-    if (this._setSkipCacheFlag) req.skipCache = true
+     const res = await pify((cb) => this._provider.sendAsync(req, cb))()
+     if (res.error) throw new Error(`PollingBlockTracker - encountered error fetching block:\n${res.error}`)
+     return res.result

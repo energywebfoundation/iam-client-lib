@@ -1,0 +1,47 @@
+diff --git a/node_modules/web3-provider-engine/dist/ProviderEngine.js b/node_modules/web3-provider-engine/dist/ProviderEngine.js
+index 09d6abb..2728772 100644
+--- a/node_modules/web3-provider-engine/dist/ProviderEngine.js
++++ b/node_modules/web3-provider-engine/dist/ProviderEngine.js
+@@ -191,7 +191,6 @@ Web3ProviderEngine.prototype._getBlockByNumber = function (blockNumber, cb) {
+   var req = createPayload({
+     method: 'eth_getBlockByNumber',
+     params: [blockNumber, false],
+-    skipCache: true
+   });
+ 
+   this._handleAsync(req, function (err, res) {
+@@ -13189,7 +13188,6 @@ class PollingBlockTracker extends BaseBlockTracker {
+ 
+   async _fetchLatestBlock () {
+     const req = { jsonrpc: "2.0", id: 1, method: 'eth_blockNumber', params: [] }
+-    if (this._setSkipCacheFlag) req.skipCache = true
+     const res = await pify((cb) => this._provider.sendAsync(req, cb))()
+     if (res.error) throw new Error(`PollingBlockTracker - encountered error fetching block:\n${res.error}`)
+     return res.result
+diff --git a/node_modules/web3-provider-engine/dist/es5/index.js b/node_modules/web3-provider-engine/dist/es5/index.js
+index 83cfd34..51cda8e 100644
+--- a/node_modules/web3-provider-engine/dist/es5/index.js
++++ b/node_modules/web3-provider-engine/dist/es5/index.js
+@@ -189,8 +189,7 @@ Web3ProviderEngine.prototype._getBlockByNumberWithRetry = function (blockNumber,
+ Web3ProviderEngine.prototype._getBlockByNumber = function (blockNumber, cb) {
+   var req = createPayload({
+     method: 'eth_getBlockByNumber',
+-    params: [blockNumber, false],
+-    skipCache: true
++    params: [blockNumber, false]
+   });
+ 
+   this._handleAsync(req, function (err, res) {
+diff --git a/node_modules/web3-provider-engine/index.js b/node_modules/web3-provider-engine/index.js
+index 3a1b7d5..66f1e45 100644
+--- a/node_modules/web3-provider-engine/index.js
++++ b/node_modules/web3-provider-engine/index.js
+@@ -169,7 +169,7 @@ Web3ProviderEngine.prototype._getBlockByNumberWithRetry = function(blockNumber,
+ 
+ 
+ Web3ProviderEngine.prototype._getBlockByNumber = function(blockNumber, cb) {
+-  const req = createPayload({ method: 'eth_getBlockByNumber', params: [blockNumber, false], skipCache: true })
++  const req = createPayload({ method: 'eth_getBlockByNumber', params: [blockNumber, false] })
+   this._handleAsync(req, (err, res) => {
+     if (err) return cb(err)
+     return cb(null, res.result)
