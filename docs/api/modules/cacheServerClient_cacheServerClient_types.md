@@ -44,6 +44,7 @@
 | `id` | `string` |
 | `includeClaims?` | `boolean` |
 | `isAccepted?` | `boolean` |
+| `issuedToken` | `string` |
 | `namespace` | `string` |
 | `order?` | [`Order`](../enums/cacheServerClient_cacheServerClient_types.Order.md) |
 | `owner` | `string` |

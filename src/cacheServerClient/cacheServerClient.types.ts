@@ -123,6 +123,7 @@ export type ClaimsQueryParams = {
     order?: Order;
     take?: number;
     skip?: number;
+    issuedToken: string;
 };
 export type RequestClaim = Pick<ClaimsQueryParams, "did"> & { message: IClaimRequest };
 export type IssueClaim = Pick<ClaimsQueryParams, "did"> & { message: IClaimIssuance };

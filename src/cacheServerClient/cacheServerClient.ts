@@ -330,4 +330,8 @@ export class CacheServerClient implements ICacheServerClient {
         const { data } = await this.httpClient.get<AssetHistory[]>(`/assets/history/${id}?${query}`);
         return data;
     }
+
+    async saveIssuedToken({ issuedToken }: Pick<ClaimsQueryParams, "issuedToken">) {
+        await this.httpClient.post("/claim/issued", { issuedToken });
+    }
 }

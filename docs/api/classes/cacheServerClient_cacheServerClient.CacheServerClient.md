@@ -52,6 +52,7 @@
 - [login](cacheServerClient_cacheServerClient.CacheServerClient.md#login)
 - [rejectClaim](cacheServerClient_cacheServerClient.CacheServerClient.md#rejectclaim)
 - [requestClaim](cacheServerClient_cacheServerClient.CacheServerClient.md#requestclaim)
+- [saveIssuedToken](cacheServerClient_cacheServerClient.CacheServerClient.md#saveissuedtoken)
 - [testLogin](cacheServerClient_cacheServerClient.CacheServerClient.md#testlogin)
 
 ## Constructors
@@ -726,6 +727,26 @@ ___
 #### Implementation of
 
 [ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[requestClaim](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#requestclaim)
+
+___
+
+### saveIssuedToken
+
+▸ **saveIssuedToken**(`__namedParameters`): `Promise`<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"issuedToken"``\> |
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Implementation of
+
+[ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[saveIssuedToken](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#saveissuedtoken)
 
 ___
 

@@ -74,4 +74,5 @@ export interface ICacheServerClient {
         skip,
         type,
     }: Pick<ClaimsQueryParams, "id" | "order" | "take" | "skip" | "type">) => Promise<AssetHistory[]>;
+    saveIssuedToken: ({ issuedToken }: Pick<ClaimsQueryParams, "issuedToken">) => Promise<void>;
 }

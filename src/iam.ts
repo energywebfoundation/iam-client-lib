@@ -358,13 +358,18 @@ export class IAM extends IAMBase {
      *
      */
     async createPublicClaim({ data, subject }: { data: ClaimData; subject?: string }) {
-        if (this._userClaims) {
-            if (subject) {
-                return this._userClaims.createPublicClaim(data, { subject, issuer: "" });
-            }
-            return this._userClaims.createPublicClaim(data);
+        if (!this._userClaims) {
+            throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
         }
-        throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+
+        let issuedToken = "";
+        if (subject) {
+            issuedToken = await this._userClaims.createPublicClaim(data, { subject, issuer: "" });
+        } else {
+            issuedToken = await this._userClaims.createPublicClaim(data);
+        }
+        this._cacheClient.saveIssuedToken({ issuedToken });
+        return issuedToken;
     }
 
     private async getClaimId({ claimData }: { claimData: ClaimData }) {
@@ -487,16 +492,27 @@ export class IAM extends IAMBase {
      *
      */
     async issuePublicClaim({ token, publicClaim }: { token?: string; publicClaim?: IPublicClaim }) {
-        if (this._issuerClaims) {
-            if (publicClaim) {
-                return this._issuerClaims.issuePublicClaim(publicClaim);
-            }
-            if (token) {
-                return this._issuerClaims.issuePublicClaim(token);
-            }
+        // Throw error when IssuerClaims is not initialized
+        if (!this._issuerClaims) {
+            throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+        }
+
+        // Throw error when there is no claim to issue
+        if (!publicClaim && !token) {
             throw new Error("unable to issue Public Claim");
         }
-        throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+
+        let issuedToken = "";
+        if (publicClaim) {
+            issuedToken = await this._issuerClaims.issuePublicClaim(publicClaim);
+        }
+        if (token && !publicClaim) {
+            issuedToken = await this._issuerClaims.issuePublicClaim(token);
+        }
+
+        this._cacheClient.saveIssuedToken({ issuedToken });
+
+        return issuedToken;
     }
 
     /**

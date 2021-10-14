@@ -45,6 +45,7 @@
 - [login](cacheServerClient_ICacheServerClient.ICacheServerClient.md#login)
 - [rejectClaim](cacheServerClient_ICacheServerClient.ICacheServerClient.md#rejectclaim)
 - [requestClaim](cacheServerClient_ICacheServerClient.ICacheServerClient.md#requestclaim)
+- [saveIssuedToken](cacheServerClient_ICacheServerClient.ICacheServerClient.md#saveissuedtoken)
 - [testLogin](cacheServerClient_ICacheServerClient.ICacheServerClient.md#testlogin)
 
 ## Properties
@@ -532,6 +533,22 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | [`RequestClaim`](../modules/cacheServerClient_cacheServerClient_types.md#requestclaim) |
+
+#### Returns
+
+`Promise`<`void`\>
+
+___
+
+### saveIssuedToken
+
+▸ **saveIssuedToken**(`__namedParameters`): `Promise`<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"issuedToken"``\> |
 
 #### Returns
 
