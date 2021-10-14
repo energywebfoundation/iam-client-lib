@@ -59,6 +59,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [getDidDocument](iam.IAM.md#getdiddocument)
 - [getENSTypesByOwner](iam.IAM.md#getenstypesbyowner)
 - [getENSTypesBySearchPhrase](iam.IAM.md#getenstypesbysearchphrase)
+- [getIssuedTokensBySubjects](iam.IAM.md#getissuedtokensbysubjects)
 - [getOfferedAssets](iam.IAM.md#getofferedassets)
 - [getOrgHierarchy](iam.IAM.md#getorghierarchy)
 - [getOwnedAssets](iam.IAM.md#getownedassets)
@@ -449,6 +450,7 @@ createPublicClaim
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.data` | [`ClaimData`](../interfaces/cacheServerClient_cacheServerClient_types.ClaimData.md) |
+| `__namedParameters.saveToken?` | `boolean` |
 | `__namedParameters.subject?` | `string` |
 
 #### Returns
@@ -845,6 +847,24 @@ getENSTypesBySearchPhrase
 
 ___
 
+### getIssuedTokensBySubjects
+
+▸ **getIssuedTokensBySubjects**(`subjects`): `Promise`<`string`[]\>
+
+**`description`** - Returns issued token claims requested for given DIDs
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjects` | `string`[] | DIDs whose issued token claims are being requested |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+___
+
 ### getOfferedAssets
 
 ▸ **getOfferedAssets**(`__namedParameters?`): `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)[]\>
@@ -1207,6 +1227,7 @@ issuePublicClaim
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.publicClaim?` | `IPublicClaim` |
+| `__namedParameters.saveToken?` | `boolean` |
 | `__namedParameters.token?` | `string` |
 
 #### Returns

@@ -33,6 +33,7 @@
 - [getClaimsBySubjects](cacheServerClient_cacheServerClient.CacheServerClient.md#getclaimsbysubjects)
 - [getDIDsForRole](cacheServerClient_cacheServerClient.CacheServerClient.md#getdidsforrole)
 - [getDidDocument](cacheServerClient_cacheServerClient.CacheServerClient.md#getdiddocument)
+- [getIssuedTokensBySubjects](cacheServerClient_cacheServerClient.CacheServerClient.md#getissuedtokensbysubjects)
 - [getNamespaceBySearchPhrase](cacheServerClient_cacheServerClient.CacheServerClient.md#getnamespacebysearchphrase)
 - [getOfferedAssets](cacheServerClient_cacheServerClient.CacheServerClient.md#getofferedassets)
 - [getOrgDefinition](cacheServerClient_cacheServerClient.CacheServerClient.md#getorgdefinition)
@@ -373,6 +374,30 @@ ___
 #### Implementation of
 
 [ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[getDidDocument](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#getdiddocument)
+
+___
+
+### getIssuedTokensBySubjects
+
+▸ **getIssuedTokensBySubjects**(`__namedParameters`): `Promise`<`string`[]\>
+
+getIssuedTokensBySubjects
+
+**`description`** returns issued tokens requested for given DIDs
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"subjects"``\> |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+#### Implementation of
+
+[ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[getIssuedTokensBySubjects](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#getissuedtokensbysubjects)
 
 ___
 
@@ -733,6 +758,10 @@ ___
 ### saveIssuedToken
 
 ▸ **saveIssuedToken**(`__namedParameters`): `Promise`<`void`\>
+
+saveIssuedToken
+
+**`description`** persist issued token on cache server
 
 #### Parameters
 

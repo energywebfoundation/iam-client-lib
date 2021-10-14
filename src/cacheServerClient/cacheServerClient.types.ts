@@ -124,6 +124,7 @@ export type ClaimsQueryParams = {
     take?: number;
     skip?: number;
     issuedToken: string;
+    subjects: string[];
 };
 export type RequestClaim = Pick<ClaimsQueryParams, "did"> & { message: IClaimRequest };
 export type IssueClaim = Pick<ClaimsQueryParams, "did"> & { message: IClaimIssuance };

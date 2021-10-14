@@ -331,7 +331,26 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
+    /**
+     * saveIssuedToken
+     *
+     * @param {string} issuedToken - token to persist
+     * @description persist issued token on cache server
+     *
+     */
     async saveIssuedToken({ issuedToken }: Pick<ClaimsQueryParams, "issuedToken">) {
         await this.httpClient.post("/claim/issued", { issuedToken });
+    }
+
+    /**
+     * getIssuedTokensBySubjects
+     *
+     * @param {Array.<string>} subjects - DIDs whose issued claims are being requested
+     * @description returns issued tokens requested for given DIDs
+     *
+     */
+    async getIssuedTokensBySubjects({ subjects }: Pick<ClaimsQueryParams, "subjects">) {
+        const { data } = await this.httpClient.get<string[]>(`/claim/issued?subjects=${subjects.join(",")}`);
+        return data;
     }
 }

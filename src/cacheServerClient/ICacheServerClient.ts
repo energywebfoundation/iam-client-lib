@@ -75,4 +75,5 @@ export interface ICacheServerClient {
         type,
     }: Pick<ClaimsQueryParams, "id" | "order" | "take" | "skip" | "type">) => Promise<AssetHistory[]>;
     saveIssuedToken: ({ issuedToken }: Pick<ClaimsQueryParams, "issuedToken">) => Promise<void>;
+    getIssuedTokensBySubjects: ({ subjects }: Pick<ClaimsQueryParams, "subjects">) => Promise<string[]>;
 }

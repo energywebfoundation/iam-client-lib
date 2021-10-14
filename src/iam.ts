@@ -357,7 +357,15 @@ export class IAM extends IAMBase {
      * @returns JWT token of created claim
      *
      */
-    async createPublicClaim({ data, subject }: { data: ClaimData; subject?: string }) {
+    async createPublicClaim({
+        data,
+        subject,
+        saveToken = false,
+    }: {
+        data: ClaimData;
+        subject?: string;
+        saveToken?: boolean;
+    }) {
         if (!this._userClaims) {
             throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
         }
@@ -368,7 +376,7 @@ export class IAM extends IAMBase {
         } else {
             issuedToken = await this._userClaims.createPublicClaim(data);
         }
-        this._cacheClient.saveIssuedToken({ issuedToken });
+        saveToken && (await this._cacheClient.saveIssuedToken({ issuedToken }));
         return issuedToken;
     }
 
@@ -491,7 +499,15 @@ export class IAM extends IAMBase {
      * @returns return issued token
      *
      */
-    async issuePublicClaim({ token, publicClaim }: { token?: string; publicClaim?: IPublicClaim }) {
+    async issuePublicClaim({
+        token,
+        publicClaim,
+        saveToken = false,
+    }: {
+        token?: string;
+        publicClaim?: IPublicClaim;
+        saveToken?: boolean;
+    }) {
         // Throw error when IssuerClaims is not initialized
         if (!this._issuerClaims) {
             throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
@@ -510,7 +526,7 @@ export class IAM extends IAMBase {
             issuedToken = await this._issuerClaims.issuePublicClaim(token);
         }
 
-        this._cacheClient.saveIssuedToken({ issuedToken });
+        saveToken && (await this._cacheClient.saveIssuedToken({ issuedToken }));
 
         return issuedToken;
     }
@@ -1775,6 +1791,14 @@ export class IAM extends IAMBase {
 
     async getClaimsBySubjects(subjects: string[]) {
         return this._cacheClient.getClaimsBySubjects(subjects);
+    }
+
+    /**
+     * @param subjects - DIDs whose issued token claims are being requested
+     * @description - Returns issued token claims requested for given DIDs
+     */
+    async getIssuedTokensBySubjects(subjects: string[]) {
+        return this._cacheClient.getIssuedTokensBySubjects({ subjects });
     }
 
     /**

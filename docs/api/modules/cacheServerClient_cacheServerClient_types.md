@@ -51,6 +51,7 @@
 | `parentNamespace?` | `string` |
 | `search` | `string` |
 | `skip?` | `number` |
+| `subjects` | `string`[] |
 | `take?` | `number` |
 | `type?` | [`AssetHistoryEventType`](../enums/cacheServerClient_cacheServerClient_types.AssetHistoryEventType.md) |
 | `types?` | (``"App"`` \| ``"Org"`` \| ``"Role"``)[] |

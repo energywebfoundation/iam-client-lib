@@ -28,6 +28,7 @@
 - [getClaimsBySubjects](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getclaimsbysubjects)
 - [getDIDsForRole](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getdidsforrole)
 - [getDidDocument](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getdiddocument)
+- [getIssuedTokensBySubjects](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getissuedtokensbysubjects)
 - [getNamespaceBySearchPhrase](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getnamespacebysearchphrase)
 - [getOfferedAssets](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getofferedassets)
 - [getOrgDefinition](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getorgdefinition)
@@ -277,6 +278,22 @@ ___
 #### Returns
 
 `Promise`<`IDIDDocument`\>
+
+___
+
+### getIssuedTokensBySubjects
+
+▸ **getIssuedTokensBySubjects**(`__namedParameters`): `Promise`<`string`[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"subjects"``\> |
+
+#### Returns
+
+`Promise`<`string`[]\>
 
 ___
 

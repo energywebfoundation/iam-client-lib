@@ -61,6 +61,7 @@ The domain ownership functionality has been redefined accordingly.
 - [getDidDocument](GnosisIam.GnosisIam-1.md#getdiddocument)
 - [getENSTypesByOwner](GnosisIam.GnosisIam-1.md#getenstypesbyowner)
 - [getENSTypesBySearchPhrase](GnosisIam.GnosisIam-1.md#getenstypesbysearchphrase)
+- [getIssuedTokensBySubjects](GnosisIam.GnosisIam-1.md#getissuedtokensbysubjects)
 - [getOfferedAssets](GnosisIam.GnosisIam-1.md#getofferedassets)
 - [getOrgHierarchy](GnosisIam.GnosisIam-1.md#getorghierarchy)
 - [getOwnedAssets](GnosisIam.GnosisIam-1.md#getownedassets)
@@ -510,6 +511,7 @@ createPublicClaim
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.data` | [`ClaimData`](../interfaces/cacheServerClient_cacheServerClient_types.ClaimData.md) |
+| `__namedParameters.saveToken?` | `boolean` |
 | `__namedParameters.subject?` | `string` |
 
 #### Returns
@@ -985,6 +987,28 @@ getENSTypesBySearchPhrase
 
 ___
 
+### getIssuedTokensBySubjects
+
+▸ **getIssuedTokensBySubjects**(`subjects`): `Promise`<`string`[]\>
+
+**`description`** - Returns issued token claims requested for given DIDs
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjects` | `string`[] | DIDs whose issued token claims are being requested |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getIssuedTokensBySubjects](iam.IAM.md#getissuedtokensbysubjects)
+
+___
+
 ### getOfferedAssets
 
 ▸ **getOfferedAssets**(`__namedParameters?`): `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)[]\>
@@ -1402,6 +1426,7 @@ issuePublicClaim
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.publicClaim?` | `IPublicClaim` |
+| `__namedParameters.saveToken?` | `boolean` |
 | `__namedParameters.token?` | `string` |
 
 #### Returns
