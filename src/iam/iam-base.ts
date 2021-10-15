@@ -120,7 +120,7 @@ export class IAMBase {
         rpcUrl,
         infuraId,
         ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
-        bridgeUrl = "https://walletconnect.energyweb.org",
+        bridgeUrl = "https://bridge.walletconnect.org",
         privateKey,
         ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new",
     }: ConnectionOptions = {}) {
