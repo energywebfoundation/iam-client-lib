@@ -6,13 +6,14 @@
     "module": "dist/iam-client-lib.esm.js",
     "types": "dist/src/iam-client-lib.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "patches"
     ],
     "scripts": {
         "postinstall": "patch-package",
         "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
         "prebuild": "rimraf dist ethers",
-        "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist  && copyfiles \"patches/*.patch\" dist",
+        "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist",
         "build:node": "npm run build:nats_node && bili --format cjs",
         "build:front_end": "npm run build:nats_front_end && bili --format esm",
         "build:nats_front_end": "grep -rl '\"nats.ws\"' ./src | xargs perl -i -pe's/nats\\.ws/nats\\.ws\\/lib\\/src\\/mod\\.js/g'",
