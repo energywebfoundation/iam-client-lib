@@ -1,3 +1,15 @@
+# [3.2.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.2...v3.2.0-alpha.3) (2021-10-18)
+
+
+### Bug Fixes
+
+* **WalletConnect:** fix walletconnect login ([4201fcb](https://github.com/energywebfoundation/iam-client-lib/commit/4201fcb491d21f0bdc242027dd56cd53ffada4e3))
+
+
+### Features
+
+* **WalletConnect:** change to public relay ([3f114c3](https://github.com/energywebfoundation/iam-client-lib/commit/3f114c32ca35c262e30cd4bc437a9c6d0a8c4dac))
+
 # [3.2.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.1...v3.2.0-alpha.2) (2021-10-13)
 
 
