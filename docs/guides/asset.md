@@ -7,8 +7,9 @@ TO DO:
 */
 
 ### Public APIs:
-- [getAssetById](iam.IAM.md#getassetbyid)
-- [getAssetHistory](iam.IAM.md#getassethistory)
-- [getOfferedAssets](iam.IAM.md#getofferedassets)
-- [getOwnedAssets](iam.IAM.md#getownedassets)
+- [getAssetById](../api/classes/iam.IAM.md#getAssetById)
+- [getAssetHistory](../api/classes/iam.IAM.md#getAssetHistory)
+- [getOfferedAssets](../api/classes/iam.IAM.md#getOfferedAssets)
+- [getOwnedAssets](../api/classes/iam.IAM.md#getOwnedAssets)
+- [getPreviouslyOwnedAssets](../api/classes/iam.IAM.md#getPreviouslyOwnedAssets)
 
