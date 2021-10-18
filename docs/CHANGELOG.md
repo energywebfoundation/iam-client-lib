@@ -1,3 +1,10 @@
+# [3.2.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.3...v3.2.0-alpha.4) (2021-10-18)
+
+
+### Features
+
+* add `patches` to build files ([f37bcc1](https://github.com/energywebfoundation/iam-client-lib/commit/f37bcc1625df8167a60bb7183c446c3b50f161ee))
+
 # [3.2.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.2...v3.2.0-alpha.3) (2021-10-18)
 
 
