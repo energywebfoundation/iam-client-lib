@@ -1,6 +1,7 @@
 # Claims
 
-[Claim Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IRole.md)
+[Claim Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IRole.md)  
+
 /*
 TO DO: 
 //Define Claim in context of iam-client-lib/Switchboard
@@ -9,11 +10,11 @@ TO DO:
 */
 
 ## Public APIs:
-- [getClaimsByIssuer](../api/classes/iam.IAM.md#getClaimsByIssuer)
-- [getClaimsByRequester](../api/classes/iam.IAM.md#getClaimsByRequester)
-- [getClaimsBySubject](../api/classes/iam.IAM.md#getClaimsBySubject)
-- [getUserClaims](../api/classes/iam.IAM.md#getUserClaims)
+- [getClaimsByIssuer](../api/classes/iam.IAM.md#getclaimsbyissuer)
+- [getClaimsByRequester](../api/classes/iam.IAM.md#getclaimsbyrequester)
+- [getClaimsBySubject](../api/classes/iam.IAM.md#getclaimsbysubject)
+- [getUserClaims](../api/classes/iam.IAM.md#getuserclaims)
 - [issueClaimRequest](../api/classes/iam.IAM.md#issueclaimrequest)
-- [issuePublicClaim](../api/classes/iam.IAM.md#issuePublicClaim)
-- [publishPublicClaim](../api/classes/iam.IAM.md#publishPublicClaim)
+- [issuePublicClaim](../api/classes/iam.IAM.md#issuepublicclaim)
+- [publishPublicClaim](../api/classes/iam.IAM.md#publishpublicclaim)
 
