@@ -1,4 +1,4 @@
-import { Codec, connect, JSONCodec, NatsConnection, Subscription } from "nats.ws/lib/src/mod.js";
+import { Codec, connect, JSONCodec, NatsConnection, Subscription } from "nats.ws";
 import { messagingConfigs } from "../../config/messaging.config";
 import { IMessage, MessagingMethod } from "./messaging.types";
 import { SignerService } from "../signer/signer.service";

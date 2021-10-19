@@ -82,7 +82,7 @@ export class DidRegistry {
     }: { did?: string; includeClaims?: boolean } | undefined = {}) {
         if (this._cacheClient) {
             try {
-                const didDoc = await this._cacheClient.getDidDocument({ did, includeClaims });
+                const didDoc = await this._cacheClient.getDidDocument(did, includeClaims);
                 return {
                     ...didDoc,
                     service: didDoc.service as (IServiceEndpoint & ClaimData)[],
@@ -243,7 +243,7 @@ export class DidRegistry {
     private async _setDocument() {
         this._document = new DIDDocumentFull(this._did, this._operator);
         if (this._cacheClient) {
-            const cachedDoc = await this._cacheClient.getDidDocument({ did: this._did });
+            const cachedDoc = await this._cacheClient.getDidDocument(this._did);
             const pubKey = cachedDoc.publicKey.find((pk) => pk.id.endsWith(KeyTags.OWNER));
             if (!pubKey) {
                 await this._document.create();

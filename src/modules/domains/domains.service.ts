@@ -25,6 +25,7 @@ import { CacheClient } from "../cacheClient/cacheClient.service";
 import { RegistrationTypes } from "../claims/claims.types";
 import { SignerService } from "../signer/signer.service";
 import { ENSNamespaceTypes, IOrganization } from "./domains.types";
+import { NamespaceType } from "../cacheClient";
 
 const { namehash } = utils;
 
@@ -326,7 +327,7 @@ export class DomainsService {
         }
 
         const apps = this._cacheClient
-            ? await this.getAppsByOrgNamespace({ namespace })
+            ? await this.getAppsOfOrg(namespace)
             : await this.getSubdomains({
                   domain: `${ENSNamespaceTypes.Application}.${namespace}`,
               });
@@ -444,7 +445,7 @@ export class DomainsService {
      */
     async deleteOrganization({ namespace, returnSteps }: { namespace: string; returnSteps?: boolean }) {
         const apps = this._cacheClient
-            ? await this.getAppsByOrgNamespace({ namespace })
+            ? await this.getAppsOfOrg(namespace)
             : await this.getSubdomains({
                   domain: `${ENSNamespaceTypes.Application}.${namespace}`,
               });
@@ -453,7 +454,7 @@ export class DomainsService {
         }
 
         const roles = this._cacheClient
-            ? await this._cacheClient.getOrganizationRoles({ namespace })
+            ? await this._cacheClient.getOrganizationRoles(namespace)
             : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
 
         if (roles && roles.length > 0) {
@@ -510,7 +511,7 @@ export class DomainsService {
      */
     async deleteApplication({ namespace, returnSteps }: { namespace: string; returnSteps?: boolean }) {
         const roles = this._cacheClient
-            ? await this._cacheClient.getApplicationRoles({ namespace })
+            ? await this._cacheClient.getApplicationRoles(namespace)
             : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
 
         if (roles && roles.length > 0) {
@@ -587,13 +588,13 @@ export class DomainsService {
         namespace: string;
     }): Promise<IRoleDefinition | IAppDefinition | IOrganizationDefinition> {
         if (type === ENSNamespaceTypes.Roles) {
-            return this._cacheClient.getRoleDefinition({ namespace });
+            return this._cacheClient.getRoleDefinition(namespace);
         }
         if (type === ENSNamespaceTypes.Application) {
-            return this._cacheClient.getAppDefinition({ namespace });
+            return this._cacheClient.getAppDefinition(namespace);
         }
         if (type === ENSNamespaceTypes.Organization) {
-            return this._cacheClient.getOrgDefinition({ namespace });
+            return this._cacheClient.getOrgDefinition(namespace);
         }
         throw new ENSTypeNotSupportedError();
     }
@@ -613,10 +614,10 @@ export class DomainsService {
         namespace: string;
     }) {
         if (parentType === ENSNamespaceTypes.Organization) {
-            return this._cacheClient.getOrganizationRoles({ namespace });
+            return this._cacheClient.getOrganizationRoles(namespace);
         }
         if (parentType === ENSNamespaceTypes.Application) {
-            return this._cacheClient.getApplicationRoles({ namespace });
+            return this._cacheClient.getApplicationRoles(namespace);
         }
         throw new ENSTypeNotSupportedError();
     }
@@ -627,21 +628,21 @@ export class DomainsService {
     getENSTypesByOwner({
         type,
         owner,
-        excludeSubOrgs = false,
+        withRelations = true,
     }: {
         type: ENSNamespaceTypes;
         owner: string;
-        excludeSubOrgs?: boolean;
+        withRelations?: boolean;
     }) {
         owner = parseDID(owner);
         if (type === ENSNamespaceTypes.Organization) {
-            return this._cacheClient.getOrganizationsByOwner({ owner, excludeSubOrgs });
+            return this._cacheClient.getOrganizationsByOwner(owner, withRelations);
         }
         if (type === ENSNamespaceTypes.Application) {
-            return this._cacheClient.getApplicationsByOwner({ owner });
+            return this._cacheClient.getApplicationsByOwner(owner, withRelations);
         }
         if (type === ENSNamespaceTypes.Roles) {
-            return this._cacheClient.getRolesByOwner({ owner });
+            return this._cacheClient.getRolesByOwner(owner);
         }
         throw new ENSTypeNotSupportedError();
     }
@@ -649,8 +650,8 @@ export class DomainsService {
     /**
      * getENSTypesBySearchPhrase
      */
-    getENSTypesBySearchPhrase({ types, search }: { types?: ("App" | "Org" | "Role")[]; search: string }) {
-        return this._cacheClient.getNamespaceBySearchPhrase({ search, types });
+    getENSTypesBySearchPhrase(search: string, types?: NamespaceType[]) {
+        return this._cacheClient.getNamespaceBySearchPhrase(search, types);
     }
 
     /**
@@ -660,8 +661,8 @@ export class DomainsService {
      * @returns array of subdomains or empty array when there is no subdomains
      *
      */
-    getAppsByOrgNamespace({ namespace }: { namespace: string }) {
-        return this._cacheClient.getApplicationsByOrganization({ namespace });
+    getAppsOfOrg(org: string) {
+        return this._cacheClient.getApplicationsByOrganization(org);
     }
 
     /**
@@ -671,8 +672,8 @@ export class DomainsService {
      * @returns array of subdomains or empty array when there is no subdomains
      *
      */
-    getSubOrgsByOrgNamespace({ namespace }: { namespace: string }) {
-        return this._cacheClient.getSubOrganizationsByOrganization({ namespace });
+    getSubOrgsByOrgNamespace(namespace: string) {
+        return this._cacheClient.getSubOrganizationsByOrganization(namespace);
     }
 
     /**
@@ -682,8 +683,8 @@ export class DomainsService {
      * @returns organization with all nested subOrgs
      *
      */
-    async getOrgHierarchy({ namespace }: { namespace: string }): Promise<IOrganization> {
-        const org = await this._cacheClient.getOrgHierarchy({ namespace });
+    async getOrgHierarchy(namespace: string): Promise<IOrganization> {
+        const org = await this._cacheClient.getOrgHierarchy(namespace);
         [org, ...(org.subOrgs || []), ...(org.apps || []), ...(org.roles || [])].forEach(
             (domain) => (domain.isOwnedByCurrentUser = domain.owner === this._owner),
         );
@@ -691,14 +692,14 @@ export class DomainsService {
     }
 
     /**
-     * getRoleDIDs
+     * getDIDsByRole
      *
      * @description get all users did which have certain role
      * @returns array of did's
      *
      */
-    getRoleDIDs({ namespace }: { namespace: string }) {
-        return this._cacheClient.getDIDsForRole({ namespace });
+    getDIDsByRole(role: string) {
+        return this._cacheClient.getDIDsForRole(role);
     }
 
     /**

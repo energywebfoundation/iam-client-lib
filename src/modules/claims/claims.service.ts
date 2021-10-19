@@ -1,4 +1,4 @@
-import { utils } from "ethers";
+import { utils, Wallet } from "ethers";
 import { v4 } from "uuid";
 import { JSONCodec } from "nats.ws";
 import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
@@ -6,7 +6,6 @@ import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { hashes, IProofData, IPublicClaim, ISaltedFields } from "@ew-did-registry/claims";
 import { DIDAttribute } from "@ew-did-registry/did-resolver-interface";
-import { ClaimManager } from "../../../ethers/ClaimManager";
 import { ClaimManager__factory } from "../../../ethers/factories/ClaimManager__factory";
 import { ERROR_MESSAGES } from "../../errors";
 import { emptyAddress } from "../../utils/constants";
@@ -31,11 +30,14 @@ import { ClaimData } from "../didRegistry/did.types";
 import { MessagingService } from "../messaging/messaging.service";
 import { NATS_EXCHANGE_TOPIC } from "../messaging/messaging.types";
 import { isValidDID } from "../../utils/did";
+import { JWT } from "@ew-did-registry/jwt";
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, namehash, arrayify } = utils;
 
 export class ClaimsService {
-    private _claimManager: ClaimManager;
+    private _claimManager: string;
+    private _claimManagerInterface = ClaimManager__factory.createInterface();
+
     private _jsonCodec = JSONCodec();
 
     constructor(
@@ -62,8 +64,7 @@ export class ClaimsService {
 
     async init() {
         const chainId = this._signerService.chainId;
-        const { claimManagerAddress } = chainConfigs()[chainId];
-        this._claimManager = new ClaimManager__factory().attach(claimManagerAddress);
+        this._claimManager = chainConfigs()[chainId].claimManagerAddress;
     }
 
     async getClaimsBySubjects(subjects: string[]) {
@@ -82,14 +83,14 @@ export class ClaimsService {
         isAccepted?: boolean;
         namespace?: string;
     }) {
-        return this._cacheClient.getClaimsByRequester({ did, isAccepted, namespace });
+        return this._cacheClient.getClaimsByRequester(did, { isAccepted, namespace });
     }
 
     /**
      * @description - Returns claims for given issuer. Allows filtering by status and parent namespace
      */
     async getClaimsByIssuer({ did, isAccepted, namespace }: { did: string; isAccepted?: boolean; namespace?: string }) {
-        return this._cacheClient.getClaimsByIssuer({ did, isAccepted, namespace });
+        return this._cacheClient.getClaimsByIssuer(did, { isAccepted, namespace });
     }
 
     /**
@@ -104,7 +105,7 @@ export class ClaimsService {
         isAccepted?: boolean;
         namespace?: string;
     }) {
-        return this._cacheClient.getClaimsBySubject({ did, isAccepted, namespace });
+        return this._cacheClient.getClaimsBySubject(did, { isAccepted, namespace });
     }
 
     async createClaimRequest({
@@ -184,7 +185,7 @@ export class ClaimsService {
             const { claimType: role, claimTypeVersion: version } = claimData;
             const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
             const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
-            const data = this._claimManager.interface.encodeFunctionData("register", [
+            const data = this._claimManagerInterface.encodeFunctionData("register", [
                 addressOf(sub),
                 namehash(role),
                 version,
@@ -194,7 +195,7 @@ export class ClaimsService {
                 onChainProof,
             ]);
             await this._signerService.send({
-                to: this._claimManager.address,
+                to: this._claimManager,
                 data,
             });
             message.onChainProof = onChainProof;
@@ -217,7 +218,7 @@ export class ClaimsService {
     }
 
     async deleteClaim({ id }: { id: string }) {
-        await this._cacheClient.deleteClaim({ claimId: id });
+        await this._cacheClient.deleteClaim(id);
     }
 
     /**
@@ -373,7 +374,7 @@ export class ClaimsService {
         const domainSeparator = utils.keccak256(
             defaultAbiCoder.encode(
                 ["bytes32", "bytes32", "bytes32", "uint256", "address"],
-                [erc712_type_hash, utils.id("Claim Manager"), utils.id("1.0"), chainId, this._claimManager.address],
+                [erc712_type_hash, utils.id("Claim Manager"), utils.id("1.0"), chainId, this._claimManager],
             ),
         );
 
@@ -419,7 +420,7 @@ export class ClaimsService {
         const domainSeparator = keccak256(
             defaultAbiCoder.encode(
                 ["bytes32", "bytes32", "bytes32", "uint256", "address"],
-                [erc712_type_hash, id("Claim Manager"), id("1.0"), chainId, this._claimManager.address],
+                [erc712_type_hash, id("Claim Manager"), id("1.0"), chainId, this._claimManager],
             ),
         );
 
@@ -440,5 +441,40 @@ export class ClaimsService {
         );
 
         return canonizeSig(await this._signerService.signer.signMessage(arrayify(agreementHash)));
+    }
+
+    /**
+     * @description create a public claim to prove identity
+     * @returns JWT token of created identity
+     */
+    async createIdentityProof() {
+        const blockNumber = await this._signerService.provider.getBlockNumber();
+        return this.createPublicClaim({
+            data: {
+                blockNumber,
+            },
+        });
+    }
+
+    /**
+     * @description create a proof of identity delegate
+     * @param delegateKey private key of the delegate
+     * @param rpcUrl the url of the blockchain provider
+     * @param identity Did of the delegate
+     * @returns token of delegate
+     */
+    async createDelegateProof(delegateKey: string, identity: string): Promise<string> {
+        const provider = this._signerService.provider;
+        const blockNumber = (await provider.getBlockNumber()).toString();
+
+        const payload = {
+            iss: identity,
+            claimData: {
+                blockNumber,
+            },
+        };
+        const jwt = new JWT(new Wallet(delegateKey));
+        const identityToken = jwt.sign(payload, { algorithm: "ES256", issuer: identity });
+        return identityToken;
     }
 }

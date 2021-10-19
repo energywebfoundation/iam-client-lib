@@ -20,12 +20,12 @@
 - [deleteApplication](modules_domains_domains_service.DomainsService.md#deleteapplication)
 - [deleteOrganization](modules_domains_domains_service.DomainsService.md#deleteorganization)
 - [deleteRole](modules_domains_domains_service.DomainsService.md#deleterole)
-- [getAppsByOrgNamespace](modules_domains_domains_service.DomainsService.md#getappsbyorgnamespace)
+- [getAppsOfOrg](modules_domains_domains_service.DomainsService.md#getappsoforg)
+- [getDIDsByRole](modules_domains_domains_service.DomainsService.md#getdidsbyrole)
 - [getDefinition](modules_domains_domains_service.DomainsService.md#getdefinition)
 - [getENSTypesByOwner](modules_domains_domains_service.DomainsService.md#getenstypesbyowner)
 - [getENSTypesBySearchPhrase](modules_domains_domains_service.DomainsService.md#getenstypesbysearchphrase)
 - [getOrgHierarchy](modules_domains_domains_service.DomainsService.md#getorghierarchy)
-- [getRoleDIDs](modules_domains_domains_service.DomainsService.md#getroledids)
 - [getRolesByNamespace](modules_domains_domains_service.DomainsService.md#getrolesbynamespace)
 - [getSubOrgsByOrgNamespace](modules_domains_domains_service.DomainsService.md#getsuborgsbyorgnamespace)
 - [getSubdomains](modules_domains_domains_service.DomainsService.md#getsubdomains)
@@ -292,9 +292,9 @@ deleteRole
 
 ___
 
-### getAppsByOrgNamespace
+### getAppsOfOrg
 
-▸ **getAppsByOrgNamespace**(`__namedParameters`): `Promise`<[`IApp`](../interfaces/modules_domains_domains_types.IApp.md)[]\>
+▸ **getAppsOfOrg**(`org`): `Promise`<[`IApp`](../interfaces/modules_domains_domains_types.IApp.md)[]\>
 
 getENSTypesByOwner
 
@@ -304,14 +304,35 @@ getENSTypesByOwner
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `org` | `string` |
 
 #### Returns
 
 `Promise`<[`IApp`](../interfaces/modules_domains_domains_types.IApp.md)[]\>
 
 array of subdomains or empty array when there is no subdomains
+
+___
+
+### getDIDsByRole
+
+▸ **getDIDsByRole**(`role`): `Promise`<`string`[]\>
+
+getDIDsByRole
+
+**`description`** get all users did which have certain role
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `role` | `string` |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+array of did's
 
 ___
 
@@ -350,9 +371,9 @@ getENSTypesByOwner
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.excludeSubOrgs?` | `boolean` |
 | `__namedParameters.owner` | `string` |
 | `__namedParameters.type` | [`ENSNamespaceTypes`](../enums/modules_domains_domains_types.ENSNamespaceTypes.md) |
+| `__namedParameters.withRelations?` | `boolean` |
 
 #### Returns
 
@@ -362,7 +383,7 @@ ___
 
 ### getENSTypesBySearchPhrase
 
-▸ **getENSTypesBySearchPhrase**(`__namedParameters`): `Promise`<([`IRole`](../interfaces/modules_domains_domains_types.IRole.md) \| [`IOrganization`](../interfaces/modules_domains_domains_types.IOrganization.md) \| [`IApp`](../interfaces/modules_domains_domains_types.IApp.md))[]\>
+▸ **getENSTypesBySearchPhrase**(`search`, `types?`): `Promise`<([`IRole`](../interfaces/modules_domains_domains_types.IRole.md) \| [`IOrganization`](../interfaces/modules_domains_domains_types.IOrganization.md) \| [`IApp`](../interfaces/modules_domains_domains_types.IApp.md))[]\>
 
 getENSTypesBySearchPhrase
 
@@ -370,9 +391,8 @@ getENSTypesBySearchPhrase
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.search` | `string` |
-| `__namedParameters.types?` | (``"App"`` \| ``"Org"`` \| ``"Role"``)[] |
+| `search` | `string` |
+| `types?` | [`NamespaceType`](../enums/modules_cacheClient_cacheClient_types.NamespaceType.md)[] |
 
 #### Returns
 
@@ -382,7 +402,7 @@ ___
 
 ### getOrgHierarchy
 
-▸ **getOrgHierarchy**(`__namedParameters`): `Promise`<[`IOrganization`](../interfaces/modules_domains_domains_types.IOrganization.md)\>
+▸ **getOrgHierarchy**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains_domains_types.IOrganization.md)\>
 
 getOrgHierarchy
 
@@ -392,37 +412,13 @@ getOrgHierarchy
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `namespace` | `string` |
 
 #### Returns
 
 `Promise`<[`IOrganization`](../interfaces/modules_domains_domains_types.IOrganization.md)\>
 
 organization with all nested subOrgs
-
-___
-
-### getRoleDIDs
-
-▸ **getRoleDIDs**(`__namedParameters`): `Promise`<`string`[]\>
-
-getRoleDIDs
-
-**`description`** get all users did which have certain role
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-
-#### Returns
-
-`Promise`<`string`[]\>
-
-array of did's
 
 ___
 
@@ -452,7 +448,7 @@ ___
 
 ### getSubOrgsByOrgNamespace
 
-▸ **getSubOrgsByOrgNamespace**(`__namedParameters`): `Promise`<[`IOrganization`](../interfaces/modules_domains_domains_types.IOrganization.md)[]\>
+▸ **getSubOrgsByOrgNamespace**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains_domains_types.IOrganization.md)[]\>
 
 getSubOrgsByOrgNamespace
 
@@ -462,8 +458,7 @@ getSubOrgsByOrgNamespace
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| `namespace` | `string` |
 
 #### Returns
 

@@ -12,6 +12,7 @@
 - [ServiceInitializer](modules_signer.md#serviceinitializer)
 - [SignerService](modules_signer.md#signerservice)
 - [WALLET\_PROVIDER](modules_signer.md#wallet_provider)
+- [createWalletConnectProvider](modules_signer.md#createwalletconnectprovider)
 - [fromKms](modules_signer.md#fromkms)
 - [fromMetaMask](modules_signer.md#frommetamask)
 - [fromPrivateKey](modules_signer.md#fromprivatekey)
@@ -64,6 +65,12 @@ ___
 ### WALLET\_PROVIDER
 
 Re-exports: [WALLET\_PROVIDER](modules_signer_signer_types.md#wallet_provider)
+
+___
+
+### createWalletConnectProvider
+
+Re-exports: [createWalletConnectProvider](modules_signer_walletConnectMetamask.md#createwalletconnectprovider)
 
 ___
 

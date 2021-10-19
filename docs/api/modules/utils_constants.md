@@ -19,7 +19,7 @@ ___
 
 ### defaultBridgeUrl
 
-• `Const` **defaultBridgeUrl**: ``"https://walletconnect.energyweb.org"``
+• `Const` **defaultBridgeUrl**: ``"https://bridge.walletconnect.org"``
 
 ___
 

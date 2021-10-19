@@ -1,14 +1,12 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { providers } from "ethers";
 import { SignerService } from "./signer.service";
 import { ProviderType } from "./signer.types";
-import { providers } from "ethers";
+import { createWalletConnectProvider } from "./walletConnectMetamask";
 
-export async function fromKms(bridge: string, kmsServerUrl: string) {
-    const walletConnectProvider = new WalletConnectProvider({ bridge });
-    walletConnectProvider.wc.on("display_uri", (err, payload) => {
-        // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
+export async function fromKms(bridge: string, kmsServerUrl: string, infuraId?: string) {
+    const walletConnectProvider = createWalletConnectProvider(bridge, infuraId);
+    walletConnectProvider.on("display_uri", (_err, payload) => {
         const wcUri = payload.params[0];
-
         const encoded = encodeURIComponent(wcUri);
         const hasQueryString = kmsServerUrl.includes("?");
         const url = `${kmsServerUrl}${hasQueryString ? "&" : "?"}uri=${encoded}`;

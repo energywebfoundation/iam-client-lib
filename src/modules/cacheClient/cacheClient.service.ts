@@ -1,17 +1,17 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { stringify } from "qs";
+import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import { IApp, IOrganization, IRole } from "../domains/domains.types";
-import { AssetHistoryEventType, AssetHistory } from "../assets/assets.types";
-import { Claim } from "../claims/claims.types";
+import { AssetHistory } from "../assets/assets.types";
+import { Claim, IClaimIssuance, IClaimRejection, IClaimRequest } from "../claims/claims.types";
 import { Asset } from "../assets/assets.types";
-import { Order } from "./cacheClient.types";
-import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../claims/claims.types";
-import { ICacheClient } from "./ICacheClient";
 import { executionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
 import { SignerService } from "../signer/signer.service";
-import { cacheConfigs } from "../../config/cache.config";
 import { IPubKeyAndIdentityToken } from "../signer/signer.types";
+import { cacheConfigs } from "../../config/cache.config";
+import { ICacheClient } from "./ICacheClient";
+import { AssetsFilter, ClaimsFilter, NamespaceType } from "./cacheClient.types";
 
 export class CacheClient implements ICacheClient {
     public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -89,7 +89,7 @@ export class CacheClient implements ICacheClient {
     async testLogin(): Promise<void> {
         // Simple test to check if logged in or no. TODO: have dedicated endpoint on the cache-server
         // If receive unauthorized response, expect that refreshToken() will be called
-        await this.getRoleDefinition({ namespace: "testing.if.logged.in" });
+        await this.getRoleDefinition("testing.if.logged.in");
     }
 
     async login(): Promise<{
@@ -111,49 +111,57 @@ export class CacheClient implements ICacheClient {
         return { pubKeyAndIdentityToken, token, refreshToken };
     }
 
-    async getRoleDefinition({ namespace }: { namespace: string }) {
+    async getRoleDefinition(namespace: string) {
         const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
         return data?.definition;
     }
 
-    async getOrgDefinition({ namespace }: { namespace: string }) {
+    async getRolesDefinition(namespaces: string[]) {
+        const { data } = await this.httpClient.get<IRole[]>(`/role?namespaces=${namespaces.join(",")}`);
+        const rolesWithDefinitions = data?.map((entry) => ({ definition: entry.definition, role: entry.namespace }));
+        return rolesWithDefinitions.reduce((result, { role, definition }) => {
+            return { ...result, [role]: definition };
+        }, {} as Record<string, IRoleDefinition>);
+    }
+
+    async getOrgDefinition(namespace: string) {
         const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
         return data?.definition;
     }
 
-    async getAppDefinition({ namespace }: { namespace: string }) {
+    async getAppDefinition(namespace: string) {
         const { data } = await this.httpClient.get<IApp>(`/app/${namespace}`);
         return data?.definition;
     }
 
-    async getApplicationRoles({ namespace }: { namespace: string }) {
+    async getApplicationRoles(namespace: string) {
         const { data } = await this.httpClient.get<IRole[]>(`/app/${namespace}/roles`);
         return data;
     }
 
-    async getOrganizationRoles({ namespace }: { namespace: string }) {
+    async getOrganizationRoles(namespace: string) {
         const { data } = await this.httpClient.get<IRole[]>(`/org/${namespace}/roles`);
         return data;
     }
 
-    async getOrganizationsByOwner({ owner, excludeSubOrgs }: { owner: string; excludeSubOrgs: boolean }) {
+    async getOrganizationsByOwner(owner: string, withRelations = true) {
         const { data } = await this.httpClient.get<IOrganization[]>(
-            `/org/owner/${owner}?excludeSubOrgs=${excludeSubOrgs}`,
+            `/org/owner/${owner}?withRelations=${withRelations}`,
         );
         return data;
     }
 
-    async getSubOrganizationsByOrganization({ namespace }: { namespace: string }) {
+    async getSubOrganizationsByOrganization(namespace: string) {
         const { data } = await this.httpClient.get<IOrganization[]>(`/org/${namespace}/suborgs`);
         return data;
     }
 
-    async getOrgHierarchy({ namespace }: { namespace: string }) {
+    async getOrgHierarchy(namespace: string) {
         const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
         return data;
     }
 
-    async getNamespaceBySearchPhrase({ types, search }: { types?: ("App" | "Org" | "Role")[]; search: string }) {
+    async getNamespaceBySearchPhrase(search: string, types?: NamespaceType[]) {
         if (types && types.length > 0) {
             const { data } = await this.httpClient.get<(IOrganization | IApp | IRole)[]>(`/search/${search}`, {
                 params: {
@@ -169,17 +177,17 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
-    async getApplicationsByOwner({ owner }: { owner: string }) {
-        const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}`);
+    async getApplicationsByOwner(owner: string, withRelations = true) {
+        const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}?withRelations=${withRelations}`);
         return data;
     }
 
-    async getApplicationsByOrganization({ namespace }: { namespace: string }) {
+    async getApplicationsByOrganization(namespace: string) {
         const { data } = await this.httpClient.get<IApp[]>(`/org/${namespace}/apps`);
         return data;
     }
 
-    async getRolesByOwner({ owner }: { owner: string }) {
+    async getRolesByOwner(owner: string) {
         const { data } = await this.httpClient.get<IRole[]>(`/role/owner/${owner}`);
         return data;
     }
@@ -191,8 +199,8 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
-    async getClaimsByIssuer({ did, isAccepted, namespace }: { did: string; isAccepted?: boolean; namespace?: string }) {
-        const { data } = await this.httpClient.get<Claim[]>(`/claim/issuer/${did}`, {
+    async getClaimsByIssuer(issuer: string, { isAccepted, namespace }: ClaimsFilter = {}) {
+        const { data } = await this.httpClient.get<Claim[]>(`/claim/issuer/${issuer}`, {
             params: {
                 isAccepted,
                 namespace,
@@ -201,16 +209,8 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
-    async getClaimsByRequester({
-        did,
-        isAccepted,
-        namespace,
-    }: {
-        did: string;
-        isAccepted?: boolean;
-        namespace?: string;
-    }) {
-        const { data } = await this.httpClient.get<Claim[]>(`/claim/requester/${did}`, {
+    async getClaimsByRequester(requester: string, { isAccepted, namespace }: ClaimsFilter = {}) {
+        const { data } = await this.httpClient.get<Claim[]>(`/claim/requester/${requester}`, {
             params: {
                 isAccepted,
                 namespace,
@@ -219,16 +219,8 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
-    async getClaimsBySubject({
-        did,
-        isAccepted,
-        namespace,
-    }: {
-        did: string;
-        isAccepted?: boolean;
-        namespace?: string;
-    }) {
-        const { data } = await this.httpClient.get<Claim[]>(`/claim/subject/${did}`, {
+    async getClaimsBySubject(subject: string, { isAccepted, namespace }: ClaimsFilter = {}) {
+        const { data } = await this.httpClient.get<Claim[]>(`/claim/subject/${subject}`, {
             params: {
                 isAccepted,
                 namespace,
@@ -237,69 +229,57 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
-    async requestClaim({ message, did }: { message: IClaimRequest; did: string }) {
-        await this.httpClient.post<void>(`/claim/request/${did}`, message);
+    async requestClaim(requester: string, message: IClaimRequest) {
+        await this.httpClient.post<void>(`/claim/request/${requester}`, message);
     }
 
-    async issueClaim({ message, did }: { message: IClaimIssuance; did: string }) {
-        await this.httpClient.post<void>(`/claim/issue/${did}`, message);
+    async issueClaim(issuer: string, message: IClaimIssuance) {
+        await this.httpClient.post<void>(`/claim/issue/${issuer}`, message);
     }
 
-    async rejectClaim({ message, did }: { message: IClaimRejection; did: string }) {
-        await this.httpClient.post<void>(`/claim/reject/${did}`, message);
+    async rejectClaim(issuer: string, message: IClaimRejection) {
+        await this.httpClient.post<void>(`/claim/reject/${issuer}`, message);
     }
 
-    async deleteClaim({ claimId }: { claimId: string }) {
-        await this.httpClient.delete<void>(`/claim/${claimId}`);
+    async deleteClaim(id: string) {
+        await this.httpClient.delete<void>(`/claim/${id}`);
     }
 
-    async getDIDsForRole({ namespace }: { namespace: string }) {
+    async getDIDsForRole(namespace: string) {
         const { data } = await this.httpClient.get<string[]>(`/claim/did/${namespace}?accepted=true`);
         return data;
     }
 
-    async getDidDocument({ did, includeClaims }: { did: string; includeClaims?: boolean }) {
+    async getDidDocument(did: string, includeClaims?: boolean) {
         const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
         return data;
     }
 
-    async addDIDToWatchList({ did }: { did: string }) {
+    async addDIDToWatchList(did: string) {
         await this.httpClient.post(`/DID/${did}`);
     }
 
-    async getOwnedAssets({ did }: { did: string }) {
+    async getOwnedAssets(did: string) {
         const { data } = await this.httpClient.get<Asset[]>(`/assets/owner/${did}`);
         return data;
     }
 
-    async getOfferedAssets({ did }: { did: string }) {
+    async getOfferedAssets(did: string) {
         const { data } = await this.httpClient.get<Asset[]>(`/assets/offered_to/${did}`);
         return data;
     }
 
-    async getAssetById({ id }: { id: string }) {
+    async getAssetById(id: string) {
         const { data } = await this.httpClient.get<Asset>(`/assets/${id}`);
         return data;
     }
 
-    async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
+    async getPreviouslyOwnedAssets(owner: string) {
         const { data } = await this.httpClient.get<Asset[]>(`/assets/owner/history/${owner}`);
         return data;
     }
 
-    async getAssetHistory({
-        id,
-        order,
-        take,
-        skip,
-        type,
-    }: {
-        id: string;
-        order?: Order;
-        take?: number;
-        skip?: number;
-        type?: AssetHistoryEventType;
-    }) {
+    async getAssetHistory(id: string, { order, take, skip, type }: AssetsFilter = {}) {
         const query = stringify({ order, take, skip, type }, { skipNulls: true });
         const { data } = await this.httpClient.get<AssetHistory[]>(`/assets/history/${id}?${query}`);
         return data;
@@ -308,7 +288,11 @@ export class CacheClient implements ICacheClient {
     private async refreshToken(): Promise<{ token: string; refreshToken: string }> {
         try {
             const { data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
-                `/refresh_token${this.isBrowser ? "" : `?refresh_token=${this.refresh_token}`}`,
+                `/refresh_token${
+                    executionEnvironment() === ExecutionEnvironment.BROWSER
+                        ? ""
+                        : `?refresh_token=${this.refresh_token}`
+                }`,
             );
             return data;
         } catch {

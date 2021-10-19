@@ -1,7 +1,7 @@
 import { BigNumber, providers, utils, Wallet, ethers, Signer } from "ethers";
 import base64url from "base64url";
 import { EventEmitter } from "events";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import WalletConnectProvider from "@walletconnect/ethereum-provider";
 import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
 import {
     IPubKeyAndIdentityToken,
@@ -55,7 +55,7 @@ export class SignerService {
     async destroy() {
         const provider = this._signer.provider;
         if (provider instanceof WalletConnectProvider) {
-            await provider.close();
+            await provider.disconnect();
         }
     }
 
@@ -64,7 +64,7 @@ export class SignerService {
         if (provider instanceof EventEmitter) {
             provider.on(event, cb);
         } else if (provider instanceof WalletConnectProvider) {
-            provider.wc.on(event, cb);
+            provider.on(event, cb);
         }
     }
 
@@ -129,7 +129,7 @@ export class SignerService {
 
     async closeConnection() {
         if (this._signer instanceof WalletConnectProvider) {
-            await this._signer.close();
+            await this._signer.disconnect();
             this.clearSession();
         }
     }

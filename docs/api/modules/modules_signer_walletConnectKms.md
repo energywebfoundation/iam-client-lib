@@ -10,7 +10,7 @@
 
 ### fromKms
 
-▸ **fromKms**(`bridge`, `kmsServerUrl`): `Promise`<[`SignerService`](../classes/modules_signer_signer_service.SignerService.md)\>
+▸ **fromKms**(`bridge`, `kmsServerUrl`, `infuraId?`): `Promise`<[`SignerService`](../classes/modules_signer_signer_service.SignerService.md)\>
 
 #### Parameters
 
@@ -18,6 +18,7 @@
 | :------ | :------ |
 | `bridge` | `string` |
 | `kmsServerUrl` | `string` |
+| `infuraId?` | `string` |
 
 #### Returns
 

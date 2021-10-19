@@ -56,10 +56,10 @@ const roles: Record<string, IRoleDefinition> = {
         enrolmentPreconditions: [{ type: PreconditionType.Role, conditions: [`${roleName1}.${root}`] }],
     },
 };
-const mockGetRoleDefinition = jest.fn().mockImplementation(({ namespace }: { namespace: string }) => {
+const mockGetRoleDefinition = jest.fn().mockImplementation((namespace: string) => {
     return roles[namespace];
 });
-const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string }) => {
+const mockGetDidDocument = jest.fn().mockImplementation((did: string) => {
     return { publicKey: [{ id: `did:ethr:${did}-${KeyTags.OWNER}` }] }; // all documents are created
 });
 const mockGetAssetById = jest.fn();

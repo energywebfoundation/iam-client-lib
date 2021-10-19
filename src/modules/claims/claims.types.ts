@@ -51,3 +51,7 @@ export const proof_type_hash = utils.id(
     "Proof(address subject,bytes32 role,uint256 version,uint256 expiry,address issuer)",
 );
 export const defaultClaimExpiry = Number.MAX_SAFE_INTEGER - 1; // constraint of ethers.BigNumber
+
+export type RequestClaim = { requester: string; message: IClaimRequest };
+export type IssueClaim = { issuer: string; message: IClaimIssuance };
+export type RejectClaim = { issuer: string; message: IClaimRejection };

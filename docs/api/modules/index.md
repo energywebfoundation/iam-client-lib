@@ -10,6 +10,7 @@
 - [AssetHistoryEventType](index.md#assethistoryeventtype)
 - [AssetProfile](index.md#assetprofile)
 - [AssetProfiles](index.md#assetprofiles)
+- [AssetsFilter](index.md#assetsfilter)
 - [AssetsService](index.md#assetsservice)
 - [CacheClient](index.md#cacheclient)
 - [CacheServerClientOptions](index.md#cacheserverclientoptions)
@@ -18,6 +19,7 @@
 - [ChangeOwnershipNotPossibleError](index.md#changeownershipnotpossibleerror)
 - [Claim](index.md#claim)
 - [ClaimData](index.md#claimdata)
+- [ClaimsFilter](index.md#claimsfilter)
 - [ClaimsService](index.md#claimsservice)
 - [DeletingNamespaceNotPossibleError](index.md#deletingnamespacenotpossibleerror)
 - [DidRegistry](index.md#didregistry)
@@ -35,18 +37,22 @@
 - [IOrganization](index.md#iorganization)
 - [IPubKeyAndIdentityToken](index.md#ipubkeyandidentitytoken)
 - [IRole](index.md#irole)
+- [IssueClaim](index.md#issueclaim)
 - [MessagingConfig](index.md#messagingconfig)
 - [MessagingMethod](index.md#messagingmethod)
 - [MessagingService](index.md#messagingservice)
 - [MethodNotAvailableInNodeEnvError](index.md#methodnotavailableinnodeenverror)
 - [NATS\_EXCHANGE\_TOPIC](index.md#nats_exchange_topic)
 - [NODE\_FIELDS\_KEY](index.md#node_fields_key)
+- [NamespaceType](index.md#namespacetype)
 - [Order](index.md#order)
 - [PUBLIC\_KEY](index.md#public_key)
 - [Profile](index.md#profile)
 - [ProviderEvent](index.md#providerevent)
 - [ProviderType](index.md#providertype)
 - [RegistrationTypes](index.md#registrationtypes)
+- [RejectClaim](index.md#rejectclaim)
+- [RequestClaim](index.md#requestclaim)
 - [Service](index.md#service)
 - [ServiceInitializer](index.md#serviceinitializer)
 - [SignerService](index.md#signerservice)
@@ -60,6 +66,7 @@
 - [agreement\_type\_hash](index.md#agreement_type_hash)
 - [cacheConfigs](index.md#cacheconfigs)
 - [chainConfigs](index.md#chainconfigs)
+- [createWalletConnectProvider](index.md#createwalletconnectprovider)
 - [defaultBridgeUrl](index.md#defaultbridgeurl)
 - [defaultClaimExpiry](index.md#defaultclaimexpiry)
 - [defaultKmsServerUrl](index.md#defaultkmsserverurl)
@@ -76,7 +83,6 @@
 - [initWithMetamask](index.md#initwithmetamask)
 - [initWithPrivateKeySigner](index.md#initwithprivatekeysigner)
 - [initWithWalletConnect](index.md#initwithwalletconnect)
-- [isMetamaskExtensionPresent](index.md#ismetamaskextensionpresent)
 - [isValidDID](index.md#isvaliddid)
 - [messagingConfigs](index.md#messagingconfigs)
 - [parseDID](index.md#parsedid)
@@ -125,6 +131,12 @@ Re-exports: [AssetProfiles](../interfaces/modules_didRegistry_did_types.AssetPro
 
 ___
 
+### AssetsFilter
+
+Re-exports: [AssetsFilter](modules_cacheClient_cacheClient_types.md#assetsfilter)
+
+___
+
 ### AssetsService
 
 Re-exports: [AssetsService](../classes/modules_assets_assets_service.AssetsService.md)
@@ -170,6 +182,12 @@ ___
 ### ClaimData
 
 Re-exports: [ClaimData](../interfaces/modules_didRegistry_did_types.ClaimData.md)
+
+___
+
+### ClaimsFilter
+
+Re-exports: [ClaimsFilter](modules_cacheClient_cacheClient_types.md#claimsfilter)
 
 ___
 
@@ -275,6 +293,12 @@ Re-exports: [IRole](../interfaces/modules_domains_domains_types.IRole.md)
 
 ___
 
+### IssueClaim
+
+Re-exports: [IssueClaim](modules_claims_claims_types.md#issueclaim)
+
+___
+
 ### MessagingConfig
 
 Re-exports: [MessagingConfig](../interfaces/config_messaging_config.MessagingConfig.md)
@@ -311,6 +335,12 @@ Re-exports: [NODE\_FIELDS\_KEY](modules_domains_domains_types.md#node_fields_key
 
 ___
 
+### NamespaceType
+
+Re-exports: [NamespaceType](../enums/modules_cacheClient_cacheClient_types.NamespaceType.md)
+
+___
+
 ### Order
 
 Re-exports: [Order](../enums/modules_cacheClient_cacheClient_types.Order.md)
@@ -344,6 +374,18 @@ ___
 ### RegistrationTypes
 
 Re-exports: [RegistrationTypes](../enums/modules_claims_claims_types.RegistrationTypes.md)
+
+___
+
+### RejectClaim
+
+Re-exports: [RejectClaim](modules_claims_claims_types.md#rejectclaim)
+
+___
+
+### RequestClaim
+
+Re-exports: [RequestClaim](modules_claims_claims_types.md#requestclaim)
 
 ___
 
@@ -422,6 +464,12 @@ ___
 ### chainConfigs
 
 Re-exports: [chainConfigs](config_chain_config.md#chainconfigs)
+
+___
+
+### createWalletConnectProvider
+
+Re-exports: [createWalletConnectProvider](modules_signer_walletConnectMetamask.md#createwalletconnectprovider)
 
 ___
 
@@ -518,12 +566,6 @@ ___
 ### initWithWalletConnect
 
 Re-exports: [initWithWalletConnect](init.md#initwithwalletconnect)
-
-___
-
-### isMetamaskExtensionPresent
-
-Re-exports: [isMetamaskExtensionPresent](utils_detectEnvironment.md#ismetamaskextensionpresent)
 
 ___
 

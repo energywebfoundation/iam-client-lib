@@ -6,7 +6,7 @@ module.exports = {
     },
     transformIgnorePatterns: ["node_modules/.+\\.!mjs$"],
     testEnvironment: "node",
-    testRegex: "(/test/(.|\\.)*\\.e2e\\.ts$)",
+    testRegex: "(/(e2e|src)/(.|\\.)*\\.(e2e|spec)\\.ts$)",
     moduleFileExtensions: ["ts", "tsx", "js", "json"],
     coveragePathIgnorePatterns: ["/node_modules/", "/test/"],
     coverageThreshold: {

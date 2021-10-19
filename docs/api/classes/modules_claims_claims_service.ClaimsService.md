@@ -11,6 +11,8 @@
 ### Methods
 
 - [createClaimRequest](modules_claims_claims_service.ClaimsService.md#createclaimrequest)
+- [createDelegateProof](modules_claims_claims_service.ClaimsService.md#createdelegateproof)
+- [createIdentityProof](modules_claims_claims_service.ClaimsService.md#createidentityproof)
 - [createProofClaim](modules_claims_claims_service.ClaimsService.md#createproofclaim)
 - [createPublicClaim](modules_claims_claims_service.ClaimsService.md#createpublicclaim)
 - [createSelfSignedClaim](modules_claims_claims_service.ClaimsService.md#createselfsignedclaim)
@@ -64,6 +66,41 @@
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### createDelegateProof
+
+▸ **createDelegateProof**(`delegateKey`, `identity`): `Promise`<`string`\>
+
+**`description`** create a proof of identity delegate
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `delegateKey` | `string` | private key of the delegate |
+| `identity` | `string` | Did of the delegate |
+
+#### Returns
+
+`Promise`<`string`\>
+
+token of delegate
+
+___
+
+### createIdentityProof
+
+▸ **createIdentityProof**(): `Promise`<`string`\>
+
+**`description`** create a public claim to prove identity
+
+#### Returns
+
+`Promise`<`string`\>
+
+JWT token of created identity
 
 ___
 

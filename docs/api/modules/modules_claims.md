@@ -9,7 +9,10 @@
 - [IClaimIssuance](modules_claims.md#iclaimissuance)
 - [IClaimRejection](modules_claims.md#iclaimrejection)
 - [IClaimRequest](modules_claims.md#iclaimrequest)
+- [IssueClaim](modules_claims.md#issueclaim)
 - [RegistrationTypes](modules_claims.md#registrationtypes)
+- [RejectClaim](modules_claims.md#rejectclaim)
+- [RequestClaim](modules_claims.md#requestclaim)
 - [agreement\_type\_hash](modules_claims.md#agreement_type_hash)
 - [defaultClaimExpiry](modules_claims.md#defaultclaimexpiry)
 - [erc712\_type\_hash](modules_claims.md#erc712_type_hash)
@@ -48,9 +51,27 @@ Re-exports: [IClaimRequest](../interfaces/modules_claims_claims_types.IClaimRequ
 
 ___
 
+### IssueClaim
+
+Re-exports: [IssueClaim](modules_claims_claims_types.md#issueclaim)
+
+___
+
 ### RegistrationTypes
 
 Re-exports: [RegistrationTypes](../enums/modules_claims_claims_types.RegistrationTypes.md)
+
+___
+
+### RejectClaim
+
+Re-exports: [RejectClaim](modules_claims_claims_types.md#rejectclaim)
+
+___
+
+### RequestClaim
+
+Re-exports: [RequestClaim](modules_claims_claims_types.md#requestclaim)
 
 ___
 

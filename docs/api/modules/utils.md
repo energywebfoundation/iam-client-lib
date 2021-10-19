@@ -11,7 +11,6 @@
 - [defaultKmsServerUrl](utils.md#defaultkmsserverurl)
 - [emptyAddress](utils.md#emptyaddress)
 - [executionEnvironment](utils.md#executionenvironment)
-- [isMetamaskExtensionPresent](utils.md#ismetamaskextensionpresent)
 - [isValidDID](utils.md#isvaliddid)
 - [parseDID](utils.md#parsedid)
 - [supportedDIDMethods](utils.md#supporteddidmethods)
@@ -57,12 +56,6 @@ ___
 ### executionEnvironment
 
 Re-exports: [executionEnvironment](utils_detectEnvironment.md#executionenvironment)
-
-___
-
-### isMetamaskExtensionPresent
-
-Re-exports: [isMetamaskExtensionPresent](utils_detectEnvironment.md#ismetamaskextensionpresent)
 
 ___
 

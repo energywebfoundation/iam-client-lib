@@ -9,24 +9,13 @@
 ### Functions
 
 - [executionEnvironment](utils_detectEnvironment.md#executionenvironment)
-- [isMetamaskExtensionPresent](utils_detectEnvironment.md#ismetamaskextensionpresent)
 
 ## Functions
 
 ### executionEnvironment
 
-▸ `Const` **executionEnvironment**(): `any`
+▸ `Const` **executionEnvironment**(): `ExecutionEnvironment`
 
 #### Returns
 
-`any`
-
-___
-
-### isMetamaskExtensionPresent
-
-▸ `Const` **isMetamaskExtensionPresent**(): `Promise`<`Object`\>
-
-#### Returns
-
-`Promise`<`Object`\>
+`ExecutionEnvironment`
