@@ -8,7 +8,11 @@ TO DO:
 */
 
 ## Public APIs:
-- [createOrganization](../api/modules/iam.md#createorganization)
-- [createApplication](../api/modules/iam.md#createapplication)
-- [createRole](../api/modules/iam.md#createrole)
+- [createRole](../api/classes/iam.IAM.md#createRole)
+- [setRoleDefinition](../api/classes/iam.IAM.md#setRoleDefinition)
+- [getRolesByNameSpace](../api/classes/iam.IAM.md#getRolesByNamespace)
+- [getRoleDIDs](../api/classes/iam.IAM.md#getRoleDIDs)
+- [changeRoleOwnership](../api/classes/iam.IAM.md#changeRoleOwnership)
+- [deleteRole](../api/classes/iam.IAM.md#deleteRole)
+
 

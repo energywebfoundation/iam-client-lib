@@ -11,6 +11,6 @@ TO DO:
 
 
 ## Public APIs:
-- [createOrganization](../api/modules/iam.md#createorganization)
-- [deleteOrganization](../api/modules/iam.md#deleteorganization)
-- [getOrgHierarchy](../api/modules/iam.md#getorghierarchy)
+- [createOrganization](../api/classes/iam.IAM.md#createOrganization)
+- [deleteOrganization](../api/classes/iam.IAM.md#deleteOrganization)
+- [getOrgHierarchy](../api/classes/iam.IAM.md#getOrgHierarchy)

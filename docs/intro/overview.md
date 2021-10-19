@@ -11,14 +11,14 @@ The iam-client-library provides high-level functions related to the identity and
 
 Identity in EW_DOS is established through a [Decentralized Identity (DID)](https://www.w3.org/TR/did-core/). A DID is a digital, verifiable identity that is user-generated and not coupled to any centralized institution. It can be used to identify any subject, such as a non-tangible asset, a customer, or an organization.
 
-- [getDID](../api/modules/iam.md#getDid)
+- [getDID](../api/classes/iam.IAM.md#getDid)
 
 Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-use-cases/#dfn-did-documents). The DID Document contains information on the DID subject such as its public keys and authentication mechanisms, attributes and claims. Only the owner of the DID can update this information. 
 
 The iam-client-lib manages the DID lifecycle:
-- [getDidDocument](../api/modules/iam.md#getdiddocument)
-- [updateDidDocument](.../api/modules/iam.md#updatediddocument)
-- [revokeDidDocument](../api/modules/iam.md#revokediddocument)
+- [getDidDocument](../api/classes/iam.IAM.md#getDidDocument)
+- [updateDidDocument](../api/classes/iam.IAM.md#updateDidDocument)
+- [revokeDidDocument](../api/classes/iam.IAM.md#revokeDidDocument)
 
 
 ## Claims
@@ -35,9 +35,9 @@ INSERT EXAMPLE
 
 
 The iam-client-lib manages the claim lifecycle:
-- [createPublicClaim](../api/modules/iam.md#createpublicclaim) 
-- [issuePublicClaim](../api/modules/iam.md#issuepublicclaim)
-- [publishPublicClaim](../api/modules/iam.md#publishpublicclaim)
-- [verifyPublicClaim](../api/modules/iam.md#verifypublicclaim)
+- [createPublicClaim](../api/classes/iam.IAM.md#createPublicClaim) 
+- [issuePublicClaim](../api/classes/iam.IAM.md#issuePublicClaim)
+- [publishPublicClaim](../api/classes/iam.IAM.md#publishPublicClaim)
+- [verifyPublicClaim](../api/classes/iam.IAM.md#verifyPublicClaim) 
 
 
