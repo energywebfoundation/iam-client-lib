@@ -6,7 +6,7 @@ Currently the iam-client library supports two domains: **[Organization](../guide
 
 ![Domain Hierarchy](../images/domainHierarchy.png)
 
-1. An **[Organization]((../guides/organization.md)** is the top-level domain. It can have an unlimited number of sub-organizations underneath of it. 
+1. An **[Organization](../guides/organization.md)** is the top-level domain. It can have an unlimited number of sub-organizations underneath of it. 
 
 2. An **[Application](../guides/application.md)** is nested under an Organization or a Sub-organization. An Organization or Sub-organization can have an unlimited number of Applications. 
 
