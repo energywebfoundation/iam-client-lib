@@ -1,3 +1,10 @@
+# [3.2.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.5...v3.2.0-alpha.6) (2021-10-19)
+
+
+### Features
+
+* remove `patch-package` dependency ([ae7db96](https://github.com/energywebfoundation/iam-client-lib/commit/ae7db9690cc3dbf14945677b390aa264eef0a4f7))
+
 # [3.2.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.4...v3.2.0-alpha.5) (2021-10-18)
 
 
