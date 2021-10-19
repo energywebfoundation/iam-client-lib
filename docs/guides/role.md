@@ -1,5 +1,6 @@
 # Roles
-[Role Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IRole.md)
+[Role Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IRole.md)  
+
 /*
 TO DO: 
 //Define Role in context of iam-client-lib/Switchboard
@@ -8,11 +9,11 @@ TO DO:
 */
 
 ## Public APIs:
-- [createRole](../api/classes/iam.IAM.md#createRole)
-- [setRoleDefinition](../api/classes/iam.IAM.md#setRoleDefinition)
-- [getRolesByNameSpace](../api/classes/iam.IAM.md#getRolesByNamespace)
-- [getRoleDIDs](../api/classes/iam.IAM.md#getRoleDIDs)
-- [changeRoleOwnership](../api/classes/iam.IAM.md#changeRoleOwnership)
-- [deleteRole](../api/classes/iam.IAM.md#deleteRole)
+- [createRole](../api/classes/iam.IAM.md#createrole)
+- [setRoleDefinition](../api/classes/iam.IAM.md#setroledefinition)
+- [getRolesByNameSpace](../api/classes/iam.IAM.md#getrolesbynamespace)
+- [getRoleDIDs](../api/classes/iam.IAM.md#getroledids)
+- [changeRoleOwnership](../api/classes/iam.IAM.md#changeroleownership)
+- [deleteRole](../api/classes/iam.IAM.md#deleterole)
 
 
