@@ -5,6 +5,7 @@
 ### Functions
 
 - [fromMetaMask](modules_signer_metamaskSigner.md#frommetamask)
+- [isMetamaskExtensionPresent](modules_signer_metamaskSigner.md#ismetamaskextensionpresent)
 
 ## Functions
 
@@ -15,3 +16,13 @@
 #### Returns
 
 `Promise`<[`SignerService`](../classes/modules_signer_signer_service.SignerService.md)\>
+
+___
+
+### isMetamaskExtensionPresent
+
+▸ `Const` **isMetamaskExtensionPresent**(): `Promise`<`Object`\>
+
+#### Returns
+
+`Promise`<`Object`\>

@@ -83,6 +83,7 @@
 - [initWithMetamask](index.md#initwithmetamask)
 - [initWithPrivateKeySigner](index.md#initwithprivatekeysigner)
 - [initWithWalletConnect](index.md#initwithwalletconnect)
+- [isMetamaskExtensionPresent](index.md#ismetamaskextensionpresent)
 - [isValidDID](index.md#isvaliddid)
 - [messagingConfigs](index.md#messagingconfigs)
 - [parseDID](index.md#parsedid)
@@ -566,6 +567,12 @@ ___
 ### initWithWalletConnect
 
 Re-exports: [initWithWalletConnect](init.md#initwithwalletconnect)
+
+___
+
+### isMetamaskExtensionPresent
+
+Re-exports: [isMetamaskExtensionPresent](modules_signer_metamaskSigner.md#ismetamaskextensionpresent)
 
 ___
 

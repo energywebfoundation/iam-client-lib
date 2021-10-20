@@ -17,6 +17,7 @@
 - [fromMetaMask](modules_signer.md#frommetamask)
 - [fromPrivateKey](modules_signer.md#fromprivatekey)
 - [fromWalletConnectMetamask](modules_signer.md#fromwalletconnectmetamask)
+- [isMetamaskExtensionPresent](modules_signer.md#ismetamaskextensionpresent)
 
 ## References
 
@@ -95,3 +96,9 @@ ___
 ### fromWalletConnectMetamask
 
 Re-exports: [fromWalletConnectMetamask](modules_signer_walletConnectMetamask.md#fromwalletconnectmetamask)
+
+___
+
+### isMetamaskExtensionPresent
+
+Re-exports: [isMetamaskExtensionPresent](modules_signer_metamaskSigner.md#ismetamaskextensionpresent)

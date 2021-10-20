@@ -40,3 +40,17 @@ const createMetamaskSigner = async ({ initializeMetamask }: { initializeMetamask
     console.log("metamask chain id:", (await signer.provider.getNetwork()).chainId);
     return signer;
 };
+
+export const isMetamaskExtensionPresent = async () => {
+    const provider = (await detectMetamask({ mustBeMetaMask: true })) as
+        | {
+              request: any;
+          }
+        | undefined;
+
+    const chainId = (await provider?.request({
+        method: "eth_chainId",
+    })) as number | undefined;
+
+    return { isMetamaskPresent: !!provider, chainId };
+};
