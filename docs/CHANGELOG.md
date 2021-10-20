@@ -1,3 +1,10 @@
+# [3.2.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.6...v3.2.0-alpha.7) (2021-10-20)
+
+
+### Features
+
+* get owned domains with relatiosn ([9d3b08e](https://github.com/energywebfoundation/iam-client-lib/commit/9d3b08e670f97134f35235157b1f2d89f2d2b1e7))
+
 # [3.2.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.5...v3.2.0-alpha.6) (2021-10-19)
 
 
