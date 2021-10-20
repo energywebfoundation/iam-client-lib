@@ -137,13 +137,15 @@ ___
 
 ### getApplicationsByOwner
 
-▸ **getApplicationsByOwner**(`__namedParameters`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
+▸ **getApplicationsByOwner**(`owner`, `opts?`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"``\> |
+| `owner` | `string` |
+| `opts?` | `Object` |
+| `opts.withRelations?` | `boolean` |
 
 #### Returns
 
@@ -361,13 +363,15 @@ ___
 
 ### getOrganizationsByOwner
 
-▸ **getOrganizationsByOwner**(`__namedParameters`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
+▸ **getOrganizationsByOwner**(`owner`, `opts?`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"`` \| ``"excludeSubOrgs"``\> |
+| `owner` | `string` |
+| `opts?` | `Object` |
+| `opts.withRelations?` | `boolean` |
 
 #### Returns
 

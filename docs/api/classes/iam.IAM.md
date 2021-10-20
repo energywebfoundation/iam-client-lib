@@ -815,9 +815,9 @@ getENSTypesByOwner
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.excludeSubOrgs?` | `boolean` |
 | `__namedParameters.owner` | `string` |
 | `__namedParameters.type` | [`ENSNamespaceTypes`](../enums/iam.ENSNamespaceTypes.md) |
+| `__namedParameters.withRelations?` | `boolean` |
 
 #### Returns
 
