@@ -103,4 +103,40 @@ export const selfsignedClaimsTests = function () {
         expect(profile?.name).toBe("Dan");
         expect(updatedService.length).toBe(1);
     });
+
+    test("ens claim should be persists on cache server", async () => {
+        const saveIssuedTokenSpy = jest.fn();
+        Object.defineProperty(iam, "_cacheClient", { value: { saveIssuedToken: saveIssuedTokenSpy } });
+        const issuedToken = await iam.createPublicClaim({
+            data: { claimType: namespace, claimTypeVersion: 1 },
+            saveToken: true,
+        });
+
+        expect(saveIssuedTokenSpy).toHaveBeenCalledTimes(1);
+        expect(saveIssuedTokenSpy).toHaveBeenCalledWith({ issuedToken });
+    });
+
+    test("ens claim should not be persists on cache server", async () => {
+        const saveIssuedTokenSpy = jest.fn();
+        Object.defineProperty(iam, "_cacheClient", { value: { saveIssuedToken: saveIssuedTokenSpy } });
+        await iam.createPublicClaim({
+            data: { claimType: namespace, claimTypeVersion: 1 },
+            saveToken: false,
+        });
+
+        expect(saveIssuedTokenSpy).not.toHaveBeenCalled();
+    });
+
+    test("should get stored issued tokens from cache server", async () => {
+        const getIssuedTokensBySubjectsSpy = jest.fn().mockResolvedValue(["issuedToken"]);
+        Object.defineProperty(iam, "_cacheClient", {
+            value: { getIssuedTokensBySubjects: getIssuedTokensBySubjectsSpy },
+        });
+        const result = await iam.getIssuedTokensBySubjects(["did:ethr:subject"]);
+
+        expect(getIssuedTokensBySubjectsSpy).toHaveBeenCalledTimes(1);
+        expect(getIssuedTokensBySubjectsSpy).toHaveBeenCalledWith({ subjects: ["did:ethr:subject"] });
+        expect(result).toHaveLength(1);
+        expect(result[0]).toBe("issuedToken");
+    });
 };

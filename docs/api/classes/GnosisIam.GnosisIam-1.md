@@ -383,6 +383,7 @@ ___
 | `__namedParameters.claim.claimTypeVersion` | `number` |
 | `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.registrationTypes?` | [`RegistrationTypes`](../enums/cacheServerClient_cacheServerClient_types.RegistrationTypes.md)[] |
+| `__namedParameters.saveToken?` | `boolean` |
 | `__namedParameters.subject?` | `string` |
 
 #### Returns
@@ -570,6 +571,7 @@ createSelfSignedClaim
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.data` | [`ClaimData`](../interfaces/cacheServerClient_cacheServerClient_types.ClaimData.md) |
+| `__namedParameters.saveToken?` | `boolean` |
 | `__namedParameters.subject?` | `string` |
 
 #### Returns

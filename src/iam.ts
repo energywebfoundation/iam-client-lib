@@ -552,9 +552,17 @@ export class IAM extends IAMBase {
      * @description creates self signed claim and upload the data to ipfs
      *
      */
-    async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
+    async createSelfSignedClaim({
+        data,
+        subject,
+        saveToken = false,
+    }: {
+        data: ClaimData;
+        subject?: string;
+        saveToken?: boolean;
+    }) {
         if (this._userClaims) {
-            const token = await this.createPublicClaim({ data, subject });
+            const token = await this.createPublicClaim({ data, subject, saveToken });
             return this.publishPublicClaim({ token });
         }
         throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
@@ -1559,10 +1567,12 @@ export class IAM extends IAMBase {
         claim,
         subject,
         registrationTypes = [RegistrationTypes.OffChain],
+        saveToken = false,
     }: {
         claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
         subject?: string;
         registrationTypes?: RegistrationTypes[];
+        saveToken?: boolean;
     }) {
         if (!this._did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1572,7 +1582,7 @@ export class IAM extends IAMBase {
         }
 
         const { claimType: role, claimTypeVersion: version } = claim;
-        const token = await this.createPublicClaim({ data: claim, subject });
+        const token = await this.createPublicClaim({ data: claim, subject, saveToken });
 
         await this.verifyEnrolmentPrerequisites({ subject, role });
 
