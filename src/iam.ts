@@ -1187,21 +1187,21 @@ export class IAM extends IAMBase {
     getENSTypesByOwner({
         type,
         owner,
-        excludeSubOrgs = false,
+        withRelations = true,
     }: {
         type: ENSNamespaceTypes;
         owner: string;
-        excludeSubOrgs?: boolean;
+        withRelations?: boolean;
     }) {
         owner = parseDID(owner);
         if (!this._cacheClient) {
             throw new CacheClientNotProvidedError();
         }
         if (type === ENSNamespaceTypes.Organization) {
-            return this._cacheClient.getOrganizationsByOwner({ owner, excludeSubOrgs });
+            return this._cacheClient.getOrganizationsByOwner(owner, { withRelations });
         }
         if (type === ENSNamespaceTypes.Application) {
-            return this._cacheClient.getApplicationsByOwner({ owner });
+            return this._cacheClient.getApplicationsByOwner(owner, { withRelations });
         }
         if (type === ENSNamespaceTypes.Roles) {
             return this._cacheClient.getRolesByOwner({ owner });
