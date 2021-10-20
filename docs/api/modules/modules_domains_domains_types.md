@@ -4,7 +4,7 @@
 
 ### Enumerations
 
-- [ENSNamespaceTypes](../enums/modules_domains_domains_types.ENSNamespaceTypes.md)
+- [NamespaceType](../enums/modules_domains_domains_types.NamespaceType.md)
 
 ### Interfaces
 

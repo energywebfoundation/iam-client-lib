@@ -1,5 +1,5 @@
 import { Codec, connect, JSONCodec, NatsConnection, Subscription } from "nats.ws";
-import { messagingConfigs } from "../../config/messaging.config";
+import { getMessagingConfig } from "../../config/messaging.config";
 import { IMessage, MessagingMethod } from "./messaging.types";
 import { SignerService } from "../signer/signer.service";
 
@@ -19,7 +19,7 @@ export class MessagingService {
     }
 
     async init() {
-        const { messagingMethod, natsServerUrl } = messagingConfigs()[this._signerService.chainId];
+        const { messagingMethod, natsServerUrl } = getMessagingConfig()[this._signerService.chainId];
         if (natsServerUrl && messagingMethod === MessagingMethod.Nats) {
             this._jsonCodec = JSONCodec();
             try {
@@ -47,7 +47,7 @@ export class MessagingService {
     }
 
     async subscribeTo({
-        subject = this._signerService.DID,
+        subject = this._signerService.did,
         messageHandler,
     }: {
         subject?: string;

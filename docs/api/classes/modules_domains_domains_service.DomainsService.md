@@ -350,7 +350,7 @@ getRoleDefinition
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.namespace` | `string` |
-| `__namedParameters.type` | [`ENSNamespaceTypes`](../enums/modules_domains_domains_types.ENSNamespaceTypes.md) |
+| `__namedParameters.type` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md) |
 
 #### Returns
 
@@ -372,7 +372,7 @@ getENSTypesByOwner
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.owner` | `string` |
-| `__namedParameters.type` | [`ENSNamespaceTypes`](../enums/modules_domains_domains_types.ENSNamespaceTypes.md) |
+| `__namedParameters.type` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md) |
 | `__namedParameters.withRelations?` | `boolean` |
 
 #### Returns
@@ -392,7 +392,7 @@ getENSTypesBySearchPhrase
 | Name | Type |
 | :------ | :------ |
 | `search` | `string` |
-| `types?` | [`NamespaceType`](../enums/modules_cacheClient_cacheClient_types.NamespaceType.md)[] |
+| `types?` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md)[] |
 
 #### Returns
 
@@ -436,7 +436,7 @@ getRolesByNamespace
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.namespace` | `string` |
-| `__namedParameters.parentType` | [`Application`](../enums/modules_domains_domains_types.ENSNamespaceTypes.md#application) \| [`Organization`](../enums/modules_domains_domains_types.ENSNamespaceTypes.md#organization) |
+| `__namedParameters.parentType` | [`Application`](../enums/modules_domains_domains_types.NamespaceType.md#application) \| [`Organization`](../enums/modules_domains_domains_types.NamespaceType.md#organization) |
 
 #### Returns
 
@@ -637,7 +637,7 @@ validateOwnership
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.namespace` | `string` |
-| `__namedParameters.type` | [`ENSNamespaceTypes`](../enums/modules_domains_domains_types.ENSNamespaceTypes.md) |
+| `__namedParameters.type` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md) |
 
 #### Returns
 

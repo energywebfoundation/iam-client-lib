@@ -24,8 +24,7 @@ import { labelhash } from "../../utils/ENS_hash";
 import { CacheClient } from "../cacheClient/cacheClient.service";
 import { RegistrationTypes } from "../claims/claims.types";
 import { SignerService } from "../signer/signer.service";
-import { ENSNamespaceTypes, IOrganization } from "./domains.types";
-import { NamespaceType } from "../cacheClient";
+import { NamespaceType, IOrganization } from "./domains.types";
 
 const { namehash } = utils;
 
@@ -53,7 +52,7 @@ export class DomainsService {
 
     async init() {
         const chainId = this._signerService.chainId;
-        const provider = this._signerService.signer.provider;
+        const provider = this._signerService.provider;
         const { ensRegistryAddress, ensResolverAddress, ensPublicResolverAddress, domainNotifierAddress } =
             chainConfigs()[chainId];
         this._ensRegistryAddress = ensRegistryAddress;
@@ -86,7 +85,7 @@ export class DomainsService {
             domainNotifierAddress: domainNotifierAddress,
             publicResolverAddress: ensPublicResolverAddress,
         });
-        this._owner = await this._signerService.signer.getAddress();
+        this._owner = this._signerService.address;
     }
 
     /**
@@ -132,8 +131,8 @@ export class DomainsService {
         returnSteps?: boolean;
     }) {
         const orgDomain = `${orgName}.${namespace}`;
-        const rolesDomain = `${ENSNamespaceTypes.Roles}.${orgDomain}`;
-        const appsDomain = `${ENSNamespaceTypes.Application}.${orgDomain}`;
+        const rolesDomain = `${NamespaceType.Role}.${orgDomain}`;
+        const appsDomain = `${NamespaceType.Application}.${orgDomain}`;
         if (!(await this.isOwner({ domain: namespace, user: this._owner }))) {
             throw new Error(ERROR_MESSAGES.NOT_AUTHORIZED_TO_CHANGE_DOMAIN);
         }
@@ -152,7 +151,7 @@ export class DomainsService {
             {
                 tx: this.createSubdomainTx({
                     domain: orgDomain,
-                    nodeName: ENSNamespaceTypes.Roles,
+                    nodeName: NamespaceType.Role,
                     owner: this._owner,
                 }),
                 info: "Create roles subdomain for organization",
@@ -164,7 +163,7 @@ export class DomainsService {
             {
                 tx: this.createSubdomainTx({
                     domain: orgDomain,
-                    nodeName: ENSNamespaceTypes.Application,
+                    nodeName: NamespaceType.Application,
                     owner: this._owner,
                 }),
                 info: "Create app subdomain for organization",
@@ -221,14 +220,14 @@ export class DomainsService {
             {
                 tx: this.createSubdomainTx({
                     domain: appDomain,
-                    nodeName: ENSNamespaceTypes.Roles,
+                    nodeName: NamespaceType.Role,
                     owner: from,
                 }),
                 info: "Create roles subdomain for application",
             },
             {
                 tx: this._domainDefinitionTransactionFactory.setDomainNameTx({
-                    domain: `${ENSNamespaceTypes.Roles}.${appDomain}`,
+                    domain: `${NamespaceType.Role}.${appDomain}`,
                 }),
                 info: "Set name for roles subdomain for application",
             },
@@ -313,8 +312,8 @@ export class DomainsService {
     }) {
         newOwner = parseDID(newOwner);
         const orgNamespaces = [
-            `${ENSNamespaceTypes.Roles}.${namespace}`,
-            `${ENSNamespaceTypes.Application}.${namespace}`,
+            `${NamespaceType.Role}.${namespace}`,
+            `${NamespaceType.Application}.${namespace}`,
             namespace,
         ];
         const { alreadyFinished, changeOwnerNamespaces, notOwnedNamespaces } = await this.validateChangeOwnership({
@@ -329,7 +328,7 @@ export class DomainsService {
         const apps = this._cacheClient
             ? await this.getAppsOfOrg(namespace)
             : await this.getSubdomains({
-                  domain: `${ENSNamespaceTypes.Application}.${namespace}`,
+                  domain: `${NamespaceType.Application}.${namespace}`,
               });
         if (apps && apps.length > 0) {
             throw new Error("You are not able to change ownership of organization with registered apps");
@@ -380,7 +379,7 @@ export class DomainsService {
         returnSteps?: boolean;
     }) {
         newOwner = parseDID(newOwner);
-        const appNamespaces = [`${ENSNamespaceTypes.Roles}.${namespace}`, namespace];
+        const appNamespaces = [`${NamespaceType.Role}.${namespace}`, namespace];
 
         const { alreadyFinished, changeOwnerNamespaces, notOwnedNamespaces } = await this.validateChangeOwnership({
             newOwner,
@@ -429,7 +428,7 @@ export class DomainsService {
         newOwner = parseDID(newOwner);
         const notOwnedNamespaces = await this.validateOwnership({
             namespace,
-            type: ENSNamespaceTypes.Roles,
+            type: NamespaceType.Role,
         });
         if (notOwnedNamespaces.length > 0) {
             throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
@@ -447,7 +446,7 @@ export class DomainsService {
         const apps = this._cacheClient
             ? await this.getAppsOfOrg(namespace)
             : await this.getSubdomains({
-                  domain: `${ENSNamespaceTypes.Application}.${namespace}`,
+                  domain: `${NamespaceType.Application}.${namespace}`,
               });
         if (apps && apps.length > 0) {
             throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
@@ -455,15 +454,15 @@ export class DomainsService {
 
         const roles = this._cacheClient
             ? await this._cacheClient.getOrganizationRoles(namespace)
-            : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
+            : await this.getSubdomains({ domain: `${NamespaceType.Role}.${namespace}` });
 
         if (roles && roles.length > 0) {
             throw new Error(ERROR_MESSAGES.ORG_WITH_ROLES);
         }
 
         const orgNamespaces = [
-            `${ENSNamespaceTypes.Roles}.${namespace}`,
-            `${ENSNamespaceTypes.Application}.${namespace}`,
+            `${NamespaceType.Role}.${namespace}`,
+            `${NamespaceType.Application}.${namespace}`,
             namespace,
         ];
 
@@ -512,13 +511,13 @@ export class DomainsService {
     async deleteApplication({ namespace, returnSteps }: { namespace: string; returnSteps?: boolean }) {
         const roles = this._cacheClient
             ? await this._cacheClient.getApplicationRoles(namespace)
-            : await this.getSubdomains({ domain: `${ENSNamespaceTypes.Roles}.${namespace}` });
+            : await this.getSubdomains({ domain: `${NamespaceType.Role}.${namespace}` });
 
         if (roles && roles.length > 0) {
             throw new Error(ERROR_MESSAGES.APP_WITH_ROLES);
         }
 
-        const appNamespaces = [`${ENSNamespaceTypes.Roles}.${namespace}`, namespace];
+        const appNamespaces = [`${NamespaceType.Role}.${namespace}`, namespace];
 
         const { alreadyFinished, namespacesToDelete, notOwnedNamespaces } = await this.validateDeletePossibility({
             namespaces: appNamespaces,
@@ -565,7 +564,7 @@ export class DomainsService {
     async deleteRole({ namespace }: { namespace: string }) {
         const notOwnedNamespaces = await this.validateOwnership({
             namespace,
-            type: ENSNamespaceTypes.Roles,
+            type: NamespaceType.Role,
         });
         if (notOwnedNamespaces.length > 0) {
             throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
@@ -584,16 +583,16 @@ export class DomainsService {
         type,
         namespace,
     }: {
-        type: ENSNamespaceTypes;
+        type: NamespaceType;
         namespace: string;
     }): Promise<IRoleDefinition | IAppDefinition | IOrganizationDefinition> {
-        if (type === ENSNamespaceTypes.Roles) {
+        if (type === NamespaceType.Role) {
             return this._cacheClient.getRoleDefinition(namespace);
         }
-        if (type === ENSNamespaceTypes.Application) {
+        if (type === NamespaceType.Application) {
             return this._cacheClient.getAppDefinition(namespace);
         }
-        if (type === ENSNamespaceTypes.Organization) {
+        if (type === NamespaceType.Organization) {
             return this._cacheClient.getOrgDefinition(namespace);
         }
         throw new ENSTypeNotSupportedError();
@@ -610,13 +609,13 @@ export class DomainsService {
         parentType,
         namespace,
     }: {
-        parentType: ENSNamespaceTypes.Application | ENSNamespaceTypes.Organization;
+        parentType: NamespaceType.Application | NamespaceType.Organization;
         namespace: string;
     }) {
-        if (parentType === ENSNamespaceTypes.Organization) {
+        if (parentType === NamespaceType.Organization) {
             return this._cacheClient.getOrganizationRoles(namespace);
         }
-        if (parentType === ENSNamespaceTypes.Application) {
+        if (parentType === NamespaceType.Application) {
             return this._cacheClient.getApplicationRoles(namespace);
         }
         throw new ENSTypeNotSupportedError();
@@ -630,18 +629,18 @@ export class DomainsService {
         owner,
         withRelations = true,
     }: {
-        type: ENSNamespaceTypes;
+        type: NamespaceType;
         owner: string;
         withRelations?: boolean;
     }) {
         owner = parseDID(owner);
-        if (type === ENSNamespaceTypes.Organization) {
+        if (type === NamespaceType.Organization) {
             return this._cacheClient.getOrganizationsByOwner(owner, withRelations);
         }
-        if (type === ENSNamespaceTypes.Application) {
+        if (type === NamespaceType.Application) {
             return this._cacheClient.getApplicationsByOwner(owner, withRelations);
         }
-        if (type === ENSNamespaceTypes.Roles) {
+        if (type === NamespaceType.Role) {
             return this._cacheClient.getRolesByOwner(owner);
         }
         throw new ENSTypeNotSupportedError();
@@ -734,7 +733,7 @@ export class DomainsService {
         const [exists, isOwned] = await Promise.all([
             this._ensRegistry.recordExists(domainHash),
             (async () => {
-                const owner = await this._ensRegistry?.owner(domainHash);
+                const owner = await this._ensRegistry.owner(domainHash);
                 return owner !== emptyAddress;
             })(),
         ]);
@@ -762,7 +761,7 @@ export class DomainsService {
      * @returns true or false whatever the passed is user is a owner of org, app or role
      *
      */
-    async validateOwnership({ namespace, type }: { namespace: string; type: ENSNamespaceTypes }) {
+    async validateOwnership({ namespace, type }: { namespace: string; type: NamespaceType }) {
         return this.nonOwnedNodesOf({ namespace, type, owner: this._owner });
     }
 
@@ -856,7 +855,7 @@ export class DomainsService {
             {},
         );
         for await (const role of roles) {
-            const def = await this.getDefinition({ type: ENSNamespaceTypes.Roles, namespace: role });
+            const def = await this.getDefinition({ type: NamespaceType.Role, namespace: role });
             if (!DomainReader.isRoleDefinition(def)) {
                 continue;
             }
@@ -965,18 +964,18 @@ export class DomainsService {
         owner,
     }: {
         namespace: string;
-        type: ENSNamespaceTypes;
+        type: NamespaceType;
         owner: string;
     }) {
-        if (![ENSNamespaceTypes.Roles, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization].includes(type)) {
+        if (![NamespaceType.Role, NamespaceType.Application, NamespaceType.Organization].includes(type)) {
             throw new Error(ERROR_MESSAGES.ENS_TYPE_NOT_SUPPORTED);
         }
         const namespacesToCheck =
-            type === ENSNamespaceTypes.Roles
+            type === NamespaceType.Role
                 ? [namespace]
-                : type === ENSNamespaceTypes.Application
-                ? [namespace, ENSNamespaceTypes.Application]
-                : [namespace, ENSNamespaceTypes.Application, ENSNamespaceTypes.Organization];
+                : type === NamespaceType.Application
+                ? [namespace, NamespaceType.Application]
+                : [namespace, NamespaceType.Application, NamespaceType.Organization];
         return Promise.all(namespacesToCheck.map((ns) => this.getOwner({ namespace: ns }))).then((owners) =>
             owners.filter((o) => ![owner, emptyAddress].includes(o)),
         );

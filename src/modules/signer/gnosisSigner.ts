@@ -11,5 +11,6 @@ import { SignerService } from "./signer.service";
 export const fromGnosis = async (safeAppSdk: SafeAppSdk) => {
     const gnosisProvider = new SafeAppProvider(await safeAppSdk.safe.getInfo(), safeAppSdk);
     const provider = new providers.Web3Provider(gnosisProvider);
-    return new SignerService(provider.getSigner(), ProviderType.Gnosis);
+    const signerService = new SignerService(provider.getSigner(), ProviderType.Gnosis);
+    return signerService;
 };

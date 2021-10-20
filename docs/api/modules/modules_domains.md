@@ -5,23 +5,17 @@
 ### References
 
 - [DomainsService](modules_domains.md#domainsservice)
-- [ENSNamespaceTypes](modules_domains.md#ensnamespacetypes)
 - [IApp](modules_domains.md#iapp)
 - [IOrganization](modules_domains.md#iorganization)
 - [IRole](modules_domains.md#irole)
 - [NODE\_FIELDS\_KEY](modules_domains.md#node_fields_key)
+- [NamespaceType](modules_domains.md#namespacetype)
 
 ## References
 
 ### DomainsService
 
 Re-exports: [DomainsService](../classes/modules_domains_domains_service.DomainsService.md)
-
-___
-
-### ENSNamespaceTypes
-
-Re-exports: [ENSNamespaceTypes](../enums/modules_domains_domains_types.ENSNamespaceTypes.md)
 
 ___
 
@@ -46,3 +40,9 @@ ___
 ### NODE\_FIELDS\_KEY
 
 Re-exports: [NODE\_FIELDS\_KEY](modules_domains_domains_types.md#node_fields_key)
+
+___
+
+### NamespaceType
+
+Re-exports: [NamespaceType](../enums/modules_domains_domains_types.NamespaceType.md)

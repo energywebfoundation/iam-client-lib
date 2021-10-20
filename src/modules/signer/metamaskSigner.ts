@@ -5,7 +5,9 @@ import { ProviderType } from "./signer.types";
 import { SignerService } from "./signer.service";
 
 export const fromMetaMask = async (): Promise<SignerService> => {
-    return new SignerService(await createMetamaskSigner({}), ProviderType.Metamask);
+    const signerService = new SignerService(await createMetamaskSigner({}), ProviderType.Metamask);
+    await signerService.init();
+    return signerService;
 };
 
 const createMetamaskSigner = async ({ initializeMetamask }: { initializeMetamask?: boolean }) => {
@@ -15,26 +17,32 @@ const createMetamaskSigner = async ({ initializeMetamask }: { initializeMetamask
     if (!metamaskProvider) {
         throw new Error(ERROR_MESSAGES.METAMASK_PROVIDER_NOT_DETECTED);
     }
-    const requestObject = {
-        method: initializeMetamask ? "wallet_requestPermissions" : "eth_accounts",
+    // const requestObject = {
+    //     method: initializeMetamask ? "wallet_requestPermissions" : "eth_accounts",
+    //     params: [
+    //         {
+    //             eth_accounts: {},
+    //         },
+    //     ],
+    // };
+    const accounts: string[] = await metamaskProvider.request(
+        // requestObject
+        { method: "eth_requestAccounts" },
+    );
+    if (accounts.length === 0) {
+        throw new Error(ERROR_MESSAGES.METAMASK_ACCOUNT_NOT_PROVIDED);
+    }
+
+    // if (!initializeMetamask && accounts.length < 1) {
+    await metamaskProvider.request({
+        method: "wallet_requestPermissions",
         params: [
             {
                 eth_accounts: {},
             },
         ],
-    };
-    const accounts: string[] = await metamaskProvider.request(requestObject);
-
-    if (!initializeMetamask && accounts.length < 1) {
-        await metamaskProvider.request({
-            method: "wallet_requestPermissions",
-            params: [
-                {
-                    eth_accounts: {},
-                },
-            ],
-        });
-    }
+    });
+    // }
     const signer = new providers.Web3Provider(metamaskProvider).getSigner();
 
     console.log("metamask chain id:", (await signer.provider.getNetwork()).chainId);

@@ -10,7 +10,6 @@
 
 ### Accessors
 
-- [did](modules_didRegistry_didRegistry_service.DidRegistry.md#did)
 - [ipfsStore](modules_didRegistry_didRegistry_service.DidRegistry.md#ipfsstore)
 - [jwt](modules_didRegistry_didRegistry_service.DidRegistry.md#jwt)
 
@@ -43,16 +42,6 @@
 | `_ipfsUrl` | `string` | `"https://ipfs.infura.io:5001/api/v0/"` |
 
 ## Accessors
-
-### did
-
-• `get` **did**(): `string`
-
-#### Returns
-
-`string`
-
-___
 
 ### ipfsStore
 

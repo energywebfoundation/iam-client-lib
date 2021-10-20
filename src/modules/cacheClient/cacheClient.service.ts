@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { stringify } from "qs";
 import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-import { IApp, IOrganization, IRole } from "../domains/domains.types";
+import { IApp, IOrganization, IRole, NamespaceType } from "../domains/domains.types";
 import { AssetHistory } from "../assets/assets.types";
 import { Claim, IClaimIssuance, IClaimRejection, IClaimRequest } from "../claims/claims.types";
 import { Asset } from "../assets/assets.types";
@@ -11,7 +11,7 @@ import { SignerService } from "../signer/signer.service";
 import { IPubKeyAndIdentityToken } from "../signer/signer.types";
 import { cacheConfigs } from "../../config/cache.config";
 import { ICacheClient } from "./ICacheClient";
-import { AssetsFilter, ClaimsFilter, NamespaceType } from "./cacheClient.types";
+import { AssetsFilter, ClaimsFilter } from "./cacheClient.types";
 
 export class CacheClient implements ICacheClient {
     public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;

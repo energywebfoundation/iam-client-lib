@@ -22,4 +22,4 @@ export const setMessagingConfig = (chainId: ChainId, options: Partial<MessagingC
     messagingConfig[chainId] = { ...messagingConfig[chainId], ...options };
 };
 
-export const messagingConfigs = () => ({ ...messagingConfig });
+export const getMessagingConfig = () => ({ ...messagingConfig });

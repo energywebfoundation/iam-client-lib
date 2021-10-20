@@ -14,5 +14,7 @@ export async function fromKms(bridge: string, kmsServerUrl: string, infuraId?: s
     });
     await walletConnectProvider.enable();
     const provider = new providers.Web3Provider(walletConnectProvider);
-    return new SignerService(provider.getSigner(), ProviderType.WalletConnect);
+    const signerService = new SignerService(provider.getSigner(), ProviderType.WalletConnect);
+    await signerService.init();
+    return signerService;
 }

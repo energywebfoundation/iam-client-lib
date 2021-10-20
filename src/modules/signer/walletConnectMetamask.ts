@@ -11,7 +11,9 @@ export const fromWalletConnectMetamask = async (bridge: string, infuraId?: strin
     const walletProvider = createWalletConnectProvider(bridge, infuraId);
     await walletProvider.enable();
     const provider = new providers.Web3Provider(walletProvider);
-    return new SignerService(provider.getSigner(), ProviderType.Metamask);
+    const signerService = new SignerService(provider.getSigner(), ProviderType.Metamask);
+    await signerService.init();
+    return signerService;
 };
 
 export const createWalletConnectProvider = (bridge: string, infuraId?: string) => {

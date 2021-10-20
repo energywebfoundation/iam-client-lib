@@ -10,6 +10,7 @@
 - [CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT](errors_ErrorMessages.ERROR_MESSAGES.md#can_not_update_not_controlled_document)
 - [ENS\_TYPE\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_type_not_supported)
 - [INSUFFICIENT\_BALANCE](errors_ErrorMessages.ERROR_MESSAGES.md#insufficient_balance)
+- [METAMASK\_ACCOUNT\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_account_not_provided)
 - [METAMASK\_PROVIDER\_NOT\_DETECTED](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_provider_not_detected)
 - [NOT\_AUTHORIZED\_TO\_CHANGE\_DOMAIN](errors_ErrorMessages.ERROR_MESSAGES.md#not_authorized_to_change_domain)
 - [ONCHAIN\_ROLE\_VERSION\_NOT\_SPECIFIED](errors_ErrorMessages.ERROR_MESSAGES.md#onchain_role_version_not_specified)
@@ -46,6 +47,12 @@ ___
 ### INSUFFICIENT\_BALANCE
 
 • **INSUFFICIENT\_BALANCE** = `"Signer has insufficient balance"`
+
+___
+
+### METAMASK\_ACCOUNT\_NOT\_PROVIDED
+
+• **METAMASK\_ACCOUNT\_NOT\_PROVIDED** = `"Metamask account not provided"`
 
 ___
 

@@ -8,14 +8,14 @@
 
 ### Functions
 
-- [messagingConfigs](config_messaging_config.md#messagingconfigs)
+- [getMessagingConfig](config_messaging_config.md#getmessagingconfig)
 - [setMessagingConfig](config_messaging_config.md#setmessagingconfig)
 
 ## Functions
 
-### messagingConfigs
+### getMessagingConfig
 
-▸ `Const` **messagingConfigs**(): `Object`
+▸ `Const` **getMessagingConfig**(): `Object`
 
 #### Returns
 

@@ -12,7 +12,7 @@ import { emptyAddress } from "../../utils/constants";
 import { canonizeSig } from "../../utils/enrollment";
 import { CacheClient } from "../cacheClient/cacheClient.service";
 import { DomainsService } from "../domains/domains.service";
-import { ENSNamespaceTypes } from "../domains/domains.types";
+import { NamespaceType } from "../domains/domains.types";
 import { SignerService } from "../signer/signer.service";
 import { chainConfigs } from "../../config/chain.config";
 import {
@@ -110,7 +110,7 @@ export class ClaimsService {
 
     async createClaimRequest({
         claim,
-        subject = this._didRegistry.did,
+        subject = this._signerService.did,
         registrationTypes = [RegistrationTypes.OffChain],
     }: {
         claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
@@ -129,7 +129,7 @@ export class ClaimsService {
             id: v4(),
             token,
             claimIssuer: issuer,
-            requester: this._didRegistry.did,
+            requester: this._signerService.did,
             registrationTypes,
         };
 
@@ -168,13 +168,13 @@ export class ClaimsService {
         const message: IClaimIssuance = {
             id,
             requester,
-            claimIssuer: [this._didRegistry.did],
-            acceptedBy: this._didRegistry.did,
+            claimIssuer: [this._signerService.did],
+            acceptedBy: this._signerService.did,
         };
         if (registrationTypes.includes(RegistrationTypes.OffChain)) {
             const publicClaim: IPublicClaim = {
                 did: sub,
-                signer: this._didRegistry.did,
+                signer: this._signerService.did,
                 claimData,
             };
             message.issuedToken = await this._didRegistry.issuePublicClaim({
@@ -190,7 +190,7 @@ export class ClaimsService {
                 namehash(role),
                 version,
                 expiry,
-                addressOf(this._didRegistry.did),
+                addressOf(this._signerService.did),
                 subjectAgreement,
                 onChainProof,
             ]);
@@ -209,7 +209,7 @@ export class ClaimsService {
         const preparedData: IClaimRejection = {
             id,
             requester: requesterDID,
-            claimIssuer: [this._didRegistry.did],
+            claimIssuer: [this._signerService.did],
             isRejected: true,
         };
 
@@ -268,7 +268,7 @@ export class ClaimsService {
         let sub = payload.sub;
         // Initialy subject was ignored because it was requester
         if (!sub || sub.length === 0 || !isValidDID(sub)) {
-            sub = this._didRegistry.did;
+            sub = this._signerService.did;
         }
 
         if (!(await this._didRegistry.verifyPublicClaim(token, iss))) {
@@ -334,14 +334,14 @@ export class ClaimsService {
      * @description get user claims
      *
      */
-    async getUserClaims({ did = this._didRegistry.did }: { did?: string } | undefined = {}) {
+    async getUserClaims({ did = this._signerService.did }: { did?: string } | undefined = {}) {
         const { service } = (await this._didRegistry.getDidDocument({ did })) || {};
         return service;
     }
 
     private async verifyEnrolmentPrerequisites({ subject, role }: { subject: string; role: string }) {
         const roleDefinition = await this._domainsService.getDefinition({
-            type: ENSNamespaceTypes.Roles,
+            type: NamespaceType.Role,
             namespace: role,
         });
 
@@ -440,7 +440,7 @@ export class ClaimsService {
             ],
         );
 
-        return canonizeSig(await this._signerService.signer.signMessage(arrayify(agreementHash)));
+        return canonizeSig(await this._signerService.signMessage(arrayify(agreementHash)));
     }
 
     /**

@@ -24,7 +24,6 @@
 - [DeletingNamespaceNotPossibleError](index.md#deletingnamespacenotpossibleerror)
 - [DidRegistry](index.md#didregistry)
 - [DomainsService](index.md#domainsservice)
-- [ENSNamespaceTypes](index.md#ensnamespacetypes)
 - [ENSTypeNotSupportedError](index.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](index.md#error_messages)
 - [ExecutionEnvironment](index.md#executionenvironment)
@@ -77,6 +76,7 @@
 - [fromMetaMask](index.md#frommetamask)
 - [fromPrivateKey](index.md#fromprivatekey)
 - [fromWalletConnectMetamask](index.md#fromwalletconnectmetamask)
+- [getMessagingConfig](index.md#getmessagingconfig)
 - [init](index.md#init)
 - [initWithGnosis](index.md#initwithgnosis)
 - [initWithKms](index.md#initwithkms)
@@ -85,7 +85,6 @@
 - [initWithWalletConnect](index.md#initwithwalletconnect)
 - [isMetamaskExtensionPresent](index.md#ismetamaskextensionpresent)
 - [isValidDID](index.md#isvaliddid)
-- [messagingConfigs](index.md#messagingconfigs)
 - [parseDID](index.md#parsedid)
 - [proof\_type\_hash](index.md#proof_type_hash)
 - [setCacheConfig](index.md#setcacheconfig)
@@ -216,12 +215,6 @@ Re-exports: [DomainsService](../classes/modules_domains_domains_service.DomainsS
 
 ___
 
-### ENSNamespaceTypes
-
-Re-exports: [ENSNamespaceTypes](../enums/modules_domains_domains_types.ENSNamespaceTypes.md)
-
-___
-
 ### ENSTypeNotSupportedError
 
 Re-exports: [ENSTypeNotSupportedError](../classes/errors_ENSTypeNotSupportedError.ENSTypeNotSupportedError.md)
@@ -338,7 +331,7 @@ ___
 
 ### NamespaceType
 
-Re-exports: [NamespaceType](../enums/modules_cacheClient_cacheClient_types.NamespaceType.md)
+Re-exports: [NamespaceType](../enums/modules_domains_domains_types.NamespaceType.md)
 
 ___
 
@@ -534,6 +527,12 @@ Re-exports: [fromWalletConnectMetamask](modules_signer_walletConnectMetamask.md#
 
 ___
 
+### getMessagingConfig
+
+Re-exports: [getMessagingConfig](config_messaging_config.md#getmessagingconfig)
+
+___
+
 ### init
 
 Re-exports: [init](init.md#init)
@@ -579,12 +578,6 @@ ___
 ### isValidDID
 
 Re-exports: [isValidDID](utils_did.md#isvaliddid)
-
-___
-
-### messagingConfigs
-
-Re-exports: [messagingConfigs](config_messaging_config.md#messagingconfigs)
 
 ___
 

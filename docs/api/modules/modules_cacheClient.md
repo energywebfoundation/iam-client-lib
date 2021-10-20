@@ -9,7 +9,6 @@
 - [CacheServerClientOptions](modules_cacheClient.md#cacheserverclientoptions)
 - [ClaimsFilter](modules_cacheClient.md#claimsfilter)
 - [ICacheClient](modules_cacheClient.md#icacheclient)
-- [NamespaceType](modules_cacheClient.md#namespacetype)
 - [Order](modules_cacheClient.md#order)
 
 ## References
@@ -41,12 +40,6 @@ ___
 ### ICacheClient
 
 Re-exports: [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md)
-
-___
-
-### NamespaceType
-
-Re-exports: [NamespaceType](../enums/modules_cacheClient_cacheClient_types.NamespaceType.md)
 
 ___
 

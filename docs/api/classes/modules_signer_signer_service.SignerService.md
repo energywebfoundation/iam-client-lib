@@ -10,9 +10,10 @@
 
 ### Accessors
 
-- [DID](modules_signer_signer_service.SignerService.md#did)
+- [accountInfo](modules_signer_signer_service.SignerService.md#accountinfo)
 - [address](modules_signer_signer_service.SignerService.md#address)
 - [chainId](modules_signer_signer_service.SignerService.md#chainid)
+- [did](modules_signer_signer_service.SignerService.md#did)
 - [provider](modules_signer_signer_service.SignerService.md#provider)
 - [providerType](modules_signer_signer_service.SignerService.md#providertype)
 - [signer](modules_signer_signer_service.SignerService.md#signer)
@@ -26,6 +27,7 @@
 - [destroy](modules_signer_signer_service.SignerService.md#destroy)
 - [init](modules_signer_signer_service.SignerService.md#init)
 - [initEventHandlers](modules_signer_signer_service.SignerService.md#initeventhandlers)
+- [isSessionActive](modules_signer_signer_service.SignerService.md#issessionactive)
 - [on](modules_signer_signer_service.SignerService.md#on)
 - [onInit](modules_signer_signer_service.SignerService.md#oninit)
 - [publicKey](modules_signer_signer_service.SignerService.md#publickey)
@@ -48,13 +50,13 @@
 
 ## Accessors
 
-### DID
+### accountInfo
 
-• `get` **DID**(): `string`
+• `get` **accountInfo**(): [`AccountInfo`](../modules/modules_signer_signer_types.md#accountinfo)
 
 #### Returns
 
-`string`
+[`AccountInfo`](../modules/modules_signer_signer_types.md#accountinfo)
 
 ___
 
@@ -75,6 +77,16 @@ ___
 #### Returns
 
 `number`
+
+___
+
+### did
+
+• `get` **did**(): `string`
+
+#### Returns
+
+`string`
 
 ___
 
@@ -167,11 +179,11 @@ ___
 
 ### init
 
-▸ **init**(): `Promise`<[`AccountInfo`](../modules/modules_signer_signer_types.md#accountinfo)\>
+▸ **init**(): `Promise`<`void`\>
 
 #### Returns
 
-`Promise`<[`AccountInfo`](../modules/modules_signer_signer_types.md#accountinfo)\>
+`Promise`<`void`\>
 
 ___
 
@@ -186,6 +198,20 @@ Add event handler for certain events
 #### Returns
 
 `void`
+
+___
+
+### isSessionActive
+
+▸ **isSessionActive**(): `boolean`
+
+Check if session is active
+
+#### Returns
+
+`boolean`
+
+boolean that indicates the session state
 
 ___
 

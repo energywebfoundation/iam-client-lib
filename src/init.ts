@@ -64,15 +64,6 @@ export async function init(signerService: SignerService) {
         return { cacheClient, domainsService, stakingService, assetsService, connectToDidRegistry };
     }
 
-    /**
-     * Check if session is active
-     *
-     * @returns boolean that indicates the session state
-     */
-    async function isSessionActive() {
-        return Boolean(await signerService.publicKey()) && Boolean(signerService.providerType);
-    }
-
     async function storeSession() {
         if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
             localStorage.setItem(WALLET_PROVIDER, signerService.providerType);
@@ -84,7 +75,6 @@ export async function init(signerService: SignerService) {
         signerService,
         messagingService,
         connectToCacheServer,
-        isSessionActive,
         storeSession,
     };
 }

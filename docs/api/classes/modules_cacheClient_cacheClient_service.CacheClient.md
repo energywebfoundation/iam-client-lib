@@ -390,7 +390,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `search` | `string` |
-| `types?` | [`NamespaceType`](../enums/modules_cacheClient_cacheClient_types.NamespaceType.md)[] |
+| `types?` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md)[] |
 
 #### Returns
 

@@ -26,10 +26,9 @@ export class AssetsService {
     }
 
     async init() {
-        const signer = this._signerService.signer;
-        this._owner = await signer.getAddress();
+        const chainId = this._signerService.chainId;
+        this._owner = this._signerService.address;
         this._did = `did:${Methods.Erc1056}:${this._owner}`;
-        const chainId = (await signer.provider.getNetwork()).chainId;
         const chainConfig = chainConfigs()[chainId] as ChainConfig;
         this._assetManager = chainConfig.assetManagerAddress;
     }

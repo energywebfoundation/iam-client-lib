@@ -55,10 +55,6 @@ export class DidRegistry {
         return registry;
     }
 
-    get did() {
-        return `did:${Methods.Erc1056}:${this._signerService.address}`;
-    }
-
     get jwt() {
         return this._jwt;
     }

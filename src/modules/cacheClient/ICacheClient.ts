@@ -2,9 +2,9 @@ import { IAppDefinition, IOrganizationDefinition, IRoleDefinition } from "@energ
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
 import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../claims/claims.types";
 import { IPubKeyAndIdentityToken } from "../signer/signer.types";
-import { AssetsFilter, ClaimsFilter, NamespaceType } from "./cacheClient.types";
+import { AssetsFilter, ClaimsFilter } from "./cacheClient.types";
 import { Asset, AssetHistory } from "../assets/assets.types";
-import { IApp, IOrganization, IRole } from "../domains/domains.types";
+import { IApp, IOrganization, IRole, NamespaceType } from "../domains/domains.types";
 import { Claim } from "../claims/claims.types";
 
 export interface ICacheClient {

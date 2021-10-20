@@ -1,9 +1,9 @@
 import { IAppDefinition, IOrganizationDefinition, IRoleDefinition } from "@energyweb/iam-contracts";
 
-export enum ENSNamespaceTypes {
-    Roles = "roles",
-    Application = "apps",
-    Organization = "org",
+export enum NamespaceType {
+    Role = "Role",
+    Application = "Application",
+    Organization = "organization",
 }
 
 export interface IRole {

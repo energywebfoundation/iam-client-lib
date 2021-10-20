@@ -19,30 +19,34 @@ const { arrayify, keccak256, recoverPublicKey, computeAddress, computePublicKey,
 export type ServiceInitializer = () => Promise<void>;
 export class SignerService {
     private _publicKey: string;
+    private _identityToken: string;
     private _address: string;
+    private _account: string;
+
     private _chainId: number;
+    private _chainName: string;
+
     private _servicesInitializers: ServiceInitializer[] = [];
 
     constructor(private _signer: Required<Signer>, private _providerType: ProviderType) {}
 
-    async init(): Promise<AccountInfo> {
+    async init() {
         this._address = await this.signer.getAddress();
         this._chainId = (await this._signer.provider.getNetwork()).chainId;
+        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
+            this._providerType = localStorage.getItem(WALLET_PROVIDER) as ProviderType;
+            this._publicKey = localStorage.getItem(PUBLIC_KEY) as ProviderType;
+        }
         this.initEventHandlers();
         for await (const initializer of this._servicesInitializers) {
             await initializer();
         }
-        let account;
         if (this._signer instanceof providers.JsonRpcSigner) {
-            account = (await this._signer.provider.listAccounts())[0];
+            this._account = (await this._signer.provider.listAccounts())[0];
         } else if (this._signer instanceof Wallet) {
-            account = this._address;
+            this._account = this._address;
         }
-        return {
-            account,
-            chainId: this._chainId,
-            chainName: chainConfigs()[this._chainId].chainName,
-        };
+        this._chainName = chainConfigs()[this._chainId].chainName;
     }
 
     /**
@@ -87,6 +91,14 @@ export class SignerService {
         return this._signer;
     }
 
+    get address() {
+        return this._address;
+    }
+
+    get accountInfo(): AccountInfo {
+        return { account: this._account, chainId: this._chainId, chainName: this._chainName };
+    }
+
     get provider() {
         return this._signer.provider;
     }
@@ -103,12 +115,17 @@ export class SignerService {
         return this._providerType;
     }
 
-    get address() {
-        return this._address;
+    get did() {
+        return `did:${Methods.Erc1056}:${this._address}`;
     }
 
-    get DID() {
-        return `did:${Methods}:${this._address}`;
+    /**
+     * Check if session is active
+     *
+     * @returns boolean that indicates the session state
+     */
+    isSessionActive() {
+        return Boolean(this._publicKey) && Boolean(this.providerType);
     }
 
     async send({ to, data, value }: providers.TransactionRequest): Promise<providers.TransactionReceipt> {
@@ -145,12 +162,29 @@ export class SignerService {
     }
 
     async publicKeyAndIdentityToken(): Promise<IPubKeyAndIdentityToken> {
+        if (!this._publicKey || !this._identityToken) {
+            await this._calculatePubKeyAndIdentityToken();
+        }
+        return {
+            publicKey: this._publicKey,
+            identityToken: this._identityToken,
+        };
+    }
+
+    clearSession() {
+        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
+            localStorage.removeItem(WALLET_PROVIDER);
+            localStorage.removeItem(PUBLIC_KEY);
+        }
+    }
+
+    private async _calculatePubKeyAndIdentityToken() {
         const header = {
             alg: "ES256",
             typ: "JWT",
         };
         const encodedHeader = base64url(JSON.stringify(header));
-        const address = await this._signer.getAddress();
+        const address = this._address;
         const payload = {
             iss: `did:ethr:${address}`,
             claimData: {
@@ -163,7 +197,7 @@ export class SignerService {
         // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
         // keccak256 hash is applied for Metamask to display a coherent hex value when signing
         const message = arrayify(keccak256(token));
-        const sig = await this._signer.signMessage(message);
+        const sig = await this.signMessage(message);
         const recoverValidatedPublicKey = (signedMessage: Uint8Array): string | undefined => {
             const publicKey = recoverPublicKey(signedMessage, sig);
             if (getAddress(address) === getAddress(computeAddress(publicKey))) {
@@ -178,15 +212,10 @@ export class SignerService {
         const digest = arrayify(hashMessage(message));
         const publicKey = recoverValidatedPublicKey(digest) ?? recoverValidatedPublicKey(message);
         if (publicKey) {
-            return { publicKey, identityToken: `${encodedHeader}.${encodedPayload}.${base64url(sig)}` };
-        }
-        throw new Error(ERROR_MESSAGES.PUBLIC_KEY_NOT_RECOVERED);
-    }
-
-    clearSession() {
-        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
-            localStorage.removeItem(WALLET_PROVIDER);
-            localStorage.removeItem(PUBLIC_KEY);
+            this._publicKey = publicKey;
+            this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(sig)}`;
+        } else {
+            throw new Error(ERROR_MESSAGES.PUBLIC_KEY_NOT_RECOVERED);
         }
     }
 }

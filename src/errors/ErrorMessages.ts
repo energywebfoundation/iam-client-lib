@@ -7,6 +7,7 @@ export enum ERROR_MESSAGES {
     ORG_WITH_ROLES = "You are not able to remove organization with registered roles",
     APP_WITH_ROLES = "You are not able to remove application with registered roles",
     METAMASK_PROVIDER_NOT_DETECTED = "Metamask provider not detected",
+    METAMASK_ACCOUNT_NOT_PROVIDED = "Metamask account not provided",
     ROLE_PREREQUISITES_NOT_MET = "Enrolment subject doesn't have required roles",
     ROLE_NOT_EXISTS = "Role you want to enroll to does not exists",
     CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT = "Can not update not controlled document",

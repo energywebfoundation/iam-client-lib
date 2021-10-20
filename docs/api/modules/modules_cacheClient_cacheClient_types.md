@@ -4,7 +4,6 @@
 
 ### Enumerations
 
-- [NamespaceType](../enums/modules_cacheClient_cacheClient_types.NamespaceType.md)
 - [Order](../enums/modules_cacheClient_cacheClient_types.Order.md)
 
 ### Interfaces

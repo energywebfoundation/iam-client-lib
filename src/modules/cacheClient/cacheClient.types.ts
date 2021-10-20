@@ -5,12 +5,6 @@ export enum Order {
     "DESC" = "DESC",
 }
 
-export enum NamespaceType {
-    "App" = "App",
-    "Org" = "Org",
-    "Role" = "Role",
-}
-
 export interface CacheServerClientOptions {
     url: string;
     cacheServerSupportsAuth?: boolean;

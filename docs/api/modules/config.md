@@ -9,7 +9,7 @@
 - [MessagingConfig](config.md#messagingconfig)
 - [cacheConfigs](config.md#cacheconfigs)
 - [chainConfigs](config.md#chainconfigs)
-- [messagingConfigs](config.md#messagingconfigs)
+- [getMessagingConfig](config.md#getmessagingconfig)
 - [setCacheConfig](config.md#setcacheconfig)
 - [setChainConfig](config.md#setchainconfig)
 - [setMessagingConfig](config.md#setmessagingconfig)
@@ -46,9 +46,9 @@ Re-exports: [chainConfigs](config_chain_config.md#chainconfigs)
 
 ___
 
-### messagingConfigs
+### getMessagingConfig
 
-Re-exports: [messagingConfigs](config_messaging_config.md#messagingconfigs)
+Re-exports: [getMessagingConfig](config_messaging_config.md#getmessagingconfig)
 
 ___
 
