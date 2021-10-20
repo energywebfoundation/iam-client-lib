@@ -15,7 +15,7 @@
 // @authors: Kim Honoridez
 // @authors: Daniel Wojno
 
-import { providers, Signer, utils } from "ethers";
+import { providers, Signer, utils, Wallet } from "ethers";
 import {
     IRoleDefinition,
     IAppDefinition,
@@ -71,7 +71,7 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
-
+import { JWT } from "@ew-did-registry/jwt";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -546,6 +546,10 @@ export class IAM extends IAMBase {
         return this._jwt.decode(token);
     }
 
+    /**
+     * @description create a public claim to prove identity
+     * @returns JWT token of created identity
+     */
     async createIdentityProof() {
         if (this._provider) {
             const blockNumber = await this._provider.getBlockNumber();
@@ -556,6 +560,28 @@ export class IAM extends IAMBase {
             });
         }
         throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
+    }
+
+    /**
+     * @description create a proof of identity delegate
+     * @param delegateKey private key of the delegate
+     * @param rpcUrl the url of the blockchain provider
+     * @param identity Did of the delegate
+     * @returns token of delegate
+     */
+    async createDelegateProof(delegateKey: string, rpcUrl: string, identity: string): Promise<string> {
+        const provider = new providers.JsonRpcProvider(rpcUrl);
+        const blockNumber = (await provider.getBlockNumber()).toString();
+
+        const payload: { iss: string; claimData: { blockNumber: string } } = {
+            iss: identity,
+            claimData: {
+                blockNumber,
+            },
+        };
+        const jwt = new JWT(new Wallet(delegateKey));
+        const identityToken = jwt.sign(payload, { algorithm: "ES256", issuer: identity });
+        return identityToken;
     }
 
     /// ROLES
@@ -1067,7 +1093,7 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * getRoleDefinition
+     * getDefinition
      *
      * @description get role definition form ens domain metadata record
      * @returns metadata string or empty string when there is no metadata
@@ -1095,6 +1121,36 @@ export class IAM extends IAMBase {
         if (this._domainDefinitionReader) {
             const roleHash = namehash(namespace);
             return await this._domainDefinitionReader.read({ node: roleHash });
+        }
+        throw new ENSResolverNotInitializedError();
+    }
+
+    /**
+     * getRolesDefinition
+     *
+     * @description get roles definition form ens domain metadata record
+     * @returns array of metadata strings
+     *
+     */
+    async getRolesDefinition({ namespaces }: { namespaces: string[] }): Promise<Record<string, IRoleDefinition>> {
+        if (this._cacheClient) {
+            return this._cacheClient.getRolesDefinition(namespaces);
+        }
+        if (this._domainDefinitionReader) {
+            const rolesWithDefinitions = await Promise.all(
+                namespaces.map(async (namespace) => {
+                    const roleHash = namehash(namespace);
+                    return {
+                        role: namespace,
+                        definition: (await this._domainDefinitionReader.read({
+                            node: roleHash,
+                        })) as unknown as IRoleDefinition,
+                    };
+                }),
+            );
+            return rolesWithDefinitions.reduce((result, { role, definition }) => {
+                return { ...result, [role]: definition };
+            }, {} as Record<string, IRoleDefinition>);
         }
         throw new ENSResolverNotInitializedError();
     }
@@ -1622,18 +1678,41 @@ export class IAM extends IAMBase {
         }
     }
 
+    private async getRolesResolvers(roles: string[]) {
+        const rolesWithResolvers = await Promise.all(
+            roles.map(async (role) => {
+                const resolver = await this._ensRegistry.resolver(namehash(role));
+                return {
+                    role,
+                    resolver,
+                };
+            }),
+        );
+
+        return rolesWithResolvers.reduce((result, { role, resolver }) => {
+            return { ...result, [role]: resolver };
+        }, {} as Record<string, string>);
+    }
+
     async registrationTypesOfRoles(roles: string[]): Promise<Record<string, Set<RegistrationTypes>>> {
         const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
             (acc, role) => ({ ...acc, [role]: new Set() }),
             {},
         );
-        for await (const role of roles) {
-            const def = await this.getDefinition({ type: ENSNamespaceTypes.Roles, namespace: role });
+
+        const [{ chainId }, definitions, resolvers] = await Promise.all([
+            this._provider.getNetwork(),
+            this.getRolesDefinition({ namespaces: roles }),
+            this.getRolesResolvers(roles),
+        ]);
+
+        for (const role of roles) {
+            const def = definitions[role];
+            const resolver = resolvers[role];
             if (!DomainReader.isRoleDefinition(def)) {
                 continue;
             }
-            const resolver = await this._ensRegistry.resolver(namehash(role));
-            const { chainId } = await this._provider.getNetwork();
+
             const { ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
             if (resolver === ensResolverAddress) {
                 types[role].add(RegistrationTypes.OnChain);

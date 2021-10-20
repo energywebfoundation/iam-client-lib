@@ -1,5 +1,5 @@
 import WalletConnect from "@walletconnect/client";
-import { IWalletConnectOptions, ICreateSessionOptions } from "@walletconnect/types";
+import { ICreateSessionOptions } from "@walletconnect/types";
 
 /**
  * Extension of WalletConnect client that allows session creation to be disabled
@@ -8,10 +8,6 @@ import { IWalletConnectOptions, ICreateSessionOptions } from "@walletconnect/typ
  */
 export class ControllableWalletConnect extends WalletConnect {
     public canCreateSession = true;
-
-    constructor(connectorOpts: IWalletConnectOptions) {
-        super(connectorOpts);
-    }
 
     public async createSession(opts?: ICreateSessionOptions): Promise<void> {
         if (this.canCreateSession) {

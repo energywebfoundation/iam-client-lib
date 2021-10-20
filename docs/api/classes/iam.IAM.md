@@ -35,6 +35,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [connectToDIDRegistry](iam.IAM.md#connecttodidregistry)
 - [createApplication](iam.IAM.md#createapplication)
 - [createClaimRequest](iam.IAM.md#createclaimrequest)
+- [createDelegateProof](iam.IAM.md#createdelegateproof)
 - [createIdentityProof](iam.IAM.md#createidentityproof)
 - [createOrganization](iam.IAM.md#createorganization)
 - [createProofClaim](iam.IAM.md#createproofclaim)
@@ -65,6 +66,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [getProviderType](iam.IAM.md#getprovidertype)
 - [getRoleDIDs](iam.IAM.md#getroledids)
 - [getRolesByNamespace](iam.IAM.md#getrolesbynamespace)
+- [getRolesDefinition](iam.IAM.md#getrolesdefinition)
 - [getSigner](iam.IAM.md#getsigner)
 - [getSubOrgsByOrgNamespace](iam.IAM.md#getsuborgsbyorgnamespace)
 - [getSubdomains](iam.IAM.md#getsubdomains)
@@ -347,13 +349,39 @@ ___
 
 ___
 
-### createIdentityProof
+### createDelegateProof
 
-▸ **createIdentityProof**(): `Promise`<`string`\>
+▸ **createDelegateProof**(`delegateKey`, `rpcUrl`, `identity`): `Promise`<`string`\>
+
+**`description`** create a proof of identity delegate
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `delegateKey` | `string` | private key of the delegate |
+| `rpcUrl` | `string` | the url of the blockchain provider |
+| `identity` | `string` | Did of the delegate |
 
 #### Returns
 
 `Promise`<`string`\>
+
+token of delegate
+
+___
+
+### createIdentityProof
+
+▸ **createIdentityProof**(): `Promise`<`string`\>
+
+**`description`** create a public claim to prove identity
+
+#### Returns
+
+`Promise`<`string`\>
+
+JWT token of created identity
 
 ___
 
@@ -722,7 +750,7 @@ ___
 
 ▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
-getRoleDefinition
+getDefinition
 
 **`description`** get role definition form ens domain metadata record
 
@@ -949,6 +977,29 @@ getRolesByNamespace
 `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 array of subdomains or empty array when there is no subdomains
+
+___
+
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`__namedParameters`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+getRolesDefinition
+
+**`description`** get roles definition form ens domain metadata record
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+array of metadata strings
 
 ___
 

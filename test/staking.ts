@@ -197,7 +197,7 @@ export const stakingTests = (): void => {
                 registrationTypes,
             });
             const [, encodedMsg] = publish.mock.calls.pop();
-            const { id, subjectAgreement, token } = jsonCodec.decode(encodedMsg);
+            const { id, subjectAgreement, token } = jsonCodec.decode(encodedMsg) as { id; subjectAgreement; token };
 
             await serviceProviderIam.issueClaimRequest({
                 id,

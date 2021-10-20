@@ -38,6 +38,7 @@
 - [getPreviouslyOwnedAssets](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getpreviouslyownedassets)
 - [getRoleDefinition](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getroledefinition)
 - [getRolesByOwner](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getrolesbyowner)
+- [getRolesDefinition](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getsuborganizationsbyorganization)
 - [isAuthEnabled](cacheServerClient_ICacheServerClient.ICacheServerClient.md#isauthenabled)
 - [issueClaim](cacheServerClient_ICacheServerClient.ICacheServerClient.md#issueclaim)
@@ -439,6 +440,22 @@ ___
 #### Returns
 
 `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
+
+___
+
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`namespaces`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
 
 ___
 

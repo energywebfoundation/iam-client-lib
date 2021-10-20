@@ -19,6 +19,7 @@ export interface ICacheServerClient {
     login: () => Promise<{ pubKeyAndIdentityToken: IPubKeyAndIdentityToken; token: string; refreshToken: string }>;
     isAuthEnabled: () => boolean;
     getRoleDefinition: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IRoleDefinition>;
+    getRolesDefinition: (namespaces: Array<ClaimsQueryParams["namespace"]>) => Promise<Record<string, IRoleDefinition>>;
     getOrgDefinition: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IOrganizationDefinition>;
     getAppDefinition: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IAppDefinition>;
     getApplicationRoles: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IRole[]>;

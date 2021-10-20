@@ -11,19 +11,18 @@ The iam-client-library provides high-level functions related to the identity and
 
 Identity in EW_DOS is established through a [Decentralized Identity (DID)](https://www.w3.org/TR/did-core/). A DID is a digital, verifiable identity that is user-generated and not coupled to any centralized institution. It can be used to identify any subject, such as a non-tangible asset, a customer, or an organization.
 
-- [getDID](../api/modules/iam.md#getDid)
-
 Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-use-cases/#dfn-did-documents). The DID Document contains information on the DID subject such as its public keys and authentication mechanisms, attributes and claims. Only the owner of the DID can update this information. 
 
-The iam-client-lib manages the DID lifecycle:
-- [getDidDocument](../api/modules/iam.md#getdiddocument)
-- [updateDidDocument](.../api/modules/iam.md#updatediddocument)
-- [revokeDidDocument](../api/modules/iam.md#revokediddocument)
+The iam-client-lib manages high-level functions related to the DIDs and DID Documents:
+- [getDID](../api/classes/iam.IAM.md#getdid)
+- [getDidDocument](../api/classes/iam.IAM.md#getdiddocument)
+- [updateDidDocument](../api/classes/iam.IAM.md#updatediddocument)
+- [revokeDidDocument](../api/classes/iam.IAM.md#revokediddocument)
 
 
 ## Claims
 
-Digital Identities can make [claims](../api/interfaces/cacheServerClient_cacheServerClient_types.Claim.md) to prove an attribute about themselves. A claim is also known as a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/).
+Decentralized Identifiers can make claims to prove an attribute about themselves. A claim is also known as a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/).
 
 Traditional credentials require manual verification, such as a signature or a stamp. Verifiable Credentials (VC) are verified completely through cryptographic means using a digital proof mechanism, such as a digital signature or a JSON Web Token, through a digital trust mechanism, such as a blockchain.
 
@@ -34,10 +33,10 @@ Verified claims are referenced in a user's DID document by a hash, and the full 
 INSERT EXAMPLE
 
 
-The iam-client-lib manages the claim lifecycle:
-- [createPublicClaim](../api/modules/iam.md#createpublicclaim) 
-- [issuePublicClaim](../api/modules/iam.md#issuepublicclaim)
-- [publishPublicClaim](../api/modules/iam.md#publishpublicclaim)
-- [verifyPublicClaim](../api/modules/iam.md#verifypublicclaim)
+The iam-client-lib performs the high-level functions related to claims:
+- [createPublicClaim](../api/classes/iam.IAM.md#createpublicclaim) 
+- [issuePublicClaim](../api/classes/iam.IAM.md#issuepublicclaim)
+- [publishPublicClaim](../api/classes/iam.IAM.md#publishpublicclaim)
+- [verifyPublicClaim](../api/classes/iam.IAM.md#verifypublicclaim) 
 
 

@@ -1,5 +1,6 @@
 # Organization
-[Organization Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)
+[Organization Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)  
+
 /*
 TO DO: 
 //Define Organization in context of iam-client-lib/Switchboard
@@ -11,6 +12,6 @@ TO DO:
 
 
 ## Public APIs:
-- [createOrganization](../api/modules/iam.md#createorganization)
-- [deleteOrganization](../api/modules/iam.md#deleteorganization)
-- [getOrgHierarchy](../api/modules/iam.md#getorghierarchy)
+- [createOrganization](../api/classes/iam.IAM.md#createorganization)
+- [deleteOrganization](../api/classes/iam.IAM.md#deleteorganization)
+- [getOrgHierarchy](../api/classes/iam.IAM.md#getorghierarchy)
