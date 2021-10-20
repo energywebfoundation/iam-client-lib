@@ -54,13 +54,13 @@ IAM Constructor
 
 ### closeConnection
 
-▸ **closeConnection**(): `Promise`<`void`\>
+▸ **closeConnection**(): `Promise`<`boolean`\>
 
 **`description`** Closes the connection between application and the signer's wallet
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<`boolean`\>
 
 ___
 

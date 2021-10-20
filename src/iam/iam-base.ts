@@ -399,13 +399,19 @@ export class IAMBase {
      * @description Closes the connection between application and the signer's wallet
      */
     async closeConnection() {
-        if (this._providerType === WalletProvider.EKC) {
-            await this._ekc?.logout({ mode: "popup" });
-        }
         this.clearSession();
         this._did = undefined;
         this._address = undefined;
         this._signer = undefined;
+        if (this._providerType === WalletProvider.EKC) {
+            try {
+                await this._ekc?.logout({ mode: "popup" });
+                return false;
+            } catch (error) {
+                console.log("error in azure logout ", error);
+            }
+        }
+        return true;
     }
 
     private async loginToCacheServer(): Promise<IPubKeyAndIdentityToken | undefined> {
