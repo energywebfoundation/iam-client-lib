@@ -15,7 +15,7 @@ nav:
   - CHANGELOG: CHANGELOG.md
 theme:
   name: material
-  logo: images/EnergyWeb_logo.png
+  logo: images/EWF-EWBrandmark-Knockout.png
   palette:
     primary: black
 repo_url: https://github.com/energywebfoundation/iam-client-lib
