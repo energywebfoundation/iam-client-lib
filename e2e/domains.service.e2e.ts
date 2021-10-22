@@ -3,7 +3,7 @@ import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import {
     DomainsService,
-    ENSNamespaceTypes,
+    NamespaceType,
     RegistrationTypes,
     initWithPrivateKeySigner,
     MessagingService,
@@ -53,11 +53,11 @@ describe("Domains service", () => {
             expect(await domainsService.checkExistenceOfDomain({ domain: `${org1}.${root}` })).toBe(true);
             expect(
                 await domainsService.checkExistenceOfDomain({
-                    domain: `${ENSNamespaceTypes.Application}.${org1}.${root}`,
+                    domain: `${NamespaceType.Application}.${org1}.${root}`,
                 }),
             ).toBe(true);
             expect(
-                await domainsService.checkExistenceOfDomain({ domain: `${ENSNamespaceTypes.Roles}.${org1}.${root}` }),
+                await domainsService.checkExistenceOfDomain({ domain: `${NamespaceType.Role}.${org1}.${root}` }),
             ).toBe(true);
             expect(await domainsService.getSubdomains({ domain: root })).toContain(`${org1}.${root}`);
             expect(await domainsService.isOwner({ domain: `${org1}.${root}`, user: rootOwner.address }));
@@ -115,7 +115,7 @@ describe("Domains service", () => {
 
             const roleDef = await domainsService.getDefinition({
                 namespace: roleDomain,
-                type: ENSNamespaceTypes.Roles,
+                type: NamespaceType.Role,
             });
             expect(roleDef).toMatchObject<IRoleDefinition>(data);
 

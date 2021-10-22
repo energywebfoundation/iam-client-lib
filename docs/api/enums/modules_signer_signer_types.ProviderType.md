@@ -8,7 +8,7 @@
 
 - [EwKeyManager](modules_signer_signer_types.ProviderType.md#ewkeymanager)
 - [Gnosis](modules_signer_signer_types.ProviderType.md#gnosis)
-- [Metamask](modules_signer_signer_types.ProviderType.md#metamask)
+- [MetaMask](modules_signer_signer_types.ProviderType.md#metamask)
 - [PrivateKey](modules_signer_signer_types.ProviderType.md#privatekey)
 - [WalletConnect](modules_signer_signer_types.ProviderType.md#walletconnect)
 
@@ -26,9 +26,9 @@ ___
 
 ___
 
-### Metamask
+### MetaMask
 
-• **Metamask** = `"MetaMask"`
+• **MetaMask** = `"MetaMask"`
 
 ___
 

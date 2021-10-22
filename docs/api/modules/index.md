@@ -60,7 +60,6 @@
 - [StakingPool](index.md#stakingpool)
 - [StakingService](index.md#stakingservice)
 - [VOLTA\_CHAIN\_ID](index.md#volta_chain_id)
-- [WALLET\_PROVIDER](index.md#wallet_provider)
 - [addSupportedDID](index.md#addsupporteddid)
 - [agreement\_type\_hash](index.md#agreement_type_hash)
 - [cacheConfigs](index.md#cacheconfigs)
@@ -428,12 +427,6 @@ ___
 ### VOLTA\_CHAIN\_ID
 
 Re-exports: [VOLTA\_CHAIN\_ID](utils_constants.md#volta_chain_id)
-
-___
-
-### WALLET\_PROVIDER
-
-Re-exports: [WALLET\_PROVIDER](modules_signer_signer_types.md#wallet_provider)
 
 ___
 

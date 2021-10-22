@@ -21,13 +21,10 @@
 ### Methods
 
 - [balance](modules_signer_signer_service.SignerService.md#balance)
-- [clearSession](modules_signer_signer_service.SignerService.md#clearsession)
 - [closeConnection](modules_signer_signer_service.SignerService.md#closeconnection)
 - [connect](modules_signer_signer_service.SignerService.md#connect)
-- [destroy](modules_signer_signer_service.SignerService.md#destroy)
 - [init](modules_signer_signer_service.SignerService.md#init)
 - [initEventHandlers](modules_signer_signer_service.SignerService.md#initeventhandlers)
-- [isSessionActive](modules_signer_signer_service.SignerService.md#issessionactive)
 - [on](modules_signer_signer_service.SignerService.md#on)
 - [onInit](modules_signer_signer_service.SignerService.md#oninit)
 - [publicKey](modules_signer_signer_service.SignerService.md#publickey)
@@ -130,16 +127,6 @@ ___
 
 ___
 
-### clearSession
-
-▸ **clearSession**(): `void`
-
-#### Returns
-
-`void`
-
-___
-
 ### closeConnection
 
 ▸ **closeConnection**(): `Promise`<`void`\>
@@ -160,16 +147,6 @@ ___
 | :------ | :------ |
 | `signer` | `Required`<`Signer`\> |
 | `providerType` | [`ProviderType`](../enums/modules_signer_signer_types.ProviderType.md) |
-
-#### Returns
-
-`Promise`<`void`\>
-
-___
-
-### destroy
-
-▸ **destroy**(): `Promise`<`void`\>
 
 #### Returns
 
@@ -198,20 +175,6 @@ Add event handler for certain events
 #### Returns
 
 `void`
-
-___
-
-### isSessionActive
-
-▸ **isSessionActive**(): `boolean`
-
-Check if session is active
-
-#### Returns
-
-`boolean`
-
-boolean that indicates the session state
 
 ___
 

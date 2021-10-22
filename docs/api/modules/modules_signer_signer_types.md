@@ -18,7 +18,6 @@
 ### Variables
 
 - [PUBLIC\_KEY](modules_signer_signer_types.md#public_key)
-- [WALLET\_PROVIDER](modules_signer_signer_types.md#wallet_provider)
 
 ## Type aliases
 
@@ -39,9 +38,3 @@
 ### PUBLIC\_KEY
 
 • `Const` **PUBLIC\_KEY**: ``"PublicKey"``
-
-___
-
-### WALLET\_PROVIDER
-
-• `Const` **WALLET\_PROVIDER**: ``"WalletProvider"``

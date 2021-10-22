@@ -2,18 +2,11 @@ import { BigNumber, providers, utils, Wallet, ethers, Signer } from "ethers";
 import base64url from "base64url";
 import { EventEmitter } from "events";
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
-import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
-import {
-    IPubKeyAndIdentityToken,
-    PUBLIC_KEY,
-    WALLET_PROVIDER,
-    ProviderType,
-    ProviderEvent,
-    AccountInfo,
-} from "./signer.types";
-import { executionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
-import { chainConfigs } from "../../config/chain.config";
 import { Methods } from "@ew-did-registry/did";
+import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
+import { chainConfigs } from "../../config/chain.config";
+import { ExecutionEnvironment, executionEnvironment } from "../../utils/detectEnvironment";
+import { IPubKeyAndIdentityToken, ProviderType, ProviderEvent, AccountInfo, PUBLIC_KEY } from "./signer.types";
 
 const { arrayify, keccak256, recoverPublicKey, computeAddress, computePublicKey, getAddress, hashMessage } = utils;
 export type ServiceInitializer = () => Promise<void>;
@@ -31,22 +24,25 @@ export class SignerService {
     constructor(private _signer: Required<Signer>, private _providerType: ProviderType) {}
 
     async init() {
+        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
+            this._publicKey = localStorage.getItem(PUBLIC_KEY) as string;
+        }
         this._address = await this.signer.getAddress();
         this._chainId = (await this._signer.provider.getNetwork()).chainId;
-        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
-            this._providerType = localStorage.getItem(WALLET_PROVIDER) as ProviderType;
-            this._publicKey = localStorage.getItem(PUBLIC_KEY) as ProviderType;
-        }
-        this.initEventHandlers();
-        for await (const initializer of this._servicesInitializers) {
-            await initializer();
-        }
+        this._chainName = chainConfigs()[this._chainId].chainName;
         if (this._signer instanceof providers.JsonRpcSigner) {
             this._account = (await this._signer.provider.listAccounts())[0];
         } else if (this._signer instanceof Wallet) {
             this._account = this._address;
         }
-        this._chainName = chainConfigs()[this._chainId].chainName;
+        /**
+         * @todo provide general way to initialize with previously saved key
+         */
+        this.initEventHandlers();
+
+        for await (const initializer of this._servicesInitializers) {
+            await initializer();
+        }
     }
 
     /**
@@ -54,13 +50,6 @@ export class SignerService {
      */
     onInit(initializer: ServiceInitializer) {
         this._servicesInitializers.push(initializer);
-    }
-
-    async destroy() {
-        const provider = this._signer.provider;
-        if (provider instanceof WalletConnectProvider) {
-            await provider.disconnect();
-        }
     }
 
     on(event: ProviderEvent, cb) {
@@ -78,12 +67,12 @@ export class SignerService {
      */
     initEventHandlers() {
         const accChangedHandler = async () => {
-            this.clearSession();
+            await this.closeConnection();
             await this.init();
         };
         this.on(ProviderEvent.AccountChanged, accChangedHandler);
         this.on(ProviderEvent.NetworkChanged, accChangedHandler);
-        this.on(ProviderEvent.Disconnected, this.clearSession);
+        this.on(ProviderEvent.Disconnected, this.closeConnection());
         this.on(ProviderEvent.SessionUpdate, accChangedHandler);
     }
 
@@ -119,15 +108,6 @@ export class SignerService {
         return `did:${Methods.Erc1056}:${this._address}`;
     }
 
-    /**
-     * Check if session is active
-     *
-     * @returns boolean that indicates the session state
-     */
-    isSessionActive() {
-        return Boolean(this._publicKey) && Boolean(this.providerType);
-    }
-
     async send({ to, data, value }: providers.TransactionRequest): Promise<providers.TransactionReceipt> {
         const tx = { to, from: this.address, data, ...(value && { value: BigNumber.from(value) }) };
         const receipt = await (await this._signer.sendTransaction(tx)).wait();
@@ -147,17 +127,16 @@ export class SignerService {
     async closeConnection() {
         if (this._signer instanceof WalletConnectProvider) {
             await this._signer.disconnect();
-            this.clearSession();
         }
     }
 
     async publicKey() {
         if (this._publicKey) return this._publicKey;
-        if (this._signer instanceof Wallet) {
+        else if (this._signer instanceof Wallet) {
             this._publicKey = this._signer.publicKey;
-            return this._publicKey;
+        } else {
+            this._publicKey = (await this.publicKeyAndIdentityToken()).publicKey;
         }
-        this._publicKey = (await this.publicKeyAndIdentityToken()).publicKey;
         return this._publicKey;
     }
 
@@ -169,13 +148,6 @@ export class SignerService {
             publicKey: this._publicKey,
             identityToken: this._identityToken,
         };
-    }
-
-    clearSession() {
-        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
-            localStorage.removeItem(WALLET_PROVIDER);
-            localStorage.removeItem(PUBLIC_KEY);
-        }
     }
 
     private async _calculatePubKeyAndIdentityToken() {

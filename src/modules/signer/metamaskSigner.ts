@@ -5,26 +5,18 @@ import { ProviderType } from "./signer.types";
 import { SignerService } from "./signer.service";
 
 export const fromMetaMask = async (): Promise<SignerService> => {
-    const signerService = new SignerService(await createMetamaskSigner({}), ProviderType.Metamask);
+    const signerService = new SignerService(await createMetamaskSigner(), ProviderType.MetaMask);
     await signerService.init();
     return signerService;
 };
 
-const createMetamaskSigner = async ({ initializeMetamask }: { initializeMetamask?: boolean }) => {
+const createMetamaskSigner = async () => {
     const metamaskProvider: any = await detectMetamask({
         mustBeMetaMask: true,
     });
     if (!metamaskProvider) {
         throw new Error(ERROR_MESSAGES.METAMASK_PROVIDER_NOT_DETECTED);
     }
-    // const requestObject = {
-    //     method: initializeMetamask ? "wallet_requestPermissions" : "eth_accounts",
-    //     params: [
-    //         {
-    //             eth_accounts: {},
-    //         },
-    //     ],
-    // };
     const accounts: string[] = await metamaskProvider.request(
         // requestObject
         { method: "eth_requestAccounts" },

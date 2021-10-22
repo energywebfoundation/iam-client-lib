@@ -1,7 +1,7 @@
 export enum ProviderType {
     WalletConnect = "WalletConnect",
     EwKeyManager = "EwKeyManager",
-    Metamask = "MetaMask",
+    MetaMask = "MetaMask",
     PrivateKey = "PrivateKey",
     Gnosis = "Gnosis",
 }
@@ -24,5 +24,4 @@ export type AccountInfo = {
     account: string;
 };
 
-export const WALLET_PROVIDER = "WalletProvider";
 export const PUBLIC_KEY = "PublicKey";

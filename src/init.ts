@@ -1,10 +1,8 @@
 import SafeAppSdk from "@gnosis.pm/safe-apps-sdk";
 import { SignerService } from "./modules/signer/signer.service";
 import { StakingService } from "./modules/staking/staking.service";
-import { executionEnvironment, ExecutionEnvironment } from "./utils/detectEnvironment";
 import { fromKms } from "./modules/signer/walletConnectKms";
 import { fromPrivateKey } from "./modules/signer/privateKeySigner";
-import { PUBLIC_KEY, WALLET_PROVIDER } from "./modules/signer/signer.types";
 import { DidRegistry } from "./modules/didRegistry/didRegistry.service";
 import { MessagingService } from "./modules/messaging/messaging.service";
 import { CacheClient } from "./modules/cacheClient/cacheClient.service";
@@ -64,17 +62,9 @@ export async function init(signerService: SignerService) {
         return { cacheClient, domainsService, stakingService, assetsService, connectToDidRegistry };
     }
 
-    async function storeSession() {
-        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
-            localStorage.setItem(WALLET_PROVIDER, signerService.providerType);
-            localStorage.setItem(PUBLIC_KEY, await signerService.publicKey());
-        }
-    }
-
     return {
         signerService,
         messagingService,
         connectToCacheServer,
-        storeSession,
     };
 }

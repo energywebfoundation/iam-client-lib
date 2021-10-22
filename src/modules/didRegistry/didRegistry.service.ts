@@ -222,8 +222,8 @@ export class DidRegistry {
             });
         } else if (provider instanceof JsonRpcProvider) {
             this._identityOwner = EwSigner.fromEthersSigner(signer, publicKey);
-            // TODO from EIP1193Provider
         } else {
+            /** @todo from EIP1193Provider */
             throw new Error(ERROR_MESSAGES.UNKNOWN_PROVIDER);
         }
 

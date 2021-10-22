@@ -32,7 +32,7 @@ export class CacheClient implements ICacheClient {
             baseURL: url,
             withCredentials: true,
         });
-        this.httpClient.interceptors.response.use(function (response: AxiosResponse) {
+        this.httpClient.interceptors.response.use((response: AxiosResponse) => {
             return response;
         }, this.handleUnauthorized);
         this.authEnabled = cacheServerSupportsAuth;
