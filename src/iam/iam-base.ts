@@ -399,6 +399,7 @@ export class IAMBase {
      * @description Closes the connection between application and the signer's wallet
      */
     async closeConnection() {
+        if (this._providerType !== WalletProvider.EKC) await this._walletConnectService.closeConnection();
         this.clearSession();
         this._did = undefined;
         this._address = undefined;
