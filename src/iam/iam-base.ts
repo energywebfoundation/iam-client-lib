@@ -315,7 +315,7 @@ export class IAMBase {
                 type: ProviderTypes.HTTP,
                 uriOrInfo: this._provider.connection.url,
             });
-        } else if (this._signer instanceof providers.JsonRpcSigner || this._providerType === WalletProvider.EKC) {
+        } else if (this._signer instanceof providers.JsonRpcSigner || this._signer instanceof Signer) {
             this._didSigner = EwSigner.fromEthersSigner(this._signer, this._publicKey);
         } else {
             throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
