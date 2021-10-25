@@ -75,6 +75,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [isConnected](iam.IAM.md#isconnected)
 - [isOwner](iam.IAM.md#isowner)
 - [isSessionActive](iam.IAM.md#issessionactive)
+- [issueClaim](iam.IAM.md#issueclaim)
 - [issueClaimRequest](iam.IAM.md#issueclaimrequest)
 - [issuePublicClaim](iam.IAM.md#issuepublicclaim)
 - [namespacesWithRelations](iam.IAM.md#namespaceswithrelations)
@@ -1169,6 +1170,27 @@ boolean that indicates the session state
 #### Inherited from
 
 [IAMBase](iam_iam_base.IAMBase.md).[isSessionActive](iam_iam_base.IAMBase.md#issessionactive)
+
+___
+
+### issueClaim
+
+▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
 
 ___
 

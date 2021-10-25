@@ -77,6 +77,7 @@ The domain ownership functionality has been redefined accordingly.
 - [isConnected](GnosisIam.GnosisIam-1.md#isconnected)
 - [isOwner](GnosisIam.GnosisIam-1.md#isowner)
 - [isSessionActive](GnosisIam.GnosisIam-1.md#issessionactive)
+- [issueClaim](GnosisIam.GnosisIam-1.md#issueclaim)
 - [issueClaimRequest](GnosisIam.GnosisIam-1.md#issueclaimrequest)
 - [issuePublicClaim](GnosisIam.GnosisIam-1.md#issuepublicclaim)
 - [namespacesWithRelations](GnosisIam.GnosisIam-1.md#namespaceswithrelations)
@@ -1360,6 +1361,31 @@ boolean that indicates the session state
 #### Inherited from
 
 [IAM](iam.IAM.md).[isSessionActive](iam.IAM.md#issessionactive)
+
+___
+
+### issueClaim
+
+▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[issueClaim](iam.IAM.md#issueclaim)
 
 ___
 
