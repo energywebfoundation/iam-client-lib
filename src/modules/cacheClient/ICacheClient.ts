@@ -10,7 +10,7 @@ import { Claim } from "../claims/claims.types";
 export interface ICacheClient {
     pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
     testLogin: () => Promise<void>;
-    login: () => Promise<{ pubKeyAndIdentityToken: IPubKeyAndIdentityToken; token: string; refreshToken: string }>;
+    login: () => Promise<void>;
     isAuthEnabled: () => boolean;
 
     getRoleDefinition: (namespace: string) => Promise<IRoleDefinition>;

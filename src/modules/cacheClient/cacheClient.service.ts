@@ -34,7 +34,7 @@ export class CacheClient implements ICacheClient {
         });
         this.httpClient.interceptors.response.use((response: AxiosResponse) => {
             return response;
-        }, this.handleUnauthorized);
+        }, this.handleUnauthorized.bind(this));
         this.authEnabled = cacheServerSupportsAuth;
         this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
     }
@@ -92,23 +92,8 @@ export class CacheClient implements ICacheClient {
         await this.getRoleDefinition("testing.if.logged.in");
     }
 
-    async login(): Promise<{
-        pubKeyAndIdentityToken: IPubKeyAndIdentityToken;
-        token: string;
-        refreshToken: string;
-    }> {
-        const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
-        const {
-            data: { refreshToken, token },
-        } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
-            identityToken: pubKeyAndIdentityToken.identityToken,
-        });
-
-        if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            this.refresh_token = refreshToken;
-        }
-        return { pubKeyAndIdentityToken, token, refreshToken };
+    async login() {
+        await this.testLogin();
     }
 
     async getRoleDefinition(namespace: string) {
@@ -296,9 +281,19 @@ export class CacheClient implements ICacheClient {
             );
             return data;
         } catch {
-            const loginResult = await this.login();
-            this.pubKeyAndIdentityToken = loginResult.pubKeyAndIdentityToken;
-            return loginResult;
+            const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
+            const {
+                data: { refreshToken, token },
+            } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
+                identityToken: pubKeyAndIdentityToken.identityToken,
+            });
+
+            if (!this.isBrowser) {
+                this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+                this.refresh_token = refreshToken;
+            }
+            this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
+            return { token, refreshToken };
         }
     }
 }

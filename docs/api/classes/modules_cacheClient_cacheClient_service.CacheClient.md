@@ -696,11 +696,11 @@ ___
 
 ### login
 
-▸ **login**(): `Promise`<`Object`\>
+▸ **login**(): `Promise`<`void`\>
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`<`void`\>
 
 #### Implementation of
 

@@ -507,11 +507,11 @@ ___
 
 ### login
 
-▸ **login**(): `Promise`<`Object`\>
+▸ **login**(): `Promise`<`void`\>
 
 #### Returns
 
-`Promise`<`Object`\>
+`Promise`<`void`\>
 
 ___
 
