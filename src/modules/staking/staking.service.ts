@@ -39,7 +39,7 @@ export class StakingService {
     private _stakingPoolFactory: StakingPoolFactory;
 
     constructor(private _signerService: SignerService, private _domainsService: DomainsService) {
-        this._signerService.onInit(async () => await this.init());
+        this._signerService.onInit(this.init.bind(this));
     }
 
     static async create(signerService: SignerService, domainsService: DomainsService) {

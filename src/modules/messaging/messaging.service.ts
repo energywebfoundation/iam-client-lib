@@ -9,7 +9,7 @@ export class MessagingService {
     private _subscriptions: Subscription[] = [];
 
     constructor(private _signerService: SignerService) {
-        this._signerService.onInit(async () => await this.init());
+        this._signerService.onInit(this.init.bind(this));
     }
 
     static async create(signerService: SignerService) {

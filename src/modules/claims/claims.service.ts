@@ -47,7 +47,7 @@ export class ClaimsService {
         private _didRegistry: DidRegistry,
         private _messagingService: MessagingService,
     ) {
-        this._signerService.onInit(async () => this.init());
+        this._signerService.onInit(this.init.bind(this));
     }
 
     static async create(

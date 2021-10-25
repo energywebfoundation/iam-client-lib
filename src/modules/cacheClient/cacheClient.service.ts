@@ -23,7 +23,7 @@ export class CacheClient implements ICacheClient {
     private refresh_token: string | undefined;
 
     constructor(private _signerService: SignerService) {
-        this._signerService.onInit(async () => await this.init());
+        this._signerService.onInit(this.init.bind(this));
     }
 
     async init() {

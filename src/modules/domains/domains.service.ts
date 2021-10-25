@@ -41,7 +41,7 @@ export class DomainsService {
     private _ttl = BigNumber.from(0);
 
     constructor(private _signerService: SignerService, private _cacheClient: CacheClient) {
-        this._signerService.onInit(async () => await this.init());
+        this._signerService.onInit(this.init.bind(this));
     }
 
     static async create(signerService: SignerService, cacheClient: CacheClient) {

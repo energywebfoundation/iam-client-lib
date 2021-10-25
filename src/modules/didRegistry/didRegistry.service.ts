@@ -41,7 +41,7 @@ export class DidRegistry {
         private _assetsService: AssetsService,
         private _ipfsUrl = "https://ipfs.infura.io:5001/api/v0/",
     ) {
-        this._signerService.onInit(async () => await this.init());
+        this._signerService.onInit(this.init.bind(this));
     }
 
     static async connect(
