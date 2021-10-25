@@ -17,24 +17,26 @@ const createMetamaskSigner = async () => {
     if (!metamaskProvider) {
         throw new Error(ERROR_MESSAGES.METAMASK_PROVIDER_NOT_DETECTED);
     }
-    const accounts: string[] = await metamaskProvider.request(
-        // requestObject
-        { method: "eth_requestAccounts" },
-    );
-    if (accounts.length === 0) {
-        throw new Error(ERROR_MESSAGES.METAMASK_ACCOUNT_NOT_PROVIDED);
-    }
-
-    // if (!initializeMetamask && accounts.length < 1) {
-    await metamaskProvider.request({
-        method: "wallet_requestPermissions",
+    const requestObject = {
+        method: "eth_accounts",
         params: [
             {
                 eth_accounts: {},
             },
         ],
-    });
-    // }
+    };
+    const accounts: string[] = await metamaskProvider.request(requestObject);
+
+    if (accounts.length < 1) {
+        await metamaskProvider.request({
+            method: "wallet_requestPermissions",
+            params: [
+                {
+                    eth_accounts: {},
+                },
+            ],
+        });
+    }
     const signer = new providers.Web3Provider(metamaskProvider).getSigner();
 
     console.log("metamask chain id:", (await signer.provider.getNetwork()).chainId);
