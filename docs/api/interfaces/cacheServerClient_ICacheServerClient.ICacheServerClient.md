@@ -38,6 +38,7 @@
 - [getPreviouslyOwnedAssets](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getpreviouslyownedassets)
 - [getRoleDefinition](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getroledefinition)
 - [getRolesByOwner](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getrolesbyowner)
+- [getRolesDefinition](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](cacheServerClient_ICacheServerClient.ICacheServerClient.md#getsuborganizationsbyorganization)
 - [isAuthEnabled](cacheServerClient_ICacheServerClient.ICacheServerClient.md#isauthenabled)
 - [issueClaim](cacheServerClient_ICacheServerClient.ICacheServerClient.md#issueclaim)
@@ -136,13 +137,15 @@ ___
 
 ### getApplicationsByOwner
 
-▸ **getApplicationsByOwner**(`__namedParameters`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
+▸ **getApplicationsByOwner**(`owner`, `opts?`): `Promise`<[`IApp`](cacheServerClient_cacheServerClient_types.IApp.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"``\> |
+| `owner` | `string` |
+| `opts?` | `Object` |
+| `opts.withRelations?` | `boolean` |
 
 #### Returns
 
@@ -360,13 +363,15 @@ ___
 
 ### getOrganizationsByOwner
 
-▸ **getOrganizationsByOwner**(`__namedParameters`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
+▸ **getOrganizationsByOwner**(`owner`, `opts?`): `Promise`<[`IOrganization`](cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"`` \| ``"excludeSubOrgs"``\> |
+| `owner` | `string` |
+| `opts?` | `Object` |
+| `opts.withRelations?` | `boolean` |
 
 #### Returns
 
@@ -435,6 +440,22 @@ ___
 #### Returns
 
 `Promise`<[`IRole`](cacheServerClient_cacheServerClient_types.IRole.md)[]\>
+
+___
+
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`namespaces`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
 
 ___
 

@@ -30,15 +30,16 @@ the connection. See [MYEN-625](https://energyweb.atlassian.net/browse/MYEN-625)
 
 ### constructor
 
-• **new ControllableWalletConnect**(`connectorOpts`)
+• **new ControllableWalletConnect**(`connectorOpts`, `pushServerOpts?`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `connectorOpts` | `IWalletConnectOptions` |
+| `pushServerOpts?` | `IPushServerOptions` |
 
-#### Overrides
+#### Inherited from
 
 WalletConnect.constructor
 

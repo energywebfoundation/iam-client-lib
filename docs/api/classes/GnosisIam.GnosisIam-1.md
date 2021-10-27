@@ -68,6 +68,7 @@ The domain ownership functionality has been redefined accordingly.
 - [getProviderType](GnosisIam.GnosisIam-1.md#getprovidertype)
 - [getRoleDIDs](GnosisIam.GnosisIam-1.md#getroledids)
 - [getRolesByNamespace](GnosisIam.GnosisIam-1.md#getrolesbynamespace)
+- [getRolesDefinition](GnosisIam.GnosisIam-1.md#getrolesdefinition)
 - [getSigner](GnosisIam.GnosisIam-1.md#getsigner)
 - [getSubOrgsByOrgNamespace](GnosisIam.GnosisIam-1.md#getsuborgsbyorgnamespace)
 - [getSubdomains](GnosisIam.GnosisIam-1.md#getsubdomains)
@@ -870,7 +871,7 @@ ___
 
 ▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
-getRoleDefinition
+getDefinition
 
 **`description`** get role definition form ens domain metadata record
 
@@ -1140,6 +1141,33 @@ array of subdomains or empty array when there is no subdomains
 #### Inherited from
 
 [IAM](iam.IAM.md).[getRolesByNamespace](iam.IAM.md#getrolesbynamespace)
+
+___
+
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`__namedParameters`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+getRolesDefinition
+
+**`description`** get roles definition form ens domain metadata record
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+array of metadata strings
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getRolesDefinition](iam.IAM.md#getrolesdefinition)
 
 ___
 

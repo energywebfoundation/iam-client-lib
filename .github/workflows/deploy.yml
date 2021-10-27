@@ -66,5 +66,6 @@ jobs:
       - name: Commit to develop branch and merge to master branch
         run: |
           git checkout develop
+          sudo chown $(id -u) .git/logs/refs/heads/develop
           git merge origin/master
           git push origin develop
