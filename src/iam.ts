@@ -1093,7 +1093,7 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * getRoleDefinition
+     * getDefinition
      *
      * @description get role definition form ens domain metadata record
      * @returns metadata string or empty string when there is no metadata
@@ -1121,6 +1121,36 @@ export class IAM extends IAMBase {
         if (this._domainDefinitionReader) {
             const roleHash = namehash(namespace);
             return await this._domainDefinitionReader.read({ node: roleHash });
+        }
+        throw new ENSResolverNotInitializedError();
+    }
+
+    /**
+     * getRolesDefinition
+     *
+     * @description get roles definition form ens domain metadata record
+     * @returns array of metadata strings
+     *
+     */
+    async getRolesDefinition({ namespaces }: { namespaces: string[] }): Promise<Record<string, IRoleDefinition>> {
+        if (this._cacheClient) {
+            return this._cacheClient.getRolesDefinition(namespaces);
+        }
+        if (this._domainDefinitionReader) {
+            const rolesWithDefinitions = await Promise.all(
+                namespaces.map(async (namespace) => {
+                    const roleHash = namehash(namespace);
+                    return {
+                        role: namespace,
+                        definition: (await this._domainDefinitionReader.read({
+                            node: roleHash,
+                        })) as unknown as IRoleDefinition,
+                    };
+                }),
+            );
+            return rolesWithDefinitions.reduce((result, { role, definition }) => {
+                return { ...result, [role]: definition };
+            }, {} as Record<string, IRoleDefinition>);
         }
         throw new ENSResolverNotInitializedError();
     }
@@ -1157,21 +1187,21 @@ export class IAM extends IAMBase {
     getENSTypesByOwner({
         type,
         owner,
-        excludeSubOrgs = false,
+        withRelations = true,
     }: {
         type: ENSNamespaceTypes;
         owner: string;
-        excludeSubOrgs?: boolean;
+        withRelations?: boolean;
     }) {
         owner = parseDID(owner);
         if (!this._cacheClient) {
             throw new CacheClientNotProvidedError();
         }
         if (type === ENSNamespaceTypes.Organization) {
-            return this._cacheClient.getOrganizationsByOwner({ owner, excludeSubOrgs });
+            return this._cacheClient.getOrganizationsByOwner(owner, { withRelations });
         }
         if (type === ENSNamespaceTypes.Application) {
-            return this._cacheClient.getApplicationsByOwner({ owner });
+            return this._cacheClient.getApplicationsByOwner(owner, { withRelations });
         }
         if (type === ENSNamespaceTypes.Roles) {
             return this._cacheClient.getRolesByOwner({ owner });
@@ -1648,18 +1678,41 @@ export class IAM extends IAMBase {
         }
     }
 
+    private async getRolesResolvers(roles: string[]) {
+        const rolesWithResolvers = await Promise.all(
+            roles.map(async (role) => {
+                const resolver = await this._ensRegistry.resolver(namehash(role));
+                return {
+                    role,
+                    resolver,
+                };
+            }),
+        );
+
+        return rolesWithResolvers.reduce((result, { role, resolver }) => {
+            return { ...result, [role]: resolver };
+        }, {} as Record<string, string>);
+    }
+
     async registrationTypesOfRoles(roles: string[]): Promise<Record<string, Set<RegistrationTypes>>> {
         const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
             (acc, role) => ({ ...acc, [role]: new Set() }),
             {},
         );
-        for await (const role of roles) {
-            const def = await this.getDefinition({ type: ENSNamespaceTypes.Roles, namespace: role });
+
+        const [{ chainId }, definitions, resolvers] = await Promise.all([
+            this._provider.getNetwork(),
+            this.getRolesDefinition({ namespaces: roles }),
+            this.getRolesResolvers(roles),
+        ]);
+
+        for (const role of roles) {
+            const def = definitions[role];
+            const resolver = resolvers[role];
             if (!DomainReader.isRoleDefinition(def)) {
                 continue;
             }
-            const resolver = await this._ensRegistry.resolver(namehash(role));
-            const { chainId } = await this._provider.getNetwork();
+
             const { ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
             if (resolver === ensResolverAddress) {
                 types[role].add(RegistrationTypes.OnChain);

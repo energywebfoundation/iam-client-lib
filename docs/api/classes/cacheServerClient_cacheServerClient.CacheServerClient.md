@@ -43,6 +43,7 @@
 - [getPreviouslyOwnedAssets](cacheServerClient_cacheServerClient.CacheServerClient.md#getpreviouslyownedassets)
 - [getRoleDefinition](cacheServerClient_cacheServerClient.CacheServerClient.md#getroledefinition)
 - [getRolesByOwner](cacheServerClient_cacheServerClient.CacheServerClient.md#getrolesbyowner)
+- [getRolesDefinition](cacheServerClient_cacheServerClient.CacheServerClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](cacheServerClient_cacheServerClient.CacheServerClient.md#getsuborganizationsbyorganization)
 - [handleRefreshToken](cacheServerClient_cacheServerClient.CacheServerClient.md#handlerefreshtoken)
 - [handleUnauthorized](cacheServerClient_cacheServerClient.CacheServerClient.md#handleunauthorized)
@@ -196,13 +197,15 @@ ___
 
 ### getApplicationsByOwner
 
-▸ **getApplicationsByOwner**(`__namedParameters`): `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
+▸ **getApplicationsByOwner**(`owner`, `__namedParameters?`): `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"``\> |
+| `owner` | `string` |
+| `__namedParameters` | `Object` |
+| `__namedParameters.withRelations?` | `boolean` |
 
 #### Returns
 
@@ -242,7 +245,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"id"`` \| ``"order"`` \| ``"take"`` \| ``"skip"`` \| ``"type"``\> |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"type"`` \| ``"id"`` \| ``"order"`` \| ``"take"`` \| ``"skip"``\> |
 
 #### Returns
 
@@ -376,7 +379,7 @@ ___
 
 ### getNamespaceBySearchPhrase
 
-▸ **getNamespaceBySearchPhrase**(`__namedParameters`): `Promise`<([`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md))[]\>
+▸ **getNamespaceBySearchPhrase**(`__namedParameters`): `Promise`<([`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md))[]\>
 
 #### Parameters
 
@@ -386,7 +389,7 @@ ___
 
 #### Returns
 
-`Promise`<([`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md))[]\>
+`Promise`<([`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md))[]\>
 
 #### Implementation of
 
@@ -476,13 +479,15 @@ ___
 
 ### getOrganizationsByOwner
 
-▸ **getOrganizationsByOwner**(`__namedParameters`): `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
+▸ **getOrganizationsByOwner**(`owner`, `__namedParameters?`): `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"owner"`` \| ``"excludeSubOrgs"``\> |
+| `owner` | `string` |
+| `__namedParameters` | `Object` |
+| `__namedParameters.withRelations?` | `boolean` |
 
 #### Returns
 
@@ -571,6 +576,26 @@ ___
 #### Implementation of
 
 [ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[getRolesByOwner](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#getrolesbyowner)
+
+___
+
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`namespaces`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+#### Implementation of
+
+[ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[getRolesDefinition](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#getrolesdefinition)
 
 ___
 

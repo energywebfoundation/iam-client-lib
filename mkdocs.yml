@@ -1,4 +1,4 @@
-site_name: IAM client library
+site_name: IAM Client Library
 nav:
   - Home: index.md
   - "Introduction":
@@ -7,14 +7,18 @@ nav:
       - "Domain Hierarchy": intro/domainhierarchy.md
   - "Guides":
       - "Authentication": guides/authentication.md
-      - "Authorization": guides/authorization.md
       - "Application": guides/application.md
       - "Asset": guides/asset.md
       - "Organization": guides/organization.md
       - "Role": guides/role.md
   - API: api/modules.md
   - CHANGELOG: CHANGELOG.md
-theme: readthedocs
+theme:
+  name: material
+  logo: images/EWF-EWBrandmark-Knockout.png
+  palette:
+    primary: black
+repo_url: https://github.com/energywebfoundation/iam-client-lib
 
 docs_dir: docs
 site_dir: site

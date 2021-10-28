@@ -1,5 +1,6 @@
 # Application
-[Application Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IApp.md)
+[Application Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IApp.md  
+
 /*
 TO DO: 
 //Define Application in context of iam-client-lib/Switchboard
@@ -8,8 +9,8 @@ TO DO:
 */
 
 ## Public APIs
-- [getAppsByOrgNamespace](../api/modules/iam.md#createorganization)
-- [createApplication](../api/modules/iam.md#getorghierarchy)
-- [deleteApplication](../api/modules/iam.md#deleteorganization)
+- [getAppsByOrgNamespace](../api/classes/iam.IAM.md#getappsbyorgnamespace)
+- [createApplication](../api/classes/iam.IAM.md#createapplication)
+- [deleteApplication](../api/classes/iam.IAM.md#deleteapplication)
 
 

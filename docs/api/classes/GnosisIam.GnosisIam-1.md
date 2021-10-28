@@ -68,6 +68,7 @@ The domain ownership functionality has been redefined accordingly.
 - [getProviderType](GnosisIam.GnosisIam-1.md#getprovidertype)
 - [getRoleDIDs](GnosisIam.GnosisIam-1.md#getroledids)
 - [getRolesByNamespace](GnosisIam.GnosisIam-1.md#getrolesbynamespace)
+- [getRolesDefinition](GnosisIam.GnosisIam-1.md#getrolesdefinition)
 - [getSigner](GnosisIam.GnosisIam-1.md#getsigner)
 - [getSubOrgsByOrgNamespace](GnosisIam.GnosisIam-1.md#getsuborgsbyorgnamespace)
 - [getSubdomains](GnosisIam.GnosisIam-1.md#getsubdomains)
@@ -868,9 +869,9 @@ ___
 
 ### getDefinition
 
-▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
+▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
-getRoleDefinition
+getDefinition
 
 **`description`** get role definition form ens domain metadata record
 
@@ -884,7 +885,7 @@ getRoleDefinition
 
 #### Returns
 
-`Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
+`Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
 metadata string or empty string when there is no metadata
 
@@ -938,7 +939,7 @@ ___
 
 ### getENSTypesByOwner
 
-▸ **getENSTypesByOwner**(`__namedParameters`): `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\> \| `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
+▸ **getENSTypesByOwner**(`__namedParameters`): `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\> \| `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 getENSTypesByOwner
 
@@ -952,7 +953,7 @@ getENSTypesByOwner
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\> \| `Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
+`Promise`<[`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\> \| `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 #### Overrides
 
@@ -962,7 +963,7 @@ ___
 
 ### getENSTypesBySearchPhrase
 
-▸ **getENSTypesBySearchPhrase**(`__namedParameters`): `Promise`<([`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md))[]\>
+▸ **getENSTypesBySearchPhrase**(`__namedParameters`): `Promise`<([`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md))[]\>
 
 getENSTypesBySearchPhrase
 
@@ -976,7 +977,7 @@ getENSTypesBySearchPhrase
 
 #### Returns
 
-`Promise`<([`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md) \| [`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md))[]\>
+`Promise`<([`IOrganization`](../interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md) \| [`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md) \| [`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md))[]\>
 
 #### Inherited from
 
@@ -1143,15 +1144,42 @@ array of subdomains or empty array when there is no subdomains
 
 ___
 
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`__namedParameters`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+getRolesDefinition
+
+**`description`** get roles definition form ens domain metadata record
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+array of metadata strings
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getRolesDefinition](iam.IAM.md#getrolesdefinition)
+
+___
+
 ### getSigner
 
-▸ **getSigner**(): `undefined` \| `Signer` \| `JsonRpcSigner`
+▸ **getSigner**(): `undefined` \| `JsonRpcSigner` \| `Signer`
 
 Get signer
 
 #### Returns
 
-`undefined` \| `Signer` \| `JsonRpcSigner`
+`undefined` \| `JsonRpcSigner` \| `Signer`
 
 JsonRpcSigner if connected to wallet, if not returns undefined
 
@@ -1596,7 +1624,7 @@ setRoleDefinition
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` |
+| `__namedParameters.data` | `IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition` |
 | `__namedParameters.domain` | `string` |
 
 #### Returns
