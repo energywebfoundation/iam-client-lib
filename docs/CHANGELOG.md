@@ -1,3 +1,10 @@
+# [3.3.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0...v3.3.0-alpha.1) (2021-10-28)
+
+
+### Features
+
+* add issuance of Role without previous request ([7ca982d](https://github.com/energywebfoundation/iam-client-lib/commit/7ca982d36473c693712687ba84be506e51f12fa9))
+
 # [3.2.0](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0...v3.2.0) (2021-10-27)
 
 
