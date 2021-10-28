@@ -1523,6 +1523,54 @@ export class IAM extends IAMBase {
         return canonizeSig(await this._signer.signMessage(arrayify(proofHash)));
     }
 
+    async issueClaim({
+        claim,
+        subject,
+    }: {
+        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        subject: string;
+    }) {
+        if (!this._did) {
+            throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+        }
+        if (!this._jwt) {
+            throw new Error(ERROR_MESSAGES.JWT_NOT_INITIALIZED);
+        }
+        if (!this._signer) {
+            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+        }
+
+        await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+
+        const message: IClaimIssuance = {
+            id: uuid(),
+            requester: subject,
+            claimIssuer: [this._did],
+            acceptedBy: this._did,
+        };
+
+        const publicClaim: IPublicClaim = {
+            did: subject,
+            signer: this._did,
+            claimData: claim,
+        };
+
+        message.issuedToken = await this.issuePublicClaim({
+            publicClaim,
+        });
+
+        if (this._natsConnection) {
+            const dataToSend = this._jsonCodec?.encode(message);
+            this._natsConnection.publish(`${subject}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        } else if (this._cacheClient) {
+            await this._cacheClient.issueClaim({ did: this._did, message });
+        } else {
+            throw new NATSConnectionNotEstablishedError();
+        }
+
+        return message.issuedToken;
+    }
+
     async createClaimRequest({
         claim,
         subject,
