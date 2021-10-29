@@ -1,3 +1,10 @@
+# [3.3.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.1...v3.3.0-alpha.2) (2021-10-29)
+
+
+### Features
+
+* **claims:** key value list when issuing credential to asset ([ab72d0d](https://github.com/energywebfoundation/iam-client-lib/commit/ab72d0d6d09d26f699cf368715e72a92f9b208c6))
+
 # [3.3.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0...v3.3.0-alpha.1) (2021-10-28)
 
 
