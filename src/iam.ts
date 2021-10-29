@@ -1627,12 +1627,14 @@ export class IAM extends IAMBase {
         id,
         subjectAgreement,
         registrationTypes,
+        claimParams,
     }: {
         requester: string;
         token: string;
         id: string;
         subjectAgreement: string;
         registrationTypes: RegistrationTypes[];
+        claimParams?: Record<string, string>;
     }) {
         if (!this._did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1661,7 +1663,7 @@ export class IAM extends IAMBase {
             const publicClaim: IPublicClaim = {
                 did: sub,
                 signer: this._did,
-                claimData,
+                claimData: { ...claimData, ...(claimParams && { claimParams }) },
             };
             message.issuedToken = await this.issuePublicClaim({
                 publicClaim,
