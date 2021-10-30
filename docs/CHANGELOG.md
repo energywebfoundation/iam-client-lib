@@ -1,3 +1,10 @@
+# [3.3.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-10-30)
+
+
+### Features
+
+* retrieve roles by issuer ICS-86 ([597ea1e](https://github.com/energywebfoundation/iam-client-lib/commit/597ea1e69697c7b2b1eb2e9a7ea0eb67f9cf611c))
+
 # [3.3.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.1...v3.3.0-alpha.2) (2021-10-29)
 
 
