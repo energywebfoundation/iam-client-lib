@@ -21,6 +21,7 @@
 - [addDIDToWatchList](cacheServerClient_cacheServerClient.CacheServerClient.md#adddidtowatchlist)
 - [addFailedRequest](cacheServerClient_cacheServerClient.CacheServerClient.md#addfailedrequest)
 - [deleteClaim](cacheServerClient_cacheServerClient.CacheServerClient.md#deleteclaim)
+- [getAllowedRolesByIssuer](cacheServerClient_cacheServerClient.CacheServerClient.md#getallowedrolesbyissuer)
 - [getAppDefinition](cacheServerClient_cacheServerClient.CacheServerClient.md#getappdefinition)
 - [getApplicationRoles](cacheServerClient_cacheServerClient.CacheServerClient.md#getapplicationroles)
 - [getApplicationsByOrganization](cacheServerClient_cacheServerClient.CacheServerClient.md#getapplicationsbyorganization)
@@ -132,6 +133,26 @@ ___
 #### Implementation of
 
 [ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[deleteClaim](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#deleteclaim)
+
+___
+
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`__namedParameters`): `Promise`<`string`[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Pick`<[`ClaimsQueryParams`](../modules/cacheServerClient_cacheServerClient_types.md#claimsqueryparams), ``"did"``\> |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+#### Implementation of
+
+[ICacheServerClient](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md).[getAllowedRolesByIssuer](../interfaces/cacheServerClient_ICacheServerClient.ICacheServerClient.md#getallowedrolesbyissuer)
 
 ___
 

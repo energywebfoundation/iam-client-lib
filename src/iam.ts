@@ -1281,6 +1281,20 @@ export class IAM extends IAMBase {
     }
 
     /**
+     * getAllowedRolesByIssuer
+     *
+     * @description get all roles that a DID can issue, given its role credentials and all role definitions
+     * @param did DID of issuer
+     * @returns array of roles that the DID can issue
+     */
+    getAllowedRolesByIssuer({ did }: { did: string }) {
+        if (!this._cacheClient) {
+            throw new CacheClientNotProvidedError();
+        }
+        return this._cacheClient.getAllowedRolesByIssuer({ did });
+    }
+
+    /**
      * getSubdomains
      *
      * @description get all subdomains for certain domain
