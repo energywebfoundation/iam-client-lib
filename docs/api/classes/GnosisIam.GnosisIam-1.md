@@ -49,6 +49,7 @@ The domain ownership functionality has been redefined accordingly.
 - [deleteClaim](GnosisIam.GnosisIam-1.md#deleteclaim)
 - [deleteOrganization](GnosisIam.GnosisIam-1.md#deleteorganization)
 - [deleteRole](GnosisIam.GnosisIam-1.md#deleterole)
+- [getAllowedRolesByIssuer](GnosisIam.GnosisIam-1.md#getallowedrolesbyissuer)
 - [getAppsByOrgNamespace](GnosisIam.GnosisIam-1.md#getappsbyorgnamespace)
 - [getAssetById](GnosisIam.GnosisIam-1.md#getassetbyid)
 - [getAssetHistory](GnosisIam.GnosisIam-1.md#getassethistory)
@@ -697,6 +698,33 @@ deleteRole
 #### Inherited from
 
 [IAM](iam.IAM.md).[deleteRole](iam.IAM.md#deleterole)
+
+___
+
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`__namedParameters`): `Promise`<`string`[]\>
+
+getAllowedRolesByIssuer
+
+**`description`** get all roles that a DID can issue, given its role credentials and all role definitions
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `__namedParameters` | `Object` | - |
+| `__namedParameters.did` | `string` | DID of issuer |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+array of roles that the DID can issue
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getAllowedRolesByIssuer](iam.IAM.md#getallowedrolesbyissuer)
 
 ___
 

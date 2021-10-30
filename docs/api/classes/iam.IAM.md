@@ -47,6 +47,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [deleteClaim](iam.IAM.md#deleteclaim)
 - [deleteOrganization](iam.IAM.md#deleteorganization)
 - [deleteRole](iam.IAM.md#deleterole)
+- [getAllowedRolesByIssuer](iam.IAM.md#getallowedrolesbyissuer)
 - [getAppsByOrgNamespace](iam.IAM.md#getappsbyorgnamespace)
 - [getAssetById](iam.IAM.md#getassetbyid)
 - [getAssetHistory](iam.IAM.md#getassethistory)
@@ -604,6 +605,29 @@ deleteRole
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`__namedParameters`): `Promise`<`string`[]\>
+
+getAllowedRolesByIssuer
+
+**`description`** get all roles that a DID can issue, given its role credentials and all role definitions
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `__namedParameters` | `Object` | - |
+| `__namedParameters.did` | `string` | DID of issuer |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+array of roles that the DID can issue
 
 ___
 

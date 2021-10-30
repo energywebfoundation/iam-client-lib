@@ -296,6 +296,11 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
+    async getAllowedRolesByIssuer({ did }: Pick<ClaimsQueryParams, "did">) {
+        const { data } = await this.httpClient.get<string[]>(`/claim/issuer/roles/allowed/${did}`);
+        return data;
+    }
+
     async getDidDocument({ did, includeClaims }: Pick<ClaimsQueryParams, "did" | "includeClaims">) {
         const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
         return data;
