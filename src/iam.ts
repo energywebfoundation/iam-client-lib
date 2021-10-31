@@ -24,8 +24,8 @@ import {
     EncodedCall,
     DomainReader,
 } from "@energyweb/iam-contracts";
+import { KeyType } from "@ew-did-registry/keys";
 import {
-    Algorithms,
     DIDAttribute,
     Encoding,
     IDIDDocument,
@@ -71,7 +71,7 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
-import { JWT } from "@ew-did-registry/jwt";
+import { Algorithms, JWT } from "@ew-did-registry/jwt";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -324,7 +324,7 @@ export class IAM extends IAMBase {
         }
 
         const updateData: IUpdateData = {
-            algo: Algorithms.Secp256k1,
+            algo: KeyType.Secp256k1,
             encoding: Encoding.HEX,
             ...data,
         };
@@ -580,7 +580,7 @@ export class IAM extends IAMBase {
             },
         };
         const jwt = new JWT(new Wallet(delegateKey));
-        const identityToken = jwt.sign(payload, { algorithm: "ES256", issuer: identity });
+        const identityToken = jwt.sign(payload, { algorithm: Algorithms.EIP191, issuer: identity });
         return identityToken;
     }
 

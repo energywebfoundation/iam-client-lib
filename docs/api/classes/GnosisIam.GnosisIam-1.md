@@ -584,7 +584,7 @@ ___
 
 ### decodeJWTToken
 
-▸ **decodeJWTToken**(`__namedParameters`): `Promise`<`string` \| { [key: string]: `string` \| `object`;  }\>
+▸ **decodeJWTToken**(`__namedParameters`): `Promise`<`unknown`\>
 
 #### Parameters
 
@@ -595,7 +595,7 @@ ___
 
 #### Returns
 
-`Promise`<`string` \| { [key: string]: `string` \| `object`;  }\>
+`Promise`<`unknown`\>
 
 #### Inherited from
 
