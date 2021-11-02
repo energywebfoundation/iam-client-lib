@@ -1,19 +1,19 @@
 import { BigNumber, utils, Wallet } from "ethers";
-import { IAM, ENSNamespaceTypes } from "../src/iam";
+import { ENSNamespaceTypes, IAM } from "../src/iam";
 import {
+    assetsManager,
+    claimManager,
+    deployClaimManager,
     deployDidRegistry,
+    deployEns,
+    deployIdentityManager,
+    didContract,
+    domainNotifer,
     ensRegistry,
     ensResolver,
-    didContract,
-    rpcUrl,
-    assetsManager,
-    domainNotifer,
-    claimManager,
-    replenish,
-    deployEns,
     provider,
-    deployIdentityManager,
-    deployClaimManager,
+    replenish,
+    rpcUrl,
 } from "./setup_contracts";
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
