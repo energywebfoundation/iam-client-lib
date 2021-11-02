@@ -2,7 +2,7 @@
 
 In the context of EW-DOS, an Asset is a digital representation of a physical or virtual device on the Energy Web Chain. An Asset could represent, for example, a solar PV panel, a battery, an electric vehicle, or an IOT device. 
 
-to read more about about Assets in EW-DOS, see our [documentation](https://energy-web-foundation.gitbook.io/energy-web/foundational-concepts/assets-in-ew-dos). 
+To read more about about Assets in EW-DOS, see the [documentation](https://energy-web-foundation.gitbook.io/energy-web/foundational-concepts/assets-in-ew-dos). 
 
 The IAM Client Library contains the high-level functions for managing (registering, fetching, transferring ownership, etc.) Assets and their corresponding data. 
 
