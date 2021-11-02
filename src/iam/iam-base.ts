@@ -25,7 +25,7 @@ import { ClaimManager } from "../../ethers/ClaimManager";
 import { JWT } from "@ew-did-registry/jwt";
 import { ICacheServerClient } from "../cacheServerClient/ICacheServerClient";
 import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
-import { connect, NatsConnection, Codec, JSONCodec } from "nats.ws/lib/src/mod.js";
+import { connect, NatsConnection, Codec, JSONCodec } from "nats.ws";
 import { ERROR_MESSAGES } from "../errors";
 import { ClaimData } from "../cacheServerClient/cacheServerClient.types";
 import difference from "lodash.difference";

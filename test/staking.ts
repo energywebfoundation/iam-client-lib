@@ -3,7 +3,7 @@ import { StakingPoolFactory__factory } from "../ethers/factories/StakingPoolFact
 import { RewardPool__factory } from "../ethers/factories/RewardPool__factory";
 import { StakingPool__factory } from "../ethers/factories/StakingPool__factory";
 import { StakingPoolFactory } from "../ethers/StakingPoolFactory";
-import { Wallet, utils, providers, BigNumber } from "ethers";
+import { BigNumber, providers, utils, Wallet } from "ethers";
 import { Methods } from "@ew-did-registry/did";
 import {
     ERROR_MESSAGES,
@@ -15,7 +15,7 @@ import {
     StakingPoolService,
     WITHDRAW_DELAY,
 } from "../src/iam-client-lib";
-import { claimManager, ensRegistry, replenish, provider, deployer } from "./setup_contracts";
+import { claimManager, deployer, ensRegistry, provider, replenish } from "./setup_contracts";
 import { createIam, root, rootOwner } from "./iam.test";
 import { mockJsonCodec, mockNats, restoreJsonCodec, restoreNats } from "./testUtils/mocks";
 import { chainConfigs } from "../src/iam/chainConfig";

@@ -18,12 +18,12 @@
 import { providers, Signer, utils, Wallet } from "ethers";
 import jsonwebtoken from "jsonwebtoken";
 import {
-    IRoleDefinition,
+    DomainReader,
+    EncodedCall,
     IAppDefinition,
     IOrganizationDefinition,
+    IRoleDefinition,
     PreconditionType,
-    EncodedCall,
-    DomainReader,
 } from "@energyweb/iam-contracts";
 import { KeyType, privToPem } from "@ew-did-registry/keys";
 import {
@@ -522,11 +522,13 @@ export class IAM extends IAMBase {
      *
      */
     async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
-        if (this._userClaims) {
-            const token = await this.createPublicClaim({ data, subject });
-            return this.publishPublicClaim({ token });
+        if (!this._userClaims) {
+            throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
         }
-        throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+
+        const token = await this.createPublicClaim({ data, subject });
+
+        return this.publishPublicClaim({ token });
     }
 
     /**
@@ -1446,6 +1448,7 @@ export class IAM extends IAMBase {
         const enroledRoles = new Set(
             (await this.getClaimsBySubject({ did: subject, isAccepted: true })).map(({ claimType }) => claimType),
         );
+
         const requiredRoles = new Set(
             enrolmentPreconditions
                 .filter(({ type }) => type === PreconditionType.Role)
@@ -1684,12 +1687,16 @@ export class IAM extends IAMBase {
             claimIssuer: [this._did],
             acceptedBy: this._did,
         };
+
+        const strippedClaimData = this.stripClaimData(claimData);
+
         if (registrationTypes.includes(RegistrationTypes.OffChain)) {
             const publicClaim: IPublicClaim = {
                 did: sub,
                 signer: this._did,
-                claimData: { ...claimData, ...(claimParams && { claimParams }) },
+                claimData: { ...strippedClaimData, ...(claimParams && { claimParams }) },
             };
+
             message.issuedToken = await this.issuePublicClaim({
                 publicClaim,
             });
@@ -2055,5 +2062,12 @@ export class IAM extends IAMBase {
             return this._cacheClient.getAssetHistory({ id, ...query });
         }
         throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
+    }
+
+    private stripClaimData(data: ClaimData): ClaimData {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { fields, ...claimData } = data;
+
+        return claimData;
     }
 }

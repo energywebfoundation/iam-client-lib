@@ -111,7 +111,7 @@ ___
 
 ### JWT\_ALGORITHM\_NOT\_SUPPORTED
 
-• **JWT\_ALGORITHM\_NOT\_SUPPORTED** = `"Jwt algorithm no supported"`
+• **JWT\_ALGORITHM\_NOT\_SUPPORTED** = `"Jwt algorithm not supported"`
 
 ___
 
