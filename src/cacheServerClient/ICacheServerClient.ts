@@ -19,15 +19,16 @@ export interface ICacheServerClient {
     login: () => Promise<{ pubKeyAndIdentityToken: IPubKeyAndIdentityToken; token: string; refreshToken: string }>;
     isAuthEnabled: () => boolean;
     getRoleDefinition: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IRoleDefinition>;
+    getRolesDefinition: (namespaces: Array<ClaimsQueryParams["namespace"]>) => Promise<Record<string, IRoleDefinition>>;
     getOrgDefinition: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IOrganizationDefinition>;
     getAppDefinition: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IAppDefinition>;
     getApplicationRoles: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IRole[]>;
     getOrganizationRoles: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IRole[]>;
-    getOrganizationsByOwner: ({
-        owner,
-        excludeSubOrgs,
-    }: Pick<ClaimsQueryParams, "owner" | "excludeSubOrgs">) => Promise<IOrganization[]>;
-    getApplicationsByOwner: ({ owner }: Pick<ClaimsQueryParams, "owner">) => Promise<IApp[]>;
+    getOrganizationsByOwner: (
+        owner: ClaimsQueryParams["owner"],
+        opts?: { withRelations?: boolean },
+    ) => Promise<IOrganization[]>;
+    getApplicationsByOwner: (owner: ClaimsQueryParams["owner"], opts?: { withRelations?: boolean }) => Promise<IApp[]>;
     getApplicationsByOrganization: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<IApp[]>;
     getSubOrganizationsByOrganization: ({
         namespace,
@@ -60,6 +61,7 @@ export interface ICacheServerClient {
     rejectClaim: ({ message, did }: RejectClaim) => Promise<void>;
     deleteClaim: ({ claimId }: Pick<ClaimsQueryParams, "claimId">) => Promise<void>;
     getDIDsForRole: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<string[]>;
+    getAllowedRolesByIssuer: ({ did }: Pick<ClaimsQueryParams, "did">) => Promise<string[]>;
     getDidDocument: ({ did, includeClaims }: Pick<ClaimsQueryParams, "did" | "includeClaims">) => Promise<IDIDDocument>;
     addDIDToWatchList: ({ did }: Pick<ClaimsQueryParams, "did">) => Promise<void>;
     getOwnedAssets: ({ did }: Pick<ClaimsQueryParams, "did">) => Promise<Asset[]>;

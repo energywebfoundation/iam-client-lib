@@ -47,6 +47,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [deleteClaim](iam.IAM.md#deleteclaim)
 - [deleteOrganization](iam.IAM.md#deleteorganization)
 - [deleteRole](iam.IAM.md#deleterole)
+- [getAllowedRolesByIssuer](iam.IAM.md#getallowedrolesbyissuer)
 - [getAppsByOrgNamespace](iam.IAM.md#getappsbyorgnamespace)
 - [getAssetById](iam.IAM.md#getassetbyid)
 - [getAssetHistory](iam.IAM.md#getassethistory)
@@ -66,6 +67,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [getProviderType](iam.IAM.md#getprovidertype)
 - [getRoleDIDs](iam.IAM.md#getroledids)
 - [getRolesByNamespace](iam.IAM.md#getrolesbynamespace)
+- [getRolesDefinition](iam.IAM.md#getrolesdefinition)
 - [getSigner](iam.IAM.md#getsigner)
 - [getSubOrgsByOrgNamespace](iam.IAM.md#getsuborgsbyorgnamespace)
 - [getSubdomains](iam.IAM.md#getsubdomains)
@@ -74,6 +76,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [isConnected](iam.IAM.md#isconnected)
 - [isOwner](iam.IAM.md#isowner)
 - [isSessionActive](iam.IAM.md#issessionactive)
+- [issueClaim](iam.IAM.md#issueclaim)
 - [issueClaimRequest](iam.IAM.md#issueclaimrequest)
 - [issuePublicClaim](iam.IAM.md#issuepublicclaim)
 - [namespacesWithRelations](iam.IAM.md#namespaceswithrelations)
@@ -605,6 +608,29 @@ deleteRole
 
 ___
 
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`__namedParameters`): `Promise`<`string`[]\>
+
+getAllowedRolesByIssuer
+
+**`description`** get all roles that a DID can issue, given its role credentials and all role definitions
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `__namedParameters` | `Object` | - |
+| `__namedParameters.did` | `string` | DID of issuer |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+array of roles that the DID can issue
+
+___
+
 ### getAppsByOrgNamespace
 
 ▸ **getAppsByOrgNamespace**(`__namedParameters`): `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
@@ -749,7 +775,7 @@ ___
 
 ▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
-getRoleDefinition
+getDefinition
 
 **`description`** get role definition form ens domain metadata record
 
@@ -814,9 +840,9 @@ getENSTypesByOwner
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.excludeSubOrgs?` | `boolean` |
 | `__namedParameters.owner` | `string` |
 | `__namedParameters.type` | [`ENSNamespaceTypes`](../enums/iam.ENSNamespaceTypes.md) |
+| `__namedParameters.withRelations?` | `boolean` |
 
 #### Returns
 
@@ -976,6 +1002,29 @@ getRolesByNamespace
 `Promise`<[`IRole`](../interfaces/cacheServerClient_cacheServerClient_types.IRole.md)[]\>
 
 array of subdomains or empty array when there is no subdomains
+
+___
+
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`__namedParameters`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+getRolesDefinition
+
+**`description`** get roles definition form ens domain metadata record
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+array of metadata strings
 
 ___
 
@@ -1148,6 +1197,27 @@ boolean that indicates the session state
 
 ___
 
+### issueClaim
+
+▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+___
+
 ### issueClaimRequest
 
 ▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
@@ -1157,6 +1227,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
+| `__namedParameters.claimParams?` | `Record`<`string`, `string`\> |
 | `__namedParameters.id` | `string` |
 | `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/cacheServerClient_cacheServerClient_types.RegistrationTypes.md)[] |
 | `__namedParameters.requester` | `string` |

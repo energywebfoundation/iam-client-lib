@@ -17,10 +17,9 @@ const config: Config = {
     // nats.ws is bundled because using standard import/require does not work for cjs format.
     // nat.ws only provides a .mjs file which cannot be required.
     // include tslib for clients using older version of tslib
-    bundleNodeModules: ["nats.ws", "tslib"],
+    bundleNodeModules: ["tslib"],
     input: "src/iam-client-lib.ts",
     output: {
-        format: ["cjs", "esm"],
         minify: false,
     },
 };

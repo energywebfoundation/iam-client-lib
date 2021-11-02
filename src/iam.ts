@@ -1096,7 +1096,7 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * getRoleDefinition
+     * getDefinition
      *
      * @description get role definition form ens domain metadata record
      * @returns metadata string or empty string when there is no metadata
@@ -1124,6 +1124,36 @@ export class IAM extends IAMBase {
         if (this._domainDefinitionReader) {
             const roleHash = namehash(namespace);
             return await this._domainDefinitionReader.read({ node: roleHash });
+        }
+        throw new ENSResolverNotInitializedError();
+    }
+
+    /**
+     * getRolesDefinition
+     *
+     * @description get roles definition form ens domain metadata record
+     * @returns array of metadata strings
+     *
+     */
+    async getRolesDefinition({ namespaces }: { namespaces: string[] }): Promise<Record<string, IRoleDefinition>> {
+        if (this._cacheClient) {
+            return this._cacheClient.getRolesDefinition(namespaces);
+        }
+        if (this._domainDefinitionReader) {
+            const rolesWithDefinitions = await Promise.all(
+                namespaces.map(async (namespace) => {
+                    const roleHash = namehash(namespace);
+                    return {
+                        role: namespace,
+                        definition: (await this._domainDefinitionReader.read({
+                            node: roleHash,
+                        })) as unknown as IRoleDefinition,
+                    };
+                }),
+            );
+            return rolesWithDefinitions.reduce((result, { role, definition }) => {
+                return { ...result, [role]: definition };
+            }, {} as Record<string, IRoleDefinition>);
         }
         throw new ENSResolverNotInitializedError();
     }
@@ -1160,21 +1190,21 @@ export class IAM extends IAMBase {
     getENSTypesByOwner({
         type,
         owner,
-        excludeSubOrgs = false,
+        withRelations = true,
     }: {
         type: ENSNamespaceTypes;
         owner: string;
-        excludeSubOrgs?: boolean;
+        withRelations?: boolean;
     }) {
         owner = parseDID(owner);
         if (!this._cacheClient) {
             throw new CacheClientNotProvidedError();
         }
         if (type === ENSNamespaceTypes.Organization) {
-            return this._cacheClient.getOrganizationsByOwner({ owner, excludeSubOrgs });
+            return this._cacheClient.getOrganizationsByOwner(owner, { withRelations });
         }
         if (type === ENSNamespaceTypes.Application) {
-            return this._cacheClient.getApplicationsByOwner({ owner });
+            return this._cacheClient.getApplicationsByOwner(owner, { withRelations });
         }
         if (type === ENSNamespaceTypes.Roles) {
             return this._cacheClient.getRolesByOwner({ owner });
@@ -1251,6 +1281,20 @@ export class IAM extends IAMBase {
             throw new CacheClientNotProvidedError();
         }
         return this._cacheClient.getDIDsForRole({ namespace });
+    }
+
+    /**
+     * getAllowedRolesByIssuer
+     *
+     * @description get all roles that a DID can issue, given its role credentials and all role definitions
+     * @param did DID of issuer
+     * @returns array of roles that the DID can issue
+     */
+    getAllowedRolesByIssuer({ did }: { did: string }) {
+        if (!this._cacheClient) {
+            throw new CacheClientNotProvidedError();
+        }
+        return this._cacheClient.getAllowedRolesByIssuer({ did });
     }
 
     /**
@@ -1497,6 +1541,54 @@ export class IAM extends IAMBase {
         return canonizeSig(await this._signer.signMessage(arrayify(proofHash)));
     }
 
+    async issueClaim({
+        claim,
+        subject,
+    }: {
+        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        subject: string;
+    }) {
+        if (!this._did) {
+            throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+        }
+        if (!this._jwt) {
+            throw new Error(ERROR_MESSAGES.JWT_NOT_INITIALIZED);
+        }
+        if (!this._signer) {
+            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+        }
+
+        await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+
+        const message: IClaimIssuance = {
+            id: uuid(),
+            requester: subject,
+            claimIssuer: [this._did],
+            acceptedBy: this._did,
+        };
+
+        const publicClaim: IPublicClaim = {
+            did: subject,
+            signer: this._did,
+            claimData: claim,
+        };
+
+        message.issuedToken = await this.issuePublicClaim({
+            publicClaim,
+        });
+
+        if (this._natsConnection) {
+            const dataToSend = this._jsonCodec?.encode(message);
+            this._natsConnection.publish(`${subject}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        } else if (this._cacheClient) {
+            await this._cacheClient.issueClaim({ did: this._did, message });
+        } else {
+            throw new NATSConnectionNotEstablishedError();
+        }
+
+        return message.issuedToken;
+    }
+
     async createClaimRequest({
         claim,
         subject,
@@ -1553,12 +1645,14 @@ export class IAM extends IAMBase {
         id,
         subjectAgreement,
         registrationTypes,
+        claimParams,
     }: {
         requester: string;
         token: string;
         id: string;
         subjectAgreement: string;
         registrationTypes: RegistrationTypes[];
+        claimParams?: Record<string, string>;
     }) {
         if (!this._did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1590,7 +1684,7 @@ export class IAM extends IAMBase {
             const publicClaim: IPublicClaim = {
                 did: sub,
                 signer: this._did,
-                claimData: strippedClaimData,
+                claimData: { ...strippedClaimData, ...(claimParams && { claimParams }) },
             };
 
             message.issuedToken = await this.issuePublicClaim({
@@ -1656,18 +1750,41 @@ export class IAM extends IAMBase {
         }
     }
 
+    private async getRolesResolvers(roles: string[]) {
+        const rolesWithResolvers = await Promise.all(
+            roles.map(async (role) => {
+                const resolver = await this._ensRegistry.resolver(namehash(role));
+                return {
+                    role,
+                    resolver,
+                };
+            }),
+        );
+
+        return rolesWithResolvers.reduce((result, { role, resolver }) => {
+            return { ...result, [role]: resolver };
+        }, {} as Record<string, string>);
+    }
+
     async registrationTypesOfRoles(roles: string[]): Promise<Record<string, Set<RegistrationTypes>>> {
         const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
             (acc, role) => ({ ...acc, [role]: new Set() }),
             {},
         );
-        for await (const role of roles) {
-            const def = await this.getDefinition({ type: ENSNamespaceTypes.Roles, namespace: role });
+
+        const [{ chainId }, definitions, resolvers] = await Promise.all([
+            this._provider.getNetwork(),
+            this.getRolesDefinition({ namespaces: roles }),
+            this.getRolesResolvers(roles),
+        ]);
+
+        for (const role of roles) {
+            const def = definitions[role];
+            const resolver = resolvers[role];
             if (!DomainReader.isRoleDefinition(def)) {
                 continue;
             }
-            const resolver = await this._ensRegistry.resolver(namehash(role));
-            const { chainId } = await this._provider.getNetwork();
+
             const { ensResolverAddress, ensPublicResolverAddress } = chainConfigs[chainId];
             if (resolver === ensResolverAddress) {
                 types[role].add(RegistrationTypes.OnChain);

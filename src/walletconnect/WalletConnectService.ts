@@ -1,4 +1,4 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import WalletConnectProvider from "@walletconnect/ethereum-provider";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { ControllableWalletConnect } from "./ControllableWalletConnect";
 import { WalletProvider } from "../types/WalletProvider";
@@ -32,8 +32,8 @@ export class WalletConnectService {
 
         this._walletConnectProvider = new WalletConnectProvider({
             rpc,
-            infuraId: this._infuraId,
             connector: this._walletConnectClient,
+            infuraId: this._infuraId,
         });
 
         if (walletProvider === WalletProvider.EwKeyManager) {
@@ -41,7 +41,7 @@ export class WalletConnectService {
                 throw Error("EwKeyManager provider type specified but no url was provided.");
             }
             const ewKeyManagerUrl = this._ewKeyManagerUrl;
-            this._walletConnectProvider.wc.on("display_uri", (err, payload) => {
+            this._walletConnectProvider.on("display_uri", (err, payload) => {
                 // uri is expected to be WalletConnect Standard URI https://eips.ethereum.org/EIPS/eip-1328
                 const wcUri = payload.params[0];
 
@@ -53,6 +53,7 @@ export class WalletConnectService {
         }
 
         await this._walletConnectProvider.enable();
+        // await this._walletConnectProvider.connector.connect();
     }
 
     /**
@@ -73,7 +74,7 @@ export class WalletConnectService {
             this._walletConnectClient.canCreateSession = false;
         }
         if (this._walletConnectProvider) {
-            await this._walletConnectProvider.close();
+            await this._walletConnectProvider.disconnect();
         }
     }
 

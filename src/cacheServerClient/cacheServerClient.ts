@@ -18,6 +18,7 @@ import { ICacheServerClient } from "./ICacheServerClient";
 import { detectExecutionEnvironment, ExecutionEnvironment } from "../utils/detectEnvironment";
 import { getPublicKeyAndIdentityToken, IPubKeyAndIdentityToken } from "../utils/getPublicKeyAndIdentityToken";
 import { Signer } from "ethers";
+import { IRoleDefinition } from "@energyweb/iam-contracts";
 
 export interface CacheServerClientOptions {
     url: string;
@@ -143,6 +144,14 @@ export class CacheServerClient implements ICacheServerClient {
         return data?.definition;
     }
 
+    async getRolesDefinition(namespaces: Array<ClaimsQueryParams["namespace"]>) {
+        const { data } = await this.httpClient.get<IRole[]>(`/role?namespaces=${namespaces.join(",")}`);
+        const rolesWithDefinitions = data?.map((entry) => ({ definition: entry.definition, role: entry.namespace }));
+        return rolesWithDefinitions.reduce((result, { role, definition }) => {
+            return { ...result, [role]: definition };
+        }, {} as Record<string, IRoleDefinition>);
+    }
+
     async getOrgDefinition({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<IOrganization>(`/org/${namespace}`);
         return data?.definition;
@@ -163,9 +172,12 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
-    async getOrganizationsByOwner({ owner, excludeSubOrgs }: Pick<ClaimsQueryParams, "owner" | "excludeSubOrgs">) {
+    async getOrganizationsByOwner(
+        owner: ClaimsQueryParams["owner"],
+        { withRelations = true }: { withRelations?: boolean } = {},
+    ) {
         const { data } = await this.httpClient.get<IOrganization[]>(
-            `/org/owner/${owner}?excludeSubOrgs=${excludeSubOrgs}`,
+            `/org/owner/${owner}?withRelations=${withRelations}`,
         );
         return data;
     }
@@ -196,8 +208,11 @@ export class CacheServerClient implements ICacheServerClient {
         return data;
     }
 
-    async getApplicationsByOwner({ owner }: Pick<ClaimsQueryParams, "owner">) {
-        const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}`);
+    async getApplicationsByOwner(
+        owner: ClaimsQueryParams["owner"],
+        { withRelations = true }: { withRelations?: boolean } = {},
+    ) {
+        const { data } = await this.httpClient.get<IApp[]>(`/app/owner/${owner}?withRelations=${withRelations}`);
         return data;
     }
 
@@ -278,6 +293,11 @@ export class CacheServerClient implements ICacheServerClient {
 
     async getDIDsForRole({ namespace }: Pick<ClaimsQueryParams, "namespace">) {
         const { data } = await this.httpClient.get<string[]>(`/claim/did/${namespace}?accepted=true`);
+        return data;
+    }
+
+    async getAllowedRolesByIssuer({ did }: Pick<ClaimsQueryParams, "did">) {
+        const { data } = await this.httpClient.get<string[]>(`/claim/issuer/roles/allowed/${did}`);
         return data;
     }
 

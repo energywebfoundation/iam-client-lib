@@ -49,6 +49,7 @@ The domain ownership functionality has been redefined accordingly.
 - [deleteClaim](GnosisIam.GnosisIam-1.md#deleteclaim)
 - [deleteOrganization](GnosisIam.GnosisIam-1.md#deleteorganization)
 - [deleteRole](GnosisIam.GnosisIam-1.md#deleterole)
+- [getAllowedRolesByIssuer](GnosisIam.GnosisIam-1.md#getallowedrolesbyissuer)
 - [getAppsByOrgNamespace](GnosisIam.GnosisIam-1.md#getappsbyorgnamespace)
 - [getAssetById](GnosisIam.GnosisIam-1.md#getassetbyid)
 - [getAssetHistory](GnosisIam.GnosisIam-1.md#getassethistory)
@@ -68,6 +69,7 @@ The domain ownership functionality has been redefined accordingly.
 - [getProviderType](GnosisIam.GnosisIam-1.md#getprovidertype)
 - [getRoleDIDs](GnosisIam.GnosisIam-1.md#getroledids)
 - [getRolesByNamespace](GnosisIam.GnosisIam-1.md#getrolesbynamespace)
+- [getRolesDefinition](GnosisIam.GnosisIam-1.md#getrolesdefinition)
 - [getSigner](GnosisIam.GnosisIam-1.md#getsigner)
 - [getSubOrgsByOrgNamespace](GnosisIam.GnosisIam-1.md#getsuborgsbyorgnamespace)
 - [getSubdomains](GnosisIam.GnosisIam-1.md#getsubdomains)
@@ -76,6 +78,7 @@ The domain ownership functionality has been redefined accordingly.
 - [isConnected](GnosisIam.GnosisIam-1.md#isconnected)
 - [isOwner](GnosisIam.GnosisIam-1.md#isowner)
 - [isSessionActive](GnosisIam.GnosisIam-1.md#issessionactive)
+- [issueClaim](GnosisIam.GnosisIam-1.md#issueclaim)
 - [issueClaimRequest](GnosisIam.GnosisIam-1.md#issueclaimrequest)
 - [issuePublicClaim](GnosisIam.GnosisIam-1.md#issuepublicclaim)
 - [namespacesWithRelations](GnosisIam.GnosisIam-1.md#namespaceswithrelations)
@@ -698,6 +701,33 @@ deleteRole
 
 ___
 
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`__namedParameters`): `Promise`<`string`[]\>
+
+getAllowedRolesByIssuer
+
+**`description`** get all roles that a DID can issue, given its role credentials and all role definitions
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `__namedParameters` | `Object` | - |
+| `__namedParameters.did` | `string` | DID of issuer |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+array of roles that the DID can issue
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getAllowedRolesByIssuer](iam.IAM.md#getallowedrolesbyissuer)
+
+___
+
 ### getAppsByOrgNamespace
 
 ▸ **getAppsByOrgNamespace**(`__namedParameters`): `Promise`<[`IApp`](../interfaces/cacheServerClient_cacheServerClient_types.IApp.md)[]\>
@@ -870,7 +900,7 @@ ___
 
 ▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IAppDefinition` \| `IOrganizationDefinition`\>
 
-getRoleDefinition
+getDefinition
 
 **`description`** get role definition form ens domain metadata record
 
@@ -1143,6 +1173,33 @@ array of subdomains or empty array when there is no subdomains
 
 ___
 
+### getRolesDefinition
+
+▸ **getRolesDefinition**(`__namedParameters`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+getRolesDefinition
+
+**`description`** get roles definition form ens domain metadata record
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.namespaces` | `string`[] |
+
+#### Returns
+
+`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+
+array of metadata strings
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getRolesDefinition](iam.IAM.md#getrolesdefinition)
+
+___
+
 ### getSigner
 
 ▸ **getSigner**(): `undefined` \| `JsonRpcSigner` \| `Signer`
@@ -1335,6 +1392,31 @@ boolean that indicates the session state
 
 ___
 
+### issueClaim
+
+▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[issueClaim](iam.IAM.md#issueclaim)
+
+___
+
 ### issueClaimRequest
 
 ▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
@@ -1344,6 +1426,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
+| `__namedParameters.claimParams?` | `Record`<`string`, `string`\> |
 | `__namedParameters.id` | `string` |
 | `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/cacheServerClient_cacheServerClient_types.RegistrationTypes.md)[] |
 | `__namedParameters.requester` | `string` |

@@ -16,7 +16,10 @@ The IAM Base class is the main class of the iam-client-library. It initializes c
 
 
 ## [IAM Class](../api/modules/iam.md)
-The IAM Class extends the IAM Base class. Methods on this class perform CRUD operations for DID Documents, Claims (Credentials), [Roles](./roles.md), [Organizations](./organization.md), and [Applications](./applications.md).
+The IAM Class extends the IAM Base class. Methods on this class perform CRUD operations for DID Documents, [Claims/Credentials](guides/claim.md), 
+[Roles](guides/role.md), 
+[Organizations](guides/organization.md), and 
+[Applications](guides/applications.md).
 
 //Placeholder - expalanation of where data is stored
 - Organizations, Applications and Roles are stored on the cache server
