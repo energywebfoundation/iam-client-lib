@@ -1,3 +1,10 @@
+# [3.3.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.3...v3.3.0-alpha.4) (2021-11-02)
+
+
+### Bug Fixes
+
+* **claims:** remove fields from claims ([8a0c91b](https://github.com/energywebfoundation/iam-client-lib/commit/8a0c91b7704b07bc167df001e3bef74be0ddf63e))
+
 # [3.3.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-10-30)
 
 
