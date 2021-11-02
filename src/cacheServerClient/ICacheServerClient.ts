@@ -61,6 +61,7 @@ export interface ICacheServerClient {
     rejectClaim: ({ message, did }: RejectClaim) => Promise<void>;
     deleteClaim: ({ claimId }: Pick<ClaimsQueryParams, "claimId">) => Promise<void>;
     getDIDsForRole: ({ namespace }: Pick<ClaimsQueryParams, "namespace">) => Promise<string[]>;
+    getAllowedRolesByIssuer: ({ did }: Pick<ClaimsQueryParams, "did">) => Promise<string[]>;
     getDidDocument: ({ did, includeClaims }: Pick<ClaimsQueryParams, "did" | "includeClaims">) => Promise<IDIDDocument>;
     addDIDToWatchList: ({ did }: Pick<ClaimsQueryParams, "did">) => Promise<void>;
     getOwnedAssets: ({ did }: Pick<ClaimsQueryParams, "did">) => Promise<Asset[]>;

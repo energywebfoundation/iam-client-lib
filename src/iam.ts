@@ -17,12 +17,12 @@
 
 import { providers, Signer, utils, Wallet } from "ethers";
 import {
-    IRoleDefinition,
+    DomainReader,
+    EncodedCall,
     IAppDefinition,
     IOrganizationDefinition,
+    IRoleDefinition,
     PreconditionType,
-    EncodedCall,
-    DomainReader,
 } from "@energyweb/iam-contracts";
 import {
     Algorithms,
@@ -72,6 +72,7 @@ import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
 import { JWT } from "@ew-did-registry/jwt";
+
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -521,11 +522,13 @@ export class IAM extends IAMBase {
      *
      */
     async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
-        if (this._userClaims) {
-            const token = await this.createPublicClaim({ data, subject });
-            return this.publishPublicClaim({ token });
+        if (!this._userClaims) {
+            throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
         }
-        throw new Error(ERROR_MESSAGES.CLAIMS_NOT_INITIALIZED);
+
+        const token = await this.createPublicClaim({ data, subject });
+
+        return this.publishPublicClaim({ token });
     }
 
     /**
@@ -1281,6 +1284,20 @@ export class IAM extends IAMBase {
     }
 
     /**
+     * getAllowedRolesByIssuer
+     *
+     * @description get all roles that a DID can issue, given its role credentials and all role definitions
+     * @param did DID of issuer
+     * @returns array of roles that the DID can issue
+     */
+    getAllowedRolesByIssuer({ did }: { did: string }) {
+        if (!this._cacheClient) {
+            throw new CacheClientNotProvidedError();
+        }
+        return this._cacheClient.getAllowedRolesByIssuer({ did });
+    }
+
+    /**
      * getSubdomains
      *
      * @description get all subdomains for certain domain
@@ -1421,6 +1438,7 @@ export class IAM extends IAMBase {
         const enroledRoles = new Set(
             (await this.getClaimsBySubject({ did: subject, isAccepted: true })).map(({ claimType }) => claimType),
         );
+
         const requiredRoles = new Set(
             enrolmentPreconditions
                 .filter(({ type }) => type === PreconditionType.Role)
@@ -1523,6 +1541,54 @@ export class IAM extends IAMBase {
         return canonizeSig(await this._signer.signMessage(arrayify(proofHash)));
     }
 
+    async issueClaim({
+        claim,
+        subject,
+    }: {
+        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        subject: string;
+    }) {
+        if (!this._did) {
+            throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
+        }
+        if (!this._jwt) {
+            throw new Error(ERROR_MESSAGES.JWT_NOT_INITIALIZED);
+        }
+        if (!this._signer) {
+            throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
+        }
+
+        await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+
+        const message: IClaimIssuance = {
+            id: uuid(),
+            requester: subject,
+            claimIssuer: [this._did],
+            acceptedBy: this._did,
+        };
+
+        const publicClaim: IPublicClaim = {
+            did: subject,
+            signer: this._did,
+            claimData: claim,
+        };
+
+        message.issuedToken = await this.issuePublicClaim({
+            publicClaim,
+        });
+
+        if (this._natsConnection) {
+            const dataToSend = this._jsonCodec?.encode(message);
+            this._natsConnection.publish(`${subject}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        } else if (this._cacheClient) {
+            await this._cacheClient.issueClaim({ did: this._did, message });
+        } else {
+            throw new NATSConnectionNotEstablishedError();
+        }
+
+        return message.issuedToken;
+    }
+
     async createClaimRequest({
         claim,
         subject,
@@ -1579,12 +1645,14 @@ export class IAM extends IAMBase {
         id,
         subjectAgreement,
         registrationTypes,
+        claimParams,
     }: {
         requester: string;
         token: string;
         id: string;
         subjectAgreement: string;
         registrationTypes: RegistrationTypes[];
+        claimParams?: Record<string, string>;
     }) {
         if (!this._did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1609,12 +1677,16 @@ export class IAM extends IAMBase {
             claimIssuer: [this._did],
             acceptedBy: this._did,
         };
+
+        const strippedClaimData = this.stripClaimData(claimData);
+
         if (registrationTypes.includes(RegistrationTypes.OffChain)) {
             const publicClaim: IPublicClaim = {
                 did: sub,
                 signer: this._did,
-                claimData,
+                claimData: { ...strippedClaimData, ...(claimParams && { claimParams }) },
             };
+
             message.issuedToken = await this.issuePublicClaim({
                 publicClaim,
             });
@@ -1980,5 +2052,12 @@ export class IAM extends IAMBase {
             return this._cacheClient.getAssetHistory({ id, ...query });
         }
         throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
+    }
+
+    private stripClaimData(data: ClaimData): ClaimData {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { fields, ...claimData } = data;
+
+        return claimData;
     }
 }

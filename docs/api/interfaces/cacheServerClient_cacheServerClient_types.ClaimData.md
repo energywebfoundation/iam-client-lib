@@ -12,11 +12,18 @@
 
 ### Properties
 
+- [claimParams](cacheServerClient_cacheServerClient_types.ClaimData.md#claimparams)
 - [claimType](cacheServerClient_cacheServerClient_types.ClaimData.md#claimtype)
 - [claimTypeVersion](cacheServerClient_cacheServerClient_types.ClaimData.md#claimtypeversion)
 - [profile](cacheServerClient_cacheServerClient_types.ClaimData.md#profile)
 
 ## Properties
+
+### claimParams
+
+• `Optional` **claimParams**: `Record`<`string`, `string`\>
+
+___
 
 ### claimType
 

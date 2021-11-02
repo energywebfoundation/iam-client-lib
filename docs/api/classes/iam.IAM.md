@@ -47,6 +47,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [deleteClaim](iam.IAM.md#deleteclaim)
 - [deleteOrganization](iam.IAM.md#deleteorganization)
 - [deleteRole](iam.IAM.md#deleterole)
+- [getAllowedRolesByIssuer](iam.IAM.md#getallowedrolesbyissuer)
 - [getAppsByOrgNamespace](iam.IAM.md#getappsbyorgnamespace)
 - [getAssetById](iam.IAM.md#getassetbyid)
 - [getAssetHistory](iam.IAM.md#getassethistory)
@@ -75,6 +76,7 @@ Decentralized Identity and Access Management (IAM) Type
 - [isConnected](iam.IAM.md#isconnected)
 - [isOwner](iam.IAM.md#isowner)
 - [isSessionActive](iam.IAM.md#issessionactive)
+- [issueClaim](iam.IAM.md#issueclaim)
 - [issueClaimRequest](iam.IAM.md#issueclaimrequest)
 - [issuePublicClaim](iam.IAM.md#issuepublicclaim)
 - [namespacesWithRelations](iam.IAM.md#namespaceswithrelations)
@@ -603,6 +605,29 @@ deleteRole
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`__namedParameters`): `Promise`<`string`[]\>
+
+getAllowedRolesByIssuer
+
+**`description`** get all roles that a DID can issue, given its role credentials and all role definitions
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `__namedParameters` | `Object` | - |
+| `__namedParameters.did` | `string` | DID of issuer |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+array of roles that the DID can issue
 
 ___
 
@@ -1172,6 +1197,27 @@ boolean that indicates the session state
 
 ___
 
+### issueClaim
+
+▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+___
+
 ### issueClaimRequest
 
 ▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
@@ -1181,6 +1227,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
+| `__namedParameters.claimParams?` | `Record`<`string`, `string`\> |
 | `__namedParameters.id` | `string` |
 | `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/cacheServerClient_cacheServerClient_types.RegistrationTypes.md)[] |
 | `__namedParameters.requester` | `string` |

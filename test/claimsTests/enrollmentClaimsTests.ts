@@ -1,9 +1,9 @@
 import { PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
-import { Wallet, utils } from "ethers";
+import { utils, Wallet } from "ethers";
 import { Codec } from "nats.ws";
-import { IAM, RegistrationTypes, IRoleDefinition, NATS_EXCHANGE_TOPIC } from "../../src/iam-client-lib";
+import { IAM, IRoleDefinition, NATS_EXCHANGE_TOPIC, RegistrationTypes } from "../../src/iam-client-lib";
 import { createIam, root, rootOwner } from "../iam.test";
 import { claimManager, replenish } from "../setup_contracts";
 import {
@@ -28,6 +28,7 @@ export function enrollmentClaimsTests() {
     const roleName1 = "myrole1";
     const roleName2 = "myrole2";
     const roleName3 = "myrole3";
+    const roleName4 = "myrole4";
     const namespace = root;
     const version = 1;
     const baseRoleDef = {
@@ -49,6 +50,11 @@ export function enrollmentClaimsTests() {
             ...baseRoleDef,
             roleName: roleName3,
             enrolmentPreconditions: [{ type: PreconditionType.Role, conditions: [`${roleName1}.${root}`] }],
+        },
+        [`${roleName4}.${root}`]: {
+            ...baseRoleDef,
+            roleName: roleName4,
+            issuer: { issuerType: "ROLE", roleName: `${roleName1}.${root}` },
         },
     };
     let roleCreatorIam: IAM;
@@ -88,11 +94,12 @@ export function enrollmentClaimsTests() {
     ) {
         const requesterDID = requesterIam.getDid();
         await requesterIam.createClaimRequest({
-            claim: { claimType, claimTypeVersion: version, fields: [] },
+            claim: { claimType, claimTypeVersion: version, fields: [{ key: "temperature", value: 36 }] },
             registrationTypes,
             subject: subjectDID,
         });
         expect(publish).toBeCalledTimes(1);
+
         const [, encodedMsg] = publish.mock.calls.pop();
         const message = mockedJsonCodec.decode(encodedMsg);
 
@@ -104,11 +111,34 @@ export function enrollmentClaimsTests() {
 
         const [requesterChannel, data] = publish.mock.calls.pop();
         expect(requesterChannel).toEqual(`${requesterIam.getDid()}.${NATS_EXCHANGE_TOPIC}`);
+        const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = mockedJsonCodec.decode(data);
 
-        const { claimIssuer, requester, onChainProof } = mockedJsonCodec.decode(data);
+        if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+            expect(issuedToken).not.toBeUndefined();
+
+            const { claimData, signer, did } = (await issuerIam.decodeJWTToken({
+                token: issuedToken,
+            })) as { [key: string]: string };
+
+            expect(claimData).toEqual({
+                claimType,
+                claimTypeVersion: version,
+            });
+
+            expect(claimData).not.toContain({
+                fields: [{ key: "temperature", value: 36 }],
+            });
+
+            expect(signer).toBe(issuerIam.getDid());
+            expect(did).toBe(requesterIam.getDid());
+        }
+
         expect(requester).toEqual(requesterDID);
         expect(claimIssuer).toEqual([issuerIam.getDid()]);
+
         registrationTypes.includes(RegistrationTypes.OnChain) && expect(onChainProof).toHaveLength(132);
+
+        expect(acceptedBy).toBe(issuerIam.getDid());
     }
 
     beforeEach(() => {
@@ -157,6 +187,31 @@ export function enrollmentClaimsTests() {
         enrolAndIssue(userIam, dynamicIssuerIam, { subjectDID: userDID, claimType: `${roleName2}.${root}` });
 
         expect(await claimManager.hasRole(addressOf(userDID), namehash(`${roleName2}.${root}`), version));
+    });
+
+    test("should enroll off-chain when prerequisites are met", async () => {
+        await roleCreatorIam.createRole({
+            roleName: roleName4,
+            namespace,
+            data: roles[`${roleName4}.${root}`],
+            returnSteps: false,
+        });
+
+        const role4Claim = {
+            claimType: `${roleName4}.${root}`,
+            isAccepted: true,
+        };
+        cacheClaim(userDID, role4Claim);
+
+        await enrolAndIssue(userIam, staticIssuerIam, {
+            subjectDID: userDID,
+            claimType: `${roleName4}.${root}`,
+            registrationTypes: [RegistrationTypes.OffChain],
+        });
+
+        const hasRole = await claimManager.hasRole(addressOf(userDID), namehash(`${roleName4}.${root}`), version);
+
+        expect(hasRole).toBe(false);
     });
 
     test("should enrol when prerequisites are met", async () => {

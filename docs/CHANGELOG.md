@@ -1,3 +1,31 @@
+# [3.3.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.3...v3.3.0-alpha.4) (2021-11-02)
+
+
+### Bug Fixes
+
+* **claims:** remove fields from claims ([8a0c91b](https://github.com/energywebfoundation/iam-client-lib/commit/8a0c91b7704b07bc167df001e3bef74be0ddf63e))
+
+# [3.3.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-10-30)
+
+
+### Features
+
+* retrieve roles by issuer ICS-86 ([597ea1e](https://github.com/energywebfoundation/iam-client-lib/commit/597ea1e69697c7b2b1eb2e9a7ea0eb67f9cf611c))
+
+# [3.3.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.1...v3.3.0-alpha.2) (2021-10-29)
+
+
+### Features
+
+* **claims:** key value list when issuing credential to asset ([ab72d0d](https://github.com/energywebfoundation/iam-client-lib/commit/ab72d0d6d09d26f699cf368715e72a92f9b208c6))
+
+# [3.3.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0...v3.3.0-alpha.1) (2021-10-28)
+
+
+### Features
+
+* add issuance of Role without previous request ([7ca982d](https://github.com/energywebfoundation/iam-client-lib/commit/7ca982d36473c693712687ba84be506e51f12fa9))
+
 # [3.2.0](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0...v3.2.0) (2021-10-27)
 
 
