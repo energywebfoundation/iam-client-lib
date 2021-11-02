@@ -16,6 +16,7 @@
 // @authors: Daniel Wojno
 
 import { providers, Signer, utils, Wallet } from "ethers";
+import jsonwebtoken from "jsonwebtoken";
 import {
     IRoleDefinition,
     IAppDefinition,
@@ -24,7 +25,7 @@ import {
     EncodedCall,
     DomainReader,
 } from "@energyweb/iam-contracts";
-import { KeyType } from "@ew-did-registry/keys";
+import { KeyType, privToPem } from "@ew-did-registry/keys";
 import {
     DIDAttribute,
     Encoding,
@@ -564,12 +565,17 @@ export class IAM extends IAMBase {
 
     /**
      * @description create a proof of identity delegate
-     * @param delegateKey private key of the delegate
+     * @param delegateKey private key of the delegate in hexadecimal format
      * @param rpcUrl the url of the blockchain provider
      * @param identity Did of the delegate
      * @returns token of delegate
      */
-    async createDelegateProof(delegateKey: string, rpcUrl: string, identity: string): Promise<string> {
+    async createDelegateProof(
+        delegateKey: string,
+        rpcUrl: string,
+        identity: string,
+        algorithm: Algorithms = Algorithms.EIP191,
+    ): Promise<string> {
         const provider = new providers.JsonRpcProvider(rpcUrl);
         const blockNumber = (await provider.getBlockNumber()).toString();
 
@@ -579,9 +585,14 @@ export class IAM extends IAMBase {
                 blockNumber,
             },
         };
-        const jwt = new JWT(new Wallet(delegateKey));
-        const identityToken = jwt.sign(payload, { algorithm: Algorithms.EIP191, issuer: identity });
-        return identityToken;
+        if (algorithm === Algorithms.EIP191) {
+            return new JWT(new Wallet(delegateKey)).sign(payload, { issuer: identity });
+        } else if (algorithm === Algorithms.ES256) {
+            /** @todo move to @ew-did-registry/jwt */
+            return jsonwebtoken.sign(payload, privToPem(delegateKey, KeyType.Secp256r1), { issuer: identity });
+        } else {
+            throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
+        }
     }
 
     /// ROLES

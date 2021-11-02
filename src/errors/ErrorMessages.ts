@@ -32,4 +32,5 @@ export enum ERROR_MESSAGES {
     WITHDRAWAL_WAS_NOT_REQUESTED = "Stake withdrawal was not requested",
     STAKE_WAS_NOT_PUT = "Stake was not put",
     INSUFFICIENT_BALANCE = "Signer has insufficient balance",
+    JWT_ALGORITHM_NOT_SUPPORTED = "Jwt algorithm no supported",
 }
