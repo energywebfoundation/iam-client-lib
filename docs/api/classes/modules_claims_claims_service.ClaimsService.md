@@ -24,6 +24,7 @@
 - [getClaimsBySubjects](modules_claims_claims_service.ClaimsService.md#getclaimsbysubjects)
 - [getUserClaims](modules_claims_claims_service.ClaimsService.md#getuserclaims)
 - [init](modules_claims_claims_service.ClaimsService.md#init)
+- [issueClaim](modules_claims_claims_service.ClaimsService.md#issueclaim)
 - [issueClaimRequest](modules_claims_claims_service.ClaimsService.md#issueclaimrequest)
 - [publishPublicClaim](modules_claims_claims_service.ClaimsService.md#publishpublicclaim)
 - [rejectClaimRequest](modules_claims_claims_service.ClaimsService.md#rejectclaimrequest)
@@ -317,6 +318,27 @@ ___
 
 ___
 
+### issueClaim
+
+▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+___
+
 ### issueClaimRequest
 
 ▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
@@ -326,6 +348,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
+| `__namedParameters.claimParams?` | `Record`<`string`, `string`\> |
 | `__namedParameters.id` | `string` |
 | `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/modules_claims_claims_types.RegistrationTypes.md)[] |
 | `__namedParameters.requester` | `string` |

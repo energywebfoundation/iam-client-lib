@@ -10,6 +10,7 @@
 - [ClaimsFilter](modules_cacheClient.md#claimsfilter)
 - [ICacheClient](modules_cacheClient.md#icacheclient)
 - [Order](modules_cacheClient.md#order)
+- [SearchType](modules_cacheClient.md#searchtype)
 
 ## References
 
@@ -46,3 +47,9 @@ ___
 ### Order
 
 Re-exports: [Order](../enums/modules_cacheClient_cacheClient_types.Order.md)
+
+___
+
+### SearchType
+
+Re-exports: [SearchType](../enums/modules_cacheClient_cacheClient_types.SearchType.md)

@@ -16,6 +16,8 @@ import {
     MessagingService,
     chainConfigs,
     StakingService,
+    NATS_EXCHANGE_TOPIC,
+    DidRegistry,
 } from "../src";
 import { root, replenish, setupENS, rpcUrl } from "./utils/setup_contracts";
 import { ClaimManager__factory } from "../ethers/factories/ClaimManager__factory";
@@ -33,6 +35,7 @@ const rootOwnerDID = `did:${Methods.Erc1056}:${rootOwner.address}`;
 const roleName1 = "myrole1";
 const roleName2 = "myrole2";
 const roleName3 = "myrole3";
+const roleName4 = "myrole4";
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -54,6 +57,11 @@ const roles: Record<string, IRoleDefinition> = {
         ...baseRoleDef,
         roleName: roleName3,
         enrolmentPreconditions: [{ type: PreconditionType.Role, conditions: [`${roleName1}.${root}`] }],
+    },
+    [`${roleName4}.${root}`]: {
+        ...baseRoleDef,
+        roleName: roleName4,
+        issuer: { issuerType: "ROLE", roleName: `${roleName1}.${root}` },
     },
 };
 const mockGetRoleDefinition = jest.fn().mockImplementation((namespace: string) => {
@@ -99,6 +107,7 @@ describe("Enrollment claim tests", () => {
     let assetsService: AssetsService;
     let domainsService: DomainsService;
     let claimManager: ClaimManager;
+    let didRegistry: DidRegistry;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -110,7 +119,7 @@ describe("Enrollment claim tests", () => {
         await setupENS(await rootOwner.getAddress());
         let connectToCacheServer;
         ({ signerService, connectToCacheServer } = await initWithPrivateKeySigner(rootOwner.privateKey, rpcUrl));
-        const chainId = await signerService.chainId;
+        const chainId = signerService.chainId;
         claimManager = new ClaimManager__factory(rootOwner).attach(chainConfigs()[chainId].claimManagerAddress);
         let connectToDidRegistry;
         ({ domainsService, connectToDidRegistry, assetsService } = await connectToCacheServer());
@@ -120,29 +129,68 @@ describe("Enrollment claim tests", () => {
             data: roles[`${roleName1}.${root}`],
             returnSteps: false,
         });
-        ({ claimsService } = await connectToDidRegistry());
+        await domainsService.createRole({
+            roleName: roleName4,
+            namespace,
+            data: roles[`${roleName4}.${root}`],
+            returnSteps: false,
+        });
+        ({ didRegistry, claimsService } = await connectToDidRegistry());
     });
 
     async function enrolAndIssue(
-        requester: Required<ethers.Signer>,
-        issuer: Required<ethers.Signer>,
+        requestSigner: Required<ethers.Signer>,
+        issueSigner: Required<ethers.Signer>,
         {
             subjectDID,
             claimType,
             registrationTypes = [RegistrationTypes.OnChain],
         }: { subjectDID: string; claimType: string; registrationTypes?: RegistrationTypes[] },
     ) {
-        await signerService.connect(requester, ProviderType.PrivateKey);
+        await signerService.connect(requestSigner, ProviderType.PrivateKey);
+        const requesterDID = signerService.did;
         await claimsService.createClaimRequest({
-            claim: { claimType, claimTypeVersion: version, fields: [] },
+            claim: { claimType, claimTypeVersion: version, fields: [{ key: "temperature", value: 36 }] },
             registrationTypes,
             subject: subjectDID,
         });
         const [, encodedMsg] = mockPublish.mock.calls.pop();
         const message = jsonCodec.decode(encodedMsg) as any;
 
-        await signerService.connect(issuer, ProviderType.PrivateKey);
+        await signerService.connect(issueSigner, ProviderType.PrivateKey);
+        const issuerDID = signerService.did;
         await claimsService.issueClaimRequest({ ...message });
+        const [requesterChannel, data] = mockPublish.mock.calls.pop();
+        expect(requesterChannel).toEqual(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`);
+
+        const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = jsonCodec.decode(data) as any;
+
+        if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+            expect(issuedToken).not.toBeUndefined();
+
+            const { claimData, signer, did } = (await didRegistry.decodeJWTToken({
+                token: issuedToken,
+            })) as { [key: string]: string };
+
+            expect(claimData).toEqual({
+                claimType,
+                claimTypeVersion: version,
+            });
+
+            expect(claimData).not.toContain({
+                fields: [{ key: "temperature", value: 36 }],
+            });
+
+            expect(signer).toBe(issuerDID);
+            expect(did).toBe(requesterDID);
+        }
+
+        expect(requester).toEqual(requesterDID);
+        expect(claimIssuer).toEqual([issuerDID]);
+
+        registrationTypes.includes(RegistrationTypes.OnChain) && expect(onChainProof).toHaveLength(132);
+
+        expect(acceptedBy).toBe(issuerDID);
     }
 
     test("enrollment by issuer of type DID", async () => {
@@ -234,5 +282,23 @@ describe("Enrollment claim tests", () => {
                 claimType: `${roleName3}.${root}`,
             }),
         ).rejects.toEqual(new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET));
+    });
+
+    test("should not enroll on-chain when requested registration off-chain", async () => {
+        const role4Claim = {
+            claimType: `${roleName4}.${root}`,
+            isAccepted: true,
+        };
+        mockGetClaimsBySubject.mockImplementationOnce(() => [role4Claim]); // to verify requesting
+
+        await enrolAndIssue(rootOwner, staticIssuer, {
+            subjectDID: rootOwnerDID,
+            claimType: `${roleName4}.${root}`,
+            registrationTypes: [RegistrationTypes.OffChain],
+        });
+
+        const hasRole = await claimManager.hasRole(addressOf(rootOwnerDID), namehash(`${roleName4}.${root}`), version);
+
+        expect(hasRole).toBe(false);
     });
 });

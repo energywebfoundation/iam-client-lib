@@ -21,6 +21,7 @@
 - [addDIDToWatchList](modules_cacheClient_cacheClient_service.CacheClient.md#adddidtowatchlist)
 - [addFailedRequest](modules_cacheClient_cacheClient_service.CacheClient.md#addfailedrequest)
 - [deleteClaim](modules_cacheClient_cacheClient_service.CacheClient.md#deleteclaim)
+- [getAllowedRolesByIssuer](modules_cacheClient_cacheClient_service.CacheClient.md#getallowedrolesbyissuer)
 - [getAppDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getappdefinition)
 - [getApplicationRoles](modules_cacheClient_cacheClient_service.CacheClient.md#getapplicationroles)
 - [getApplicationsByOrganization](modules_cacheClient_cacheClient_service.CacheClient.md#getapplicationsbyorganization)
@@ -132,6 +133,22 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[deleteClaim](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#deleteclaim)
+
+___
+
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`did`): `Promise`<`string`[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `did` | `string` |
+
+#### Returns
+
+`Promise`<`string`[]\>
 
 ___
 
@@ -390,7 +407,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `search` | `string` |
-| `types?` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md)[] |
+| `types?` | [`SearchType`](../enums/modules_cacheClient_cacheClient_types.SearchType.md)[] |
 
 #### Returns
 

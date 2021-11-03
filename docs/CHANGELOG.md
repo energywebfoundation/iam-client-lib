@@ -1,3 +1,53 @@
+# [3.3.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.3...v3.3.0-alpha.4) (2021-11-02)
+
+
+### Bug Fixes
+
+* **claims:** remove fields from claims ([8a0c91b](https://github.com/energywebfoundation/iam-client-lib/commit/8a0c91b7704b07bc167df001e3bef74be0ddf63e))
+
+# [3.3.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-10-30)
+
+
+### Features
+
+* retrieve roles by issuer ICS-86 ([597ea1e](https://github.com/energywebfoundation/iam-client-lib/commit/597ea1e69697c7b2b1eb2e9a7ea0eb67f9cf611c))
+
+# [3.3.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.1...v3.3.0-alpha.2) (2021-10-29)
+
+
+### Features
+
+* **claims:** key value list when issuing credential to asset ([ab72d0d](https://github.com/energywebfoundation/iam-client-lib/commit/ab72d0d6d09d26f699cf368715e72a92f9b208c6))
+
+# [3.3.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0...v3.3.0-alpha.1) (2021-10-28)
+
+
+### Features
+
+* add issuance of Role without previous request ([7ca982d](https://github.com/energywebfoundation/iam-client-lib/commit/7ca982d36473c693712687ba84be506e51f12fa9))
+
+# [3.2.0](https://github.com/energywebfoundation/iam-client-lib/compare/v3.1.0...v3.2.0) (2021-10-27)
+
+
+### Bug Fixes
+
+* **nats:** upgraded to latest nats version working with BackEnd and FrontEnd ([8b654dc](https://github.com/energywebfoundation/iam-client-lib/commit/8b654dc81751ec171551513a7b4360b035765a87))
+* **WalletConnect:** fix walletconnect login ([4201fcb](https://github.com/energywebfoundation/iam-client-lib/commit/4201fcb491d21f0bdc242027dd56cd53ffada4e3))
+
+
+### Features
+
+* get owned domains with relatiosn ([9d3b08e](https://github.com/energywebfoundation/iam-client-lib/commit/9d3b08e670f97134f35235157b1f2d89f2d2b1e7))
+* remove `patch-package` dependency ([ae7db96](https://github.com/energywebfoundation/iam-client-lib/commit/ae7db9690cc3dbf14945677b390aa264eef0a4f7))
+* **build:** include `patches` into build ([0bbbdc0](https://github.com/energywebfoundation/iam-client-lib/commit/0bbbdc00d3e781b46898be520a1429101c6b4b1e))
+* add `patches` to build files ([f37bcc1](https://github.com/energywebfoundation/iam-client-lib/commit/f37bcc1625df8167a60bb7183c446c3b50f161ee))
+* **WalletConnect:** change to public relay ([3f114c3](https://github.com/energywebfoundation/iam-client-lib/commit/3f114c32ca35c262e30cd4bc437a9c6d0a8c4dac))
+* improve performance of `registrationTypesOfRoles` function ([8e39e28](https://github.com/energywebfoundation/iam-client-lib/commit/8e39e28070fcb9c5bc97c4b28b7696f0c573d6c6))
+
+# [3.2.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.8...v3.2.0-alpha.9) (2021-10-27)
+
+# [3.2.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.7...v3.2.0-alpha.8) (2021-10-21)
+
 # [3.2.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0-alpha.6...v3.2.0-alpha.7) (2021-10-20)
 
 

@@ -4,8 +4,9 @@ import { IClaimIssuance, IClaimRejection, IClaimRequest } from "../claims/claims
 import { IPubKeyAndIdentityToken } from "../signer/signer.types";
 import { AssetsFilter, ClaimsFilter } from "./cacheClient.types";
 import { Asset, AssetHistory } from "../assets/assets.types";
-import { IApp, IOrganization, IRole, NamespaceType } from "../domains/domains.types";
+import { IApp, IOrganization, IRole } from "../domains/domains.types";
 import { Claim } from "../claims/claims.types";
+import { SearchType } from ".";
 
 export interface ICacheClient {
     pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -24,7 +25,7 @@ export interface ICacheClient {
     getApplicationsByOrganization: (namespace: string) => Promise<IApp[]>;
     getSubOrganizationsByOrganization: (namespace: string) => Promise<IOrganization[]>;
     getOrgHierarchy: (namespace: string) => Promise<IOrganization>;
-    getNamespaceBySearchPhrase: (phrase: string, types?: NamespaceType[]) => Promise<(IOrganization | IApp | IRole)[]>;
+    getNamespaceBySearchPhrase: (phrase: string, types?: SearchType[]) => Promise<(IOrganization | IApp | IRole)[]>;
     getRolesByOwner: (owner: string) => Promise<IRole[]>;
     getDIDsForRole: (namespace: string) => Promise<string[]>;
 

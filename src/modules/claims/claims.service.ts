@@ -151,12 +151,14 @@ export class ClaimsService {
         id,
         subjectAgreement,
         registrationTypes,
+        claimParams,
     }: {
         requester: string;
         token: string;
         id: string;
         subjectAgreement: string;
         registrationTypes: RegistrationTypes[];
+        claimParams?: Record<string, string>;
     }) {
         const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
             claimData: { claimType: string; claimTypeVersion: number; expiry: number };
@@ -171,11 +173,12 @@ export class ClaimsService {
             claimIssuer: [this._signerService.did],
             acceptedBy: this._signerService.did,
         };
+        const strippedClaimData = this.stripClaimData(claimData);
         if (registrationTypes.includes(RegistrationTypes.OffChain)) {
             const publicClaim: IPublicClaim = {
                 did: sub,
                 signer: this._signerService.did,
-                claimData,
+                claimData: { ...strippedClaimData, ...(claimParams && { claimParams }) },
             };
             message.issuedToken = await this._didRegistry.issuePublicClaim({
                 publicClaim,
@@ -230,6 +233,38 @@ export class ClaimsService {
      */
     async createPublicClaim({ data, subject }: { data: ClaimData; subject?: string }) {
         return this._didRegistry.createPublicClaim({ data, subject });
+    }
+
+    async issueClaim({
+        claim,
+        subject,
+    }: {
+        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        subject: string;
+    }) {
+        await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+
+        const message: IClaimIssuance = {
+            id: v4(),
+            requester: subject,
+            claimIssuer: [this._signerService.did],
+            acceptedBy: this._signerService.did,
+        };
+
+        const publicClaim: IPublicClaim = {
+            did: subject,
+            signer: this._signerService.did,
+            claimData: claim,
+        };
+
+        message.issuedToken = await this._didRegistry.issuePublicClaim({
+            publicClaim,
+        });
+
+        const dataToSend = this._jsonCodec?.encode(message);
+        this._messagingService.publish(`${subject}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+
+        return message.issuedToken;
     }
 
     async getClaimId({ claimData }: { claimData: ClaimData }) {
@@ -476,5 +511,12 @@ export class ClaimsService {
         const jwt = new JWT(new Wallet(delegateKey));
         const identityToken = jwt.sign(payload, { algorithm: "ES256", issuer: identity });
         return identityToken;
+    }
+
+    private stripClaimData(data: ClaimData): ClaimData {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { fields, ...claimData } = data;
+
+        return claimData;
     }
 }

@@ -5,6 +5,7 @@
 ### Enumerations
 
 - [Order](../enums/modules_cacheClient_cacheClient_types.Order.md)
+- [SearchType](../enums/modules_cacheClient_cacheClient_types.SearchType.md)
 
 ### Interfaces
 

@@ -52,6 +52,7 @@
 - [RegistrationTypes](index.md#registrationtypes)
 - [RejectClaim](index.md#rejectclaim)
 - [RequestClaim](index.md#requestclaim)
+- [SearchType](index.md#searchtype)
 - [Service](index.md#service)
 - [ServiceInitializer](index.md#serviceinitializer)
 - [SignerService](index.md#signerservice)
@@ -379,6 +380,12 @@ ___
 ### RequestClaim
 
 Re-exports: [RequestClaim](modules_claims_claims_types.md#requestclaim)
+
+___
+
+### SearchType
+
+Re-exports: [SearchType](../enums/modules_cacheClient_cacheClient_types.SearchType.md)
 
 ___
 

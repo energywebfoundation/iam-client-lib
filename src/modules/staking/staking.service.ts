@@ -36,6 +36,7 @@ export type Stake = {
  * Inteneded for staking pools management
  */
 export class StakingService {
+    private _stakingPoolFactoryAddress: string;
     private _stakingPoolFactory: StakingPoolFactory;
 
     constructor(private _signerService: SignerService, private _domainsService: DomainsService) {
@@ -54,8 +55,13 @@ export class StakingService {
      */
     async init() {
         const chainId = this._signerService.chainId;
-        const { stakingPoolFactoryAddress } = chainConfigs()[chainId];
-        this._stakingPoolFactory = new StakingPoolFactory__factory().attach(stakingPoolFactoryAddress);
+        this._stakingPoolFactoryAddress = chainConfigs()[chainId].stakingPoolFactoryAddress;
+        this._stakingPoolFactory = new StakingPoolFactory__factory(
+            StakingPoolFactory__factory.createInterface(),
+            StakingPoolFactory__factory.bytecode,
+        )
+            .attach(this._stakingPoolFactoryAddress)
+            .connect(this._signerService.provider);
     }
 
     /**
@@ -81,7 +87,7 @@ export class StakingService {
         principal: BigNumber;
     }): Promise<void> {
         const tx: providers.TransactionRequest = {
-            to: this._stakingPoolFactory.address,
+            to: this._stakingPoolFactoryAddress,
             data: this._stakingPoolFactory.interface.encodeFunctionData("launchStakingPool", [
                 namehash(org),
                 minStakingPeriod,
@@ -97,11 +103,10 @@ export class StakingService {
      * @description Returns all services for which pools are launched
      */
     async allServices(): Promise<Service[]> {
-        const stakingPoolFactory = this._stakingPoolFactory.connect(this._signerService.signer);
-        const orgs = await stakingPoolFactory.orgsList();
+        const orgs = await this._stakingPoolFactory.orgsList();
         return Promise.all(
             orgs.map((org) =>
-                stakingPoolFactory
+                this._stakingPoolFactory
                     .services(org)
                     .then((service) => ({ ...service, org }))
                     .then((service) => this._domainsService.readName(service.org).then((org) => ({ ...service, org }))),
@@ -133,7 +138,10 @@ export class StakingPool {
     private pool: StakingPoolContract;
 
     constructor(private signerService: SignerService, address: string) {
-        this.pool = new StakingPool__factory().attach(address);
+        this.pool = new StakingPool__factory(
+            StakingPool__factory.createInterface(),
+            StakingPool__factory.bytecode,
+        ).attach(address);
     }
 
     /**

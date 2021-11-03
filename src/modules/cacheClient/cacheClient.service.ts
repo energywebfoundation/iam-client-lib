@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { stringify } from "qs";
 import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { IDIDDocument } from "@ew-did-registry/did-resolver-interface";
-import { IApp, IOrganization, IRole, NamespaceType } from "../domains/domains.types";
+import { IApp, IOrganization, IRole } from "../domains/domains.types";
 import { AssetHistory } from "../assets/assets.types";
 import { Claim, IClaimIssuance, IClaimRejection, IClaimRequest } from "../claims/claims.types";
 import { Asset } from "../assets/assets.types";
@@ -12,6 +12,7 @@ import { IPubKeyAndIdentityToken } from "../signer/signer.types";
 import { cacheConfigs } from "../../config/cache.config";
 import { ICacheClient } from "./ICacheClient";
 import { AssetsFilter, ClaimsFilter } from "./cacheClient.types";
+import { SearchType } from ".";
 
 export class CacheClient implements ICacheClient {
     public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -146,7 +147,7 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
-    async getNamespaceBySearchPhrase(search: string, types?: NamespaceType[]) {
+    async getNamespaceBySearchPhrase(search: string, types?: SearchType[]) {
         if (types && types.length > 0) {
             const { data } = await this.httpClient.get<(IOrganization | IApp | IRole)[]>(`/search/${search}`, {
                 params: {
@@ -237,6 +238,11 @@ export class CacheClient implements ICacheClient {
 
     async getDidDocument(did: string, includeClaims?: boolean) {
         const { data } = await this.httpClient.get<IDIDDocument>(`/DID/${did}?includeClaims=${includeClaims || false}`);
+        return data;
+    }
+
+    async getAllowedRolesByIssuer(did: string) {
+        const { data } = await this.httpClient.get<string[]>(`/claim/issuer/roles/allowed/${did}`);
         return data;
     }
 

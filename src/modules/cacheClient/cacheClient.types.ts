@@ -21,3 +21,9 @@ export type AssetsFilter = {
     skip?: number;
     type?: AssetHistoryEventType;
 };
+
+export enum SearchType {
+    App = "App",
+    Org = "Org",
+    Role = "Role",
+}

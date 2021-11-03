@@ -18,4 +18,5 @@ export interface ClaimData extends Record<string, unknown> {
     profile?: Profile;
     claimType?: string;
     claimTypeVersion?: number;
+    claimParams?: Record<string, string>;
 }

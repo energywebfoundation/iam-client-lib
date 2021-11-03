@@ -25,6 +25,7 @@ import { CacheClient } from "../cacheClient/cacheClient.service";
 import { RegistrationTypes } from "../claims/claims.types";
 import { SignerService } from "../signer/signer.service";
 import { NamespaceType, IOrganization } from "./domains.types";
+import { SearchType } from "../cacheClient/cacheClient.types";
 
 const { namehash } = utils;
 
@@ -58,7 +59,12 @@ export class DomainsService {
         this._ensRegistryAddress = ensRegistryAddress;
         this._ensResolverAddress = ensResolverAddress;
         this._ensPublicResolverAddress = ensPublicResolverAddress;
-        this._ensRegistry = new ENSRegistry__factory().attach(ensRegistryAddress).connect(provider);
+        this._ensRegistry = new ENSRegistry__factory(
+            ENSRegistry__factory.createInterface(),
+            ENSRegistry__factory.bytecode,
+        )
+            .attach(ensRegistryAddress)
+            .connect(provider);
         this._domainDefinitionReader = new DomainReader({
             ensRegistryAddress,
             provider,
@@ -622,6 +628,17 @@ export class DomainsService {
     }
 
     /**
+     * getAllowedRolesByIssuer
+     *
+     * @description get all roles that a DID can issue, given its role credentials and all role definitions
+     * @param did DID of issuer
+     * @returns array of roles that the DID can issue
+     */
+    getAllowedRolesByIssuer(did: string) {
+        return this._cacheClient.getAllowedRolesByIssuer(did);
+    }
+
+    /**
      * getENSTypesByOwner
      */
     getENSTypesByOwner({
@@ -649,7 +666,7 @@ export class DomainsService {
     /**
      * getENSTypesBySearchPhrase
      */
-    getENSTypesBySearchPhrase(search: string, types?: NamespaceType[]) {
+    getENSTypesBySearchPhrase(search: string, types?: SearchType[]) {
         return this._cacheClient.getNamespaceBySearchPhrase(search, types);
     }
 

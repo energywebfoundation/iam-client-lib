@@ -293,7 +293,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `phrase` | `string` |
-| `types?` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md)[] |
+| `types?` | [`SearchType`](../enums/modules_cacheClient_cacheClient_types.SearchType.md)[] |
 
 #### Returns
 

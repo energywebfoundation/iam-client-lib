@@ -20,6 +20,7 @@
 - [deleteApplication](modules_domains_domains_service.DomainsService.md#deleteapplication)
 - [deleteOrganization](modules_domains_domains_service.DomainsService.md#deleteorganization)
 - [deleteRole](modules_domains_domains_service.DomainsService.md#deleterole)
+- [getAllowedRolesByIssuer](modules_domains_domains_service.DomainsService.md#getallowedrolesbyissuer)
 - [getAppsOfOrg](modules_domains_domains_service.DomainsService.md#getappsoforg)
 - [getDIDsByRole](modules_domains_domains_service.DomainsService.md#getdidsbyrole)
 - [getDefinition](modules_domains_domains_service.DomainsService.md#getdefinition)
@@ -292,6 +293,28 @@ deleteRole
 
 ___
 
+### getAllowedRolesByIssuer
+
+▸ **getAllowedRolesByIssuer**(`did`): `Promise`<`string`[]\>
+
+getAllowedRolesByIssuer
+
+**`description`** get all roles that a DID can issue, given its role credentials and all role definitions
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `did` | `string` | DID of issuer |
+
+#### Returns
+
+`Promise`<`string`[]\>
+
+array of roles that the DID can issue
+
+___
+
 ### getAppsOfOrg
 
 ▸ **getAppsOfOrg**(`org`): `Promise`<[`IApp`](../interfaces/modules_domains_domains_types.IApp.md)[]\>
@@ -392,7 +415,7 @@ getENSTypesBySearchPhrase
 | Name | Type |
 | :------ | :------ |
 | `search` | `string` |
-| `types?` | [`NamespaceType`](../enums/modules_domains_domains_types.NamespaceType.md)[] |
+| `types?` | [`SearchType`](../enums/modules_cacheClient_cacheClient_types.SearchType.md)[] |
 
 #### Returns
 
