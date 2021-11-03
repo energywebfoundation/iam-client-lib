@@ -143,6 +143,8 @@ ___
 
 ▸ **acceptAssetOffer**(`__namedParameters`): `Promise`<`void`\>
 
+**`description`** Accept an offered Asset
+
 #### Parameters
 
 | Name | Type |
@@ -163,6 +165,8 @@ ___
 ### cancelAssetOffer
 
 ▸ **cancelAssetOffer**(`__namedParameters`): `Promise`<`void`\>
+
+**`description`** Cancel an Asset offer
 
 #### Parameters
 
@@ -759,16 +763,20 @@ ___
 
 ▸ **getAssetById**(`__namedParameters`): `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)\>
 
+**`description`** Get Asset by Id
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `__namedParameters` | `Object` | - |
+| `__namedParameters.id` | `string` | Asset Id |
 
 #### Returns
 
 `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)\>
+
+Asset
 
 #### Inherited from
 
@@ -779,6 +787,8 @@ ___
 ### getAssetHistory
 
 ▸ **getAssetHistory**(`__namedParameters`): `Promise`<[`AssetHistory`](../interfaces/cacheServerClient_cacheServerClient_types.AssetHistory.md)[]\>
+
+**`description`** Get history of a given Asset Id
 
 #### Parameters
 
@@ -794,6 +804,8 @@ ___
 #### Returns
 
 `Promise`<[`AssetHistory`](../interfaces/cacheServerClient_cacheServerClient_types.AssetHistory.md)[]\>
+
+Asset[] || []
 
 #### Inherited from
 
@@ -1018,6 +1030,8 @@ ___
 
 ▸ **getOfferedAssets**(`__namedParameters?`): `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)[]\>
 
+**`description`** Get all Assets offered to current User
+
 #### Parameters
 
 | Name | Type |
@@ -1028,6 +1042,8 @@ ___
 #### Returns
 
 `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)[]\>
+
+Asset[] || []
 
 #### Inherited from
 
@@ -1062,6 +1078,8 @@ ___
 
 ▸ **getOwnedAssets**(`__namedParameters?`): `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)[]\>
 
+**`description`** Retrieve all owned assets for the User's DID
+
 #### Parameters
 
 | Name | Type |
@@ -1083,6 +1101,8 @@ ___
 
 ▸ **getPreviouslyOwnedAssets**(`__namedParameters`): `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)[]\>
 
+**`description`** Get previously owned asset for a given DID
+
 #### Parameters
 
 | Name | Type |
@@ -1093,6 +1113,8 @@ ___
 #### Returns
 
 `Promise`<[`Asset`](../interfaces/cacheServerClient_cacheServerClient_types.Asset.md)[]\>
+
+Asset[] || []
 
 #### Inherited from
 
@@ -1497,6 +1519,8 @@ ___
 
 ▸ **offerAsset**(`__namedParameters`): `Promise`<`void`\>
 
+**`description`** Offer asset to a given address
+
 #### Parameters
 
 | Name | Type |
@@ -1571,9 +1595,13 @@ ___
 
 ▸ **registerAsset**(): `Promise`<`string`\>
 
+**`description`** Registers a new Asset to the User
+
 #### Returns
 
 `Promise`<`string`\>
+
+Asset DID
 
 #### Inherited from
 
@@ -1604,6 +1632,8 @@ ___
 ### rejectAssetOffer
 
 ▸ **rejectAssetOffer**(`__namedParameters`): `Promise`<`void`\>
+
+**`description`** Reject an offered Asset
 
 #### Parameters
 

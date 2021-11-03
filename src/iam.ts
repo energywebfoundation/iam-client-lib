@@ -1930,6 +1930,10 @@ export class IAM extends IAMBase {
     }
 
     // ### ASSETS ###
+    /**
+     * @description Registers a new Asset to the User
+     * @returns Asset DID
+     */
     public async registerAsset(): Promise<string> {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1964,7 +1968,11 @@ export class IAM extends IAMBase {
             throw err as Error;
         }
     }
-
+    /**
+     * @description Offer asset to a given address
+     * @param params.assetDID: DID of Offered Asset
+     * @param params.offerTo: Address of offer recipient
+     */
     public async offerAsset({ assetDID, offerTo }: { assetDID: string; offerTo: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1976,7 +1984,10 @@ export class IAM extends IAMBase {
             from: this._address,
         });
     }
-
+    /**
+     * @description Accept an offered Asset
+     * @param params.assetDID: DID of Offered Asset
+     */
     public async acceptAssetOffer({ assetDID }: { assetDID: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1988,7 +1999,10 @@ export class IAM extends IAMBase {
             from: this._address,
         });
     }
-
+    /**
+     * @description Reject an offered Asset
+     * @param params.assetDID: DID of offered Asset
+     */
     public async rejectAssetOffer({ assetDID }: { assetDID: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -2000,7 +2014,10 @@ export class IAM extends IAMBase {
             from: this._address,
         });
     }
-
+    /**
+     * @description Cancel an Asset offer
+     * @param params.assetDID: DID of offered Asset
+     */
     public async cancelAssetOffer({ assetDID }: { assetDID: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -2009,35 +2026,56 @@ export class IAM extends IAMBase {
         const tx = this.cancelOfferTx({ assetContractAddress });
         await this.send({ calls: [tx], from: this._address });
     }
-
+    /**
+     * @description Retrieve all owned assets for the User's DID
+     */
     public async getOwnedAssets({ did = this._did }: { did?: string } = {}) {
         if (!did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
         }
         return this._cacheClient.getOwnedAssets({ did });
     }
-
+    /**
+     * @description Get all Assets offered to current User
+     * @returns Asset[] || []
+     */
     public async getOfferedAssets({ did = this._did }: { did?: string } = {}) {
         if (!did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
         }
         return this._cacheClient.getOfferedAssets({ did });
     }
-
+    /**
+     * @description Get Asset by Id
+     * @param id Asset Id
+     * @returns Asset
+     */
     public async getAssetById({ id }: { id: string }) {
         if (this._cacheClient) {
             return this._cacheClient.getAssetById({ id });
         }
         throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
     }
-
+    /**
+     * @description Get previously owned asset for a given DID
+     * @param params.owner User DID
+     * @returns Asset[] || []
+     */
     public async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
         if (this._cacheClient) {
             return this._cacheClient.getPreviouslyOwnedAssets({ owner });
         }
         throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
     }
-
+    /**
+     * @description Get history of a given Asset Id
+     * @param params.id Asset Id
+     * @param params.order "ASC" (Ascending) || "DESC" (Descending)
+     * @param params.take number
+     * @param params.skip number
+     * @param params.type AssetHistoryEventType
+     * @returns Asset[] || []
+     */
     public async getAssetHistory({
         id,
         ...query
