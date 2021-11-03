@@ -402,7 +402,7 @@ ___
 
 ### createDelegateProof
 
-▸ **createDelegateProof**(`delegateKey`, `rpcUrl`, `identity`): `Promise`<`string`\>
+▸ **createDelegateProof**(`delegateKey`, `rpcUrl`, `identity`, `algorithm?`): `Promise`<`string`\>
 
 **`description`** create a proof of identity delegate
 
@@ -410,9 +410,10 @@ ___
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `delegateKey` | `string` | private key of the delegate |
+| `delegateKey` | `string` | private key of the delegate in hexadecimal format |
 | `rpcUrl` | `string` | the url of the blockchain provider |
 | `identity` | `string` | Did of the delegate |
+| `algorithm` | `Algorithms` | - |
 
 #### Returns
 
@@ -588,7 +589,7 @@ ___
 
 ### decodeJWTToken
 
-▸ **decodeJWTToken**(`__namedParameters`): `Promise`<`string` \| { [key: string]: `string` \| `object`;  }\>
+▸ **decodeJWTToken**(`__namedParameters`): `Promise`<`unknown`\>
 
 #### Parameters
 
@@ -599,7 +600,7 @@ ___
 
 #### Returns
 
-`Promise`<`string` \| { [key: string]: `string` \| `object`;  }\>
+`Promise`<`unknown`\>
 
 #### Inherited from
 
