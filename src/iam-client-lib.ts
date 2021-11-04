@@ -33,8 +33,8 @@ import {
     AssetProfile,
     RegistrationTypes,
 } from "./cacheServerClient/cacheServerClient.types";
-
-import { DIDAttribute, Encoding, Algorithms, PubKeyType } from "@ew-did-registry/did-resolver-interface";
+import { KeyType } from "@ew-did-registry/keys";
+import { DIDAttribute, Encoding, PubKeyType } from "@ew-did-registry/did-resolver-interface";
 
 import { setCacheClientOptions, setChainConfig, setMessagingOptions } from "./iam/chainConfig";
 
@@ -62,7 +62,7 @@ export { setCacheClientOptions, setChainConfig, setMessagingOptions };
 export {
     DIDAttribute,
     Encoding,
-    Algorithms,
+    KeyType,
     PubKeyType,
     ENSNamespaceTypes,
     MessagingMethod,

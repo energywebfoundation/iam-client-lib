@@ -34,4 +34,5 @@ export enum ERROR_MESSAGES {
     INSUFFICIENT_BALANCE = "Signer has insufficient balance",
     ERROR_IN_AZURE_PROVIDER = "Error in Azure Provider",
     EKC_PROXY_NOT_PROVIDED = "EKC proxy url is not provided",
+    JWT_ALGORITHM_NOT_SUPPORTED = "Jwt algorithm not supported",
 }

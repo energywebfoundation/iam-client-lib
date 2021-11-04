@@ -255,13 +255,12 @@ export class IAMBase {
                 throw new Error(ERROR_MESSAGES.EKC_PROXY_NOT_PROVIDED);
             }
             try {
-                // proxyUrl should be
                 this._ekc = await EKC.init({ proxyUrl });
                 await this._ekc.login({ mode: "popup" });
             } catch (error) {
                 throw new Error(ERROR_MESSAGES.ERROR_IN_AZURE_PROVIDER);
             }
-            this._signer = this._ekc.getSigner() as Signer;
+            this._signer = this._ekc.getSigner();
             this._provider = this._signer.provider as providers.JsonRpcProvider;
             this._providerType = walletProvider;
             return;
@@ -315,7 +314,7 @@ export class IAMBase {
                 type: ProviderTypes.HTTP,
                 uriOrInfo: this._provider.connection.url,
             });
-        } else if (this._signer instanceof providers.JsonRpcSigner || this._signer instanceof Signer) {
+        } else if (this._signer instanceof Signer) {
             this._didSigner = EwSigner.fromEthersSigner(this._signer, this._publicKey);
         } else {
             throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
@@ -399,7 +398,6 @@ export class IAMBase {
      * @description Closes the connection between application and the signer's wallet
      */
     async closeConnection() {
-        if (this._providerType !== WalletProvider.EKC) await this._walletConnectService.closeConnection();
         this.clearSession();
         this._did = undefined;
         this._address = undefined;
@@ -411,6 +409,8 @@ export class IAMBase {
             } catch (error) {
                 console.log("error in azure logout ", error);
             }
+        } else {
+            await this._walletConnectService.closeConnection();
         }
         return true;
     }

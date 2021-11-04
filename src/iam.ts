@@ -16,6 +16,7 @@
 // @authors: Daniel Wojno
 
 import { providers, Signer, utils, Wallet } from "ethers";
+import jsonwebtoken from "jsonwebtoken";
 import {
     DomainReader,
     EncodedCall,
@@ -24,8 +25,8 @@ import {
     IRoleDefinition,
     PreconditionType,
 } from "@energyweb/iam-contracts";
+import { KeyType, privToPem } from "@ew-did-registry/keys";
 import {
-    Algorithms,
     DIDAttribute,
     Encoding,
     IDIDDocument,
@@ -71,8 +72,7 @@ import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
-import { JWT } from "@ew-did-registry/jwt";
-
+import { Algorithms, JWT } from "@ew-did-registry/jwt";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -325,7 +325,7 @@ export class IAM extends IAMBase {
         }
 
         const updateData: IUpdateData = {
-            algo: Algorithms.Secp256k1,
+            algo: KeyType.Secp256k1,
             encoding: Encoding.HEX,
             ...data,
         };
@@ -567,12 +567,17 @@ export class IAM extends IAMBase {
 
     /**
      * @description create a proof of identity delegate
-     * @param delegateKey private key of the delegate
+     * @param delegateKey private key of the delegate in hexadecimal format
      * @param rpcUrl the url of the blockchain provider
      * @param identity Did of the delegate
      * @returns token of delegate
      */
-    async createDelegateProof(delegateKey: string, rpcUrl: string, identity: string): Promise<string> {
+    async createDelegateProof(
+        delegateKey: string,
+        rpcUrl: string,
+        identity: string,
+        algorithm: Algorithms = Algorithms.EIP191,
+    ): Promise<string> {
         const provider = new providers.JsonRpcProvider(rpcUrl);
         const blockNumber = (await provider.getBlockNumber()).toString();
 
@@ -582,9 +587,14 @@ export class IAM extends IAMBase {
                 blockNumber,
             },
         };
-        const jwt = new JWT(new Wallet(delegateKey));
-        const identityToken = jwt.sign(payload, { algorithm: "ES256", issuer: identity });
-        return identityToken;
+        if (algorithm === Algorithms.EIP191) {
+            return new JWT(new Wallet(delegateKey)).sign(payload, { issuer: identity });
+        } else if (algorithm === Algorithms.ES256) {
+            /** @todo move to @ew-did-registry/jwt */
+            return jsonwebtoken.sign(payload, privToPem(delegateKey, KeyType.Secp256r1), { issuer: identity });
+        } else {
+            throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
+        }
     }
 
     /// ROLES
@@ -1930,6 +1940,10 @@ export class IAM extends IAMBase {
     }
 
     // ### ASSETS ###
+    /**
+     * @description Registers a new Asset to the User
+     * @returns Asset DID
+     */
     public async registerAsset(): Promise<string> {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1964,7 +1978,11 @@ export class IAM extends IAMBase {
             throw err as Error;
         }
     }
-
+    /**
+     * @description Offer asset to a given address
+     * @param params.assetDID: DID of Offered Asset
+     * @param params.offerTo: Address of offer recipient
+     */
     public async offerAsset({ assetDID, offerTo }: { assetDID: string; offerTo: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1976,7 +1994,10 @@ export class IAM extends IAMBase {
             from: this._address,
         });
     }
-
+    /**
+     * @description Accept an offered Asset
+     * @param params.assetDID: DID of Offered Asset
+     */
     public async acceptAssetOffer({ assetDID }: { assetDID: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -1988,7 +2009,10 @@ export class IAM extends IAMBase {
             from: this._address,
         });
     }
-
+    /**
+     * @description Reject an offered Asset
+     * @param params.assetDID: DID of offered Asset
+     */
     public async rejectAssetOffer({ assetDID }: { assetDID: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -2000,7 +2024,10 @@ export class IAM extends IAMBase {
             from: this._address,
         });
     }
-
+    /**
+     * @description Cancel an Asset offer
+     * @param params.assetDID: DID of offered Asset
+     */
     public async cancelAssetOffer({ assetDID }: { assetDID: string }) {
         if (!this._address) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
@@ -2009,35 +2036,56 @@ export class IAM extends IAMBase {
         const tx = this.cancelOfferTx({ assetContractAddress });
         await this.send({ calls: [tx], from: this._address });
     }
-
+    /**
+     * @description Retrieve all owned assets for the User's DID
+     */
     public async getOwnedAssets({ did = this._did }: { did?: string } = {}) {
         if (!did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
         }
         return this._cacheClient.getOwnedAssets({ did });
     }
-
+    /**
+     * @description Get all Assets offered to current User
+     * @returns Asset[] || []
+     */
     public async getOfferedAssets({ did = this._did }: { did?: string } = {}) {
         if (!did) {
             throw new Error(ERROR_MESSAGES.USER_NOT_LOGGED_IN);
         }
         return this._cacheClient.getOfferedAssets({ did });
     }
-
+    /**
+     * @description Get Asset by Id
+     * @param id Asset Id
+     * @returns Asset
+     */
     public async getAssetById({ id }: { id: string }) {
         if (this._cacheClient) {
             return this._cacheClient.getAssetById({ id });
         }
         throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
     }
-
+    /**
+     * @description Get previously owned asset for a given DID
+     * @param params.owner User DID
+     * @returns Asset[] || []
+     */
     public async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
         if (this._cacheClient) {
             return this._cacheClient.getPreviouslyOwnedAssets({ owner });
         }
         throw new Error(ERROR_MESSAGES.CACHE_CLIENT_NOT_PROVIDED);
     }
-
+    /**
+     * @description Get history of a given Asset Id
+     * @param params.id Asset Id
+     * @param params.order "ASC" (Ascending) || "DESC" (Descending)
+     * @param params.take number
+     * @param params.skip number
+     * @param params.type AssetHistoryEventType
+     * @returns Asset[] || []
+     */
     public async getAssetHistory({
         id,
         ...query

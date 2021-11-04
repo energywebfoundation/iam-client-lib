@@ -63,7 +63,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Commit to develop branch and merge to master branch
+      - name: Merge master into develop
+        if: github.ref == 'refs/heads/master'
         run: |
           git checkout develop
           sudo chown $(id -u) .git/logs/refs/heads/develop

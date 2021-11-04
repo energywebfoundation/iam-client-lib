@@ -19,6 +19,7 @@
 - [ENS\_TYPE\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_type_not_supported)
 - [ERROR\_IN\_AZURE\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#error_in_azure_provider)
 - [INSUFFICIENT\_BALANCE](errors_ErrorMessages.ERROR_MESSAGES.md#insufficient_balance)
+- [JWT\_ALGORITHM\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#jwt_algorithm_not_supported)
 - [JWT\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#jwt_not_initialized)
 - [METAMASK\_EXTENSION\_NOT\_AVAILABLE](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_extension_not_available)
 - [NATS\_NOT\_CONNECTED](errors_ErrorMessages.ERROR_MESSAGES.md#nats_not_connected)
@@ -119,6 +120,12 @@ ___
 ### INSUFFICIENT\_BALANCE
 
 • **INSUFFICIENT\_BALANCE** = `"Signer has insufficient balance"`
+
+___
+
+### JWT\_ALGORITHM\_NOT\_SUPPORTED
+
+• **JWT\_ALGORITHM\_NOT\_SUPPORTED** = `"Jwt algorithm not supported"`
 
 ___
 

@@ -1,11 +1,11 @@
-import { Keys } from "@ew-did-registry/keys";
+import { Keys, KeyType } from "@ew-did-registry/keys";
 import { OfferableIdentity__factory } from "../ethers/factories/OfferableIdentity__factory";
 import { IAM } from "../src/iam";
 import { emptyAddress } from "../src/utils/constants";
 import { rootOwner, createIam } from "./iam.test";
 import { replenish, provider, rpcUrl } from "./setup_contracts";
 import { PubKeyType } from "@ew-did-registry/did-resolver-interface/src/models/operator";
-import { Algorithms, DIDAttribute, Encoding } from "@ew-did-registry/did-resolver-interface";
+import { DIDAttribute, Encoding } from "@ew-did-registry/did-resolver-interface";
 import { Methods } from "@ew-did-registry/did";
 
 export const assetsTests = () => {
@@ -99,7 +99,7 @@ export const assetsTests = () => {
             didAttribute: DIDAttribute.PublicKey,
             did: `did:ethr:${assetAddress}`,
             data: {
-                algo: Algorithms.Secp256k1,
+                algo: KeyType.Secp256k1,
                 encoding: Encoding.HEX,
                 type: PubKeyType.SignatureAuthentication2018,
                 value: { tag: "key-1", publicKey: `0x${new Keys().publicKey}` },
