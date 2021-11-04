@@ -6,7 +6,7 @@ import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import { Algorithms } from "@ew-did-registry/jwt";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
-import { hashes, IProofData, IPublicClaim, ISaltedFields } from "@ew-did-registry/claims";
+import { hashes, IPublicClaim } from "@ew-did-registry/claims";
 import { DIDAttribute } from "@ew-did-registry/did-resolver-interface";
 import { ClaimManager__factory } from "../../../ethers/factories/ClaimManager__factory";
 import { ERROR_MESSAGES } from "../../errors";
@@ -121,7 +121,7 @@ export class ClaimsService {
         registrationTypes?: RegistrationTypes[];
     }) {
         const { claimType: role, claimTypeVersion: version } = claim;
-        const token = await this.createPublicClaim({ data: claim, subject });
+        const token = await this._didRegistry.createPublicClaim({ data: claim, subject });
 
         await this.verifyEnrolmentPrerequisites({ subject, role });
 
@@ -227,17 +227,6 @@ export class ClaimsService {
         await this._cacheClient.deleteClaim(id);
     }
 
-    /**
-     * createPublicClaim
-     *
-     * @description create a public claim based on data provided
-     * @returns JWT token of created claim
-     *
-     */
-    async createPublicClaim({ data, subject }: { data: ClaimData; subject?: string }) {
-        return this._didRegistry.createPublicClaim({ data, subject });
-    }
-
     async issueClaim({
         claim,
         subject,
@@ -329,40 +318,13 @@ export class ClaimsService {
     }
 
     /**
-     * createProofClaim
-     *
-     * @description creates a proof of a claim
-     * @returns proof token
-     *
-     */
-    async createProofClaim({ claimUrl, saltedFields }: { claimUrl: string; saltedFields: ISaltedFields }) {
-        const encryptedSaltedFields: IProofData = {};
-        let counter = 0;
-        Object.entries(saltedFields).forEach(([key, value]) => {
-            if (counter % 2 === 0) {
-                encryptedSaltedFields[key] = {
-                    value,
-                    encrypted: true,
-                };
-            } else {
-                encryptedSaltedFields[key] = {
-                    value,
-                    encrypted: false,
-                };
-            }
-            counter++;
-        });
-        return this._didRegistry.createProofClaim({ claimUrl, encryptedSaltedFields });
-    }
-
-    /**
      * createSelfSignedClaim
      *
      * @description creates self signed claim and upload the data to ipfs
      *
      */
     async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
-        const token = await this.createPublicClaim({ data, subject });
+        const token = await this._didRegistry.createPublicClaim({ data, subject });
         return this.publishPublicClaim({ token });
     }
 
@@ -487,7 +449,7 @@ export class ClaimsService {
      */
     async createIdentityProof() {
         const blockNumber = await this._signerService.provider.getBlockNumber();
-        return this.createPublicClaim({
+        return this._didRegistry.createPublicClaim({
             data: {
                 blockNumber,
             },

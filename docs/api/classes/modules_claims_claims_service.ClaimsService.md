@@ -13,8 +13,6 @@
 - [createClaimRequest](modules_claims_claims_service.ClaimsService.md#createclaimrequest)
 - [createDelegateProof](modules_claims_claims_service.ClaimsService.md#createdelegateproof)
 - [createIdentityProof](modules_claims_claims_service.ClaimsService.md#createidentityproof)
-- [createProofClaim](modules_claims_claims_service.ClaimsService.md#createproofclaim)
-- [createPublicClaim](modules_claims_claims_service.ClaimsService.md#createpublicclaim)
 - [createSelfSignedClaim](modules_claims_claims_service.ClaimsService.md#createselfsignedclaim)
 - [deleteClaim](modules_claims_claims_service.ClaimsService.md#deleteclaim)
 - [getClaimId](modules_claims_claims_service.ClaimsService.md#getclaimid)
@@ -103,54 +101,6 @@ ___
 `Promise`<`string`\>
 
 JWT token of created identity
-
-___
-
-### createProofClaim
-
-▸ **createProofClaim**(`__namedParameters`): `Promise`<`void`\>
-
-createProofClaim
-
-**`description`** creates a proof of a claim
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claimUrl` | `string` |
-| `__namedParameters.saltedFields` | `ISaltedFields` |
-
-#### Returns
-
-`Promise`<`void`\>
-
-proof token
-
-___
-
-### createPublicClaim
-
-▸ **createPublicClaim**(`__namedParameters`): `Promise`<`string`\>
-
-createPublicClaim
-
-**`description`** create a public claim based on data provided
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.data` | [`ClaimData`](../interfaces/modules_didRegistry_did_types.ClaimData.md) |
-| `__namedParameters.subject?` | `string` |
-
-#### Returns
-
-`Promise`<`string`\>
-
-JWT token of created claim
 
 ___
 

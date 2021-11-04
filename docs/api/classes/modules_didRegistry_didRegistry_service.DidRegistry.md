@@ -15,7 +15,6 @@
 
 ### Methods
 
-- [createProofClaim](modules_didRegistry_didRegistry_service.DidRegistry.md#createproofclaim)
 - [createPublicClaim](modules_didRegistry_didRegistry_service.DidRegistry.md#createpublicclaim)
 - [decodeJWTToken](modules_didRegistry_didRegistry_service.DidRegistry.md#decodejwttoken)
 - [getDidDocument](modules_didRegistry_didRegistry_service.DidRegistry.md#getdiddocument)
@@ -62,24 +61,6 @@ ___
 `JWT`
 
 ## Methods
-
-### createProofClaim
-
-▸ **createProofClaim**(`__namedParameters`): `Promise`<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claimUrl` | `string` |
-| `__namedParameters.encryptedSaltedFields` | `IProofData` |
-
-#### Returns
-
-`Promise`<`void`\>
-
-___
 
 ### createPublicClaim
 

@@ -15,7 +15,7 @@ import {
 import { DIDDocumentFull, IDIDDocumentFull } from "@ew-did-registry/did-document";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
 import { Methods } from "@ew-did-registry/did";
-import { ClaimsIssuer, ClaimsUser, IProofData, IPublicClaim } from "@ew-did-registry/claims";
+import { ClaimsIssuer, ClaimsUser, IPublicClaim } from "@ew-did-registry/claims";
 import { SignerService } from "../signer/signer.service";
 import { ERROR_MESSAGES } from "../../errors";
 import { CacheClient } from "../cacheClient/cacheClient.service";
@@ -114,16 +114,6 @@ export class DidRegistry {
             return this._userClaims.createPublicClaim(data, { subject, issuer: "" });
         }
         return this._userClaims.createPublicClaim(data);
-    }
-
-    async createProofClaim({
-        claimUrl,
-        encryptedSaltedFields,
-    }: {
-        claimUrl: string;
-        encryptedSaltedFields: IProofData;
-    }) {
-        await this._userClaims.createProofClaim(claimUrl, encryptedSaltedFields);
     }
 
     /**
