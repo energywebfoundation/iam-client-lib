@@ -27,6 +27,7 @@
 | `infuraId?` | `string` | - |
 | `ipfsUrl?` | `string` | - |
 | `privateKey?` | `string` | - |
+| `proxyUrl?` | `string` | - |
 | `rpcUrl?` | `string` | only required in node env |
 
 ___

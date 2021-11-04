@@ -1,4 +1,5 @@
 import { providers, Signer, utils, Wallet, BigNumber, ethers } from "ethers";
+import EKC from "@energyweb/ekc";
 import {
     DomainReader,
     DomainTransactionFactory,
@@ -52,6 +53,7 @@ export type ConnectionOptions = {
     bridgeUrl?: string;
     privateKey?: string;
     ewKeyManagerUrl?: string;
+    proxyUrl?: string;
 };
 
 export type EncodedCall = {
@@ -110,6 +112,8 @@ export class IAMBase {
     protected _natsConnection: NatsConnection | undefined;
     protected _jsonCodec: Codec<any> | undefined;
 
+    private _ekc: EKC | undefined;
+
     private ttl = BigNumber.from(0);
 
     /**
@@ -123,6 +127,7 @@ export class IAMBase {
         bridgeUrl = "https://bridge.walletconnect.org",
         privateKey,
         ewKeyManagerUrl = "https://km.aws.energyweb.org/connect/new",
+        proxyUrl = "https://azure-proxy-server.energyweb.org/api/v1",
     }: ConnectionOptions = {}) {
         this._executionEnvironment = detectExecutionEnvironment();
 
@@ -133,6 +138,7 @@ export class IAMBase {
             rpcUrl,
             bridgeUrl,
             infuraId,
+            proxyUrl,
         };
 
         this._ipfsStore = new DidStore(ipfsUrl);
@@ -183,7 +189,7 @@ export class IAMBase {
         initializeMetamask?: boolean;
         walletProvider?: WalletProvider;
     }): Promise<AccountInfo | undefined> {
-        const { privateKey, rpcUrl } = this._connectionOptions;
+        const { privateKey, rpcUrl, proxyUrl } = this._connectionOptions;
 
         if (walletProvider === WalletProvider.PrivateKey) {
             this.initWithPrivateKey(privateKey, rpcUrl);
@@ -244,6 +250,21 @@ export class IAMBase {
             this._providerType = walletProvider;
             return;
         }
+        if (walletProvider === WalletProvider.EKC) {
+            if (!proxyUrl) {
+                throw new Error(ERROR_MESSAGES.EKC_PROXY_NOT_PROVIDED);
+            }
+            try {
+                this._ekc = await EKC.init({ proxyUrl });
+                await this._ekc.login({ mode: "popup" });
+            } catch (error) {
+                throw new Error(ERROR_MESSAGES.ERROR_IN_AZURE_PROVIDER);
+            }
+            this._signer = this._ekc.getSigner();
+            this._provider = this._signer.provider as providers.JsonRpcProvider;
+            this._providerType = walletProvider;
+            return;
+        }
         throw new Error(ERROR_MESSAGES.WALLET_TYPE_NOT_PROVIDED);
     }
 
@@ -293,7 +314,7 @@ export class IAMBase {
                 type: ProviderTypes.HTTP,
                 uriOrInfo: this._provider.connection.url,
             });
-        } else if (this._signer instanceof providers.JsonRpcSigner) {
+        } else if (this._signer instanceof Signer) {
             this._didSigner = EwSigner.fromEthersSigner(this._signer, this._publicKey);
         } else {
             throw new Error(ERROR_MESSAGES.PROVIDER_NOT_INITIALIZED);
@@ -377,11 +398,21 @@ export class IAMBase {
      * @description Closes the connection between application and the signer's wallet
      */
     async closeConnection() {
-        await this._walletConnectService.closeConnection();
         this.clearSession();
         this._did = undefined;
         this._address = undefined;
         this._signer = undefined;
+        if (this._providerType === WalletProvider.EKC) {
+            try {
+                await this._ekc?.logout({ mode: "popup" });
+                return false;
+            } catch (error) {
+                console.log("error in azure logout ", error);
+            }
+        } else {
+            await this._walletConnectService.closeConnection();
+        }
+        return true;
     }
 
     private async loginToCacheServer(): Promise<IPubKeyAndIdentityToken | undefined> {

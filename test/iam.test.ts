@@ -18,12 +18,12 @@ import {
 import { labelhash } from "../src/utils/ENS_hash";
 import { orgTests } from "./organization.testSuite";
 import { appsTests } from "./application.testSuite";
-import { initializeConnectionTests } from "./initializeConnection.testSuite";
 import { claimsTests } from "./claimsTests/claims.testSuite";
 import { setCacheClientOptions, setChainConfig } from "../src/iam/chainConfig";
 import { utilsTests } from "./utils/utils.testSuite";
 import { assetsTests } from "./assets.testsuite";
 import { stakingTests } from "./staking";
+import { signerTests } from "./signer/signerTests";
 
 const { namehash } = utils;
 
@@ -107,7 +107,7 @@ describe("IAM tests", () => {
 
 describe("Organization tests", orgTests);
 describe("Application tests", appsTests);
-describe("InitializeConnection tests", initializeConnectionTests);
+describe("InitializeConnection tests", signerTests);
 describe("Claim tests", claimsTests);
 describe("Utils tests", utilsTests);
 describe("Assets tests", assetsTests);
