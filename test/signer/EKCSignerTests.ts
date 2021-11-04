@@ -13,7 +13,6 @@ export function ekcSignerTests() {
             initCacheServer: false,
             createDocument: true,
             reinitializeMetamask: false,
-            proxyUrl: "http://localhost:5000/api/v1",
         });
     });
 }
