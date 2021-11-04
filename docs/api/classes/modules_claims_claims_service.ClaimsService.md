@@ -72,7 +72,7 @@ ___
 
 ### createDelegateProof
 
-▸ **createDelegateProof**(`delegateKey`, `identity`): `Promise`<`string`\>
+▸ **createDelegateProof**(`delegateKey`, `identity`, `algorithm?`): `Promise`<`string`\>
 
 **`description`** create a proof of identity delegate
 
@@ -80,8 +80,9 @@ ___
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `delegateKey` | `string` | private key of the delegate |
+| `delegateKey` | `string` | private key of the delegate in hexadecimal format |
 | `identity` | `string` | Did of the delegate |
+| `algorithm` | `Algorithms` | - |
 
 #### Returns
 

@@ -33,6 +33,10 @@ export class AssetsService {
         this._assetManager = chainConfig.assetManagerAddress;
     }
 
+    /**
+     * @description Registers a new Asset to the User
+     * @returns Asset DID
+     */
     async registerAsset(): Promise<string> {
         const data = this._assetManagerInterface.encodeFunctionData("createIdentity", [this._owner]);
         const receipt = await this._signerService.send({ to: this._assetManager, data });
@@ -58,7 +62,9 @@ export class AssetsService {
     }
 
     /**
-     * @param offerTo - recepient address
+     * @description Offer asset to a given address
+     * @param params.assetDID: DID of Offered Asset
+     * @param params.offerTo: Address of offer recipient
      */
     async offerAsset({ assetDID, offerTo }: { assetDID: string; offerTo: string }) {
         const [, , assetContractAddress] = assetDID.split(":");
@@ -66,40 +72,78 @@ export class AssetsService {
         await this._signerService.send(tx);
     }
 
+    /**
+     * @description Accept an offered Asset
+     * @param params.assetDID: DID of Offered Asset
+     */
     async acceptAssetOffer({ assetDID }: { assetDID: string }) {
         const [, , assetContractAddress] = assetDID.split(":");
         const tx = this.acceptOfferTx({ assetContractAddress });
         await this._signerService.send(tx);
     }
 
+    /**
+     * @description Reject an offered Asset
+     * @param params.assetDID: DID of offered Asset
+     */
     async rejectAssetOffer({ assetDID }: { assetDID: string }) {
         const [, , assetContractAddress] = assetDID.split(":");
         const tx = this.rejectOfferTx({ assetContractAddress });
         await this._signerService.send(tx);
     }
 
+    /**
+     * @description Cancel an Asset offer
+     * @param params.assetDID: DID of offered Asset
+     */
     async cancelAssetOffer({ assetDID }: { assetDID: string }) {
         const [, , assetContractAddress] = assetDID.split(":");
         const tx = this.cancelOfferTx({ assetContractAddress });
         await this._signerService.send(tx);
     }
 
+    /**
+     * @description Retrieve all owned assets for the User's DID
+     */
     async getOwnedAssets({ did = this._did }: { did?: string } = {}) {
         return this._cacheClient.getOwnedAssets(did);
     }
 
+    /**
+     * @description Get all Assets offered to current User
+     * @returns Asset[] || []
+     */
     async getOfferedAssets({ did = this._did }: { did?: string } = {}) {
         return this._cacheClient.getOfferedAssets(did);
     }
 
+    /**
+     * @description Get Asset by Id
+     * @param id Asset Id
+     * @returns Asset
+     */
     async getAssetById({ id }: { id: string }) {
         return this._cacheClient.getAssetById(id);
     }
 
+    /**
+     * @description Get previously owned asset for a given DID
+     * @param params.owner User DID
+     * @returns Asset[] || []
+     */
     async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
         return this._cacheClient.getPreviouslyOwnedAssets(owner);
     }
 
+    /**
+     * @description Get history of a given Asset Id
+     * @param params.id Asset Id
+     * @param params.order "ASC" (Ascending) || "DESC" (Descending)
+     * @param params.take number
+     * @param params.skip number
+     * @param params.type AssetHistoryEventType
+     * @returns Asset[] || []
+     */
     async getAssetHistory({
         id,
         ...query

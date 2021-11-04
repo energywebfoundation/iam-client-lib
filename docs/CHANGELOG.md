@@ -1,3 +1,17 @@
+# [3.3.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.5...v3.3.0-alpha.6) (2021-11-03)
+
+
+### Features
+
+* ES256 delegate ([a3a9ba8](https://github.com/energywebfoundation/iam-client-lib/commit/a3a9ba8fa884757a38d50986fa6a431bda840b6b))
+
+# [3.3.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.4...v3.3.0-alpha.5) (2021-11-03)
+
+
+### Bug Fixes
+
+* merge updated master to develop ([5f1a3fc](https://github.com/energywebfoundation/iam-client-lib/commit/5f1a3fcf136782030e5f5928b306a03a69ce805a))
+
 # [3.3.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.3...v3.3.0-alpha.4) (2021-11-02)
 
 

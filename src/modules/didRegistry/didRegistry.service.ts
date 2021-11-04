@@ -1,10 +1,10 @@
 import { Wallet, providers } from "ethers";
 import { AxiosError } from "axios";
+import { KeyType } from "@ew-did-registry/keys";
 import { JWT } from "@ew-did-registry/jwt";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { addressOf, EwSigner, Operator } from "@ew-did-registry/did-ethr-resolver";
 import {
-    Algorithms,
     DIDAttribute,
     Encoding,
     IServiceEndpoint,
@@ -183,7 +183,7 @@ export class DidRegistry {
         }
 
         const updateData: IUpdateData = {
-            algo: Algorithms.Secp256k1,
+            algo: KeyType.Secp256k1,
             encoding: Encoding.HEX,
             ...data,
         };

@@ -1,8 +1,10 @@
 import { utils, Wallet } from "ethers";
+import jsonwebtoken from "jsonwebtoken";
 import { v4 } from "uuid";
 import { JSONCodec } from "nats.ws";
 import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
+import { Algorithms } from "@ew-did-registry/jwt";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { hashes, IProofData, IPublicClaim, ISaltedFields } from "@ew-did-registry/claims";
 import { DIDAttribute } from "@ew-did-registry/did-resolver-interface";
@@ -31,6 +33,7 @@ import { MessagingService } from "../messaging/messaging.service";
 import { NATS_EXCHANGE_TOPIC } from "../messaging/messaging.types";
 import { isValidDID } from "../../utils/did";
 import { JWT } from "@ew-did-registry/jwt";
+import { privToPem, KeyType } from "@ew-did-registry/keys";
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, namehash, arrayify } = utils;
 
@@ -493,12 +496,16 @@ export class ClaimsService {
 
     /**
      * @description create a proof of identity delegate
-     * @param delegateKey private key of the delegate
+     * @param delegateKey private key of the delegate in hexadecimal format
      * @param rpcUrl the url of the blockchain provider
      * @param identity Did of the delegate
      * @returns token of delegate
      */
-    async createDelegateProof(delegateKey: string, identity: string): Promise<string> {
+    async createDelegateProof(
+        delegateKey: string,
+        identity: string,
+        algorithm: Algorithms = Algorithms.EIP191,
+    ): Promise<string> {
         const provider = this._signerService.provider;
         const blockNumber = (await provider.getBlockNumber()).toString();
 
@@ -508,9 +515,14 @@ export class ClaimsService {
                 blockNumber,
             },
         };
-        const jwt = new JWT(new Wallet(delegateKey));
-        const identityToken = jwt.sign(payload, { algorithm: "ES256", issuer: identity });
-        return identityToken;
+        if (algorithm === Algorithms.EIP191) {
+            return new JWT(new Wallet(delegateKey)).sign(payload, { issuer: identity });
+        } else if (algorithm === Algorithms.ES256) {
+            /** @todo move to @ew-did-registry/jwt */
+            return jsonwebtoken.sign(payload, privToPem(delegateKey, KeyType.Secp256r1), { issuer: identity });
+        } else {
+            throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
+        }
     }
 
     private stripClaimData(data: ClaimData): ClaimData {
