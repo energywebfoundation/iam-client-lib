@@ -5,7 +5,7 @@ import { createWalletConnectProvider } from "./walletConnectMetamask";
 
 export async function fromKms(bridge: string, kmsServerUrl: string, infuraId?: string) {
     const walletConnectProvider = createWalletConnectProvider(bridge, infuraId);
-    walletConnectProvider.on("display_uri", (_err, payload) => {
+    walletConnectProvider.on("display_uri", (_, payload) => {
         const wcUri = payload.params[0];
         const encoded = encodeURIComponent(wcUri);
         const hasQueryString = kmsServerUrl.includes("?");
