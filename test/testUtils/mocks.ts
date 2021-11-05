@@ -32,6 +32,11 @@ export const mockCacheClient = () => {
 
     const mockedCachedClient = {
         getRoleDefinition: jest.fn(({ namespace }: { namespace: string }) => cachedRoleDefinitions[namespace]),
+        getRolesDefinition: jest.fn((namespaces: string[]) =>
+            Object.keys(cachedRoleDefinitions)
+                .filter((c) => namespaces.find((n) => n === c))
+                .map((c) => cacheRoleDefinitions[c]),
+        ),
         getClaimsBySubject: jest.fn(({ did, isAccepted }: { did: string; isAccepted?: boolean }) => {
             const claims = cachedClaims[did];
             return claims ? claims.filter((c) => c.isAccepted === isAccepted) : [];

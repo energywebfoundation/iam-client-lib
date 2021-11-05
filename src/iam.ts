@@ -73,6 +73,7 @@ import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
 import { Algorithms, JWT } from "@ew-did-registry/jwt";
+import { validateRequiredParamsDefinition, varifyRequiredParams } from "./iam/roleRequiredFieldsHelper";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -95,7 +96,6 @@ export interface IMessage {
     requester: string;
     claimIssuer?: string[];
 }
-
 export interface IClaimRequest extends IMessage {
     token: string;
     registrationTypes: RegistrationTypes[];
@@ -801,6 +801,9 @@ export class IAM extends IAMBase {
     }) {
         const newDomain = `${roleName}.${namespace}`;
         const from = await this.getOwner({ namespace });
+
+        validateRequiredParamsDefinition(data);
+
         const steps = [
             {
                 tx: this.createSubdomainTx({ domain: namespace, nodeName: roleName, owner: from }),
@@ -1431,12 +1434,39 @@ export class IAM extends IAMBase {
         );
     }
 
-    private async verifyEnrolmentPrerequisites({ subject, role }: { subject: string; role: string }) {
-        const roleDefinition = await this.getDefinition({
+    private async verifyEnrolmentRequest({ subject, role }: { subject: string; role: string }) {
+        const roleDefinition = (await this.getDefinition({
             type: ENSNamespaceTypes.Roles,
             namespace: role,
-        });
+        })) as IRoleDefinition;
 
+        await this.verifyEnrolmentPrerequisites({ subject, roleDefinition });
+    }
+    private async verifyEnrolment({
+        subject,
+        role,
+        claimParams,
+    }: {
+        subject: string;
+        role: string;
+        claimParams?: Record<string, string>;
+    }) {
+        const roleDefinition = (await this.getDefinition({
+            type: ENSNamespaceTypes.Roles,
+            namespace: role,
+        })) as IRoleDefinition;
+
+        await this.verifyEnrolmentPrerequisites({ subject, roleDefinition });
+        await varifyRequiredParams({ claimParams, roleDefinition });
+    }
+
+    private async verifyEnrolmentPrerequisites({
+        subject,
+        roleDefinition,
+    }: {
+        subject: string;
+        roleDefinition?: IRoleDefinition;
+    }) {
         if (!roleDefinition) {
             throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
         }
@@ -1455,6 +1485,7 @@ export class IAM extends IAMBase {
                 .map(({ conditions }) => conditions)
                 .reduce((all, cur) => all.concat(cur), []),
         );
+
         for (const role in requiredRoles) {
             if (!enroledRoles.has(role)) {
                 throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
@@ -1555,7 +1586,12 @@ export class IAM extends IAMBase {
         claim,
         subject,
     }: {
-        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        claim: {
+            claimType: string;
+            claimTypeVersion: number;
+            fields: { key: string; value: string | number }[];
+            claimParams?: Record<string, string>;
+        };
         subject: string;
     }) {
         if (!this._did) {
@@ -1568,7 +1604,7 @@ export class IAM extends IAMBase {
             throw new Error(ERROR_MESSAGES.SIGNER_NOT_INITIALIZED);
         }
 
-        await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+        await this.verifyEnrolment({ subject, role: claim.claimType, claimParams: claim.claimParams });
 
         const message: IClaimIssuance = {
             id: uuid(),
@@ -1618,7 +1654,7 @@ export class IAM extends IAMBase {
         const { claimType: role, claimTypeVersion: version } = claim;
         const token = await this.createPublicClaim({ data: claim, subject });
 
-        await this.verifyEnrolmentPrerequisites({ subject, role });
+        await this.verifyEnrolmentRequest({ subject, role: claim.claimType });
 
         // temporarily, until claimIssuer is not removed from Claim entity
         const issuer = [`did:${Methods.Erc1056}:${emptyAddress}`];
@@ -1679,7 +1715,7 @@ export class IAM extends IAMBase {
             sub: string;
         };
 
-        await this.verifyEnrolmentPrerequisites({ subject: sub, role: claimData.claimType });
+        await this.verifyEnrolment({ subject: sub, role: claimData.claimType, claimParams });
 
         const message: IClaimIssuance = {
             id,

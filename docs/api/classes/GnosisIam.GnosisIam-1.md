@@ -1425,6 +1425,7 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimParams?` | `Record`<`string`, `string`\> |
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
 | `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |

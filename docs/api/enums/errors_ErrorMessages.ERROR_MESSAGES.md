@@ -34,6 +34,9 @@
 - [PUBLIC\_KEY\_NOT\_RECOVERED](errors_ErrorMessages.ERROR_MESSAGES.md#public_key_not_recovered)
 - [ROLE\_NOT\_EXISTS](errors_ErrorMessages.ERROR_MESSAGES.md#role_not_exists)
 - [ROLE\_PREREQUISITES\_NOT\_MET](errors_ErrorMessages.ERROR_MESSAGES.md#role_prerequisites_not_met)
+- [ROLE\_PREREQUISITES\_REQUIRED\_PARAM\_INVALID](errors_ErrorMessages.ERROR_MESSAGES.md#role_prerequisites_required_param_invalid)
+- [ROLE\_REQUIRED\_PARAMS\_DEFINITION\_INVALID](errors_ErrorMessages.ERROR_MESSAGES.md#role_required_params_definition_invalid)
+- [ROLE\_REQUIRED\_PARAM\_PATTERN\_NOT\_VALID\_REGEX](errors_ErrorMessages.ERROR_MESSAGES.md#role_required_param_pattern_not_valid_regex)
 - [RPC\_URL\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#rpc_url_not_provided)
 - [SIGNER\_NOT\_INITIALIZED](errors_ErrorMessages.ERROR_MESSAGES.md#signer_not_initialized)
 - [STAKE\_WAS\_NOT\_PUT](errors_ErrorMessages.ERROR_MESSAGES.md#stake_was_not_put)
@@ -210,6 +213,24 @@ ___
 ### ROLE\_PREREQUISITES\_NOT\_MET
 
 • **ROLE\_PREREQUISITES\_NOT\_MET** = `"Enrolment subject doesn't have required roles"`
+
+___
+
+### ROLE\_PREREQUISITES\_REQUIRED\_PARAM\_INVALID
+
+• **ROLE\_PREREQUISITES\_REQUIRED\_PARAM\_INVALID** = `"Required Param for enrolment subject not provided"`
+
+___
+
+### ROLE\_REQUIRED\_PARAMS\_DEFINITION\_INVALID
+
+• **ROLE\_REQUIRED\_PARAMS\_DEFINITION\_INVALID** = `"Required params definition is not valid"`
+
+___
+
+### ROLE\_REQUIRED\_PARAM\_PATTERN\_NOT\_VALID\_REGEX
+
+• **ROLE\_REQUIRED\_PARAM\_PATTERN\_NOT\_VALID\_REGEX** = `"Required param pattern is not valid regex"`
 
 ___
 
