@@ -1,5 +1,5 @@
 import { IRoleDefinition } from "@energyweb/iam-contracts";
-import { validateRequiredParamsDefinition, varifyRequiredParams } from "../../src/iam/roleRequiredFieldsHelper";
+import { validateRequiredParamsDefinition, verifyRequiredParams } from "../../src/iam/roleRequiredFieldsHelper";
 
 export function roleRequiredFieldsHelperTest() {
     it("required params - validateRequiredParamsDefinition should throw error if schema incorrect", () => {
@@ -40,7 +40,7 @@ export function roleRequiredFieldsHelperTest() {
         }
     });
 
-    it("required params - varifyRequiredParams should not throw error on any", () => {
+    it("required params - verifyRequiredParams should not throw error on any", () => {
         const roleDefinition = {
             metadata: {
                 requiredParams: [
@@ -64,13 +64,13 @@ export function roleRequiredFieldsHelperTest() {
             param3: "some arbitrary value",
         };
         try {
-            varifyRequiredParams({ claimParams, roleDefinition });
+            verifyRequiredParams({ claimParams, roleDefinition });
         } catch (ex) {
             fail("should not throw any error");
         }
     });
 
-    it("required params - varifyRequiredParams should throw error if required params not provided", () => {
+    it("required params - verifyRequiredParams should throw error if required params not provided", () => {
         const roleDefinition = {
             metadata: {
                 requiredParams: [
@@ -86,12 +86,12 @@ export function roleRequiredFieldsHelperTest() {
         const claimParams = {
             param3: "some arbitrary value",
         };
-        expect(() => varifyRequiredParams({ claimParams, roleDefinition })).toThrow(
+        expect(() => verifyRequiredParams({ claimParams, roleDefinition })).toThrow(
             "Required Param for enrolment subject not provided",
         );
     });
 
-    it("required params - varifyRequiredParams should throw error if required params format invalid", () => {
+    it("required params - verifyRequiredParams should throw error if required params format invalid", () => {
         const roleDefinition = {
             metadata: {
                 requiredParams: [
@@ -108,7 +108,7 @@ export function roleRequiredFieldsHelperTest() {
             param1: "invalid123value",
         };
 
-        expect(() => varifyRequiredParams({ claimParams, roleDefinition })).toThrow(
+        expect(() => verifyRequiredParams({ claimParams, roleDefinition })).toThrow(
             "Required Param for enrolment subject not provided",
         );
     });

@@ -13,7 +13,7 @@
 ### Functions
 
 - [validateRequiredParamsDefinition](iam_roleRequiredFieldsHelper.md#validaterequiredparamsdefinition)
-- [varifyRequiredParams](iam_roleRequiredFieldsHelper.md#varifyrequiredparams)
+- [verifyRequiredParams](iam_roleRequiredFieldsHelper.md#verifyrequiredparams)
 
 ## Type aliases
 
@@ -53,9 +53,9 @@
 
 ___
 
-### varifyRequiredParams
+### verifyRequiredParams
 
-▸ **varifyRequiredParams**(`__namedParameters`): `void`
+▸ **verifyRequiredParams**(`__namedParameters`): `void`
 
 #### Parameters
 

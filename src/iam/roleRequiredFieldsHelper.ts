@@ -39,7 +39,7 @@ export function validateRequiredParamsDefinition(roleDefinition: IRoleDefinition
     if (!valid) throw new Error(ERROR_MESSAGES.ROLE_REQUIRED_PARAMS_DEFINITION_INVALID);
 }
 
-export function varifyRequiredParams({
+export function verifyRequiredParams({
     claimParams,
     roleDefinition,
 }: {

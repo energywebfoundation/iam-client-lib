@@ -73,7 +73,7 @@ import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
 import { Algorithms, JWT } from "@ew-did-registry/jwt";
-import { validateRequiredParamsDefinition, varifyRequiredParams } from "./iam/roleRequiredFieldsHelper";
+import { validateRequiredParamsDefinition, verifyRequiredParams } from "./iam/roleRequiredFieldsHelper";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -1457,7 +1457,7 @@ export class IAM extends IAMBase {
         })) as IRoleDefinition;
 
         await this.verifyEnrolmentPrerequisites({ subject, roleDefinition });
-        await varifyRequiredParams({ claimParams, roleDefinition });
+        await verifyRequiredParams({ claimParams, roleDefinition });
     }
 
     private async verifyEnrolmentPrerequisites({
