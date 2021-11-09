@@ -53,9 +53,10 @@ export class DomainsService {
 
     async init() {
         const chainId = this._signerService.chainId;
+        this.chainId = chainId;
         const provider = this._signerService.provider;
         const { ensRegistryAddress, ensResolverAddress, ensPublicResolverAddress, domainNotifierAddress } =
-            chainConfigs()[chainId];
+            chainConfigs()[this.chainId];
         this._ensRegistryAddress = ensRegistryAddress;
         this._ensResolverAddress = ensResolverAddress;
         this._ensPublicResolverAddress = ensPublicResolverAddress;
