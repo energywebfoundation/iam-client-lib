@@ -1,3 +1,10 @@
+# [3.3.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.9...v3.3.0-alpha.10) (2021-11-09)
+
+
+### Bug Fixes
+
+* **didRegistry:** update owned document ([7f69fdb](https://github.com/energywebfoundation/iam-client-lib/commit/7f69fdbb69b0380a4d9bfa41d76613b1c0b1dc51))
+
 # [3.3.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.8...v3.3.0-alpha.9) (2021-11-09)
 
 
