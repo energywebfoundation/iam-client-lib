@@ -1,3 +1,15 @@
+# [3.3.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.7...v3.3.0-alpha.8) (2021-11-09)
+
+
+### Code Refactoring
+
+* replace IAM and IAMBase with modules ([aa037a0](https://github.com/energywebfoundation/iam-client-lib/commit/aa037a0be9e8b2416e467ac5f2828a0f38abd6cd))
+
+
+### BREAKING CHANGES
+
+* initialize modules in order
+
 # [3.3.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.6...v3.3.0-alpha.7) (2021-11-04)
 
 
