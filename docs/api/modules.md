@@ -29,6 +29,7 @@
 - [utils/change\_resolver](modules/utils_change_resolver.md)
 - [utils/constants](modules/utils_constants.md)
 - [utils/detectEnvironment](modules/utils_detectEnvironment.md)
+- [utils/detectPublicKeyEncoding](modules/utils_detectPublicKeyEncoding.md)
 - [utils/did](modules/utils_did.md)
 - [utils/enrollment](modules/utils_enrollment.md)
 - [utils/getPublicKeyAndIdentityToken](modules/utils_getPublicKeyAndIdentityToken.md)

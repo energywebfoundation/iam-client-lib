@@ -74,6 +74,8 @@ The domain ownership functionality has been redefined accordingly.
 - [getSubOrgsByOrgNamespace](GnosisIam.GnosisIam-1.md#getsuborgsbyorgnamespace)
 - [getSubdomains](GnosisIam.GnosisIam-1.md#getsubdomains)
 - [getUserClaims](GnosisIam.GnosisIam-1.md#getuserclaims)
+- [getUserDelegetes](GnosisIam.GnosisIam-1.md#getuserdelegetes)
+- [getUserPublicKeys](GnosisIam.GnosisIam-1.md#getuserpublickeys)
 - [initializeConnection](GnosisIam.GnosisIam-1.md#initializeconnection)
 - [isConnected](GnosisIam.GnosisIam-1.md#isconnected)
 - [isOwner](GnosisIam.GnosisIam-1.md#isowner)
@@ -94,6 +96,9 @@ The domain ownership functionality has been redefined accordingly.
 - [subscribeTo](GnosisIam.GnosisIam-1.md#subscribeto)
 - [unsubscribeFrom](GnosisIam.GnosisIam-1.md#unsubscribefrom)
 - [updateDidDocument](GnosisIam.GnosisIam-1.md#updatediddocument)
+- [updateUserClaim](GnosisIam.GnosisIam-1.md#updateuserclaim)
+- [updateUserDelegate](GnosisIam.GnosisIam-1.md#updateuserdelegate)
+- [updateUserPublicKey](GnosisIam.GnosisIam-1.md#updateuserpublickey)
 - [validateOwnership](GnosisIam.GnosisIam-1.md#validateownership)
 - [verifyPublicClaim](GnosisIam.GnosisIam-1.md#verifypublicclaim)
 - [isMetamaskExtensionPresent](GnosisIam.GnosisIam-1.md#ismetamaskextensionpresent)
@@ -1302,7 +1307,7 @@ ___
 
 getUserClaims
 
-**`description`** get user claims
+**`description`** get claims from User's DID document
 
 #### Parameters
 
@@ -1317,6 +1322,54 @@ getUserClaims
 #### Inherited from
 
 [IAM](iam.IAM.md).[getUserClaims](iam.IAM.md#getuserclaims)
+
+___
+
+### getUserDelegetes
+
+▸ **getUserDelegetes**(`__namedParameters`): `Promise`<`undefined` \| `string`[]\>
+
+getUserDelegetes
+
+**`description`** get delegates from User's DID document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+
+#### Returns
+
+`Promise`<`undefined` \| `string`[]\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getUserDelegetes](iam.IAM.md#getuserdelegetes)
+
+___
+
+### getUserPublicKeys
+
+▸ **getUserPublicKeys**(`__namedParameters`): `Promise`<`IPublicKey`[]\>
+
+getUserPublicKeys
+
+**`description`** get public keys from User's DID document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+
+#### Returns
+
+`Promise`<`IPublicKey`[]\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[getUserPublicKeys](iam.IAM.md#getuserpublickeys)
 
 ___
 
@@ -1790,6 +1843,80 @@ true if document is updated successfuly
 #### Inherited from
 
 [IAM](iam.IAM.md).[updateDidDocument](iam.IAM.md#updatediddocument)
+
+___
+
+### updateUserClaim
+
+▸ **updateUserClaim**(`__namedParameters`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[updateUserClaim](iam.IAM.md#updateuserclaim)
+
+___
+
+### updateUserDelegate
+
+▸ **updateUserDelegate**(`__namedParameters`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.algo` | `KeyType` |
+| `__namedParameters.did?` | `string` |
+| `__namedParameters.publicKey` | `string` |
+| `__namedParameters.type` | `PubKeyType` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[updateUserDelegate](iam.IAM.md#updateuserdelegate)
+
+___
+
+### updateUserPublicKey
+
+▸ **updateUserPublicKey**(`__namedParameters`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.algo` | `KeyType` |
+| `__namedParameters.did?` | `string` |
+| `__namedParameters.publicKey` | `string` |
+| `__namedParameters.tag` | `string` |
+| `__namedParameters.type` | `PubKeyType` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+#### Inherited from
+
+[IAM](iam.IAM.md).[updateUserPublicKey](iam.IAM.md#updateuserpublickey)
 
 ___
 

@@ -72,6 +72,8 @@ Decentralized Identity and Access Management (IAM) Type
 - [getSubOrgsByOrgNamespace](iam.IAM.md#getsuborgsbyorgnamespace)
 - [getSubdomains](iam.IAM.md#getsubdomains)
 - [getUserClaims](iam.IAM.md#getuserclaims)
+- [getUserDelegetes](iam.IAM.md#getuserdelegetes)
+- [getUserPublicKeys](iam.IAM.md#getuserpublickeys)
 - [initializeConnection](iam.IAM.md#initializeconnection)
 - [isConnected](iam.IAM.md#isconnected)
 - [isOwner](iam.IAM.md#isowner)
@@ -92,6 +94,9 @@ Decentralized Identity and Access Management (IAM) Type
 - [subscribeTo](iam.IAM.md#subscribeto)
 - [unsubscribeFrom](iam.IAM.md#unsubscribefrom)
 - [updateDidDocument](iam.IAM.md#updatediddocument)
+- [updateUserClaim](iam.IAM.md#updateuserclaim)
+- [updateUserDelegate](iam.IAM.md#updateuserdelegate)
+- [updateUserPublicKey](iam.IAM.md#updateuserpublickey)
 - [validateOwnership](iam.IAM.md#validateownership)
 - [verifyPublicClaim](iam.IAM.md#verifypublicclaim)
 - [isMetamaskExtensionPresent](iam.IAM.md#ismetamaskextensionpresent)
@@ -1118,7 +1123,7 @@ ___
 
 getUserClaims
 
-**`description`** get user claims
+**`description`** get claims from User's DID document
 
 #### Parameters
 
@@ -1129,6 +1134,46 @@ getUserClaims
 #### Returns
 
 `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/cacheServerClient_cacheServerClient_types.ClaimData.md)[]\>
+
+___
+
+### getUserDelegetes
+
+▸ **getUserDelegetes**(`__namedParameters`): `Promise`<`undefined` \| `string`[]\>
+
+getUserDelegetes
+
+**`description`** get delegates from User's DID document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+
+#### Returns
+
+`Promise`<`undefined` \| `string`[]\>
+
+___
+
+### getUserPublicKeys
+
+▸ **getUserPublicKeys**(`__namedParameters`): `Promise`<`IPublicKey`[]\>
+
+getUserPublicKeys
+
+**`description`** get public keys from User's DID document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+
+#### Returns
+
+`Promise`<`IPublicKey`[]\>
 
 ___
 
@@ -1535,6 +1580,68 @@ ___
 `Promise`<`boolean`\>
 
 true if document is updated successfuly
+
+___
+
+### updateUserClaim
+
+▸ **updateUserClaim**(`__namedParameters`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.claim` | `Object` |
+| `__namedParameters.claim.claimType` | `string` |
+| `__namedParameters.claim.claimTypeVersion` | `number` |
+| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.subject` | `string` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+___
+
+### updateUserDelegate
+
+▸ **updateUserDelegate**(`__namedParameters`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.algo` | `KeyType` |
+| `__namedParameters.did?` | `string` |
+| `__namedParameters.publicKey` | `string` |
+| `__namedParameters.type` | `PubKeyType` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+___
+
+### updateUserPublicKey
+
+▸ **updateUserPublicKey**(`__namedParameters`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.algo` | `KeyType` |
+| `__namedParameters.did?` | `string` |
+| `__namedParameters.publicKey` | `string` |
+| `__namedParameters.tag` | `string` |
+| `__namedParameters.type` | `PubKeyType` |
+
+#### Returns
+
+`Promise`<`boolean`\>
 
 ___
 

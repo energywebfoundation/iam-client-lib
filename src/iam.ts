@@ -30,10 +30,12 @@ import {
     DIDAttribute,
     Encoding,
     IDIDDocument,
+    IPublicKey,
     IServiceEndpoint,
     IUpdateData,
 } from "@ew-did-registry/did-resolver-interface";
 import { hashes, IProofData, IPublicClaim, ISaltedFields } from "@ew-did-registry/claims";
+import { PubKeyType } from "@ew-did-registry/did-resolver-interface";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { v4 as uuid } from "uuid";
 import { IAMBase } from "./iam/iam-base";
@@ -73,6 +75,7 @@ import { isValidDID, parseDID } from "./utils/did";
 import { chainConfigs } from "./iam/chainConfig";
 import { canonizeSig } from "./utils/enrollment";
 import { Algorithms, JWT } from "@ew-did-registry/jwt";
+import { detectEncoding } from "./utils/detectPublicKeyEncoding";
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, arrayify, namehash } = utils;
 
 export type InitializeData = {
@@ -279,6 +282,7 @@ export class IAM extends IAMBase {
 
         if (did && this._resolver) {
             const document = await this._resolver.read(did);
+
             return {
                 ...document,
                 service: includeClaims
@@ -334,6 +338,72 @@ export class IAM extends IAMBase {
         const update = await operator.update(did, didAttribute, updateData);
 
         return Boolean(update);
+    }
+
+    async updateUserPublicKey({
+        publicKey,
+        did = this._did,
+        algo = KeyType.Secp256k1,
+        type = PubKeyType.SignatureAuthentication2018,
+        tag = "",
+    }: {
+        publicKey: string;
+        did?: string;
+        algo: KeyType;
+        type: PubKeyType;
+        tag: string;
+    }): Promise<boolean> {
+        const isDIdDocUpdated = await this.updateDidDocument({
+            didAttribute: DIDAttribute.PublicKey,
+            did,
+            data: {
+                algo,
+                encoding: detectEncoding(publicKey),
+                type,
+                value: { tag, publicKey: publicKey },
+            },
+        });
+        return isDIdDocUpdated;
+    }
+
+    async updateUserDelegate({
+        publicKey,
+        did = this._did,
+        algo = KeyType.ED25519,
+        type = PubKeyType.VerificationKey2018,
+    }: {
+        publicKey: string;
+        did?: string;
+        algo: KeyType;
+        type: PubKeyType;
+    }): Promise<boolean> {
+        const isDIdDocUpdated = await this.updateDidDocument({
+            didAttribute: DIDAttribute.Authenticate,
+            did,
+            data: {
+                algo,
+                encoding: detectEncoding(publicKey),
+                type,
+                delegate: publicKey,
+            },
+        });
+        return isDIdDocUpdated;
+    }
+
+    async updateUserClaim({
+        claim,
+        subject,
+    }: {
+        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        subject: string;
+    }): Promise<boolean> {
+        const claims = await this.getUserClaims();
+        const claimId = await this.getClaimId({ claimData: claim });
+        let isDIdDocUpdated = false;
+        if (!claims || !claims.find((c) => c.id === claimId)) {
+            isDIdDocUpdated = !!(await this.issueClaim({ claim, subject }));
+        }
+        return isDIdDocUpdated;
     }
 
     /**
@@ -534,12 +604,32 @@ export class IAM extends IAMBase {
     /**
      * getUserClaims
      *
-     * @description get user claims
+     * @description get claims from User's DID document
      *
      */
     async getUserClaims({ did = this._did }: { did?: string } | undefined = {}) {
         const { service } = (await this.getDidDocument({ did })) || {};
         return service;
+    }
+
+    /**
+     * getUserPublicKeys
+     *
+     * @description get public keys from User's DID document
+     *
+     */
+    async getUserPublicKeys({ did = this._did }): Promise<IPublicKey[]> {
+        return (await this.getDidDocument({ did: did, includeClaims: false })).publicKey;
+    }
+
+    /**
+     * getUserDelegetes
+     *
+     * @description get delegates from User's DID document
+     *
+     */
+    async getUserDelegetes({ did = this._did }): Promise<string[] | undefined> {
+        return (await this.getDidDocument({ did: did, includeClaims: true })).delegates;
     }
 
     async decodeJWTToken({ token }: { token: string }) {
@@ -613,6 +703,7 @@ export class IAM extends IAMBase {
         domain: string;
         data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
     }) {
+        console.log(`[CALL] setRoleDefinition for domain ${domain} and data: ${data}.`);
         // Special case of updating legacy PublicResolver definitions
         if (await this.updateLegacyDefinition(domain, data)) {
             return;
@@ -625,7 +716,7 @@ export class IAM extends IAMBase {
     }
 
     /**
-     * In initial version of Switchboard, role definitions where contained in ENS PublicResolver.
+     * In initial version of Switchboard, role definitions where contained in ENS Pudf;=blicResolver.
      * However, in order for key properties of role definitions to be readable on-chain, a new RoleDefinitionResolver is used.
      * This function sets the resolver in the ENS to the new contract for definitions that are pointing to the old contract
      * @param domain domain to potentially update
