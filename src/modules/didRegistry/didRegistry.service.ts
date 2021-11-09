@@ -157,32 +157,41 @@ export class DidRegistry {
      * @returns true if document is updated successfuly
      *
      */
-    async updateDocument(options: {
+    async updateDocument({
+        didAttribute,
+        data,
+        validity,
+        did = this._signerService.did,
+    }: {
         didAttribute: DIDAttribute;
         data: IUpdateData;
         did?: string;
         validity?: number;
     }): Promise<boolean> {
-        const { didAttribute, data, validity, did } = options;
-
-        if (!did) {
+        if (did === this._signerService.did) {
             const updated = await this._document.update(didAttribute, data, validity);
             return Boolean(updated);
-        } else if (!(await this._assetsService.getOwnedAssets()).find((a) => a.document.id === did)) {
-            throw new Error(ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT);
+        } else {
+            const assetDID = (await this._assetsService.getOwnedAssets()).find((a) => a.document.id === did)?.id;
+            if (!assetDID) {
+                throw new Error(ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT);
+            }
+            const updateData: IUpdateData = {
+                algo: KeyType.Secp256k1,
+                encoding: Encoding.HEX,
+                ...data,
+            };
+
+            const { didRegistryAddress: didContractAddress } = chainConfigs()[this._signerService.chainId];
+            const operator = new ProxyOperator(
+                this._identityOwner,
+                { address: didContractAddress },
+                addressOf(assetDID),
+            );
+            const update = await operator.update(did, didAttribute, updateData);
+
+            return Boolean(update);
         }
-
-        const updateData: IUpdateData = {
-            algo: KeyType.Secp256k1,
-            encoding: Encoding.HEX,
-            ...data,
-        };
-
-        const { didRegistryAddress: didContractAddress } = chainConfigs()[this._signerService.chainId];
-        const operator = new ProxyOperator(this._identityOwner, { address: didContractAddress }, addressOf(did));
-        const update = await operator.update(did, didAttribute, updateData);
-
-        return Boolean(update);
     }
 
     /**

@@ -171,19 +171,19 @@ ___
 
 ### updateDocument
 
-▸ **updateDocument**(`options`): `Promise`<`boolean`\>
+▸ **updateDocument**(`__namedParameters`): `Promise`<`boolean`\>
 
 **`description`** updates did document based on data provided
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `options` | `Object` | Options to connect with blockchain |
-| `options.data` | `IUpdateData` | New attribute value |
-| `options.did?` | `string` | Asset did to be updated |
-| `options.didAttribute` | `DIDAttribute` | Type of document to be updated |
-| `options.validity?` | `number` | Time (s) for the attribute to expire |
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.data` | `IUpdateData` |
+| `__namedParameters.did?` | `string` |
+| `__namedParameters.didAttribute` | `DIDAttribute` |
+| `__namedParameters.validity?` | `number` |
 
 #### Returns
 
