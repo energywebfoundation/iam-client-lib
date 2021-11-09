@@ -5,6 +5,7 @@
 ### Functions
 
 - [init](init.md#init)
+- [initWithEKC](init.md#initwithekc)
 - [initWithGnosis](init.md#initwithgnosis)
 - [initWithKms](init.md#initwithkms)
 - [initWithMetamask](init.md#initwithmetamask)
@@ -22,6 +23,22 @@
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](../classes/modules_signer_signer_service.SignerService.md) |
+
+#### Returns
+
+`Promise`<`Object`\>
+
+___
+
+### initWithEKC
+
+▸ **initWithEKC**(`proxyUrl?`): `Promise`<`Object`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `proxyUrl` | `string` |
 
 #### Returns
 

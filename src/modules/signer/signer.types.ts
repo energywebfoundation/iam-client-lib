@@ -4,6 +4,7 @@ export enum ProviderType {
     MetaMask = "MetaMask",
     PrivateKey = "PrivateKey",
     Gnosis = "Gnosis",
+    EKC = "Enterprise Key Connect",
 }
 
 export enum ProviderEvent {

@@ -1,3 +1,10 @@
+# [3.3.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.6...v3.3.0-alpha.7) (2021-11-04)
+
+
+### Features
+
+* sign with EKC ([ea2c3b3](https://github.com/energywebfoundation/iam-client-lib/commit/ea2c3b3c001d1abf7e88d386f74ef329fa023c57))
+
 # [3.3.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.5...v3.3.0-alpha.6) (2021-11-03)
 
 

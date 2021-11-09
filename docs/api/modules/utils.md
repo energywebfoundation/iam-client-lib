@@ -7,6 +7,7 @@
 - [ExecutionEnvironment](utils.md#executionenvironment)
 - [VOLTA\_CHAIN\_ID](utils.md#volta_chain_id)
 - [addSupportedDID](utils.md#addsupporteddid)
+- [defaultAzureProxyUrl](utils.md#defaultazureproxyurl)
 - [defaultBridgeUrl](utils.md#defaultbridgeurl)
 - [defaultKmsServerUrl](utils.md#defaultkmsserverurl)
 - [emptyAddress](utils.md#emptyaddress)
@@ -32,6 +33,12 @@ ___
 ### addSupportedDID
 
 Re-exports: [addSupportedDID](utils_did.md#addsupporteddid)
+
+___
+
+### defaultAzureProxyUrl
+
+Re-exports: [defaultAzureProxyUrl](utils_constants.md#defaultazureproxyurl)
 
 ___
 

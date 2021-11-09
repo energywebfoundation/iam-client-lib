@@ -9,6 +9,7 @@
 - [APP\_WITH\_ROLES](errors_ErrorMessages.ERROR_MESSAGES.md#app_with_roles)
 - [CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT](errors_ErrorMessages.ERROR_MESSAGES.md#can_not_update_not_controlled_document)
 - [ENS\_TYPE\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_type_not_supported)
+- [ERROR\_IN\_AZURE\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#error_in_azure_provider)
 - [INSUFFICIENT\_BALANCE](errors_ErrorMessages.ERROR_MESSAGES.md#insufficient_balance)
 - [JWT\_ALGORITHM\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#jwt_algorithm_not_supported)
 - [METAMASK\_ACCOUNT\_NOT\_PROVIDED](errors_ErrorMessages.ERROR_MESSAGES.md#metamask_account_not_provided)
@@ -42,6 +43,12 @@ ___
 ### ENS\_TYPE\_NOT\_SUPPORTED
 
 • **ENS\_TYPE\_NOT\_SUPPORTED** = `"ENS type not supported"`
+
+___
+
+### ERROR\_IN\_AZURE\_PROVIDER
+
+• **ERROR\_IN\_AZURE\_PROVIDER** = `"Error in Azure Provider"`
 
 ___
 

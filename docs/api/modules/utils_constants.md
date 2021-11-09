@@ -5,6 +5,7 @@
 ### Variables
 
 - [VOLTA\_CHAIN\_ID](utils_constants.md#volta_chain_id)
+- [defaultAzureProxyUrl](utils_constants.md#defaultazureproxyurl)
 - [defaultBridgeUrl](utils_constants.md#defaultbridgeurl)
 - [defaultKmsServerUrl](utils_constants.md#defaultkmsserverurl)
 - [emptyAddress](utils_constants.md#emptyaddress)
@@ -14,6 +15,12 @@
 ### VOLTA\_CHAIN\_ID
 
 • `Const` **VOLTA\_CHAIN\_ID**: ``73799``
+
+___
+
+### defaultAzureProxyUrl
+
+• `Const` **defaultAzureProxyUrl**: ``"https://azure-proxy-server.energyweb.org/api/v1"``
 
 ___
 

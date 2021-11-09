@@ -5,6 +5,7 @@
 ### References
 
 - [AccountInfo](modules_signer.md#accountinfo)
+- [EkcSigner](modules_signer.md#ekcsigner)
 - [IPubKeyAndIdentityToken](modules_signer.md#ipubkeyandidentitytoken)
 - [PUBLIC\_KEY](modules_signer.md#public_key)
 - [ProviderEvent](modules_signer.md#providerevent)
@@ -12,6 +13,7 @@
 - [ServiceInitializer](modules_signer.md#serviceinitializer)
 - [SignerService](modules_signer.md#signerservice)
 - [createWalletConnectProvider](modules_signer.md#createwalletconnectprovider)
+- [fromGnosis](modules_signer.md#fromgnosis)
 - [fromKms](modules_signer.md#fromkms)
 - [fromMetaMask](modules_signer.md#frommetamask)
 - [fromPrivateKey](modules_signer.md#fromprivatekey)
@@ -23,6 +25,12 @@
 ### AccountInfo
 
 Re-exports: [AccountInfo](modules_signer_signer_types.md#accountinfo)
+
+___
+
+### EkcSigner
+
+Re-exports: [EkcSigner](../classes/modules_signer_ekcSigner.EkcSigner.md)
 
 ___
 
@@ -65,6 +73,12 @@ ___
 ### createWalletConnectProvider
 
 Re-exports: [createWalletConnectProvider](modules_signer_walletConnectMetamask.md#createwalletconnectprovider)
+
+___
+
+### fromGnosis
+
+Re-exports: [fromGnosis](modules_signer_gnosisSigner.md#fromgnosis)
 
 ___
 

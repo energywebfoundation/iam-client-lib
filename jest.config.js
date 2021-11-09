@@ -2,9 +2,9 @@ module.exports = {
     verbose: true,
     transform: {
         "\\.(ts|tsx)$": "ts-jest",
-        "\\.mjs$": "babel-jest",
+        "\\.(mjs|js)$": "babel-jest",
     },
-    transformIgnorePatterns: ["node_modules/.+\\.!mjs$"],
+    transformIgnorePatterns: ["node_modules/!(@energyweb/ekc)", "node_modules/.+\\.!(mjs)$"],
     testEnvironment: "node",
     testRegex: "(/(e2e|src)/(.|\\.)*\\.(e2e|spec)\\.ts$)",
     moduleFileExtensions: ["ts", "tsx", "js", "json"],

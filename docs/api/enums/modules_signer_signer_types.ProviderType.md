@@ -6,6 +6,7 @@
 
 ### Enumeration members
 
+- [EKC](modules_signer_signer_types.ProviderType.md#ekc)
 - [EwKeyManager](modules_signer_signer_types.ProviderType.md#ewkeymanager)
 - [Gnosis](modules_signer_signer_types.ProviderType.md#gnosis)
 - [MetaMask](modules_signer_signer_types.ProviderType.md#metamask)
@@ -13,6 +14,12 @@
 - [WalletConnect](modules_signer_signer_types.ProviderType.md#walletconnect)
 
 ## Enumeration members
+
+### EKC
+
+• **EKC** = `"Enterprise Key Connect"`
+
+___
 
 ### EwKeyManager
 

@@ -129,11 +129,11 @@ ___
 
 ### closeConnection
 
-▸ **closeConnection**(): `Promise`<`void`\>
+▸ **closeConnection**(): `Promise`<`boolean`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<`boolean`\>
 
 ___
 

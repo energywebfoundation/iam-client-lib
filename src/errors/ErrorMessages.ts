@@ -16,5 +16,6 @@ export enum ERROR_MESSAGES {
     STAKE_WAS_NOT_PUT = "Stake was not put",
     INSUFFICIENT_BALANCE = "Signer has insufficient balance",
     NOT_AUTHORIZED_TO_CHANGE_DOMAIN = "Not authorized to change domain",
+    ERROR_IN_AZURE_PROVIDER = "Error in Azure Provider",
     JWT_ALGORITHM_NOT_SUPPORTED = "Jwt algorithm not supported",
 }

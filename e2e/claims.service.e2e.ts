@@ -301,4 +301,38 @@ describe("Enrollment claim tests", () => {
 
         expect(hasRole).toBe(false);
     });
+
+    test("should issue claim request with additional params", async () => {
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+
+        const registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain];
+        await claimsService.createClaimRequest({
+            claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: 1, fields: [] },
+            registrationTypes,
+        });
+        const [, encodedMsg1] = mockPublish.mock.calls.pop();
+        const { id, subjectAgreement, token } = jsonCodec.decode(encodedMsg1) as {
+            id;
+            subjectAgreement;
+            token;
+        };
+        const claimParams: Record<string, string> = {
+            "document ID": "ASG 123222",
+            DOB: "1990-01-07",
+        };
+        await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+        await claimsService.issueClaimRequest({
+            id,
+            registrationTypes,
+            requester: rootOwnerDID,
+            subjectAgreement,
+            token,
+            claimParams,
+        });
+
+        const [, encodedMsg2] = mockPublish.mock.calls.pop();
+        const { issuedToken } = jsonCodec.decode(encodedMsg2) as { issuedToken };
+        const data = didRegistry.jwt.decode(issuedToken) as { claimData: { claimParams } };
+        expect(data.claimData.claimParams).toEqual(claimParams);
+    });
 });

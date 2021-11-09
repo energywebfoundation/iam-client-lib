@@ -1,18 +1,22 @@
 import SafeAppSdk from "@gnosis.pm/safe-apps-sdk";
-import { SignerService } from "./modules/signer/signer.service";
-import { StakingService } from "./modules/staking/staking.service";
-import { fromKms } from "./modules/signer/walletConnectKms";
-import { fromPrivateKey } from "./modules/signer/privateKeySigner";
-import { DidRegistry } from "./modules/didRegistry/didRegistry.service";
-import { MessagingService } from "./modules/messaging/messaging.service";
-import { CacheClient } from "./modules/cacheClient/cacheClient.service";
-import { DomainsService } from "./modules/domains/domains.service";
-import { AssetsService } from "./modules/assets/assets.service";
-import { ClaimsService } from "./modules/claims/claims.service";
-import { fromMetaMask } from "./modules/signer/metamaskSigner";
-import { fromWalletConnectMetamask } from "./modules/signer/walletConnectMetamask";
-import { fromGnosis } from "./modules/signer/gnosisSigner";
-import { defaultBridgeUrl, defaultKmsServerUrl } from "./utils/constants";
+import {
+    SignerService,
+    ProviderType,
+    fromKms,
+    fromWalletConnectMetamask,
+    fromMetaMask,
+    fromPrivateKey,
+    fromGnosis,
+    EkcSigner,
+} from "./modules/signer";
+import { StakingService } from "./modules/staking";
+import { DidRegistry } from "./modules/didRegistry";
+import { MessagingService } from "./modules/messaging";
+import { CacheClient } from "./modules/cacheClient";
+import { DomainsService } from "./modules/domains";
+import { AssetsService } from "./modules/assets";
+import { ClaimsService } from "./modules/claims";
+import { defaultAzureProxyUrl, defaultBridgeUrl, defaultKmsServerUrl } from "./utils";
 
 export async function initWithPrivateKeySigner(privateKey: string, rpcUrl: string) {
     const signerService = await fromPrivateKey(privateKey, rpcUrl);
@@ -33,6 +37,12 @@ export async function initWithWalletConnect(bridge = defaultBridgeUrl) {
 
 export async function initWithGnosis(safeAppSdk: SafeAppSdk) {
     return init(await fromGnosis(safeAppSdk));
+}
+
+export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
+    const signerService = new SignerService(await EkcSigner.create(proxyUrl), ProviderType.EKC);
+    await signerService.init();
+    return init(signerService);
 }
 
 export async function init(signerService: SignerService) {

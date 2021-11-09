@@ -26,6 +26,7 @@
 - [DomainsService](index.md#domainsservice)
 - [ENSTypeNotSupportedError](index.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](index.md#error_messages)
+- [EkcSigner](index.md#ekcsigner)
 - [ExecutionEnvironment](index.md#executionenvironment)
 - [IApp](index.md#iapp)
 - [ICacheClient](index.md#icacheclient)
@@ -66,18 +67,21 @@
 - [cacheConfigs](index.md#cacheconfigs)
 - [chainConfigs](index.md#chainconfigs)
 - [createWalletConnectProvider](index.md#createwalletconnectprovider)
+- [defaultAzureProxyUrl](index.md#defaultazureproxyurl)
 - [defaultBridgeUrl](index.md#defaultbridgeurl)
 - [defaultClaimExpiry](index.md#defaultclaimexpiry)
 - [defaultKmsServerUrl](index.md#defaultkmsserverurl)
 - [emptyAddress](index.md#emptyaddress)
 - [erc712\_type\_hash](index.md#erc712_type_hash)
 - [executionEnvironment](index.md#executionenvironment)
+- [fromGnosis](index.md#fromgnosis)
 - [fromKms](index.md#fromkms)
 - [fromMetaMask](index.md#frommetamask)
 - [fromPrivateKey](index.md#fromprivatekey)
 - [fromWalletConnectMetamask](index.md#fromwalletconnectmetamask)
 - [getMessagingConfig](index.md#getmessagingconfig)
 - [init](index.md#init)
+- [initWithEKC](index.md#initwithekc)
 - [initWithGnosis](index.md#initwithgnosis)
 - [initWithKms](index.md#initwithkms)
 - [initWithMetamask](index.md#initwithmetamask)
@@ -224,6 +228,12 @@ ___
 ### ERROR\_MESSAGES
 
 Re-exports: [ERROR\_MESSAGES](../enums/errors_ErrorMessages.ERROR_MESSAGES.md)
+
+___
+
+### EkcSigner
+
+Re-exports: [EkcSigner](../classes/modules_signer_ekcSigner.EkcSigner.md)
 
 ___
 
@@ -467,6 +477,12 @@ Re-exports: [createWalletConnectProvider](modules_signer_walletConnectMetamask.m
 
 ___
 
+### defaultAzureProxyUrl
+
+Re-exports: [defaultAzureProxyUrl](utils_constants.md#defaultazureproxyurl)
+
+___
+
 ### defaultBridgeUrl
 
 Re-exports: [defaultBridgeUrl](utils_constants.md#defaultbridgeurl)
@@ -503,6 +519,12 @@ Re-exports: [executionEnvironment](utils_detectEnvironment.md#executionenvironme
 
 ___
 
+### fromGnosis
+
+Re-exports: [fromGnosis](modules_signer_gnosisSigner.md#fromgnosis)
+
+___
+
 ### fromKms
 
 Re-exports: [fromKms](modules_signer_walletConnectKms.md#fromkms)
@@ -536,6 +558,12 @@ ___
 ### init
 
 Re-exports: [init](init.md#init)
+
+___
+
+### initWithEKC
+
+Re-exports: [initWithEKC](init.md#initwithekc)
 
 ___
 

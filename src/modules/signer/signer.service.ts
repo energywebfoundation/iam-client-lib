@@ -7,6 +7,7 @@ import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
 import { chainConfigs } from "../../config/chain.config";
 import { ExecutionEnvironment, executionEnvironment } from "../../utils/detectEnvironment";
 import { IPubKeyAndIdentityToken, ProviderType, ProviderEvent, AccountInfo, PUBLIC_KEY } from "./signer.types";
+import { EkcSigner } from "./ekcSigner";
 
 const { arrayify, keccak256, recoverPublicKey, computeAddress, computePublicKey, getAddress, hashMessage } = utils;
 export type ServiceInitializer = () => Promise<void>;
@@ -127,7 +128,15 @@ export class SignerService {
     async closeConnection() {
         if (this._signer instanceof WalletConnectProvider) {
             await this._signer.disconnect();
+        } else if (this._signer instanceof EkcSigner) {
+            try {
+                await this._signer.ekc.logout({ mode: "popup" });
+                return false;
+            } catch (error) {
+                console.log("error in azure logout ", error);
+            }
         }
+        return true;
     }
 
     async publicKey() {

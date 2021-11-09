@@ -36,6 +36,7 @@
 - [modules/messaging/messaging.service](modules/modules_messaging_messaging_service.md)
 - [modules/messaging/messaging.types](modules/modules_messaging_messaging_types.md)
 - [modules/signer](modules/modules_signer.md)
+- [modules/signer/ekcSigner](modules/modules_signer_ekcSigner.md)
 - [modules/signer/gnosisSigner](modules/modules_signer_gnosisSigner.md)
 - [modules/signer/metamaskSigner](modules/modules_signer_metamaskSigner.md)
 - [modules/signer/privateKeySigner](modules/modules_signer_privateKeySigner.md)
