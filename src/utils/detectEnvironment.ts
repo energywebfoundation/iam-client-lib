@@ -3,7 +3,7 @@ export enum ExecutionEnvironment {
     BROWSER = "ExecutionEnvironment:Browser",
 }
 
-export const detectExecutionEnvironment = () =>
+export const executionEnvironment = () =>
     isNode() && !isBrowser() ? ExecutionEnvironment.NODE : ExecutionEnvironment.BROWSER;
 
 const isNode = () => typeof process !== "undefined" && process.versions != null && process.versions.node != null;

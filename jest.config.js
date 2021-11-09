@@ -6,7 +6,7 @@ module.exports = {
     },
     transformIgnorePatterns: ["node_modules/!(@energyweb/ekc)", "node_modules/.+\\.!(mjs)$"],
     testEnvironment: "node",
-    testRegex: "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    testRegex: "(/(e2e|src)/(.|\\.)*\\.(e2e|spec)\\.ts$)",
     moduleFileExtensions: ["ts", "tsx", "js", "json"],
     coveragePathIgnorePatterns: ["/node_modules/", "/test/"],
     coverageThreshold: {
@@ -18,4 +18,5 @@ module.exports = {
         },
     },
     collectCoverageFrom: ["src/*.{js,ts}"],
+    setupFilesAfterEnv: ["./jest.setup.js"],
 };

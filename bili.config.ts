@@ -18,7 +18,7 @@ const config: Config = {
     // nat.ws only provides a .mjs file which cannot be required.
     // include tslib for clients using older version of tslib
     bundleNodeModules: ["tslib"],
-    input: "src/iam-client-lib.ts",
+    input: "src/index.ts",
     output: {
         minify: false,
     },

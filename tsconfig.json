@@ -32,5 +32,5 @@
         "suppressImplicitAnyIndexErrors": true,
         "target": "es6"
     },
-    "include": ["src/**/*", "ethers/**/*", "test/**/*"]
+    "include": ["src/**/*", "ethers/**/*", "test/**/*", "e2e/claims.service.spec.ts"]
 }
