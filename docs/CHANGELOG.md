@@ -1,3 +1,10 @@
+# [3.3.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.8...v3.3.0-alpha.9) (2021-11-09)
+
+
+### Bug Fixes
+
+* **domainsService:** save chain id ([6e4255a](https://github.com/energywebfoundation/iam-client-lib/commit/6e4255a8ca88a8ac442d0ff9ca037c3794b7ebeb))
+
 # [3.3.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.7...v3.3.0-alpha.8) (2021-11-09)
 
 
