@@ -4,6 +4,7 @@
 
 ### Enumerations
 
+- [EnrollmentVerificationPredicate](../enums/modules_claims_claims_types.EnrollmentVerificationPredicate.md)
 - [RegistrationTypes](../enums/modules_claims_claims_types.RegistrationTypes.md)
 
 ### Interfaces

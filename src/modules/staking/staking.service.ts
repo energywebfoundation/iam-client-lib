@@ -7,30 +7,11 @@ import { emptyAddress } from "../../utils/constants";
 import { SignerService } from "../signer/signer.service";
 import { chainConfigs } from "../../config/chain.config";
 import { DomainsService } from "../domains/domains.service";
+import { ClaimsService } from "../claims";
+import { Service, Stake, StakeStatus, StakingPoolProps } from "./staking.types";
+import { CacheClient } from "../cacheClient";
 
 const { namehash, parseUnits } = utils;
-
-export enum StakeStatus {
-    NONSTAKING = 0,
-    STAKING = 1,
-    WITHDRAWING = 2,
-}
-
-export type Service = {
-    /** organization ENS name */
-    org: string;
-    /** pool address */
-    pool: string;
-    /** provider address */
-    provider: string;
-};
-
-export type Stake = {
-    amount: BigNumber;
-    depositStart: BigNumber;
-    depositEnd: BigNumber;
-    status: StakeStatus;
-};
 
 /**
  * Inteneded for staking pools management
@@ -39,12 +20,22 @@ export class StakingService {
     private _stakingPoolFactoryAddress: string;
     private _stakingPoolFactory: StakingPoolFactory;
 
-    constructor(private _signerService: SignerService, private _domainsService: DomainsService) {
+    constructor(
+        private _signerService: SignerService,
+        private _domainsService: DomainsService,
+        private _cacheClient: CacheClient,
+        private _claimsService: ClaimsService,
+    ) {
         this._signerService.onInit(this.init.bind(this));
     }
 
-    static async create(signerService: SignerService, domainsService: DomainsService) {
-        const service = new StakingService(signerService, domainsService);
+    static async create(
+        signerService: SignerService,
+        domainsService: DomainsService,
+        cacheClient: CacheClient,
+        claimsService: ClaimsService,
+    ) {
+        const service = new StakingService(signerService, domainsService, cacheClient, claimsService);
         await service.init();
         return service;
     }
@@ -119,11 +110,15 @@ export class StakingService {
      * @param org ENS name of organization
      */
     async getPool(org: string): Promise<StakingPool | null> {
-        const { pool } = await this._stakingPoolFactory.connect(this._signerService.signer).services(namehash(org));
-        if (pool === emptyAddress) {
+        const { pool: poolAddress } = await this._stakingPoolFactory
+            .connect(this._signerService.signer)
+            .services(namehash(org));
+        if (poolAddress === emptyAddress) {
             return null;
         }
-        return new StakingPool(this._signerService, pool);
+        const pool = new StakingPool(poolAddress, this._signerService, this._cacheClient, this._claimsService);
+        await pool.init();
+        return pool;
     }
 }
 
@@ -131,17 +126,27 @@ export class StakingService {
  * Abstraction over staking pool smart contract
  */
 export class StakingPool {
-    private overrides = {
+    private _overrides = {
         gasPrice: parseUnits("0.01", "gwei"),
         gasLimit: BigNumber.from(490000),
     };
-    private pool: StakingPoolContract;
+    private _contract: StakingPoolContract;
+    private _props: StakingPoolProps;
 
-    constructor(private signerService: SignerService, address: string) {
-        this.pool = new StakingPool__factory(
+    constructor(
+        public address: string,
+        private _signerService: SignerService,
+        private _cacheClient: CacheClient,
+        private _claimsService: ClaimsService,
+    ) {
+        this._contract = new StakingPool__factory(
             StakingPool__factory.createInterface(),
             StakingPool__factory.bytecode,
         ).attach(address);
+    }
+
+    async init() {
+        this._props = await this._cacheClient.getPoolByAddress(this._contract.address);
     }
 
     /**
@@ -152,17 +157,20 @@ export class StakingPool {
         /** stake amount */
         stake: BigNumber | number,
     ): Promise<void> {
+        if (!(await this._claimsService.isEnrolled(this._signerService.did, this._props.patronRoles))) {
+            throw new Error(ERROR_MESSAGES.PATRON_NOT_AUTHORIZED_TO_STAKE);
+        }
         stake = BigNumber.from(stake);
         const tx: providers.TransactionRequest = {
-            to: this.pool.address,
-            from: this.signerService.address,
-            data: this.pool.interface.encodeFunctionData("putStake"),
+            to: this._contract.address,
+            from: this._signerService.address,
+            data: this._contract.interface.encodeFunctionData("putStake"),
             value: stake,
         };
-        const balance = await this.signerService.balance();
+        const balance = await this._signerService.balance();
 
-        const gasPrice = await this.signerService.signer.getGasPrice();
-        const gas = await this.signerService.provider.estimateGas(tx);
+        const gasPrice = await this._signerService.signer.getGasPrice();
+        const gas = await this._signerService.provider.estimateGas(tx);
 
         // multiplier 2 chosen arbitrarily because it is not known how reasonably to choose it
         const fee = gasPrice.mul(gas).mul(2);
@@ -173,7 +181,7 @@ export class StakingPool {
             throw new Error(ERROR_MESSAGES.INSUFFICIENT_BALANCE);
         }
         tx.value = stake.lt(maxStake) ? stake : maxStake;
-        await this.signerService.send(tx);
+        await this._signerService.send(tx);
     }
 
     /**
@@ -184,9 +192,7 @@ export class StakingPool {
         if (status !== StakeStatus.STAKING) {
             throw new Error(ERROR_MESSAGES.STAKE_WAS_NOT_PUT);
         }
-        const requestAvailableFrom = depositStart.add(
-            await this.pool.connect(this.signerService.signer).minStakingPeriod(),
-        );
+        const requestAvailableFrom = depositStart.add(this._props.minStakingPeriod);
         const now = await this.now();
         if (requestAvailableFrom.lte(now)) {
             return 0;
@@ -199,7 +205,7 @@ export class StakingPool {
      * Accumulated reward
      */
     async checkReward(): Promise<BigNumber> {
-        return this.pool.connect(this.signerService.signer).checkReward();
+        return this._contract.connect(this._signerService.signer).checkReward();
     }
 
     /**
@@ -208,9 +214,9 @@ export class StakingPool {
      */
     async getStake(patron?: string): Promise<Stake> {
         if (!patron) {
-            patron = this.signerService.address;
+            patron = this._signerService.address;
         }
-        return this.pool.connect(this.signerService.signer).stakes(patron);
+        return this._contract.connect(this._signerService.signer).stakes(patron);
     }
 
     /**
@@ -219,11 +225,11 @@ export class StakingPool {
      */
     async requestWithdraw(): Promise<void> {
         const tx: providers.TransactionRequest = {
-            to: this.pool.address,
-            data: this.pool.interface.encodeFunctionData("requestWithdraw"),
-            ...this.overrides,
+            to: this._contract.address,
+            data: this._contract.interface.encodeFunctionData("requestWithdraw"),
+            ...this._overrides,
         };
-        await this.signerService.send(tx);
+        await this._signerService.send(tx);
     }
 
     /**
@@ -234,9 +240,7 @@ export class StakingPool {
         if (status !== StakeStatus.WITHDRAWING) {
             throw new Error(ERROR_MESSAGES.WITHDRAWAL_WAS_NOT_REQUESTED);
         }
-        const withdrawAvailableFrom = depositEnd.add(
-            await this.pool.connect(this.signerService.signer).withdrawDelay(),
-        );
+        const withdrawAvailableFrom = depositEnd.add(this._props.withdrawDelay);
         const now = await this.now();
         if (withdrawAvailableFrom.lte(now)) {
             return 0;
@@ -251,15 +255,15 @@ export class StakingPool {
      */
     async withdraw(): Promise<void> {
         const tx: providers.TransactionRequest = {
-            to: this.pool.address,
-            data: this.pool.interface.encodeFunctionData("withdraw"),
-            ...this.overrides,
+            to: this._contract.address,
+            data: this._contract.interface.encodeFunctionData("withdraw"),
+            ...this._overrides,
         };
-        await this.signerService.send(tx);
+        await this._signerService.send(tx);
     }
 
     private async now(): Promise<BigNumber> {
-        const lastBlock = await this.signerService.provider.getBlockNumber();
-        return BigNumber.from((await this.signerService.provider.getBlock(lastBlock)).timestamp);
+        const lastBlock = await this._signerService.provider.getBlockNumber();
+        return BigNumber.from((await this._signerService.provider.getBlock(lastBlock)).timestamp);
     }
 }

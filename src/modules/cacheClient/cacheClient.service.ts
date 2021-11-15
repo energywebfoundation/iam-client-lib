@@ -13,6 +13,7 @@ import { cacheConfigs } from "../../config/cache.config";
 import { ICacheClient } from "./ICacheClient";
 import { AssetsFilter, ClaimsFilter } from "./cacheClient.types";
 import { SearchType } from ".";
+import { StakingPoolProps } from "../staking/staking.types";
 
 export class CacheClient implements ICacheClient {
     public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -104,7 +105,10 @@ export class CacheClient implements ICacheClient {
 
     async getRolesDefinition(namespaces: string[]) {
         const { data } = await this.httpClient.get<IRole[]>(`/role?namespaces=${namespaces.join(",")}`);
-        const rolesWithDefinitions = data?.map((entry) => ({ definition: entry.definition, role: entry.namespace }));
+        const rolesWithDefinitions = data?.map((entry) => ({
+            definition: entry.definition,
+            role: entry.namespace,
+        }));
         return rolesWithDefinitions.reduce((result, { role, definition }) => {
             return { ...result, [role]: definition };
         }, {} as Record<string, IRoleDefinition>);
@@ -273,6 +277,20 @@ export class CacheClient implements ICacheClient {
     async getAssetHistory(id: string, { order, take, skip, type }: AssetsFilter = {}) {
         const query = stringify({ order, take, skip, type }, { skipNulls: true });
         const { data } = await this.httpClient.get<AssetHistory[]>(`/assets/history/${id}?${query}`);
+        return data;
+    }
+
+    async getPoolByAddress(address: string): Promise<StakingPoolProps> {
+        const { data } = await this.httpClient.get<StakingPoolProps>("/staking/pool", {
+            params: { address },
+        });
+        return data;
+    }
+
+    async getPoolByOrg(orgNamespace: string): Promise<StakingPoolProps> {
+        const { data } = await this.httpClient.get<StakingPoolProps>("/staking/pool", {
+            params: { org: orgNamespace },
+        });
         return data;
     }
 

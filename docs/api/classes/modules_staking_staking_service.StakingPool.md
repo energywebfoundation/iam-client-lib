@@ -10,10 +10,15 @@ Abstraction over staking pool smart contract
 
 - [constructor](modules_staking_staking_service.StakingPool.md#constructor)
 
+### Properties
+
+- [address](modules_staking_staking_service.StakingPool.md#address)
+
 ### Methods
 
 - [checkReward](modules_staking_staking_service.StakingPool.md#checkreward)
 - [getStake](modules_staking_staking_service.StakingPool.md#getstake)
+- [init](modules_staking_staking_service.StakingPool.md#init)
 - [putStake](modules_staking_staking_service.StakingPool.md#putstake)
 - [requestWithdraw](modules_staking_staking_service.StakingPool.md#requestwithdraw)
 - [requestWithdrawDelay](modules_staking_staking_service.StakingPool.md#requestwithdrawdelay)
@@ -24,14 +29,22 @@ Abstraction over staking pool smart contract
 
 ### constructor
 
-• **new StakingPool**(`signerService`, `address`)
+• **new StakingPool**(`address`, `_signerService`, `_cacheClient`, `_claimsService`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `signerService` | [`SignerService`](modules_signer_signer_service.SignerService.md) |
 | `address` | `string` |
+| `_signerService` | [`SignerService`](modules_signer_signer_service.SignerService.md) |
+| `_cacheClient` | [`CacheClient`](modules_cacheClient_cacheClient_service.CacheClient.md) |
+| `_claimsService` | [`ClaimsService`](modules_claims_claims_service.ClaimsService.md) |
+
+## Properties
+
+### address
+
+• **address**: `string`
 
 ## Methods
 
@@ -49,7 +62,7 @@ ___
 
 ### getStake
 
-▸ **getStake**(`patron?`): `Promise`<[`Stake`](../modules/modules_staking_staking_service.md#stake)\>
+▸ **getStake**(`patron?`): `Promise`<[`Stake`](../modules/modules_staking_staking_types.md#stake)\>
 
 #### Parameters
 
@@ -59,9 +72,19 @@ ___
 
 #### Returns
 
-`Promise`<[`Stake`](../modules/modules_staking_staking_service.md#stake)\>
+`Promise`<[`Stake`](../modules/modules_staking_staking_types.md#stake)\>
 
 Stake
+
+___
+
+### init
+
+▸ **init**(): `Promise`<`void`\>
+
+#### Returns
+
+`Promise`<`void`\>
 
 ___
 

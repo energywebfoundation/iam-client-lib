@@ -18,6 +18,7 @@
 - [ONCHAIN\_ROLE\_VERSION\_NOT\_SPECIFIED](errors_ErrorMessages.ERROR_MESSAGES.md#onchain_role_version_not_specified)
 - [ORG\_WITH\_APPS](errors_ErrorMessages.ERROR_MESSAGES.md#org_with_apps)
 - [ORG\_WITH\_ROLES](errors_ErrorMessages.ERROR_MESSAGES.md#org_with_roles)
+- [PATRON\_NOT\_AUTHORIZED\_TO\_STAKE](errors_ErrorMessages.ERROR_MESSAGES.md#patron_not_authorized_to_stake)
 - [PUBLIC\_KEY\_NOT\_RECOVERED](errors_ErrorMessages.ERROR_MESSAGES.md#public_key_not_recovered)
 - [ROLE\_NOT\_EXISTS](errors_ErrorMessages.ERROR_MESSAGES.md#role_not_exists)
 - [ROLE\_PREREQUISITES\_NOT\_MET](errors_ErrorMessages.ERROR_MESSAGES.md#role_prerequisites_not_met)
@@ -97,6 +98,12 @@ ___
 ### ORG\_WITH\_ROLES
 
 • **ORG\_WITH\_ROLES** = `"You are not able to remove organization with registered roles"`
+
+___
+
+### PATRON\_NOT\_AUTHORIZED\_TO\_STAKE
+
+• **PATRON\_NOT\_AUTHORIZED\_TO\_STAKE** = `"Patron not authorized to stake"`
 
 ___
 

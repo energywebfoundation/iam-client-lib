@@ -12,6 +12,7 @@ import { replenish, root, rpcUrl, setupENS } from "./utils/setup_contracts";
 import { defaultPrincipalThreshold, setupStakingPoolFactory } from "./utils/staking";
 import { initWithPrivateKeySigner } from "../src/init";
 import { MessagingService } from "../src/modules/messaging/messaging.service";
+import { ClaimsService } from "../src";
 
 const defaultMinStakingPeriod = 1;
 const patronRewardPortion = 800;
@@ -61,6 +62,7 @@ describe("Staking service tests", () => {
     let signerService: SignerService;
     let stakingService: StakingService;
     let domainsService: DomainsService;
+    let claimsService: ClaimsService;
 
     beforeAll(async () => {
         await replenish(orgOwner.address);
@@ -71,8 +73,8 @@ describe("Staking service tests", () => {
         let connectToCacheServer;
         ({ connectToCacheServer, signerService } = await initWithPrivateKeySigner(rootOwner.privateKey, rpcUrl));
         let connectToDidRegistry;
-        ({ domainsService, stakingService, connectToDidRegistry } = await connectToCacheServer());
-        const { claimsService } = await connectToDidRegistry();
+        ({ domainsService, connectToDidRegistry } = await connectToCacheServer());
+        ({ claimsService, stakingService } = await connectToDidRegistry());
 
         const data: IRoleDefinition = {
             fields: [],

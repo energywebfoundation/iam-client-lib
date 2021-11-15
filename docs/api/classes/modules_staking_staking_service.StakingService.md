@@ -22,7 +22,7 @@ Inteneded for staking pools management
 
 ### constructor
 
-• **new StakingService**(`_signerService`, `_domainsService`)
+• **new StakingService**(`_signerService`, `_domainsService`, `_cacheClient`, `_claimsService`)
 
 #### Parameters
 
@@ -30,18 +30,20 @@ Inteneded for staking pools management
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer_signer_service.SignerService.md) |
 | `_domainsService` | [`DomainsService`](modules_domains_domains_service.DomainsService.md) |
+| `_cacheClient` | [`CacheClient`](modules_cacheClient_cacheClient_service.CacheClient.md) |
+| `_claimsService` | [`ClaimsService`](modules_claims_claims_service.ClaimsService.md) |
 
 ## Methods
 
 ### allServices
 
-▸ **allServices**(): `Promise`<[`Service`](../modules/modules_staking_staking_service.md#service)[]\>
+▸ **allServices**(): `Promise`<[`Service`](../modules/modules_staking_staking_types.md#service)[]\>
 
 **`description`** Returns all services for which pools are launched
 
 #### Returns
 
-`Promise`<[`Service`](../modules/modules_staking_staking_service.md#service)[]\>
+`Promise`<[`Service`](../modules/modules_staking_staking_types.md#service)[]\>
 
 ___
 
@@ -102,7 +104,7 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `domainsService`): `Promise`<[`StakingService`](modules_staking_staking_service.StakingService.md)\>
+▸ `Static` **create**(`signerService`, `domainsService`, `cacheClient`, `claimsService`): `Promise`<[`StakingService`](modules_staking_staking_service.StakingService.md)\>
 
 #### Parameters
 
@@ -110,6 +112,8 @@ ___
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer_signer_service.SignerService.md) |
 | `domainsService` | [`DomainsService`](modules_domains_domains_service.DomainsService.md) |
+| `cacheClient` | [`CacheClient`](modules_cacheClient_cacheClient_service.CacheClient.md) |
+| `claimsService` | [`ClaimsService`](modules_claims_claims_service.ClaimsService.md) |
 
 #### Returns
 

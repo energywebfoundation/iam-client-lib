@@ -13,8 +13,15 @@ import {
     ProviderType,
     StakingPool,
     StakeStatus,
+    ERROR_MESSAGES,
+    ClaimsService,
 } from "../src";
-import { calculateReward, defaultPrincipalThreshold, setupStakingPoolFactory } from "./utils/staking";
+import {
+    calculateReward,
+    defaultPrincipalThreshold,
+    defaultWithdrawDelay,
+    setupStakingPoolFactory,
+} from "./utils/staking";
 import { replenish, root, rpcUrl, setupENS } from "./utils/setup_contracts";
 
 const { parseEther } = utils;
@@ -48,6 +55,8 @@ const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string 
     return { publicKey: [{ id: `did:ethr:${did}-${KeyTags.OWNER}` }] };
 });
 const mockGetApplicationsByOrgNamespace = jest.fn();
+const mockGetPoolByAddress = jest.fn();
+const mockGetClaimsBySubject = jest.fn();
 
 jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
     return {
@@ -58,6 +67,8 @@ jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
                 getApplicationsByOrganization: mockGetApplicationsByOrgNamespace,
                 init: jest.fn(),
                 login: jest.fn(),
+                getPoolByAddress: mockGetPoolByAddress,
+                getClaimsBySubject: mockGetClaimsBySubject,
             };
         }),
     };
@@ -67,7 +78,9 @@ describe("StakingPool tests", () => {
     let stakingService: StakingService;
     let domainsService: DomainsService;
     let signerService: SignerService;
+    let claimsService: ClaimsService;
     let pool: StakingPool;
+    const patronRoles = [`${patronRole}.${root}`];
 
     beforeAll(async () => {
         await replenish(orgOwner.address);
@@ -78,8 +91,8 @@ describe("StakingPool tests", () => {
         let connectToCacheServer;
         ({ connectToCacheServer, signerService } = await initWithPrivateKeySigner(rootOwner.privateKey, rpcUrl));
         let connectToDidRegistry;
-        ({ domainsService, stakingService, connectToDidRegistry } = await connectToCacheServer());
-        const { claimsService } = await connectToDidRegistry();
+        ({ domainsService, connectToDidRegistry } = await connectToCacheServer());
+        ({ claimsService, stakingService } = await connectToDidRegistry());
 
         const data: IRoleDefinition = {
             fields: [],
@@ -99,6 +112,9 @@ describe("StakingPool tests", () => {
             namespace: root,
             data,
         });
+        mockGetClaimsBySubject.mockImplementation((did: string) =>
+            did === patronDID ? [{ subject: patronDID, claimType: `${patronRole}.${root}`, isAccepted: true }] : [],
+        );
 
         await domainsService.createOrganization({
             orgName,
@@ -154,8 +170,13 @@ describe("StakingPool tests", () => {
             org: orgDomain,
             minStakingPeriod,
             patronRewardPortion,
-            patronRoles: [`${patronRole}.${root}`],
+            patronRoles,
             principal: principalThreshold,
+        });
+        mockGetPoolByAddress.mockResolvedValue({
+            minStakingPeriod,
+            withdrawDelay: defaultWithdrawDelay,
+            patronRoles,
         });
         pool = (await stakingService.getPool(orgDomain)) as StakingPool;
     }
@@ -170,9 +191,7 @@ describe("StakingPool tests", () => {
         const nonPatron = Wallet.createRandom().connect(provider);
         await replenish(await nonPatron.getAddress());
         await signerService.connect(nonPatron, ProviderType.PrivateKey);
-        return expect(pool.putStake(parseEther("0.1"))).rejects.toThrow(
-            "StakingPool: patron is not registered with patron role",
-        );
+        return expect(pool.putStake(parseEther("0.1"))).rejects.toThrow(ERROR_MESSAGES.PATRON_NOT_AUTHORIZED_TO_STAKE);
     });
 
     it("should reject when stake amount isn't provided", async () => {

@@ -6,7 +6,7 @@ import { chainConfigs, setChainConfig } from "../../src/config/chain.config";
 const { parseEther } = utils;
 
 export const defaultPrincipalThreshold = parseEther("0.1");
-const defaultWithdrawDelay = 1;
+export const defaultWithdrawDelay = 1;
 
 export async function setupStakingPoolFactory(withdrawDelay = defaultWithdrawDelay) {
     const { chainId } = await deployer.provider.getNetwork();

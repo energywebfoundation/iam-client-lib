@@ -53,12 +53,9 @@ export async function init(signerService: SignerService) {
         await cacheClient.init();
         await cacheClient.login();
         const domainsService = await DomainsService.create(signerService, cacheClient);
-        const stakingService = await StakingService.create(signerService, domainsService);
         const assetsService = await AssetsService.create(signerService, cacheClient);
 
-        async function connectToDidRegistry(
-            ipfsStore?: string,
-        ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
+        async function connectToDidRegistry(ipfsStore?: string) {
             const didRegistry = await DidRegistry.connect(signerService, cacheClient, assetsService, ipfsStore);
             const claimsService = await ClaimsService.create(
                 signerService,
@@ -67,9 +64,15 @@ export async function init(signerService: SignerService) {
                 didRegistry,
                 messagingService,
             );
-            return { didRegistry, claimsService };
+            const stakingService = await StakingService.create(
+                signerService,
+                domainsService,
+                cacheClient,
+                claimsService,
+            );
+            return { didRegistry, claimsService, stakingService };
         }
-        return { cacheClient, domainsService, stakingService, assetsService, connectToDidRegistry };
+        return { cacheClient, domainsService, assetsService, connectToDidRegistry };
     }
 
     return {

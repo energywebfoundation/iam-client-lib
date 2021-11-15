@@ -6,6 +6,7 @@
 
 - [Claim](modules_claims.md#claim)
 - [ClaimsService](modules_claims.md#claimsservice)
+- [EnrollmentVerificationPredicate](modules_claims.md#enrollmentverificationpredicate)
 - [IClaimIssuance](modules_claims.md#iclaimissuance)
 - [IClaimRejection](modules_claims.md#iclaimrejection)
 - [IClaimRequest](modules_claims.md#iclaimrequest)
@@ -30,6 +31,12 @@ ___
 ### ClaimsService
 
 Re-exports: [ClaimsService](../classes/modules_claims_claims_service.ClaimsService.md)
+
+___
+
+### EnrollmentVerificationPredicate
+
+Re-exports: [EnrollmentVerificationPredicate](../enums/modules_claims_claims_types.EnrollmentVerificationPredicate.md)
 
 ___
 

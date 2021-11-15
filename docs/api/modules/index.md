@@ -27,6 +27,7 @@
 - [ENSTypeNotSupportedError](index.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](index.md#error_messages)
 - [EkcSigner](index.md#ekcsigner)
+- [EnrollmentVerificationPredicate](index.md#enrollmentverificationpredicate)
 - [ExecutionEnvironment](index.md#executionenvironment)
 - [IApp](index.md#iapp)
 - [ICacheClient](index.md#icacheclient)
@@ -60,7 +61,9 @@
 - [Stake](index.md#stake)
 - [StakeStatus](index.md#stakestatus)
 - [StakingPool](index.md#stakingpool)
+- [StakingPoolProps](index.md#stakingpoolprops)
 - [StakingService](index.md#stakingservice)
+- [StakingTerms](index.md#stakingterms)
 - [VOLTA\_CHAIN\_ID](index.md#volta_chain_id)
 - [addSupportedDID](index.md#addsupporteddid)
 - [agreement\_type\_hash](index.md#agreement_type_hash)
@@ -237,6 +240,12 @@ Re-exports: [EkcSigner](../classes/modules_signer_ekcSigner.EkcSigner.md)
 
 ___
 
+### EnrollmentVerificationPredicate
+
+Re-exports: [EnrollmentVerificationPredicate](../enums/modules_claims_claims_types.EnrollmentVerificationPredicate.md)
+
+___
+
 ### ExecutionEnvironment
 
 Re-exports: [ExecutionEnvironment](../enums/utils_detectEnvironment.ExecutionEnvironment.md)
@@ -401,7 +410,7 @@ ___
 
 ### Service
 
-Re-exports: [Service](modules_staking_staking_service.md#service)
+Re-exports: [Service](modules_staking_staking_types.md#service)
 
 ___
 
@@ -419,13 +428,13 @@ ___
 
 ### Stake
 
-Re-exports: [Stake](modules_staking_staking_service.md#stake)
+Re-exports: [Stake](modules_staking_staking_types.md#stake)
 
 ___
 
 ### StakeStatus
 
-Re-exports: [StakeStatus](../enums/modules_staking_staking_service.StakeStatus.md)
+Re-exports: [StakeStatus](../enums/modules_staking_staking_types.StakeStatus.md)
 
 ___
 
@@ -435,9 +444,21 @@ Re-exports: [StakingPool](../classes/modules_staking_staking_service.StakingPool
 
 ___
 
+### StakingPoolProps
+
+Re-exports: [StakingPoolProps](modules_staking_staking_types.md#stakingpoolprops)
+
+___
+
 ### StakingService
 
 Re-exports: [StakingService](../classes/modules_staking_staking_service.StakingService.md)
+
+___
+
+### StakingTerms
+
+Re-exports: [StakingTerms](modules_staking_staking_types.md#stakingterms)
 
 ___
 

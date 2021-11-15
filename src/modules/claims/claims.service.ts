@@ -26,6 +26,7 @@ import {
     erc712_type_hash,
     proof_type_hash,
     typedMsgPrefix,
+    EnrollmentVerificationPredicate,
 } from "./claims.types";
 import { DidRegistry } from "../didRegistry/didRegistry.service";
 import { ClaimData } from "../didRegistry/did.types";
@@ -116,7 +117,11 @@ export class ClaimsService {
         subject = this._signerService.did,
         registrationTypes = [RegistrationTypes.OffChain],
     }: {
-        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        claim: {
+            claimType: string;
+            claimTypeVersion: number;
+            fields: { key: string; value: string | number }[];
+        };
         subject?: string;
         registrationTypes?: RegistrationTypes[];
     }) {
@@ -231,7 +236,11 @@ export class ClaimsService {
         claim,
         subject,
     }: {
-        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        claim: {
+            claimType: string;
+            claimTypeVersion: number;
+            fields: { key: string; value: string | number }[];
+        };
         subject: string;
     }) {
         await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
@@ -312,7 +321,11 @@ export class ClaimsService {
                 hashAlg: "SHA256",
             },
         };
-        await this._didRegistry.updateDocument({ didAttribute: DIDAttribute.ServicePoint, data, did: sub });
+        await this._didRegistry.updateDocument({
+            didAttribute: DIDAttribute.ServicePoint,
+            data,
+            did: sub,
+        });
 
         return url;
     }
@@ -339,6 +352,26 @@ export class ClaimsService {
         return service;
     }
 
+    /**
+     * @param subject
+     * @param roles
+     */
+    async isEnrolled(
+        subject: string,
+        roles: string[],
+        predicate: EnrollmentVerificationPredicate = EnrollmentVerificationPredicate.OR,
+    ) {
+        const enroledRoles = new Set(
+            (await this.getClaimsBySubject({ did: subject, isAccepted: true })).map(({ claimType }) => claimType),
+        );
+        switch (predicate) {
+            case EnrollmentVerificationPredicate.OR:
+                return roles.some((role) => enroledRoles.has(role));
+            case EnrollmentVerificationPredicate.AND:
+                return roles.every((role) => enroledRoles.has(role));
+        }
+    }
+
     private async verifyEnrolmentPrerequisites({ subject, role }: { subject: string; role: string }) {
         const roleDefinition = await this._domainsService.getDefinition({
             type: NamespaceType.Role,
@@ -353,16 +386,11 @@ export class ClaimsService {
 
         if (!enrolmentPreconditions || enrolmentPreconditions.length === 0) return;
 
-        const enroledRoles = new Set(
-            (await this.getClaimsBySubject({ did: subject, isAccepted: true })).map(({ claimType }) => claimType),
-        );
-        const requiredRoles = new Set(
-            enrolmentPreconditions
-                .filter(({ type }) => type === PreconditionType.Role)
-                .map(({ conditions }) => conditions)
-                .reduce((all, cur) => all.concat(cur), []),
-        );
-        if (Array.from(requiredRoles).some((role) => !enroledRoles.has(role))) {
+        const requiredRoles = enrolmentPreconditions
+            .filter(({ type }) => type === PreconditionType.Role)
+            .map(({ conditions }) => conditions)
+            .reduce((all, cur) => all.concat(cur), []);
+        if (!(await this.isEnrolled(subject, requiredRoles))) {
             throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
         }
     }
@@ -481,7 +509,9 @@ export class ClaimsService {
             return new JWT(new Wallet(delegateKey)).sign(payload, { issuer: identity });
         } else if (algorithm === Algorithms.ES256) {
             /** @todo move to @ew-did-registry/jwt */
-            return jsonwebtoken.sign(payload, privToPem(delegateKey, KeyType.Secp256r1), { issuer: identity });
+            return jsonwebtoken.sign(payload, privToPem(delegateKey, KeyType.Secp256r1), {
+                issuer: identity,
+            });
         } else {
             throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
         }

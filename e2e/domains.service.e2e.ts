@@ -9,6 +9,8 @@ import {
     MessagingService,
     SignerService,
     StakingService,
+    CacheClient,
+    ClaimsService,
 } from "../src";
 import { replenish, rpcUrl, setupENS, root } from "./utils/setup_contracts";
 
@@ -28,8 +30,12 @@ jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
 });
 
 MessagingService.create = (signerService: SignerService) => Promise.resolve(new MessagingService(signerService));
-StakingService.create = (signerService: SignerService, domainsService: DomainsService) =>
-    Promise.resolve(new StakingService(signerService, domainsService));
+StakingService.create = (
+    signerService: SignerService,
+    domainsService: DomainsService,
+    cacheClient: CacheClient,
+    claimsService: ClaimsService,
+) => Promise.resolve(new StakingService(signerService, domainsService, cacheClient, claimsService));
 
 describe("Domains service", () => {
     let domainsService: DomainsService;
@@ -49,22 +55,41 @@ describe("Domains service", () => {
         const orgName = "Organization 1";
 
         test("organization can be created", async () => {
-            await domainsService.createOrganization({ orgName: org1, namespace: root, data: { orgName } });
-            expect(await domainsService.checkExistenceOfDomain({ domain: `${org1}.${root}` })).toBe(true);
+            await domainsService.createOrganization({
+                orgName: org1,
+                namespace: root,
+                data: { orgName },
+            });
+            expect(
+                await domainsService.checkExistenceOfDomain({
+                    domain: `${org1}.${root}`,
+                }),
+            ).toBe(true);
             expect(
                 await domainsService.checkExistenceOfDomain({
                     domain: `${NamespaceType.Application}.${org1}.${root}`,
                 }),
             ).toBe(true);
             expect(
-                await domainsService.checkExistenceOfDomain({ domain: `${NamespaceType.Role}.${org1}.${root}` }),
+                await domainsService.checkExistenceOfDomain({
+                    domain: `${NamespaceType.Role}.${org1}.${root}`,
+                }),
             ).toBe(true);
             expect(await domainsService.getSubdomains({ domain: root })).toContain(`${org1}.${root}`);
-            expect(await domainsService.isOwner({ domain: `${org1}.${root}`, user: rootOwner.address }));
+            expect(
+                await domainsService.isOwner({
+                    domain: `${org1}.${root}`,
+                    user: rootOwner.address,
+                }),
+            );
         });
 
         test("suborganization can be created", async () => {
-            await domainsService.createOrganization({ orgName: org1, namespace: root, data: { orgName } });
+            await domainsService.createOrganization({
+                orgName: org1,
+                namespace: root,
+                data: { orgName },
+            });
             const org1_1 = "org1-1";
             await domainsService.createOrganization({
                 orgName: org1_1,
@@ -74,14 +99,24 @@ describe("Domains service", () => {
                 namespace: `${org1}.${root}`,
             });
 
-            expect(await domainsService.checkExistenceOfDomain({ domain: `${org1_1}.${org1}.${root}` })).toBe(true);
-            expect(await domainsService.getSubdomains({ domain: `${org1}.${root}` })).toContain(
-                `${org1_1}.${org1}.${root}`,
-            );
+            expect(
+                await domainsService.checkExistenceOfDomain({
+                    domain: `${org1_1}.${org1}.${root}`,
+                }),
+            ).toBe(true);
+            expect(
+                await domainsService.getSubdomains({
+                    domain: `${org1}.${root}`,
+                }),
+            ).toContain(`${org1_1}.${org1}.${root}`);
         });
 
         test("org role can be created", async () => {
-            await domainsService.createOrganization({ orgName: org1, namespace: root, data: { orgName } });
+            await domainsService.createOrganization({
+                orgName: org1,
+                namespace: root,
+                data: { orgName },
+            });
             const namespace = `${org1}.${root}`;
             const roleName = `${org1}-role1`;
             const roleDomain = `${roleName}.${namespace}`;

@@ -55,3 +55,8 @@ export const defaultClaimExpiry = Number.MAX_SAFE_INTEGER - 1; // constraint of 
 export type RequestClaim = { requester: string; message: IClaimRequest };
 export type IssueClaim = { issuer: string; message: IClaimIssuance };
 export type RejectClaim = { issuer: string; message: IClaimRejection };
+
+export enum EnrollmentVerificationPredicate {
+    OR = "ALL",
+    AND = "AND",
+}

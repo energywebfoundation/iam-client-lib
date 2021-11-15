@@ -22,6 +22,7 @@
 - [getClaimsBySubjects](modules_claims_claims_service.ClaimsService.md#getclaimsbysubjects)
 - [getUserClaims](modules_claims_claims_service.ClaimsService.md#getuserclaims)
 - [init](modules_claims_claims_service.ClaimsService.md#init)
+- [isEnrolled](modules_claims_claims_service.ClaimsService.md#isenrolled)
 - [issueClaim](modules_claims_claims_service.ClaimsService.md#issueclaim)
 - [issueClaimRequest](modules_claims_claims_service.ClaimsService.md#issueclaimrequest)
 - [publishPublicClaim](modules_claims_claims_service.ClaimsService.md#publishpublicclaim)
@@ -266,6 +267,24 @@ ___
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### isEnrolled
+
+▸ **isEnrolled**(`subject`, `roles`, `predicate?`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `subject` | `string` |
+| `roles` | `string`[] |
+| `predicate` | [`EnrollmentVerificationPredicate`](../enums/modules_claims_claims_types.EnrollmentVerificationPredicate.md) |
+
+#### Returns
+
+`Promise`<`boolean`\>
 
 ___
 

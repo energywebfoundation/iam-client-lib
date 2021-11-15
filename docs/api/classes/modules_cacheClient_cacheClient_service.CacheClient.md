@@ -41,6 +41,8 @@
 - [getOrganizationRoles](modules_cacheClient_cacheClient_service.CacheClient.md#getorganizationroles)
 - [getOrganizationsByOwner](modules_cacheClient_cacheClient_service.CacheClient.md#getorganizationsbyowner)
 - [getOwnedAssets](modules_cacheClient_cacheClient_service.CacheClient.md#getownedassets)
+- [getPoolByAddress](modules_cacheClient_cacheClient_service.CacheClient.md#getpoolbyaddress)
+- [getPoolByOrg](modules_cacheClient_cacheClient_service.CacheClient.md#getpoolbyorg)
 - [getPreviouslyOwnedAssets](modules_cacheClient_cacheClient_service.CacheClient.md#getpreviouslyownedassets)
 - [getRoleDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getroledefinition)
 - [getRolesByOwner](modules_cacheClient_cacheClient_service.CacheClient.md#getrolesbyowner)
@@ -537,6 +539,38 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[getOwnedAssets](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#getownedassets)
+
+___
+
+### getPoolByAddress
+
+▸ **getPoolByAddress**(`address`): `Promise`<[`StakingPoolProps`](../modules/modules_staking_staking_types.md#stakingpoolprops)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `address` | `string` |
+
+#### Returns
+
+`Promise`<[`StakingPoolProps`](../modules/modules_staking_staking_types.md#stakingpoolprops)\>
+
+___
+
+### getPoolByOrg
+
+▸ **getPoolByOrg**(`orgNamespace`): `Promise`<[`StakingPoolProps`](../modules/modules_staking_staking_types.md#stakingpoolprops)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `orgNamespace` | `string` |
+
+#### Returns
+
+`Promise`<[`StakingPoolProps`](../modules/modules_staking_staking_types.md#stakingpoolprops)\>
 
 ___
 
