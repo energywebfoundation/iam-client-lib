@@ -1,3 +1,10 @@
+# [3.3.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.10...v3.3.0-alpha.11) (2021-11-16)
+
+
+### Bug Fixes
+
+* **jest:** make work of the npm test:watch and test:watch:windows ([6a799b5](https://github.com/energywebfoundation/iam-client-lib/commit/6a799b5e9a7605c037e8a0c1364fa69499813cc3))
+
 # [3.3.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.9...v3.3.0-alpha.10) (2021-11-09)
 
 
