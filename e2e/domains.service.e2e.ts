@@ -1,16 +1,16 @@
-import { Wallet, utils } from "ethers";
+import { utils, Wallet } from "ethers";
 import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import {
     DomainsService,
-    NamespaceType,
-    RegistrationTypes,
     initWithPrivateKeySigner,
     MessagingService,
+    NamespaceType,
+    RegistrationTypes,
     SignerService,
     StakingService,
 } from "../src";
-import { replenish, rpcUrl, setupENS, root } from "./utils/setup_contracts";
+import { replenish, root, rpcUrl, setupENS } from "./utils/setup_contracts";
 
 const { namehash } = utils;
 

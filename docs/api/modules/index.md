@@ -59,7 +59,9 @@
 - [SignerService](index.md#signerservice)
 - [Stake](index.md#stake)
 - [StakeStatus](index.md#stakestatus)
+- [StakingFactoryService](index.md#stakingfactoryservice)
 - [StakingPool](index.md#stakingpool)
+- [StakingPoolService](index.md#stakingpoolservice)
 - [StakingService](index.md#stakingservice)
 - [VOLTA\_CHAIN\_ID](index.md#volta_chain_id)
 - [addSupportedDID](index.md#addsupporteddid)
@@ -429,9 +431,21 @@ Re-exports: [StakeStatus](../enums/modules_staking_staking_service.StakeStatus.m
 
 ___
 
+### StakingFactoryService
+
+Re-exports: [StakingFactoryService](../classes/modules_staking_staking_pool_service.StakingFactoryService.md)
+
+___
+
 ### StakingPool
 
 Re-exports: [StakingPool](../classes/modules_staking_staking_service.StakingPool.md)
+
+___
+
+### StakingPoolService
+
+Re-exports: [StakingPoolService](../classes/modules_staking_staking_pool_service.StakingPoolService.md)
 
 ___
 
