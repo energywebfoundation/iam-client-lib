@@ -154,14 +154,14 @@ export class ClaimsService {
         id,
         subjectAgreement,
         registrationTypes,
-        claimParams,
+        issuerFields,
     }: {
         requester: string;
         token: string;
         id: string;
         subjectAgreement: string;
         registrationTypes: RegistrationTypes[];
-        claimParams?: Record<string, string>;
+        issuerFields: { key: string; value: string | number }[];
     }) {
         const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
             claimData: { claimType: string; claimTypeVersion: number; expiry: number };
@@ -181,7 +181,7 @@ export class ClaimsService {
             const publicClaim: IPublicClaim = {
                 did: sub,
                 signer: this._signerService.did,
-                claimData: { ...strippedClaimData, ...(claimParams && { claimParams }) },
+                claimData: { ...strippedClaimData, ...(issuerFields && { issuerFields }) },
             };
             message.issuedToken = await this._didRegistry.issuePublicClaim({
                 publicClaim,
@@ -231,7 +231,12 @@ export class ClaimsService {
         claim,
         subject,
     }: {
-        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        claim: {
+            claimType: string;
+            claimTypeVersion: number;
+            fields: { key: string; value: string | number }[];
+            issuerFields: { key: string; value: string | number }[];
+        };
         subject: string;
     }) {
         await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });

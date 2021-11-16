@@ -53,7 +53,8 @@ const deployIdentityManager = async (): Promise<void> => {
 };
 
 const deployClaimManager = async (): Promise<void> => {
-    claimManager = await new ClaimManager__factory(deployer).deploy(didRegistry.address, ensRegistry.address);
+    claimManager = await (await new ClaimManager__factory(deployer).deploy()).deployed();
+    claimManager.initialize(didRegistry.address, ensRegistry.address);
 };
 
 export const root = "ewc";
