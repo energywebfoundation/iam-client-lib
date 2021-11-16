@@ -1,3 +1,10 @@
+# [3.3.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.11...v3.3.0-alpha.12) (2021-11-16)
+
+
+### Features
+
+* **claims:** issuer fields ([0b7d6c4](https://github.com/energywebfoundation/iam-client-lib/commit/0b7d6c45f096a057c6d9d8b131c42745bfa336c9))
+
 # [3.3.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.10...v3.3.0-alpha.11) (2021-11-16)
 
 
