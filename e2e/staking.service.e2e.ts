@@ -76,6 +76,7 @@ describe("Staking service tests", () => {
 
         const data: IRoleDefinition = {
             fields: [],
+            issuerFields: [],
             issuer: {
                 issuerType: "DID",
                 did: [orgOwnerDid],
