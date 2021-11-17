@@ -1,3 +1,10 @@
+# [3.3.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.12...v3.3.0-alpha.13) (2021-11-17)
+
+
+### Bug Fixes
+
+* **cacheClient:** recalculate identity token on login ([aaaf929](https://github.com/energywebfoundation/iam-client-lib/commit/aaaf9291ffa5e679b14bd8c215731442104a95c9))
+
 # [3.3.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.11...v3.3.0-alpha.12) (2021-11-16)
 
 
