@@ -1,6 +1,6 @@
 import { Codec, connect, JSONCodec, NatsConnection, Subscription } from "nats.ws";
 import { getMessagingConfig } from "../../config/messaging.config";
-import { IMessage, MessagingMethod } from "./messaging.types";
+import { IMessage, MessagingMethod, NATS_EXCHANGE_TOPIC } from "./messaging.types";
 import { SignerService } from "../signer/signer.service";
 
 export class MessagingService {
@@ -47,7 +47,7 @@ export class MessagingService {
     }
 
     async subscribeTo({
-        subject = this._signerService.did,
+        subject = `${this._signerService.did}.${NATS_EXCHANGE_TOPIC}`,
         messageHandler,
     }: {
         subject?: string;
