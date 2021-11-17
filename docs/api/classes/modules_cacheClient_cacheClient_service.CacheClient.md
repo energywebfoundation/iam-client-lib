@@ -54,7 +54,6 @@
 - [login](modules_cacheClient_cacheClient_service.CacheClient.md#login)
 - [rejectClaim](modules_cacheClient_cacheClient_service.CacheClient.md#rejectclaim)
 - [requestClaim](modules_cacheClient_cacheClient_service.CacheClient.md#requestclaim)
-- [testLogin](modules_cacheClient_cacheClient_service.CacheClient.md#testlogin)
 
 ## Constructors
 
@@ -764,17 +763,3 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[requestClaim](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#requestclaim)
-
-___
-
-### testLogin
-
-▸ **testLogin**(): `Promise`<`void`\>
-
-#### Returns
-
-`Promise`<`void`\>
-
-#### Implementation of
-
-[ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[testLogin](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#testlogin)
