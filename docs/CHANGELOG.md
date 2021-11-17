@@ -1,3 +1,10 @@
+# [3.3.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.13...v3.3.0-alpha.14) (2021-11-17)
+
+
+### Bug Fixes
+
+* **messaging:** subsribe to channels from claims channel ([4788a97](https://github.com/energywebfoundation/iam-client-lib/commit/4788a9782efda7be2e6ccc55bc6f30ad5b83fcbb))
+
 # [3.3.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.12...v3.3.0-alpha.13) (2021-11-17)
 
 
