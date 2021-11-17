@@ -116,7 +116,12 @@ export class ClaimsService {
         subject = this._signerService.did,
         registrationTypes = [RegistrationTypes.OffChain],
     }: {
-        claim: { claimType: string; claimTypeVersion: number; fields: { key: string; value: string | number }[] };
+        claim: {
+            claimType: string;
+            claimTypeVersion: number;
+            fields: { key: string; value: string | number }[];
+            issuerFields?: { key: string; value: string | number }[];
+        };
         subject?: string;
         registrationTypes?: RegistrationTypes[];
     }) {
@@ -161,7 +166,7 @@ export class ClaimsService {
         id: string;
         subjectAgreement: string;
         registrationTypes: RegistrationTypes[];
-        issuerFields: { key: string; value: string | number }[];
+        issuerFields?: { key: string; value: string | number }[];
     }) {
         const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
             claimData: { claimType: string; claimTypeVersion: number; expiry: number };

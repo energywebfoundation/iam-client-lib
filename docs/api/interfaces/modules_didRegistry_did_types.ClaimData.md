@@ -12,18 +12,12 @@
 
 ### Properties
 
-- [claimParams](modules_didRegistry_did_types.ClaimData.md#claimparams)
 - [claimType](modules_didRegistry_did_types.ClaimData.md#claimtype)
 - [claimTypeVersion](modules_didRegistry_did_types.ClaimData.md#claimtypeversion)
+- [issuerFields](modules_didRegistry_did_types.ClaimData.md#issuerfields)
 - [profile](modules_didRegistry_did_types.ClaimData.md#profile)
 
 ## Properties
-
-### claimParams
-
-• `Optional` **claimParams**: `Record`<`string`, `string`\>
-
-___
 
 ### claimType
 
@@ -34,6 +28,12 @@ ___
 ### claimTypeVersion
 
 • `Optional` **claimTypeVersion**: `number`
+
+___
+
+### issuerFields
+
+• `Optional` **issuerFields**: { `key`: `string` ; `value`: `string` \| `number`  }[]
 
 ___
 
