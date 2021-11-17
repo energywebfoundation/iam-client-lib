@@ -12,7 +12,7 @@ import { IPubKeyAndIdentityToken } from "../signer/signer.types";
 import { cacheConfigs } from "../../config/cache.config";
 import { ICacheClient } from "./ICacheClient";
 import { AssetsFilter, ClaimsFilter } from "./cacheClient.types";
-import { SearchType } from ".";
+import { SearchType, TEST_LOGIN_NAMESPACE } from ".";
 
 export class CacheClient implements ICacheClient {
     public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -85,12 +85,6 @@ export class CacheClient implements ICacheClient {
             return retryOriginalRequest;
         }
         return Promise.reject(error);
-    }
-
-    async testLogin(): Promise<void> {
-        // Simple test to check if logged in or no. TODO: have dedicated endpoint on the cache-server
-        // If receive unauthorized response, expect that refreshToken() will be called
-        await this.getRoleDefinition("testing.if.logged.in");
     }
 
     async login() {
@@ -301,5 +295,11 @@ export class CacheClient implements ICacheClient {
             this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
             return { token, refreshToken };
         }
+    }
+
+    private async testLogin(): Promise<void> {
+        // Simple test to check if logged in or no. TODO: have dedicated endpoint on the cache-server
+        // If receive unauthorized response, expect that refreshToken() will be called
+        await this.getRoleDefinition(TEST_LOGIN_NAMESPACE);
     }
 }

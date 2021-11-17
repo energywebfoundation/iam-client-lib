@@ -10,7 +10,6 @@ import { SearchType } from ".";
 
 export interface ICacheClient {
     pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
-    testLogin: () => Promise<void>;
     login: () => Promise<void>;
     isAuthEnabled: () => boolean;
 

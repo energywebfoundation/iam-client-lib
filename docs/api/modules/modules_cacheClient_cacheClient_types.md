@@ -16,6 +16,10 @@
 - [AssetsFilter](modules_cacheClient_cacheClient_types.md#assetsfilter)
 - [ClaimsFilter](modules_cacheClient_cacheClient_types.md#claimsfilter)
 
+### Variables
+
+- [TEST\_LOGIN\_NAMESPACE](modules_cacheClient_cacheClient_types.md#test_login_namespace)
+
 ## Type aliases
 
 ### AssetsFilter
@@ -43,3 +47,9 @@ ___
 | :------ | :------ |
 | `isAccepted?` | `boolean` |
 | `namespace?` | `string` |
+
+## Variables
+
+### TEST\_LOGIN\_NAMESPACE
+
+• `Const` **TEST\_LOGIN\_NAMESPACE**: ``"testing.if.logged.in"``
