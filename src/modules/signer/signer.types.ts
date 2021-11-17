@@ -8,9 +8,9 @@ export enum ProviderType {
 }
 
 export enum ProviderEvent {
-    AccountChanged = "accountChanged",
+    AccountChanged = "accountsChanged",
     NetworkChanged = "networkChanged",
-    Disconnected = "disconnected",
+    Disconnected = "disconnect",
     SessionUpdate = "session_update",
 }
 

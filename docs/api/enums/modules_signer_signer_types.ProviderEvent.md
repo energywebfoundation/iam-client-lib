@@ -15,13 +15,13 @@
 
 ### AccountChanged
 
-• **AccountChanged** = `"accountChanged"`
+• **AccountChanged** = `"accountsChanged"`
 
 ___
 
 ### Disconnected
 
-• **Disconnected** = `"disconnected"`
+• **Disconnected** = `"disconnect"`
 
 ___
 
