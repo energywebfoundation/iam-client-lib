@@ -1,3 +1,11 @@
+# [3.3.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.14...v3.3.0-alpha.15) (2021-11-18)
+
+
+### Bug Fixes
+
+* **claim:** stripped fields from issueClaim function ([b4bf01e](https://github.com/energywebfoundation/iam-client-lib/commit/b4bf01ec8015c6ac4604b93767b331842199f36e))
+* **issuerFields:** fix to issuerFields on publishPublicClaim ([f3b32f9](https://github.com/energywebfoundation/iam-client-lib/commit/f3b32f9602da70827ed24472e55f8c56ee4f4c36))
+
 # [3.3.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.13...v3.3.0-alpha.14) (2021-11-17)
 
 
