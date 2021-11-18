@@ -282,7 +282,6 @@ ___
 | `__namedParameters.claim` | `Object` |
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
-| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.claim.issuerFields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.subject` | `string` |
 

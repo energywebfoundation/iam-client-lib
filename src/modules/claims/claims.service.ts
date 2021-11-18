@@ -239,7 +239,6 @@ export class ClaimsService {
         claim: {
             claimType: string;
             claimTypeVersion: number;
-            fields: { key: string; value: string | number }[];
             issuerFields: { key: string; value: string | number }[];
         };
         subject: string;
