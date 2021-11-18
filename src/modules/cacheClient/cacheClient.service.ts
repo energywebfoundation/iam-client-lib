@@ -52,10 +52,10 @@ export class CacheClient implements ICacheClient {
      * @description Refreshes access token. If login still fails then signs new identity token and requests access token
      * After authentication runs previously failed requests
      */
-    async handleUnauthenticated() {
+    async authenticate() {
         try {
             const { refreshToken, token } = await this.refreshToken();
-            if (await this.isLoggedIn()) {
+            if (await this.isAuthenticated()) {
                 this.refresh_token = refreshToken;
                 this.token = token;
                 return;
@@ -76,7 +76,7 @@ export class CacheClient implements ICacheClient {
     }
 
     /**
-     * @description Schedules failed requests after login in
+     * @description At the time hanldes only authentication errors. Schedules failed requests and starts authentication
      * @param error
      * @returns
      */
@@ -99,7 +99,7 @@ export class CacheClient implements ICacheClient {
             });
             if (!this.isAuthenticating) {
                 this.isAuthenticating = true;
-                await this.handleUnauthenticated();
+                await this.authenticate();
                 this.isAuthenticating = false;
             }
             return retryOriginalRequest;
@@ -108,8 +108,8 @@ export class CacheClient implements ICacheClient {
     }
 
     async login() {
-        if (!(await this.isLoggedIn())) {
-            await this.handleUnauthenticated();
+        if (!(await this.isAuthenticated())) {
+            await this.authenticate();
         }
     }
 
@@ -300,10 +300,10 @@ export class CacheClient implements ICacheClient {
     }
 
     /**
-     * @description Checks that auth token has been created, has not expired and corresponds to logged in user
+     * @description Checks that auth token has been created, has not expired and corresponds to signer
      * @todo specific endpoint on cache server to return login info instead of error
      */
-    private async isLoggedIn(): Promise<boolean> {
+    private async isAuthenticated(): Promise<boolean> {
         try {
             await this.getOwnedAssets(this._signerService.did);
             return true;

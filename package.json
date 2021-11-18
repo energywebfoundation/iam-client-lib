@@ -1,6 +1,6 @@
 {
     "name": "iam-client-lib",
-    "version": "3.3.0-alpha.10",
+    "version": "3.3.0-alpha.15",
     "description": "Library for Decentralized Identity and Access Management",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -34,9 +34,9 @@
         "prepare": "npm run build",
         "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 1000 -l=10000000",
         "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 1000 -l=10000000",
-        "test:watch": "npm run start-rpc -- \"jest --coverage --env=jest.env.js --watchAll\"",
+        "test:watch": "npm run start-rpc -- \"jest --coverage --env=./jest.env.js --watchAll\"",
         "test": "npm run start-rpc -- \"jest --no-cache --env=./jest.env.js\"",
-        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=jest.env.js --watchAll\""
+        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\""
     },
     "keywords": [
         "decentralized",
@@ -63,7 +63,7 @@
         "@babel/plugin-transform-runtime": "^7.15.8",
         "@babel/runtime": "^7.12.5",
         "@energyweb/ekc": "^0.6.4",
-        "@energyweb/iam-contracts": "^3.3.0",
+        "@energyweb/iam-contracts": "^3.5.0",
         "@ensdomains/ens": "^0.4.5",
         "@ew-did-registry/claims": "^0.6.3-alpha.262.0",
         "@ew-did-registry/did": "^0.6.3-alpha.262.0",

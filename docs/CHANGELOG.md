@@ -1,3 +1,39 @@
+# [3.3.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.14...v3.3.0-alpha.15) (2021-11-18)
+
+
+### Bug Fixes
+
+* **claim:** stripped fields from issueClaim function ([b4bf01e](https://github.com/energywebfoundation/iam-client-lib/commit/b4bf01ec8015c6ac4604b93767b331842199f36e))
+* **issuerFields:** fix to issuerFields on publishPublicClaim ([f3b32f9](https://github.com/energywebfoundation/iam-client-lib/commit/f3b32f9602da70827ed24472e55f8c56ee4f4c36))
+
+# [3.3.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.13...v3.3.0-alpha.14) (2021-11-17)
+
+
+### Bug Fixes
+
+* **messaging:** subsribe to channels from claims channel ([4788a97](https://github.com/energywebfoundation/iam-client-lib/commit/4788a9782efda7be2e6ccc55bc6f30ad5b83fcbb))
+
+# [3.3.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.12...v3.3.0-alpha.13) (2021-11-17)
+
+
+### Bug Fixes
+
+* **cacheClient:** recalculate identity token on login ([aaaf929](https://github.com/energywebfoundation/iam-client-lib/commit/aaaf9291ffa5e679b14bd8c215731442104a95c9))
+
+# [3.3.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.11...v3.3.0-alpha.12) (2021-11-16)
+
+
+### Features
+
+* **claims:** issuer fields ([0b7d6c4](https://github.com/energywebfoundation/iam-client-lib/commit/0b7d6c45f096a057c6d9d8b131c42745bfa336c9))
+
+# [3.3.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.10...v3.3.0-alpha.11) (2021-11-16)
+
+
+### Bug Fixes
+
+* **jest:** make work of the npm test:watch and test:watch:windows ([6a799b5](https://github.com/energywebfoundation/iam-client-lib/commit/6a799b5e9a7605c037e8a0c1364fa69499813cc3))
+
 # [3.3.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.9...v3.3.0-alpha.10) (2021-11-09)
 
 

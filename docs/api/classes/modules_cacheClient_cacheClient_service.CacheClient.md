@@ -19,6 +19,7 @@
 ### Methods
 
 - [addDIDToWatchList](modules_cacheClient_cacheClient_service.CacheClient.md#adddidtowatchlist)
+- [authenticate](modules_cacheClient_cacheClient_service.CacheClient.md#authenticate)
 - [deleteClaim](modules_cacheClient_cacheClient_service.CacheClient.md#deleteclaim)
 - [getAllowedRolesByIssuer](modules_cacheClient_cacheClient_service.CacheClient.md#getallowedrolesbyissuer)
 - [getAppDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getappdefinition)
@@ -46,7 +47,6 @@
 - [getRolesDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](modules_cacheClient_cacheClient_service.CacheClient.md#getsuborganizationsbyorganization)
 - [handleError](modules_cacheClient_cacheClient_service.CacheClient.md#handleerror)
-- [handleUnauthenticated](modules_cacheClient_cacheClient_service.CacheClient.md#handleunauthenticated)
 - [init](modules_cacheClient_cacheClient_service.CacheClient.md#init)
 - [isAuthEnabled](modules_cacheClient_cacheClient_service.CacheClient.md#isauthenabled)
 - [issueClaim](modules_cacheClient_cacheClient_service.CacheClient.md#issueclaim)
@@ -95,6 +95,19 @@
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#adddidtowatchlist)
+
+___
+
+### authenticate
+
+▸ **authenticate**(): `Promise`<`void`\>
+
+**`description`** Refreshes access token. If login still fails then signs new identity token and requests access token
+After authentication runs previously failed requests
+
+#### Returns
+
+`Promise`<`void`\>
 
 ___
 
@@ -626,7 +639,7 @@ ___
 
 ▸ **handleError**(`error`): `Promise`<`unknown`\>
 
-**`description`** Schedules failed requests after login in
+**`description`** At the time hanldes only authentication errors. Schedules failed requests and starts authentication
 
 #### Parameters
 
@@ -637,19 +650,6 @@ ___
 #### Returns
 
 `Promise`<`unknown`\>
-
-___
-
-### handleUnauthenticated
-
-▸ **handleUnauthenticated**(): `Promise`<`void`\>
-
-**`description`** Refreshes access token. If login still fails then signs new identity token and requests access token
-After authentication runs previously failed requests
-
-#### Returns
-
-`Promise`<`void`\>
 
 ___
 
