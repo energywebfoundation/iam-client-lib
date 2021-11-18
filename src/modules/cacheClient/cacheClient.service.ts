@@ -49,7 +49,8 @@ export class CacheClient implements ICacheClient {
     }
 
     /**
-     * Refreshes access token. If login still fails then signs new identity token and requests access token
+     * @description Refreshes access token. If login still fails then signs new identity token and requests access token
+     * After authentication runs previously failed requests
      */
     async handleUnauthenticated() {
         try {
@@ -74,12 +75,8 @@ export class CacheClient implements ICacheClient {
         this.failedRequests = this.failedRequests.filter((callback) => callback());
     }
 
-    addFailedRequest(callback: () => void) {
-        this.failedRequests.push(callback);
-    }
-
     /**
-     * @description if error was returned not from test loging endpoint, then first tries to refresh auth token and if not helps then asks for new
+     * @description Schedules failed requests after login in
      * @param error
      * @returns
      */
@@ -96,7 +93,7 @@ export class CacheClient implements ICacheClient {
             config.url?.indexOf(TEST_LOGIN_ENDPOINT) === -1
         ) {
             const retryOriginalRequest = new Promise((resolve) => {
-                this.addFailedRequest(() => {
+                this.failedRequests.push(() => {
                     resolve(axios(originalRequest));
                 });
             });

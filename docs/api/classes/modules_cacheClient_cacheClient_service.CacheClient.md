@@ -19,7 +19,6 @@
 ### Methods
 
 - [addDIDToWatchList](modules_cacheClient_cacheClient_service.CacheClient.md#adddidtowatchlist)
-- [addFailedRequest](modules_cacheClient_cacheClient_service.CacheClient.md#addfailedrequest)
 - [deleteClaim](modules_cacheClient_cacheClient_service.CacheClient.md#deleteclaim)
 - [getAllowedRolesByIssuer](modules_cacheClient_cacheClient_service.CacheClient.md#getallowedrolesbyissuer)
 - [getAppDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getappdefinition)
@@ -96,22 +95,6 @@
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#adddidtowatchlist)
-
-___
-
-### addFailedRequest
-
-▸ **addFailedRequest**(`callback`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `callback` | () => `void` |
-
-#### Returns
-
-`void`
 
 ___
 
@@ -643,7 +626,7 @@ ___
 
 ▸ **handleError**(`error`): `Promise`<`unknown`\>
 
-**`description`** if error was returned not from test loging endpoint, then first tries to refresh auth token and if not helps then asks for new
+**`description`** Schedules failed requests after login in
 
 #### Parameters
 
@@ -661,7 +644,8 @@ ___
 
 ▸ **handleUnauthenticated**(): `Promise`<`void`\>
 
-Refreshes access token. If login still fails then signs new identity token and requests access token
+**`description`** Refreshes access token. If login still fails then signs new identity token and requests access token
+After authentication runs previously failed requests
 
 #### Returns
 
