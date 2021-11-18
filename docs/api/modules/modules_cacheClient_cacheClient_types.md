@@ -18,7 +18,7 @@
 
 ### Variables
 
-- [TEST\_LOGIN\_NAMESPACE](modules_cacheClient_cacheClient_types.md#test_login_namespace)
+- [TEST\_LOGIN\_ENDPOINT](modules_cacheClient_cacheClient_types.md#test_login_endpoint)
 
 ## Type aliases
 
@@ -50,6 +50,6 @@ ___
 
 ## Variables
 
-### TEST\_LOGIN\_NAMESPACE
+### TEST\_LOGIN\_ENDPOINT
 
-• `Const` **TEST\_LOGIN\_NAMESPACE**: ``"testing.if.logged.in"``
+• `Const` **TEST\_LOGIN\_ENDPOINT**: ``"/assets/owner/"``

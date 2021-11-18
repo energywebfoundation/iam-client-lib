@@ -28,4 +28,4 @@ export enum SearchType {
     Role = "Role",
 }
 
-export const TEST_LOGIN_NAMESPACE = "testing.if.logged.in";
+export const TEST_LOGIN_ENDPOINT = "/assets/owner/";

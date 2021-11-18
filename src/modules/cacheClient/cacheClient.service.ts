@@ -11,17 +11,18 @@ import { SignerService } from "../signer/signer.service";
 import { IPubKeyAndIdentityToken } from "../signer/signer.types";
 import { cacheConfigs } from "../../config/cache.config";
 import { ICacheClient } from "./ICacheClient";
-import { AssetsFilter, ClaimsFilter } from "./cacheClient.types";
-import { SearchType, TEST_LOGIN_NAMESPACE } from ".";
+import { AssetsFilter, ClaimsFilter, TEST_LOGIN_ENDPOINT } from "./cacheClient.types";
+import { SearchType } from ".";
 
 export class CacheClient implements ICacheClient {
     public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
     private httpClient: AxiosInstance;
-    private isAlreadyFetchingAccessToken = false;
-    private failedRequests: Array<(token?: string) => void> = [];
+    private isAuthenticating = false;
+    private failedRequests: Array<() => void> = [];
     private authEnabled: boolean;
     private isBrowser: boolean;
     private refresh_token: string | undefined;
+    private token: string | undefined;
 
     constructor(private _signerService: SignerService) {
         this._signerService.onInit(this.init.bind(this));
@@ -35,52 +36,74 @@ export class CacheClient implements ICacheClient {
         });
         this.httpClient.interceptors.response.use((response: AxiosResponse) => {
             return response;
-        }, this.handleUnauthorized.bind(this));
+        }, this.handleError.bind(this));
         this.authEnabled = cacheServerSupportsAuth;
         this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
+        if (!this.isBrowser) {
+            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
+        }
     }
 
     isAuthEnabled() {
         return this.authEnabled;
     }
 
-    async handleRefreshToken() {
-        const { refreshToken, token } = await this.refreshToken();
+    /**
+     * Refreshes access token. If login still fails then signs new identity token and requests access token
+     */
+    async handleUnauthenticated() {
+        try {
+            const { refreshToken, token } = await this.refreshToken();
+            if (await this.isLoggedIn()) {
+                this.refresh_token = refreshToken;
+                this.token = token;
+                return;
+            }
+        } catch {}
+
+        const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
+        const {
+            data: { refreshToken, token },
+        } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
+            identityToken: pubKeyAndIdentityToken.identityToken,
+        });
         this.refresh_token = refreshToken;
-        this.failedRequests = this.failedRequests.filter((callback) => callback(this.isBrowser ? undefined : token));
-        if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            this.refresh_token = refreshToken;
-        }
+        this.token = token;
+        this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
+
+        this.failedRequests = this.failedRequests.filter((callback) => callback());
     }
 
-    addFailedRequest(callback: (token?: string) => void) {
+    addFailedRequest(callback: () => void) {
         this.failedRequests.push(callback);
     }
 
-    async handleUnauthorized(error: AxiosError) {
+    /**
+     * @description if error was returned not from test loging endpoint, then first tries to refresh auth token and if not helps then asks for new
+     * @param error
+     * @returns
+     */
+    async handleError(error: AxiosError) {
         const { config, response } = error;
         const originalRequest = config;
         if (
             this.authEnabled &&
             response &&
-            response.status === 401 &&
+            (response.status === 401 || response.status === 403) &&
             config &&
             config.url?.indexOf("/login") === -1 &&
-            config.url?.indexOf("/refresh_token") === -1
+            config.url?.indexOf("/refresh_token") === -1 &&
+            config.url?.indexOf(TEST_LOGIN_ENDPOINT) === -1
         ) {
             const retryOriginalRequest = new Promise((resolve) => {
-                this.addFailedRequest((token?: string) => {
-                    if (token) {
-                        originalRequest.headers.Authorization = "Bearer " + token;
-                    }
+                this.addFailedRequest(() => {
                     resolve(axios(originalRequest));
                 });
             });
-            if (!this.isAlreadyFetchingAccessToken) {
-                this.isAlreadyFetchingAccessToken = true;
-                await this.handleRefreshToken();
-                this.isAlreadyFetchingAccessToken = false;
+            if (!this.isAuthenticating) {
+                this.isAuthenticating = true;
+                await this.handleUnauthenticated();
+                this.isAuthenticating = false;
             }
             return retryOriginalRequest;
         }
@@ -88,7 +111,9 @@ export class CacheClient implements ICacheClient {
     }
 
     async login() {
-        await this.testLogin();
+        if (!(await this.isLoggedIn())) {
+            await this.handleUnauthenticated();
+        }
     }
 
     async getRoleDefinition(namespace: string) {
@@ -271,35 +296,22 @@ export class CacheClient implements ICacheClient {
     }
 
     private async refreshToken(): Promise<{ token: string; refreshToken: string }> {
-        try {
-            const { data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
-                `/refresh_token${
-                    executionEnvironment() === ExecutionEnvironment.BROWSER
-                        ? ""
-                        : `?refresh_token=${this.refresh_token}`
-                }`,
-            );
-            return data;
-        } catch {
-            const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
-            const {
-                data: { refreshToken, token },
-            } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
-                identityToken: pubKeyAndIdentityToken.identityToken,
-            });
-
-            if (!this.isBrowser) {
-                this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                this.refresh_token = refreshToken;
-            }
-            this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
-            return { token, refreshToken };
-        }
+        const { data } = await this.httpClient.get<{ token: string; refreshToken: string }>(
+            `/refresh_token${this.isBrowser ? "" : `?refresh_token=${this.refresh_token}`}`,
+        );
+        return data;
     }
 
-    private async testLogin(): Promise<void> {
-        // Simple test to check if logged in or no. TODO: have dedicated endpoint on the cache-server
-        // If receive unauthorized response, expect that refreshToken() will be called
-        await this.getRoleDefinition(TEST_LOGIN_NAMESPACE);
+    /**
+     * @description Checks that auth token has been created, has not expired and corresponds to logged in user
+     * @todo specific endpoint on cache server to return login info instead of error
+     */
+    private async isLoggedIn(): Promise<boolean> {
+        try {
+            await this.getOwnedAssets(this._signerService.did);
+            return true;
+        } catch (_) {
+            return false;
+        }
     }
 }

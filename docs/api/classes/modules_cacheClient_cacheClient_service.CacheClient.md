@@ -46,8 +46,8 @@
 - [getRolesByOwner](modules_cacheClient_cacheClient_service.CacheClient.md#getrolesbyowner)
 - [getRolesDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](modules_cacheClient_cacheClient_service.CacheClient.md#getsuborganizationsbyorganization)
-- [handleRefreshToken](modules_cacheClient_cacheClient_service.CacheClient.md#handlerefreshtoken)
-- [handleUnauthorized](modules_cacheClient_cacheClient_service.CacheClient.md#handleunauthorized)
+- [handleError](modules_cacheClient_cacheClient_service.CacheClient.md#handleerror)
+- [handleUnauthenticated](modules_cacheClient_cacheClient_service.CacheClient.md#handleunauthenticated)
 - [init](modules_cacheClient_cacheClient_service.CacheClient.md#init)
 - [isAuthEnabled](modules_cacheClient_cacheClient_service.CacheClient.md#isauthenabled)
 - [issueClaim](modules_cacheClient_cacheClient_service.CacheClient.md#issueclaim)
@@ -107,7 +107,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `callback` | (`token?`: `string`) => `void` |
+| `callback` | () => `void` |
 
 #### Returns
 
@@ -639,19 +639,11 @@ ___
 
 ___
 
-### handleRefreshToken
+### handleError
 
-▸ **handleRefreshToken**(): `Promise`<`void`\>
+▸ **handleError**(`error`): `Promise`<`unknown`\>
 
-#### Returns
-
-`Promise`<`void`\>
-
-___
-
-### handleUnauthorized
-
-▸ **handleUnauthorized**(`error`): `Promise`<`unknown`\>
+**`description`** if error was returned not from test loging endpoint, then first tries to refresh auth token and if not helps then asks for new
 
 #### Parameters
 
@@ -662,6 +654,18 @@ ___
 #### Returns
 
 `Promise`<`unknown`\>
+
+___
+
+### handleUnauthenticated
+
+▸ **handleUnauthenticated**(): `Promise`<`void`\>
+
+Refreshes access token. If login still fails then signs new identity token and requests access token
+
+#### Returns
+
+`Promise`<`void`\>
 
 ___
 
