@@ -15,6 +15,7 @@
 
 ### Methods
 
+- [createDocument](modules_didRegistry_didRegistry_service.DidRegistry.md#createdocument)
 - [createPublicClaim](modules_didRegistry_didRegistry_service.DidRegistry.md#createpublicclaim)
 - [decodeJWTToken](modules_didRegistry_didRegistry_service.DidRegistry.md#decodejwttoken)
 - [getDidDocument](modules_didRegistry_didRegistry_service.DidRegistry.md#getdiddocument)
@@ -61,6 +62,20 @@ ___
 `JWT`
 
 ## Methods
+
+### createDocument
+
+▸ **createDocument**(): `Promise`<`boolean`\>
+
+**`description`** create did document if not exists
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if document is created successfully
+
+___
 
 ### createPublicClaim
 
