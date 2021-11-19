@@ -1,3 +1,10 @@
+# [3.3.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.15...v3.3.0-alpha.16) (2021-11-19)
+
+
+### Features
+
+* **DID:** remove did document creation upon initialization ([b2feede](https://github.com/energywebfoundation/iam-client-lib/commit/b2feede866bd255166b8a03e391f1f01d1f7737b))
+
 # [3.3.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.14...v3.3.0-alpha.15) (2021-11-18)
 
 
