@@ -87,14 +87,18 @@ export class CacheClient implements ICacheClient {
         return Promise.reject(error);
     }
 
-    async testLogin(): Promise<void> {
-        // Simple test to check if logged in or no. TODO: have dedicated endpoint on the cache-server
-        // If receive unauthorized response, expect that refreshToken() will be called
-        await this.getRoleDefinition("testing.if.logged.in");
-    }
-
     async login() {
-        await this.testLogin();
+        const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
+        const {
+            data: { refreshToken, token },
+        } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
+            identityToken: pubKeyAndIdentityToken.identityToken,
+        });
+        this.refresh_token = refreshToken;
+        if (!this.isBrowser) {
+            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            this.refresh_token = refreshToken;
+        }
     }
 
     async getRoleDefinition(namespace: string) {

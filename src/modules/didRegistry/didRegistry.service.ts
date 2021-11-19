@@ -195,6 +195,22 @@ export class DidRegistry {
     }
 
     /**
+     * @description create did document if not exists
+     * @returns true if document is created successfully
+     */
+    async createDocument(): Promise<boolean> {
+        if (this._cacheClient) {
+            const cachedDoc = await this._cacheClient.getDidDocument(this._did);
+            const pubKey = cachedDoc.publicKey.find((pk) => pk.id.endsWith(KeyTags.OWNER));
+            if (!pubKey) {
+                return this._document.create();
+            }
+            return true;
+        }
+        return this._document.create();
+    }
+
+    /**
      * revokeDidDocument
      *
      * @description revokes did document
@@ -237,13 +253,6 @@ export class DidRegistry {
 
     private async _setDocument() {
         this._document = new DIDDocumentFull(this._did, this._operator);
-        if (this._cacheClient) {
-            const cachedDoc = await this._cacheClient.getDidDocument(this._did);
-            const pubKey = cachedDoc.publicKey.find((pk) => pk.id.endsWith(KeyTags.OWNER));
-            if (!pubKey) {
-                await this._document.create();
-            }
-        }
     }
 
     private _setClaims() {

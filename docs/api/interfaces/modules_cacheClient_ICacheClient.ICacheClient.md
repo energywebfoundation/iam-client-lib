@@ -45,7 +45,6 @@
 - [login](modules_cacheClient_ICacheClient.ICacheClient.md#login)
 - [rejectClaim](modules_cacheClient_ICacheClient.ICacheClient.md#rejectclaim)
 - [requestClaim](modules_cacheClient_ICacheClient.ICacheClient.md#requestclaim)
-- [testLogin](modules_cacheClient_ICacheClient.ICacheClient.md#testlogin)
 
 ## Properties
 
@@ -542,16 +541,6 @@ ___
 | :------ | :------ |
 | `requester` | `string` |
 | `message` | [`IClaimRequest`](modules_claims_claims_types.IClaimRequest.md) |
-
-#### Returns
-
-`Promise`<`void`\>
-
-___
-
-### testLogin
-
-▸ **testLogin**(): `Promise`<`void`\>
 
 #### Returns
 

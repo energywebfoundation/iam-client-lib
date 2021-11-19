@@ -83,6 +83,7 @@ describe("StakingPool tests", () => {
 
         const data: IRoleDefinition = {
             fields: [],
+            issuerFields: [],
             issuer: {
                 issuerType: "DID",
                 did: [orgOwnerDid],

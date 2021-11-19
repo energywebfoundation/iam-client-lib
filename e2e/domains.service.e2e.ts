@@ -89,6 +89,7 @@ describe("Domains service", () => {
 
             const data: IRoleDefinition = {
                 fields: [],
+                issuerFields: [],
                 issuer: {
                     issuerType: "DID",
                     did: [`did:${Methods.Erc1056}:${rootOwner.address}`],

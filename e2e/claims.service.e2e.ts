@@ -41,6 +41,7 @@ const version = 1;
 const baseRoleDef = {
     roleType: "org",
     fields: [],
+    issuerFields: [],
     enrolmentPreconditions: [],
     issuer: { issuerType: "DID", did: [staticIssuerDID] },
     version,
@@ -302,7 +303,7 @@ describe("Enrollment claim tests", () => {
         expect(hasRole).toBe(false);
     });
 
-    test("should issue claim request with additional params", async () => {
+    test("should issue claim request with additional issuer fields", async () => {
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
 
         const registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain];
@@ -316,10 +317,16 @@ describe("Enrollment claim tests", () => {
             subjectAgreement;
             token;
         };
-        const claimParams: Record<string, string> = {
-            "document ID": "ASG 123222",
-            DOB: "1990-01-07",
-        };
+        const issuerFields: { key: string; value: string | number }[] = [
+            {
+                key: "document ID",
+                value: "ASG 123222",
+            },
+            {
+                key: "DOB",
+                value: "1990-01-07",
+            },
+        ];
         await signerService.connect(staticIssuer, ProviderType.PrivateKey);
         await claimsService.issueClaimRequest({
             id,
@@ -327,12 +334,12 @@ describe("Enrollment claim tests", () => {
             requester: rootOwnerDID,
             subjectAgreement,
             token,
-            claimParams,
+            issuerFields,
         });
 
         const [, encodedMsg2] = mockPublish.mock.calls.pop();
         const { issuedToken } = jsonCodec.decode(encodedMsg2) as { issuedToken };
-        const data = didRegistry.jwt.decode(issuedToken) as { claimData: { claimParams } };
-        expect(data.claimData.claimParams).toEqual(claimParams);
+        const data = didRegistry.jwt.decode(issuedToken) as { claimData: { issuerFields } };
+        expect(data.claimData.issuerFields).toEqual(issuerFields);
     });
 });
