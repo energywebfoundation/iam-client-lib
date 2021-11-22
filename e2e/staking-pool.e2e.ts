@@ -50,24 +50,25 @@ jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
     };
 });
 
+const duration = 3600 * 24 * 7;
+
+const oneEWT = utils.parseUnits("1", "ether");
+const hardCap = utils.parseUnits("2", "ether");
+const contributionLimit = oneEWT.mul(50000);
+
+const ratio = 0.0002225;
+const ratioInt = utils.parseUnits(ratio.toString(), 18);
+
+const rewards = oneEWT.mul(11);
+
 export const setupStakingPoolFactory = async () => {
     const { chainId } = await deployer.provider.getNetwork();
     const { claimManagerAddress } = chainConfigs()[chainId];
 
     const { timestamp } = await deployer.provider.getBlock("latest");
 
-    const duration = 3600 * 24 * 7;
     const start = timestamp + 10;
     const end = start + duration;
-
-    const oneEWT = utils.parseUnits("1", "ether");
-    const hardCap = utils.parseUnits("2", "ether");
-    const contributionLimit = oneEWT.mul(50000);
-
-    const ratio = 0.0002225;
-    const ratioInt = utils.parseUnits(ratio.toString(), 18);
-
-    const rewards = oneEWT.mul(11);
 
     const stakingPoolFactory = await (
         await new StakingPool__factory(deployer).deploy(
@@ -164,6 +165,9 @@ describe("StakingPool tests", () => {
         const stakeAfterWithdraw = await pool.getStake();
 
         expect(stakeAfterWithdraw.amount.toNumber()).toBe(0);
+
+        const { status } = await pool.getStake();
+        expect(status).toBe(StakeStatus.NONSTAKING);
     });
 
     it("should withdraw without reward", async () => {
@@ -182,5 +186,21 @@ describe("StakingPool tests", () => {
         const stake = await pool.getStake();
 
         expect(stake.status).toBe(StakeStatus.NONSTAKING);
+    });
+
+    it("should return hardcap", async () => {
+        const pool = await stakingPoolService.getPool();
+
+        const poolHardCap = await pool.getHardCap();
+
+        expect(poolHardCap.eq(hardCap)).toEqual(true);
+    });
+
+    it("should return contribution limit", async () => {
+        const pool = await stakingPoolService.getPool();
+
+        const poolContributionLimit = await pool.getContributionLimit();
+
+        expect(poolContributionLimit.eq(contributionLimit)).toEqual(true);
     });
 });

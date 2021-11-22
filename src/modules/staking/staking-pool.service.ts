@@ -61,6 +61,14 @@ export class StakingPoolService {
         ).attach(address);
     }
 
+    async getHardCap(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).hardCap();
+    }
+
+    async getContributionLimit(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).contributionLimit();
+    }
+
     /**
      * @description Locks stake and starts accumulating reward
      * @emits StakingPool.StakePut

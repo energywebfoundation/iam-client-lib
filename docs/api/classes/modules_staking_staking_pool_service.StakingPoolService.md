@@ -13,6 +13,8 @@ Abstraction over staking pool smart contract
 ### Methods
 
 - [checkReward](modules_staking_staking_pool_service.StakingPoolService.md#checkreward)
+- [getContributionLimit](modules_staking_staking_pool_service.StakingPoolService.md#getcontributionlimit)
+- [getHardCap](modules_staking_staking_pool_service.StakingPoolService.md#gethardcap)
 - [getStake](modules_staking_staking_pool_service.StakingPoolService.md#getstake)
 - [putStake](modules_staking_staking_pool_service.StakingPoolService.md#putstake)
 - [withdraw](modules_staking_staking_pool_service.StakingPoolService.md#withdraw)
@@ -37,6 +39,26 @@ Abstraction over staking pool smart contract
 ▸ **checkReward**(): `Promise`<`BigNumber`\>
 
 Accumulated reward
+
+#### Returns
+
+`Promise`<`BigNumber`\>
+
+___
+
+### getContributionLimit
+
+▸ **getContributionLimit**(): `Promise`<`BigNumber`\>
+
+#### Returns
+
+`Promise`<`BigNumber`\>
+
+___
+
+### getHardCap
+
+▸ **getHardCap**(): `Promise`<`BigNumber`\>
 
 #### Returns
 
