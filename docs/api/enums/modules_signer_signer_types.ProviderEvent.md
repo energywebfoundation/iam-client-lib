@@ -15,13 +15,17 @@
 
 ### AccountChanged
 
-• **AccountChanged** = `"accountChanged"`
+• **AccountChanged** = `"accountsChanged"`
+
+Metamask events https://docs.metamask.io/guide/ethereum-provider.html#events
 
 ___
 
 ### Disconnected
 
-• **Disconnected** = `"disconnected"`
+• **Disconnected** = `"disconnect"`
+
+WalletConnect events https://docs.walletconnect.com/1.0/client-api#register-event-subscription
 
 ___
 

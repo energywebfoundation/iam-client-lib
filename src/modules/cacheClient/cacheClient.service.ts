@@ -22,7 +22,6 @@ export class CacheClient implements ICacheClient {
     private authEnabled: boolean;
     private isBrowser: boolean;
     private refresh_token: string | undefined;
-    private token: string | undefined;
 
     constructor(private _signerService: SignerService) {
         this._signerService.onInit(this.init.bind(this));
@@ -39,12 +38,6 @@ export class CacheClient implements ICacheClient {
         }, this.handleError.bind(this));
         this.authEnabled = cacheServerSupportsAuth;
         this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
-        if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common = {
-                ...this.httpClient.defaults.headers.common,
-                Authorization: this.authHeader,
-            };
-        }
     }
 
     isAuthEnabled() {
@@ -58,10 +51,11 @@ export class CacheClient implements ICacheClient {
     async authenticate() {
         try {
             const { refreshToken, token } = await this.refreshToken();
+            if (!this.isBrowser) {
+                this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            }
             if (await this.isAuthenticated()) {
                 this.refresh_token = refreshToken;
-
-                this.token = token;
                 return;
             }
         } catch {}
@@ -72,8 +66,10 @@ export class CacheClient implements ICacheClient {
         } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
             identityToken: pubKeyAndIdentityToken.identityToken,
         });
+        if (!this.isBrowser) {
+            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        }
         this.refresh_token = refreshToken;
-        this.token = token;
         this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
 
         this.failedRequests = this.failedRequests.filter((callback) => callback());
@@ -317,9 +313,5 @@ export class CacheClient implements ICacheClient {
         } catch (_) {
             return false;
         }
-    }
-
-    private get authHeader() {
-        return `Bearer ${this.token}`;
     }
 }
