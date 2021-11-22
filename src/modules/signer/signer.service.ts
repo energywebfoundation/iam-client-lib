@@ -55,11 +55,13 @@ export class SignerService {
     }
 
     async emit(e: ProviderEvent) {
-        for await (const { event, cb } of this._walletEventListeners) {
-            if (event === e) {
-                await cb();
-            }
-        }
+        await Promise.all(
+            this._walletEventListeners
+                .map(({ event, cb }) => {
+                    return e === event ? cb() : null;
+                })
+                .filter(Boolean),
+        );
     }
 
     on(event: ProviderEvent, cb) {
@@ -80,7 +82,7 @@ export class SignerService {
             this.on(ProviderEvent.NetworkChanged, accChangedHandler);
         } else if (this._providerType === ProviderType.WalletConnect) {
             this.on(ProviderEvent.SessionUpdate, accChangedHandler);
-            this.on(ProviderEvent.Disconnected, this.closeConnection());
+            this.on(ProviderEvent.Disconnected, this.closeConnection);
         }
     }
 
