@@ -1,16 +1,22 @@
 import { providers } from "ethers";
 import detectMetamask from "@metamask/detect-provider";
 import { ERROR_MESSAGES } from "../../errors";
-import { ProviderType } from "./signer.types";
+import { ProviderType, ProviderEvent } from "./signer.types";
 import { SignerService } from "./signer.service";
 
 export const fromMetaMask = async (): Promise<SignerService> => {
-    const signerService = new SignerService(await createMetamaskSigner(), ProviderType.MetaMask);
+    const provider = await createMetamaskProvider();
+    const signer = new providers.Web3Provider(provider).getSigner();
+    console.log("metamask chain id:", (await signer.provider.getNetwork()).chainId);
+    const signerService = new SignerService(signer, ProviderType.MetaMask);
+    provider.on(ProviderEvent.AccountChanged, () => signerService.emit(ProviderEvent.AccountChanged));
+    provider.on(ProviderEvent.NetworkChanged, () => signerService.emit(ProviderEvent.NetworkChanged));
     await signerService.init();
+
     return signerService;
 };
 
-const createMetamaskSigner = async () => {
+const createMetamaskProvider = async () => {
     const metamaskProvider: any = await detectMetamask({
         mustBeMetaMask: true,
     });
@@ -37,10 +43,8 @@ const createMetamaskSigner = async () => {
             ],
         });
     }
-    const signer = new providers.Web3Provider(metamaskProvider).getSigner();
 
-    console.log("metamask chain id:", (await signer.provider.getNetwork()).chainId);
-    return signer;
+    return metamaskProvider;
 };
 
 export const isMetamaskExtensionPresent = async () => {

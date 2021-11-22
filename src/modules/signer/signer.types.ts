@@ -8,9 +8,15 @@ export enum ProviderType {
 }
 
 export enum ProviderEvent {
-    AccountChanged = "accountChanged",
+    /**
+     * Metamask events https://docs.metamask.io/guide/ethereum-provider.html#events
+     */
+    AccountChanged = "accountsChanged",
     NetworkChanged = "networkChanged",
-    Disconnected = "disconnected",
+    /**
+     * WalletConnect events https://docs.walletconnect.com/1.0/client-api#register-event-subscription
+     */
+    Disconnected = "disconnect",
     SessionUpdate = "session_update",
 }
 

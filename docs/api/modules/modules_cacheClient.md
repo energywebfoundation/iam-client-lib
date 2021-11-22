@@ -11,6 +11,7 @@
 - [ICacheClient](modules_cacheClient.md#icacheclient)
 - [Order](modules_cacheClient.md#order)
 - [SearchType](modules_cacheClient.md#searchtype)
+- [TEST\_LOGIN\_ENDPOINT](modules_cacheClient.md#test_login_endpoint)
 
 ## References
 
@@ -53,3 +54,9 @@ ___
 ### SearchType
 
 Re-exports: [SearchType](../enums/modules_cacheClient_cacheClient_types.SearchType.md)
+
+___
+
+### TEST\_LOGIN\_ENDPOINT
+
+Re-exports: [TEST\_LOGIN\_ENDPOINT](modules_cacheClient_cacheClient_types.md#test_login_endpoint)
