@@ -1,3 +1,10 @@
+# [3.3.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.17...v3.3.0-alpha.18) (2021-11-22)
+
+
+### Bug Fixes
+
+* **signer:** listen to wallet events ([dca58b1](https://github.com/energywebfoundation/iam-client-lib/commit/dca58b10ea5fb18f3e0ff47f4017960f9fb3f8ad))
+
 # [3.3.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.16...v3.3.0-alpha.17) (2021-11-22)
 
 
