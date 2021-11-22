@@ -40,7 +40,10 @@ export class CacheClient implements ICacheClient {
         this.authEnabled = cacheServerSupportsAuth;
         this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
         if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common["Authorization"] = this.authHeader;
+            this.httpClient.defaults.headers.common = {
+                ...this.httpClient.defaults.headers.common,
+                Authorization: this.authHeader,
+            };
         }
     }
 
@@ -301,7 +304,10 @@ export class CacheClient implements ICacheClient {
     }
 
     /**
-     * @description Checks that auth token has been created, has not expired and corresponds to signer
+     * @description Checks that auth token has been created, has not expired and corresponds to signer.
+     * This is done by a request to the server because the auth token is stored in an HTTP-only cookie and
+     * so the Javascript has no way to check its validity
+     *
      * @todo specific endpoint on cache server to return login info instead of error
      */
     private async isAuthenticated(): Promise<boolean> {
