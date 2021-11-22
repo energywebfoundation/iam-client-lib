@@ -1,6 +1,5 @@
 import { BigNumber, providers, utils, Wallet, ethers, Signer } from "ethers";
 import base64url from "base64url";
-import { EventEmitter } from "events";
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
 import { Methods } from "@ew-did-registry/did";
 import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
@@ -21,6 +20,8 @@ export class SignerService {
     private _chainName: string;
 
     private _servicesInitializers: ServiceInitializer[] = [];
+
+    private _walletEventListeners: { event: ProviderEvent; cb: any }[] = [];
 
     constructor(private _signer: Required<Signer>, private _providerType: ProviderType) {}
 
@@ -53,13 +54,18 @@ export class SignerService {
         this._servicesInitializers.push(initializer);
     }
 
+    async emit(e: ProviderEvent) {
+        await Promise.all(
+            this._walletEventListeners
+                .map(({ event, cb }) => {
+                    return e === event ? cb() : null;
+                })
+                .filter(Boolean),
+        );
+    }
+
     on(event: ProviderEvent, cb) {
-        const provider = this._signer.provider;
-        if (provider instanceof EventEmitter) {
-            provider.on(event, cb);
-        } else if (provider instanceof WalletConnectProvider) {
-            provider.on(event, cb);
-        }
+        this._walletEventListeners.push({ event, cb });
     }
 
     /**
@@ -71,10 +77,13 @@ export class SignerService {
             await this.closeConnection();
             await this.init();
         };
-        this.on(ProviderEvent.AccountChanged, accChangedHandler);
-        this.on(ProviderEvent.NetworkChanged, accChangedHandler);
-        this.on(ProviderEvent.Disconnected, this.closeConnection());
-        this.on(ProviderEvent.SessionUpdate, accChangedHandler);
+        if (this._providerType === ProviderType.MetaMask) {
+            this.on(ProviderEvent.AccountChanged, accChangedHandler);
+            this.on(ProviderEvent.NetworkChanged, accChangedHandler);
+        } else if (this._providerType === ProviderType.WalletConnect) {
+            this.on(ProviderEvent.SessionUpdate, accChangedHandler);
+            this.on(ProviderEvent.Disconnected, this.closeConnection);
+        }
     }
 
     get signer() {

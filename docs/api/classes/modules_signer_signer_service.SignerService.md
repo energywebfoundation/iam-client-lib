@@ -23,6 +23,7 @@
 - [balance](modules_signer_signer_service.SignerService.md#balance)
 - [closeConnection](modules_signer_signer_service.SignerService.md#closeconnection)
 - [connect](modules_signer_signer_service.SignerService.md#connect)
+- [emit](modules_signer_signer_service.SignerService.md#emit)
 - [init](modules_signer_signer_service.SignerService.md#init)
 - [initEventHandlers](modules_signer_signer_service.SignerService.md#initeventhandlers)
 - [on](modules_signer_signer_service.SignerService.md#on)
@@ -147,6 +148,22 @@ ___
 | :------ | :------ |
 | `signer` | `Required`<`Signer`\> |
 | `providerType` | [`ProviderType`](../enums/modules_signer_signer_types.ProviderType.md) |
+
+#### Returns
+
+`Promise`<`void`\>
+
+___
+
+### emit
+
+▸ **emit**(`e`): `Promise`<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `e` | [`ProviderEvent`](../enums/modules_signer_signer_types.ProviderEvent.md) |
 
 #### Returns
 
