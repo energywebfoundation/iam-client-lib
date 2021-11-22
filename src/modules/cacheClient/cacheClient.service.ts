@@ -40,7 +40,7 @@ export class CacheClient implements ICacheClient {
         this.authEnabled = cacheServerSupportsAuth;
         this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
         if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
+            this.httpClient.defaults.headers.common["Authorization"] = this.authHeader;
         }
     }
 
@@ -57,6 +57,7 @@ export class CacheClient implements ICacheClient {
             const { refreshToken, token } = await this.refreshToken();
             if (await this.isAuthenticated()) {
                 this.refresh_token = refreshToken;
+
                 this.token = token;
                 return;
             }
@@ -310,5 +311,9 @@ export class CacheClient implements ICacheClient {
         } catch (_) {
             return false;
         }
+    }
+
+    private get authHeader() {
+        return `Bearer ${this.token}`;
     }
 }
