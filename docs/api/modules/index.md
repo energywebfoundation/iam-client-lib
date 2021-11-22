@@ -61,6 +61,7 @@
 - [StakeStatus](index.md#stakestatus)
 - [StakingPool](index.md#stakingpool)
 - [StakingService](index.md#stakingservice)
+- [TEST\_LOGIN\_ENDPOINT](index.md#test_login_endpoint)
 - [VOLTA\_CHAIN\_ID](index.md#volta_chain_id)
 - [addSupportedDID](index.md#addsupporteddid)
 - [agreement\_type\_hash](index.md#agreement_type_hash)
@@ -438,6 +439,12 @@ ___
 ### StakingService
 
 Re-exports: [StakingService](../classes/modules_staking_staking_service.StakingService.md)
+
+___
+
+### TEST\_LOGIN\_ENDPOINT
+
+Re-exports: [TEST\_LOGIN\_ENDPOINT](modules_cacheClient_cacheClient_types.md#test_login_endpoint)
 
 ___
 
