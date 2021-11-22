@@ -1,3 +1,11 @@
+# [3.3.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.16...v3.3.0-alpha.17) (2021-11-22)
+
+
+### Bug Fixes
+
+* **cache:** separate failed test reloging from unauthenticated ([d07a084](https://github.com/energywebfoundation/iam-client-lib/commit/d07a0849f4cdbfe6ea420c06231a659ed695eeb3))
+* **cacheClient:** test cache login ([dec430f](https://github.com/energywebfoundation/iam-client-lib/commit/dec430f0e5d2f334eb77a0d809f7b0a408d8c4c1))
+
 # [3.3.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.15...v3.3.0-alpha.16) (2021-11-19)
 
 
