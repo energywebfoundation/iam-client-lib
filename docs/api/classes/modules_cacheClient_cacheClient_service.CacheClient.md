@@ -19,7 +19,7 @@
 ### Methods
 
 - [addDIDToWatchList](modules_cacheClient_cacheClient_service.CacheClient.md#adddidtowatchlist)
-- [addFailedRequest](modules_cacheClient_cacheClient_service.CacheClient.md#addfailedrequest)
+- [authenticate](modules_cacheClient_cacheClient_service.CacheClient.md#authenticate)
 - [deleteClaim](modules_cacheClient_cacheClient_service.CacheClient.md#deleteclaim)
 - [getAllowedRolesByIssuer](modules_cacheClient_cacheClient_service.CacheClient.md#getallowedrolesbyissuer)
 - [getAppDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getappdefinition)
@@ -46,15 +46,13 @@
 - [getRolesByOwner](modules_cacheClient_cacheClient_service.CacheClient.md#getrolesbyowner)
 - [getRolesDefinition](modules_cacheClient_cacheClient_service.CacheClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](modules_cacheClient_cacheClient_service.CacheClient.md#getsuborganizationsbyorganization)
-- [handleRefreshToken](modules_cacheClient_cacheClient_service.CacheClient.md#handlerefreshtoken)
-- [handleUnauthorized](modules_cacheClient_cacheClient_service.CacheClient.md#handleunauthorized)
+- [handleError](modules_cacheClient_cacheClient_service.CacheClient.md#handleerror)
 - [init](modules_cacheClient_cacheClient_service.CacheClient.md#init)
 - [isAuthEnabled](modules_cacheClient_cacheClient_service.CacheClient.md#isauthenabled)
 - [issueClaim](modules_cacheClient_cacheClient_service.CacheClient.md#issueclaim)
 - [login](modules_cacheClient_cacheClient_service.CacheClient.md#login)
 - [rejectClaim](modules_cacheClient_cacheClient_service.CacheClient.md#rejectclaim)
 - [requestClaim](modules_cacheClient_cacheClient_service.CacheClient.md#requestclaim)
-- [testLogin](modules_cacheClient_cacheClient_service.CacheClient.md#testlogin)
 
 ## Constructors
 
@@ -100,19 +98,16 @@
 
 ___
 
-### addFailedRequest
+### authenticate
 
-▸ **addFailedRequest**(`callback`): `void`
+▸ **authenticate**(): `Promise`<`void`\>
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `callback` | (`token?`: `string`) => `void` |
+**`description`** Refreshes access token. If login still fails then signs new identity token and requests access token
+After authentication runs previously failed requests
 
 #### Returns
 
-`void`
+`Promise`<`void`\>
 
 ___
 
@@ -640,19 +635,11 @@ ___
 
 ___
 
-### handleRefreshToken
+### handleError
 
-▸ **handleRefreshToken**(): `Promise`<`void`\>
+▸ **handleError**(`error`): `Promise`<`unknown`\>
 
-#### Returns
-
-`Promise`<`void`\>
-
-___
-
-### handleUnauthorized
-
-▸ **handleUnauthorized**(`error`): `Promise`<`unknown`\>
+**`description`** At the time hanldes only authentication errors. Schedules failed requests and starts authentication
 
 #### Parameters
 
@@ -764,17 +751,3 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[requestClaim](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#requestclaim)
-
-___
-
-### testLogin
-
-▸ **testLogin**(): `Promise`<`void`\>
-
-#### Returns
-
-`Promise`<`void`\>
-
-#### Implementation of
-
-[ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[testLogin](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#testlogin)

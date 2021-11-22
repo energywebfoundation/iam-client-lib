@@ -59,6 +59,7 @@
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
 | `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.claim.issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.registrationTypes?` | [`RegistrationTypes`](../enums/modules_claims_claims_types.RegistrationTypes.md)[] |
 | `__namedParameters.subject?` | `string` |
 
@@ -281,7 +282,7 @@ ___
 | `__namedParameters.claim` | `Object` |
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
-| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.claim.issuerFields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.subject` | `string` |
 
 #### Returns
@@ -299,8 +300,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.claimParams?` | `Record`<`string`, `string`\> |
 | `__namedParameters.id` | `string` |
+| `__namedParameters.issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/modules_claims_claims_types.RegistrationTypes.md)[] |
 | `__namedParameters.requester` | `string` |
 | `__namedParameters.subjectAgreement` | `string` |

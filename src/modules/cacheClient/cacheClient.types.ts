@@ -27,3 +27,5 @@ export enum SearchType {
     Org = "Org",
     Role = "Role",
 }
+
+export const TEST_LOGIN_ENDPOINT = "/assets/owner/";
