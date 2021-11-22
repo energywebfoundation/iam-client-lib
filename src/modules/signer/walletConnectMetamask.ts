@@ -13,7 +13,7 @@ export const fromWalletConnectMetamask = async (bridge: string, infuraId?: strin
     const provider = new providers.Web3Provider(walletProvider);
     const signerService = new SignerService(provider.getSigner(), ProviderType.WalletConnect);
     walletProvider.on(ProviderEvent.Disconnected, () => signerService.emit(ProviderEvent.Disconnected));
-    walletProvider.on(ProviderEvent.SessionUpdate, signerService.emit(ProviderEvent.SessionUpdate));
+    walletProvider.on(ProviderEvent.SessionUpdate, () => signerService.emit(ProviderEvent.SessionUpdate));
     await signerService.init();
     return signerService;
 };
