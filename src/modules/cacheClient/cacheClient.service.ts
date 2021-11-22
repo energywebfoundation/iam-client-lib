@@ -306,7 +306,7 @@ export class CacheClient implements ICacheClient {
      */
     private async isAuthenticated(): Promise<boolean> {
         try {
-            await this.getOwnedAssets(this._signerService.did);
+            await this.httpClient.get<Asset[]>(`${TEST_LOGIN_ENDPOINT}${this._signerService.did}`);
             return true;
         } catch (_) {
             return false;
