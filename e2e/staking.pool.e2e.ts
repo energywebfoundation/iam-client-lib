@@ -1,18 +1,18 @@
 import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import { KeyTags } from "@ew-did-registry/did-resolver-interface";
-import { Wallet, BigNumber, utils, providers } from "ethers";
+import { BigNumber, providers, utils, Wallet } from "ethers";
 import { JSONCodec } from "nats.ws";
 import {
-    MessagingService,
-    SignerService,
     DomainsService,
-    StakingService,
     initWithPrivateKeySigner,
-    RegistrationTypes,
+    MessagingService,
     ProviderType,
-    StakingPool,
+    RegistrationTypes,
+    SignerService,
     StakeStatus,
+    StakingPool,
+    StakingService,
 } from "../src";
 import { calculateReward, defaultPrincipalThreshold, setupStakingPoolFactory } from "./utils/staking";
 import { replenish, root, rpcUrl, setupENS } from "./utils/setup_contracts";

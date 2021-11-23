@@ -1,25 +1,25 @@
-import { PreconditionType, IRoleDefinition } from "@energyweb/iam-contracts";
+import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { KeyTags } from "@ew-did-registry/did-resolver-interface";
-import { Wallet, utils, providers, ethers } from "ethers";
+import { ethers, providers, utils, Wallet } from "ethers";
 import { JSONCodec } from "nats.ws";
 import {
-    RegistrationTypes,
-    DomainsService,
-    ClaimsService,
     AssetsService,
-    ProviderType,
-    SignerService,
+    chainConfigs,
+    ClaimsService,
+    DidRegistry,
+    DomainsService,
     ERROR_MESSAGES,
     initWithPrivateKeySigner,
     MessagingService,
-    chainConfigs,
-    StakingService,
     NATS_EXCHANGE_TOPIC,
-    DidRegistry,
+    ProviderType,
+    RegistrationTypes,
+    SignerService,
+    StakingService,
 } from "../src";
-import { root, replenish, setupENS, rpcUrl } from "./utils/setup_contracts";
+import { replenish, root, rpcUrl, setupENS } from "./utils/setup_contracts";
 import { ClaimManager__factory } from "../ethers/factories/ClaimManager__factory";
 import { ClaimManager } from "../ethers/ClaimManager";
 
