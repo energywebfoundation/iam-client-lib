@@ -1,15 +1,15 @@
 import SafeAppSdk from "@gnosis.pm/safe-apps-sdk";
 import {
-    SignerService,
-    ProviderType,
+    EkcSigner,
+    fromGnosis,
     fromKms,
-    fromWalletConnectMetamask,
     fromMetaMask,
     fromPrivateKey,
-    fromGnosis,
-    EkcSigner,
+    fromWalletConnectMetamask,
+    ProviderType,
+    SignerService,
 } from "./modules/signer";
-import { StakingService } from "./modules/staking";
+import { StakingFactoryService, StakingService } from "./modules/staking";
 import { DidRegistry } from "./modules/didRegistry";
 import { MessagingService } from "./modules/messaging";
 import { CacheClient } from "./modules/cacheClient";
@@ -54,6 +54,7 @@ export async function init(signerService: SignerService) {
         await cacheClient.login();
         const domainsService = await DomainsService.create(signerService, cacheClient);
         const stakingService = await StakingService.create(signerService, domainsService);
+        const stakingPoolService = await StakingFactoryService.create(signerService, domainsService);
         const assetsService = await AssetsService.create(signerService, cacheClient);
 
         async function connectToDidRegistry(
@@ -69,7 +70,7 @@ export async function init(signerService: SignerService) {
             );
             return { didRegistry, claimsService };
         }
-        return { cacheClient, domainsService, stakingService, assetsService, connectToDidRegistry };
+        return { cacheClient, domainsService, stakingService, assetsService, connectToDidRegistry, stakingPoolService };
     }
 
     return {

@@ -1,3 +1,11 @@
+# [3.3.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.18...v3.3.0-alpha.19) (2021-11-23)
+
+
+### Features
+
+* add hardcap to staking pool, improve tests ([65dd861](https://github.com/energywebfoundation/iam-client-lib/commit/65dd861347570fea3efa45c57ace5ebb4ab8acf6))
+* integrate staking-pool ([0173b27](https://github.com/energywebfoundation/iam-client-lib/commit/0173b27cfccbe0419d3d11d20f4f1002f8f26093))
+
 # [3.3.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.17...v3.3.0-alpha.18) (2021-11-22)
 
 
