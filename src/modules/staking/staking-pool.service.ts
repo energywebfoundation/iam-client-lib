@@ -61,12 +61,30 @@ export class StakingPoolService {
         ).attach(address);
     }
 
+    async getStart(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).start();
+    }
+
+    async getEnd(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).end();
+    }
+
     async getHardCap(): Promise<BigNumber> {
         return this.pool.connect(this.signerService.signer).hardCap();
     }
 
     async getContributionLimit(): Promise<BigNumber> {
         return this.pool.connect(this.signerService.signer).contributionLimit();
+    }
+
+    /**
+     * @description
+     * @param value
+     */
+    async partialWithdraw(value: BigNumber | number): Promise<void> {
+        value = BigNumber.from(value);
+
+        await this.pool.connect(this.signerService.signer).unstake(value);
     }
 
     /**

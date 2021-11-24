@@ -61,6 +61,9 @@ const ratioInt = utils.parseUnits(ratio.toString(), 18);
 
 const rewards = oneEWT.mul(11);
 
+let poolStart;
+let poolEnd;
+
 export const setupStakingPoolFactory = async () => {
     const { chainId } = await deployer.provider.getNetwork();
     const { claimManagerAddress } = chainConfigs()[chainId];
@@ -70,17 +73,14 @@ export const setupStakingPoolFactory = async () => {
     const start = timestamp + 10;
     const end = start + duration;
 
-    const stakingPoolFactory = await (
-        await new StakingPool__factory(deployer).deploy(
-            claimManagerAddress,
-            start,
-            end,
-            ratioInt,
-            hardCap,
-            contributionLimit,
-            { value: rewards },
-        )
-    ).deployed();
+    const stakingPoolFactory = await (await new StakingPool__factory(deployer).deploy()).deployed();
+
+    poolStart = start;
+    poolEnd = end;
+
+    await stakingPoolFactory.init(claimManagerAddress, start, end, ratioInt, hardCap, contributionLimit, {
+        value: rewards,
+    });
 
     setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address });
 };
@@ -202,5 +202,33 @@ describe("StakingPool tests", () => {
         const poolContributionLimit = await pool.getContributionLimit();
 
         expect(poolContributionLimit.eq(contributionLimit)).toEqual(true);
+    });
+
+    it("should be able to unstake", async () => {
+        const pool = await stakingPoolService.getPool();
+
+        await putStake(pool, 2);
+
+        await pool.partialWithdraw(1);
+
+        const currentStake = await pool.getStake();
+        expect(currentStake.amount.toNumber()).toBe(1);
+        expect(currentStake.status).toBe(StakeStatus.STAKING);
+    });
+
+    it("should return start of the pool", async () => {
+        const pool = await stakingPoolService.getPool();
+
+        const start = await pool.getStart();
+
+        expect(start.toNumber()).toBe(poolStart);
+    });
+
+    it("should return end of the pool", async () => {
+        const pool = await stakingPoolService.getPool();
+
+        const end = await pool.getEnd();
+
+        expect(end.toNumber()).toBe(poolEnd);
     });
 });
