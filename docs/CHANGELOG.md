@@ -1,3 +1,10 @@
+# [3.3.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.20...v3.3.0-alpha.21) (2021-11-25)
+
+
+### Bug Fixes
+
+* **test:** increase faucet capacity ([d0b7ebb](https://github.com/energywebfoundation/iam-client-lib/commit/d0b7ebb90434d6729ade407c263a357d31fbb88f))
+
 # [3.3.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.19...v3.3.0-alpha.20) (2021-11-25)
 
 
