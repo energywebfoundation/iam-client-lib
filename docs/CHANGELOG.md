@@ -1,3 +1,15 @@
+# [3.3.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.19...v3.3.0-alpha.20) (2021-11-25)
+
+
+### Bug Fixes
+
+* **cacheClient:** set auth header ([ba9e870](https://github.com/energywebfoundation/iam-client-lib/commit/ba9e8703fb275b6cd2b0d50c50cabff2e0431fda))
+
+
+### Features
+
+* **deps:** update ekc package ([839070a](https://github.com/energywebfoundation/iam-client-lib/commit/839070af1a4a346d3f9b3448593477f8772634f2))
+
 # [3.3.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.18...v3.3.0-alpha.19) (2021-11-23)
 
 
