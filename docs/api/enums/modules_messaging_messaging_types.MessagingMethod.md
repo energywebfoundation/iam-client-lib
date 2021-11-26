@@ -7,23 +7,9 @@
 ### Enumeration members
 
 - [Nats](modules_messaging_messaging_types.MessagingMethod.md#nats)
-- [SmartContractStorage](modules_messaging_messaging_types.MessagingMethod.md#smartcontractstorage)
-- [WebRTC](modules_messaging_messaging_types.MessagingMethod.md#webrtc)
 
 ## Enumeration members
 
 ### Nats
 
 • **Nats** = `"nats"`
-
-___
-
-### SmartContractStorage
-
-• **SmartContractStorage** = `"smartContractStorage"`
-
-___
-
-### WebRTC
-
-• **WebRTC** = `"webRTC"`
