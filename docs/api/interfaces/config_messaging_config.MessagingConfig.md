@@ -13,7 +13,7 @@
 
 ### messagingMethod
 
-• **messagingMethod**: [`MessagingMethod`](../enums/modules_messaging_messaging_types.MessagingMethod.md)
+• **messagingMethod**: [`Nats`](../enums/modules_messaging_messaging_types.MessagingMethod.md#nats)
 
 ___
 

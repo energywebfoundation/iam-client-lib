@@ -1,7 +1,8 @@
 export enum MessagingMethod {
     Nats = "nats",
-    WebRTC = "webRTC",
-    SmartContractStorage = "smartContractStorage",
+    // Not implemented yet
+    // WebRTC = "webRTC",
+    // SmartContractStorage = "smartContractStorage",
 }
 
 export interface IMessage {
