@@ -53,7 +53,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         uses: codfish/semantic-release-action@v1
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Deploy on master branch
