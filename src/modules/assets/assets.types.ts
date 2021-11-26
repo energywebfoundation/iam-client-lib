@@ -5,6 +5,8 @@ export interface Asset {
     owner: string;
     offeredTo?: string;
     document: IDIDDocument;
+    updatedAt: string;
+    createdAt: string;
 }
 
 export interface AssetHistory {
