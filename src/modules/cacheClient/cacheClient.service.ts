@@ -22,7 +22,6 @@ export class CacheClient implements ICacheClient {
     private authEnabled: boolean;
     private isBrowser: boolean;
     private refresh_token: string | undefined;
-    private token: string | undefined;
 
     constructor(private _signerService: SignerService) {
         this._signerService.onInit(this.init.bind(this));
@@ -39,9 +38,6 @@ export class CacheClient implements ICacheClient {
         }, this.handleError.bind(this));
         this.authEnabled = cacheServerSupportsAuth;
         this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
-        if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
-        }
     }
 
     isAuthEnabled() {
@@ -55,9 +51,11 @@ export class CacheClient implements ICacheClient {
     async authenticate() {
         try {
             const { refreshToken, token } = await this.refreshToken();
+            if (!this.isBrowser) {
+                this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            }
             if (await this.isAuthenticated()) {
                 this.refresh_token = refreshToken;
-                this.token = token;
                 return;
             }
         } catch {}
@@ -68,8 +66,10 @@ export class CacheClient implements ICacheClient {
         } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
             identityToken: pubKeyAndIdentityToken.identityToken,
         });
+        if (!this.isBrowser) {
+            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        }
         this.refresh_token = refreshToken;
-        this.token = token;
         this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
 
         this.failedRequests = this.failedRequests.filter((callback) => callback());
@@ -300,12 +300,15 @@ export class CacheClient implements ICacheClient {
     }
 
     /**
-     * @description Checks that auth token has been created, has not expired and corresponds to signer
+     * @description Checks that auth token has been created, has not expired and corresponds to signer.
+     * This is done by a request to the server because the auth token is stored in an HTTP-only cookie and
+     * so the Javascript has no way to check its validity
+     *
      * @todo specific endpoint on cache server to return login info instead of error
      */
     private async isAuthenticated(): Promise<boolean> {
         try {
-            await this.getOwnedAssets(this._signerService.did);
+            await this.httpClient.get<Asset[]>(`${TEST_LOGIN_ENDPOINT}${this._signerService.did}`);
             return true;
         } catch (_) {
             return false;
