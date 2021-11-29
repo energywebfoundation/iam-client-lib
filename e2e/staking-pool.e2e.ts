@@ -1,5 +1,5 @@
 import { KeyTags } from "@ew-did-registry/did-resolver-interface";
-import { providers, utils, Wallet } from "ethers";
+import { BigNumber, providers, utils, Wallet } from "ethers";
 import {
     chainConfigs,
     initWithPrivateKeySigner,
@@ -53,8 +53,9 @@ jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
 const duration = 3600 * 24 * 7;
 
 const oneEWT = utils.parseUnits("1", "ether");
-const hardCap = utils.parseUnits("2", "ether");
-const contributionLimit = oneEWT.mul(50000);
+const hardCap = oneEWT.mul(20);
+const contributionLimit = oneEWT.mul(10);
+const zeroEwt = utils.parseUnits("0", "ether");
 
 const ratio = 0.0002225;
 const ratioInt = utils.parseUnits(ratio.toString(), 18);
@@ -85,19 +86,19 @@ export const setupStakingPoolFactory = async () => {
     setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address });
 };
 
-const putStake = async (pool: StakingPoolService, amount: number, withAmountCheck = true) => {
+const putStake = async (pool: StakingPoolService, amount: number | BigNumber, withAmountCheck = true) => {
     await pool.putStake(amount);
 
     const currentStake = await pool.getStake();
 
     if (withAmountCheck) {
-        expect(currentStake.amount.toNumber()).toBe(amount);
+        expect(currentStake.amount).toStrictEqual(amount);
     }
 
     expect(currentStake.status).toBe(StakeStatus.STAKING);
 
     const reward = await pool.checkReward();
-    expect(reward.toNumber()).toBe(0);
+    expect(reward).toStrictEqual(zeroEwt);
 };
 
 const timeTravel = async (provider: providers.JsonRpcProvider, seconds: number) => {
@@ -135,12 +136,12 @@ describe("StakingPool tests", () => {
     it("can stake", async () => {
         const pool = await stakingPoolService.getPool();
 
-        await putStake(pool, 10);
+        await putStake(pool, oneEWT);
     });
 
     it("should reward", async () => {
         const pool = await stakingPoolService.getPool();
-        await putStake(pool, 10000);
+        await putStake(pool, oneEWT);
 
         const periods = 24 * 90; // 3 months
         const hour = 3600;
@@ -149,22 +150,22 @@ describe("StakingPool tests", () => {
 
         const rewardAfterTimeTravel = await pool.checkReward();
 
-        expect(rewardAfterTimeTravel.toNumber()).toBe(378);
+        expect(rewardAfterTimeTravel.gt(zeroEwt)).toBe(true);
     });
 
     it("should return all staked", async () => {
         const pool = await stakingPoolService.getPool();
 
-        await putStake(pool, 1);
-        await putStake(pool, 1, false);
+        await putStake(pool, oneEWT);
+        await putStake(pool, oneEWT, false);
 
         const currentStake = await pool.getStake();
-        expect(currentStake.amount.toNumber()).toBe(2);
+        expect(currentStake.amount).toStrictEqual(oneEWT.mul(2));
 
         await pool.withdraw();
         const stakeAfterWithdraw = await pool.getStake();
 
-        expect(stakeAfterWithdraw.amount.toNumber()).toBe(0);
+        expect(stakeAfterWithdraw.amount).toStrictEqual(zeroEwt);
 
         const { status } = await pool.getStake();
         expect(status).toBe(StakeStatus.NONSTAKING);
@@ -173,12 +174,12 @@ describe("StakingPool tests", () => {
     it("should withdraw without reward", async () => {
         const pool = await stakingPoolService.getPool();
 
-        await putStake(pool, 1);
+        await putStake(pool, oneEWT);
 
         await pool.withdraw();
 
         const currentStake = await pool.getStake();
-        expect(currentStake.amount.toNumber()).toBe(0);
+        expect(currentStake.amount).toStrictEqual(zeroEwt);
     });
 
     it("should return NONSTAKING status as staking pool is empty", async () => {
@@ -207,13 +208,13 @@ describe("StakingPool tests", () => {
     it("should be able to unstake", async () => {
         const pool = await stakingPoolService.getPool();
 
-        await putStake(pool, 2);
+        await putStake(pool, oneEWT.mul(2));
 
-        await pool.partialWithdraw(1);
+        await pool.partialWithdraw(oneEWT);
         await provider.send("evm_mine", []);
 
         const currentStake = await pool.getStake();
-        expect(currentStake.amount.toNumber()).toBe(1);
+        expect(currentStake.amount).toStrictEqual(oneEWT);
         expect(currentStake.status).toBe(StakeStatus.STAKING);
     });
 
