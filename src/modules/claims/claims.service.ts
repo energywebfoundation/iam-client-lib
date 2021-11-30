@@ -238,7 +238,7 @@ export class ClaimsService {
     /**
      * deleteClaim
      *
-     * @description allows issuer to accept credential request for requester
+     * @description allows to remove claim from cache
      *
      */
     async deleteClaim({ id }: { id: string }) {
