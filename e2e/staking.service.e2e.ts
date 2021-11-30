@@ -1,5 +1,4 @@
 import { providers, Wallet } from "ethers";
-import { JSONCodec } from "nats.ws";
 import { IRoleDefinition } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import { KeyTags } from "@ew-did-registry/did-resolver-interface";
@@ -26,7 +25,6 @@ const orgOwnerDid = `did:${Methods.Erc1056}:${orgOwner.address}`;
 const patron = Wallet.createRandom().connect(provider);
 const patronDID = `did:${Methods.Erc1056}:${patron.address}`;
 
-const jsonCodec = JSONCodec();
 MessagingService.create = (signerService: SignerService) => Promise.resolve(new MessagingService(signerService));
 const mockPublish = jest.fn();
 jest.mock("../src/modules/messaging/messaging.service", () => {
@@ -42,6 +40,7 @@ const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string 
     return { publicKey: [{ id: `did:ethr:${did}-${KeyTags.OWNER}` }] };
 });
 const mockGetApplicationsByOrgNamespace = jest.fn();
+const mockRequestClaim = jest.fn();
 
 jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
     return {
@@ -52,6 +51,8 @@ jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
                 getApplicationsByOrganization: mockGetApplicationsByOrgNamespace,
                 init: jest.fn(),
                 login: jest.fn(),
+                requestClaim: mockRequestClaim,
+                issueClaim: jest.fn(),
             };
         }),
     };
@@ -115,8 +116,8 @@ describe("Staking service tests", () => {
             registrationTypes,
         });
 
-        const [, encodedMsg] = mockPublish.mock.calls.pop();
-        const { id, subjectAgreement, token } = jsonCodec.decode(encodedMsg) as any;
+        const [, message] = mockRequestClaim.mock.calls.pop();
+        const { id, subjectAgreement, token } = message;
 
         await signerService.connect(orgOwner, ProviderType.PrivateKey);
         mockGetRoleDefinition.mockReturnValueOnce(data);

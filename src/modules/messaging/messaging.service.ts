@@ -1,6 +1,6 @@
 import { Codec, connect, JSONCodec, NatsConnection, Subscription } from "nats.ws";
 import { getMessagingConfig } from "../../config/messaging.config";
-import { IMessage, MessagingMethod, NATS_EXCHANGE_TOPIC } from "./messaging.types";
+import { IMessage, MessagingMethod } from "./messaging.types";
 import { SignerService } from "../signer/signer.service";
 import { executionEnvironment, ExecutionEnvironment } from "../../utils/detectEnvironment";
 
@@ -8,7 +8,7 @@ export class MessagingService {
     private _jsonCodec: Codec<any>;
     private _natsConnection: NatsConnection;
     private _subscriptions: Subscription[] = [];
-
+    private _natsEnvironmentName: string;
     constructor(private _signerService: SignerService) {
         this._signerService.onInit(this.init.bind(this));
     }
@@ -24,9 +24,10 @@ export class MessagingService {
         if (executionEnvironment() === ExecutionEnvironment.NODE) {
             return;
         }
-
-        const { messagingMethod, natsServerUrl } = getMessagingConfig()[this._signerService.chainId];
+        const { messagingMethod, natsServerUrl, natsEnvironmentName } =
+            getMessagingConfig()[this._signerService.chainId];
         if (natsServerUrl && messagingMethod === MessagingMethod.Nats) {
+            this._natsEnvironmentName = natsEnvironmentName;
             this._jsonCodec = JSONCodec();
             try {
                 let protocol = "ws";
@@ -53,7 +54,7 @@ export class MessagingService {
     }
 
     async subscribeTo({
-        subject = `${this._signerService.did}.${NATS_EXCHANGE_TOPIC}`,
+        subject = `*.${this._signerService.did}.${this._natsEnvironmentName}`,
         messageHandler,
     }: {
         subject?: string;

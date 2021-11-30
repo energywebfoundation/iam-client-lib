@@ -1,7 +1,6 @@
 import { utils, Wallet } from "ethers";
 import jsonwebtoken from "jsonwebtoken";
 import { v4 } from "uuid";
-import { JSONCodec } from "nats.ws";
 import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
 import { Methods } from "@ew-did-registry/did";
 import { Algorithms } from "@ew-did-registry/jwt";
@@ -29,8 +28,6 @@ import {
 } from "./claims.types";
 import { DidRegistry } from "../didRegistry/didRegistry.service";
 import { ClaimData } from "../didRegistry/did.types";
-import { MessagingService } from "../messaging/messaging.service";
-import { NATS_EXCHANGE_TOPIC } from "../messaging/messaging.types";
 import { isValidDID } from "../../utils/did";
 import { JWT } from "@ew-did-registry/jwt";
 import { privToPem, KeyType } from "@ew-did-registry/keys";
@@ -41,14 +38,11 @@ export class ClaimsService {
     private _claimManager: string;
     private _claimManagerInterface = ClaimManager__factory.createInterface();
 
-    private _jsonCodec = JSONCodec();
-
     constructor(
         private _signerService: SignerService,
         private _domainsService: DomainsService,
         private _cacheClient: CacheClient,
         private _didRegistry: DidRegistry,
-        private _messagingService: MessagingService,
     ) {
         this._signerService.onInit(this.init.bind(this));
     }
@@ -58,9 +52,8 @@ export class ClaimsService {
         domainsService: DomainsService,
         cacheClient: CacheClient,
         didRegistry: DidRegistry,
-        messagingService: MessagingService,
     ) {
-        const service = new ClaimsService(signerService, domainsService, cacheClient, didRegistry, messagingService);
+        const service = new ClaimsService(signerService, domainsService, cacheClient, didRegistry);
         await service.init();
         return service;
     }
@@ -148,9 +141,7 @@ export class ClaimsService {
             message.subjectAgreement = await this.approveRolePublishing({ subject, role, version });
         }
 
-        issuer.map((issuerDID) =>
-            this._messagingService.publish(`${issuerDID}.${NATS_EXCHANGE_TOPIC}`, this._jsonCodec.encode(message)),
-        );
+        await this._cacheClient.requestClaim(subject, message);
     }
 
     async issueClaimRequest({
@@ -212,20 +203,18 @@ export class ClaimsService {
             message.onChainProof = onChainProof;
         }
 
-        const dataToSend = this._jsonCodec?.encode(message);
-        this._messagingService.publish(`${requester}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        return this._cacheClient.issueClaim(this._signerService.did, message);
     }
 
     async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
-        const preparedData: IClaimRejection = {
+        const message: IClaimRejection = {
             id,
             requester: requesterDID,
             claimIssuer: [this._signerService.did],
             isRejected: true,
         };
 
-        const dataToSend = this._jsonCodec?.encode(preparedData);
-        this._messagingService.publish(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        return this._cacheClient.rejectClaim(this._signerService.did, message);
     }
 
     async deleteClaim({ id }: { id: string }) {
@@ -262,8 +251,7 @@ export class ClaimsService {
             publicClaim,
         });
 
-        const dataToSend = this._jsonCodec?.encode(message);
-        this._messagingService.publish(`${subject}.${NATS_EXCHANGE_TOPIC}`, dataToSend);
+        await this._cacheClient.issueClaim(this._signerService.did, message);
 
         return message.issuedToken;
     }
