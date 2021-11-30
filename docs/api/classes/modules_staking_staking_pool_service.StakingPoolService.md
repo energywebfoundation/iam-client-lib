@@ -14,8 +14,11 @@ Abstraction over staking pool smart contract
 
 - [checkReward](modules_staking_staking_pool_service.StakingPoolService.md#checkreward)
 - [getContributionLimit](modules_staking_staking_pool_service.StakingPoolService.md#getcontributionlimit)
+- [getEnd](modules_staking_staking_pool_service.StakingPoolService.md#getend)
 - [getHardCap](modules_staking_staking_pool_service.StakingPoolService.md#gethardcap)
 - [getStake](modules_staking_staking_pool_service.StakingPoolService.md#getstake)
+- [getStart](modules_staking_staking_pool_service.StakingPoolService.md#getstart)
+- [partialWithdraw](modules_staking_staking_pool_service.StakingPoolService.md#partialwithdraw)
 - [putStake](modules_staking_staking_pool_service.StakingPoolService.md#putstake)
 - [withdraw](modules_staking_staking_pool_service.StakingPoolService.md#withdraw)
 
@@ -56,6 +59,16 @@ ___
 
 ___
 
+### getEnd
+
+▸ **getEnd**(): `Promise`<`BigNumber`\>
+
+#### Returns
+
+`Promise`<`BigNumber`\>
+
+___
+
 ### getHardCap
 
 ▸ **getHardCap**(): `Promise`<`BigNumber`\>
@@ -75,6 +88,34 @@ ___
 `Promise`<[`Stake`](../modules/modules_staking_staking_service.md#stake)\>
 
 Stake
+
+___
+
+### getStart
+
+▸ **getStart**(): `Promise`<`BigNumber`\>
+
+#### Returns
+
+`Promise`<`BigNumber`\>
+
+___
+
+### partialWithdraw
+
+▸ **partialWithdraw**(`value`): `Promise`<`ContractReceipt`\>
+
+**`description`**
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `value` | `number` \| `BigNumber` |
+
+#### Returns
+
+`Promise`<`ContractReceipt`\>
 
 ___
 

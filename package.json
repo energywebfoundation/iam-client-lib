@@ -65,7 +65,7 @@
         "@babel/runtime": "^7.12.5",
         "@energyweb/ekc": "^0.6.5",
         "@energyweb/iam-contracts": "^3.5.0",
-        "@energyweb/staking-pool": "^1.0.0-rc.2",
+        "@energyweb/staking-pool": "^1.0.0-rc.5",
         "@ensdomains/ens": "^0.4.5",
         "@ew-did-registry/claims": "^0.6.3-alpha.262.0",
         "@ew-did-registry/did": "^0.6.3-alpha.262.0",
