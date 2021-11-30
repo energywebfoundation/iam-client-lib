@@ -10,5 +10,3 @@ export interface IMessage {
     requester: string;
     claimIssuer?: string[];
 }
-
-export const NATS_EXCHANGE_TOPIC = "claim.exchange";

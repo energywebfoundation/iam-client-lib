@@ -42,7 +42,6 @@
 - [MessagingMethod](index.md#messagingmethod)
 - [MessagingService](index.md#messagingservice)
 - [MethodNotAvailableInNodeEnvError](index.md#methodnotavailableinnodeenverror)
-- [NATS\_EXCHANGE\_TOPIC](index.md#nats_exchange_topic)
 - [NODE\_FIELDS\_KEY](index.md#node_fields_key)
 - [NamespaceType](index.md#namespacetype)
 - [Order](index.md#order)
@@ -327,12 +326,6 @@ ___
 ### MethodNotAvailableInNodeEnvError
 
 Re-exports: [MethodNotAvailableInNodeEnvError](../classes/errors_MethodNotAvailableInNodeError.MethodNotAvailableInNodeEnvError.md)
-
-___
-
-### NATS\_EXCHANGE\_TOPIC
-
-Re-exports: [NATS\_EXCHANGE\_TOPIC](modules_messaging_messaging_types.md#nats_exchange_topic)
 
 ___
 

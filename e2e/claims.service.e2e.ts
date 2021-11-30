@@ -3,21 +3,19 @@ import { Methods } from "@ew-did-registry/did";
 import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { KeyTags } from "@ew-did-registry/did-resolver-interface";
 import { ethers, providers, utils, Wallet } from "ethers";
-import { JSONCodec } from "nats.ws";
 import {
     AssetsService,
-    chainConfigs,
     ClaimsService,
-    DidRegistry,
     DomainsService,
     ERROR_MESSAGES,
     initWithPrivateKeySigner,
-    MessagingService,
-    NATS_EXCHANGE_TOPIC,
     ProviderType,
     RegistrationTypes,
     SignerService,
+    chainConfigs,
     StakingService,
+    DidRegistry,
+    MessagingService,
 } from "../src";
 import { replenish, root, rpcUrl, setupENS } from "./utils/setup_contracts";
 import { ClaimManager__factory } from "../ethers/factories/ClaimManager__factory";
@@ -73,6 +71,9 @@ const mockGetDidDocument = jest.fn().mockImplementation((did: string) => {
 });
 const mockGetAssetById = jest.fn();
 const mockGetClaimsBySubject = jest.fn();
+const mockRequestClaim = jest.fn();
+const mockIssueClaim = jest.fn();
+const mockRejectClaim = jest.fn();
 jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
     return {
         CacheClient: jest.fn().mockImplementation(() => {
@@ -83,22 +84,22 @@ jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
                 getClaimsBySubject: mockGetClaimsBySubject,
                 init: jest.fn(),
                 login: jest.fn(),
+                requestClaim: mockRequestClaim,
+                issueClaim: mockIssueClaim,
+                rejectClaim: mockRejectClaim,
             };
         }),
     };
 });
 
-const mockPublish = jest.fn();
 MessagingService.create = (signerService: SignerService) => Promise.resolve(new MessagingService(signerService));
 jest.mock("../src/modules/messaging/messaging.service", () => {
     return {
         MessagingService: jest.fn().mockImplementation(() => {
-            return { publish: mockPublish };
+            return { publish: jest.fn() };
         }),
     };
 });
-
-const jsonCodec = JSONCodec();
 
 StakingService.create = jest.fn();
 
@@ -155,16 +156,14 @@ describe("Enrollment claim tests", () => {
             registrationTypes,
             subject: subjectDID,
         });
-        const [, encodedMsg] = mockPublish.mock.calls.pop();
-        const message = jsonCodec.decode(encodedMsg) as any;
+        const [, message] = mockRequestClaim.mock.calls.pop();
 
         await signerService.connect(issueSigner, ProviderType.PrivateKey);
         const issuerDID = signerService.did;
         await claimsService.issueClaimRequest({ ...message });
-        const [requesterChannel, data] = mockPublish.mock.calls.pop();
-        expect(requesterChannel).toEqual(`${requesterDID}.${NATS_EXCHANGE_TOPIC}`);
+        const [, data] = mockIssueClaim.mock.calls.pop();
 
-        const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = jsonCodec.decode(data) as any;
+        const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = data;
 
         if (registrationTypes.includes(RegistrationTypes.OffChain)) {
             expect(issuedToken).not.toBeUndefined();
@@ -311,12 +310,8 @@ describe("Enrollment claim tests", () => {
             claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: 1, fields: [] },
             registrationTypes,
         });
-        const [, encodedMsg1] = mockPublish.mock.calls.pop();
-        const { id, subjectAgreement, token } = jsonCodec.decode(encodedMsg1) as {
-            id;
-            subjectAgreement;
-            token;
-        };
+        const [, message] = mockRequestClaim.mock.calls.pop();
+        const { id, subjectAgreement, token } = message;
         const issuerFields: { key: string; value: string | number }[] = [
             {
                 key: "document ID",
@@ -337,8 +332,8 @@ describe("Enrollment claim tests", () => {
             issuerFields,
         });
 
-        const [, encodedMsg2] = mockPublish.mock.calls.pop();
-        const { issuedToken } = jsonCodec.decode(encodedMsg2) as { issuedToken };
+        const [, msg2] = mockIssueClaim.mock.calls.pop();
+        const { issuedToken } = msg2 as { issuedToken };
         const data = didRegistry.jwt.decode(issuedToken) as { claimData: { issuerFields } };
         expect(data.claimData.issuerFields).toEqual(issuerFields);
     });
