@@ -7,7 +7,6 @@
 - [IMessage](modules_messaging.md#imessage)
 - [MessagingMethod](modules_messaging.md#messagingmethod)
 - [MessagingService](modules_messaging.md#messagingservice)
-- [NATS\_EXCHANGE\_TOPIC](modules_messaging.md#nats_exchange_topic)
 
 ## References
 
@@ -26,9 +25,3 @@ ___
 ### MessagingService
 
 Re-exports: [MessagingService](../classes/modules_messaging_messaging_service.MessagingService.md)
-
-___
-
-### NATS\_EXCHANGE\_TOPIC
-
-Re-exports: [NATS\_EXCHANGE\_TOPIC](modules_messaging_messaging_types.md#nats_exchange_topic)

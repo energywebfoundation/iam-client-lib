@@ -1,3 +1,10 @@
+# [3.3.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.21...v3.3.0-alpha.22) (2021-11-26)
+
+
+### Features
+
+* **messaging:** disable nats messaging method for Node.js ([febabd2](https://github.com/energywebfoundation/iam-client-lib/commit/febabd295b1dbae2553fea4eef6b965504c67484))
+
 # [3.3.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.20...v3.3.0-alpha.21) (2021-11-25)
 
 

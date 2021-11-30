@@ -7,13 +7,20 @@
 ### Properties
 
 - [messagingMethod](config_messaging_config.MessagingConfig.md#messagingmethod)
+- [natsEnvironmentName](config_messaging_config.MessagingConfig.md#natsenvironmentname)
 - [natsServerUrl](config_messaging_config.MessagingConfig.md#natsserverurl)
 
 ## Properties
 
 ### messagingMethod
 
-• **messagingMethod**: [`MessagingMethod`](../enums/modules_messaging_messaging_types.MessagingMethod.md)
+• **messagingMethod**: [`Nats`](../enums/modules_messaging_messaging_types.MessagingMethod.md#nats)
+
+___
+
+### natsEnvironmentName
+
+• **natsEnvironmentName**: `string`
 
 ___
 
