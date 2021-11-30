@@ -105,10 +105,7 @@ export class ClaimsService {
     }
 
     /**
-     * createClaimRequest
-     *
      * @description allows subject to request for credential
-     *
      */
     async createClaimRequest({
         claim,
@@ -151,10 +148,7 @@ export class ClaimsService {
     }
 
     /**
-     * issueClaimRequest
-     *
      * @description allows issuer to accept credential request made by requester
-     *
      */
     async issueClaimRequest({
         requester,
@@ -219,10 +213,7 @@ export class ClaimsService {
     }
 
     /**
-     * rejectClaimRequest
-     *
      * @description allows issuer to reject credential request for requester
-     *
      */
     async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
         const message: IClaimRejection = {
@@ -236,20 +227,14 @@ export class ClaimsService {
     }
 
     /**
-     * deleteClaim
-     *
      * @description allows to remove claim from cache
-     *
      */
     async deleteClaim({ id }: { id: string }) {
         await this._cacheClient.deleteClaim(id);
     }
 
     /**
-     * issueClaim
-     *
      * @description allows issuer to give credential to subject without createClaimRequest step
-     *
      */
     async issueClaim({
         claim,
@@ -287,11 +272,8 @@ export class ClaimsService {
     }
 
     /**
-     * getClaimId
-     *
      * @description gets claimId by claimData profile or type
      * @returns claim id
-     *
      */
     async getClaimId({ claimData }: { claimData: ClaimData }) {
         const { service = [] } = await this._didRegistry.getDidDocument();
@@ -313,11 +295,8 @@ export class ClaimsService {
     }
 
     /**
-     * publishPublicClaim
-     *
      * @description store claim data in ipfs and save url to DID document services
      * @returns ulr to ipfs
-     *
      */
     async publishPublicClaim({ token }: { token: string }) {
         const payload = (await this._didRegistry.decodeJWTToken({ token })) as {
@@ -352,10 +331,7 @@ export class ClaimsService {
     }
 
     /**
-     * createSelfSignedClaim
-     *
      * @description creates self signed claim and upload the data to ipfs
-     *
      */
     async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
         const token = await this._didRegistry.createPublicClaim({ data, subject });
@@ -363,10 +339,7 @@ export class ClaimsService {
     }
 
     /**
-     * getUserClaims
-     *
      * @description get user claims
-     *
      */
     async getUserClaims({ did = this._signerService.did }: { did?: string } | undefined = {}) {
         const { service } = (await this._didRegistry.getDidDocument({ did })) || {};

@@ -49,8 +49,6 @@
 
 ▸ **createClaimRequest**(`__namedParameters`): `Promise`<`void`\>
 
-createClaimRequest
-
 **`description`** allows subject to request for credential
 
 #### Parameters
@@ -112,8 +110,6 @@ ___
 
 ▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`string`\>
 
-createSelfSignedClaim
-
 **`description`** creates self signed claim and upload the data to ipfs
 
 #### Parameters
@@ -134,8 +130,6 @@ ___
 
 ▸ **deleteClaim**(`__namedParameters`): `Promise`<`void`\>
 
-deleteClaim
-
 **`description`** allows to remove claim from cache
 
 #### Parameters
@@ -154,8 +148,6 @@ ___
 ### getClaimId
 
 ▸ **getClaimId**(`__namedParameters`): `Promise`<`string`\>
-
-getClaimId
 
 **`description`** gets claimId by claimData profile or type
 
@@ -257,8 +249,6 @@ ___
 
 ▸ **getUserClaims**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry_did_types.ClaimData.md)[]\>
 
-getUserClaims
-
 **`description`** get user claims
 
 #### Parameters
@@ -287,8 +277,6 @@ ___
 
 ▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
 
-issueClaim
-
 **`description`** allows issuer to give credential to subject without createClaimRequest step
 
 #### Parameters
@@ -311,8 +299,6 @@ ___
 ### issueClaimRequest
 
 ▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
-
-issueClaimRequest
 
 **`description`** allows issuer to accept credential request made by requester
 
@@ -338,8 +324,6 @@ ___
 
 ▸ **publishPublicClaim**(`__namedParameters`): `Promise`<`string`\>
 
-publishPublicClaim
-
 **`description`** store claim data in ipfs and save url to DID document services
 
 #### Parameters
@@ -360,8 +344,6 @@ ___
 ### rejectClaimRequest
 
 ▸ **rejectClaimRequest**(`__namedParameters`): `Promise`<`void`\>
-
-rejectClaimRequest
 
 **`description`** allows issuer to reject credential request for requester
 
