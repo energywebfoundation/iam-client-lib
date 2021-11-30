@@ -104,6 +104,12 @@ export class ClaimsService {
         return this._cacheClient.getClaimsBySubject(did, { isAccepted, namespace });
     }
 
+    /**
+     * createClaimRequest
+     *
+     * @description allows subject to request for credential
+     *
+     */
     async createClaimRequest({
         claim,
         subject = this._signerService.did,
@@ -144,6 +150,12 @@ export class ClaimsService {
         await this._cacheClient.requestClaim(subject, message);
     }
 
+    /**
+     * issueClaimRequest
+     *
+     * @description allows issuer to accept credential request made by requester
+     *
+     */
     async issueClaimRequest({
         requester,
         token,
@@ -206,6 +218,12 @@ export class ClaimsService {
         return this._cacheClient.issueClaim(this._signerService.did, message);
     }
 
+    /**
+     * rejectClaimRequest
+     *
+     * @description allows issuer to reject credential request for requester
+     *
+     */
     async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
         const message: IClaimRejection = {
             id,
@@ -217,10 +235,22 @@ export class ClaimsService {
         return this._cacheClient.rejectClaim(this._signerService.did, message);
     }
 
+    /**
+     * deleteClaim
+     *
+     * @description allows issuer to accept credential request for requester
+     *
+     */
     async deleteClaim({ id }: { id: string }) {
         await this._cacheClient.deleteClaim(id);
     }
 
+    /**
+     * issueClaim
+     *
+     * @description allows issuer to give credential to subject without createClaimRequest step
+     *
+     */
     async issueClaim({
         claim,
         subject,
@@ -256,6 +286,13 @@ export class ClaimsService {
         return message.issuedToken;
     }
 
+    /**
+     * getClaimId
+     *
+     * @description gets claimId by claimData profile or type
+     * @returns claim id
+     *
+     */
     async getClaimId({ claimData }: { claimData: ClaimData }) {
         const { service = [] } = await this._didRegistry.getDidDocument();
         const { id, claimTypeVersion } =

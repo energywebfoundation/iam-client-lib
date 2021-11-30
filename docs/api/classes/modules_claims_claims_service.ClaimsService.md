@@ -49,6 +49,10 @@
 
 ▸ **createClaimRequest**(`__namedParameters`): `Promise`<`void`\>
 
+createClaimRequest
+
+**`description`** allows subject to request for credential
+
 #### Parameters
 
 | Name | Type |
@@ -130,6 +134,10 @@ ___
 
 ▸ **deleteClaim**(`__namedParameters`): `Promise`<`void`\>
 
+deleteClaim
+
+**`description`** allows issuer to accept credential request for requester
+
 #### Parameters
 
 | Name | Type |
@@ -147,6 +155,10 @@ ___
 
 ▸ **getClaimId**(`__namedParameters`): `Promise`<`string`\>
 
+getClaimId
+
+**`description`** gets claimId by claimData profile or type
+
 #### Parameters
 
 | Name | Type |
@@ -157,6 +169,8 @@ ___
 #### Returns
 
 `Promise`<`string`\>
+
+claim id
 
 ___
 
@@ -273,6 +287,10 @@ ___
 
 ▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
 
+issueClaim
+
+**`description`** allows issuer to give credential to subject without createClaimRequest step
+
 #### Parameters
 
 | Name | Type |
@@ -293,6 +311,10 @@ ___
 ### issueClaimRequest
 
 ▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
+
+issueClaimRequest
+
+**`description`** allows issuer to accept credential request made by requester
 
 #### Parameters
 
@@ -338,6 +360,10 @@ ___
 ### rejectClaimRequest
 
 ▸ **rejectClaimRequest**(`__namedParameters`): `Promise`<`void`\>
+
+rejectClaimRequest
+
+**`description`** allows issuer to reject credential request for requester
 
 #### Parameters
 
