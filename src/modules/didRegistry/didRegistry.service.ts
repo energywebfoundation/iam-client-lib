@@ -1,7 +1,7 @@
 import { Wallet, providers } from "ethers";
 import { AxiosError } from "axios";
 import { KeyType } from "@ew-did-registry/keys";
-import { JWT } from "@ew-did-registry/jwt";
+import { JWT, JwtPayload } from "@ew-did-registry/jwt";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { addressOf, EwSigner, Operator } from "@ew-did-registry/did-ethr-resolver";
 import {
@@ -141,7 +141,10 @@ export class DidRegistry {
      *
      */
     async verifyPublicClaim(token: string, iss: string) {
-        return this._userClaims.verifySignature(token, iss);
+        const { sub } = this._jwt.decode(token) as Required<JwtPayload>;
+        const holderDoc = await this._cacheClient.getDidDocument(sub, true);
+        const issuerDoc = await this._cacheClient.getDidDocument(iss, true);
+        return this._userClaims.verify(token, { holderDoc, issuerDoc });
     }
 
     /**
