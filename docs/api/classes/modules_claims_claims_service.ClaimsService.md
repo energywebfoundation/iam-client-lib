@@ -15,6 +15,7 @@
 - [createIdentityProof](modules_claims_claims_service.ClaimsService.md#createidentityproof)
 - [createSelfSignedClaim](modules_claims_claims_service.ClaimsService.md#createselfsignedclaim)
 - [deleteClaim](modules_claims_claims_service.ClaimsService.md#deleteclaim)
+- [getClaimById](modules_claims_claims_service.ClaimsService.md#getclaimbyid)
 - [getClaimId](modules_claims_claims_service.ClaimsService.md#getclaimid)
 - [getClaimsByIssuer](modules_claims_claims_service.ClaimsService.md#getclaimsbyissuer)
 - [getClaimsByRequester](modules_claims_claims_service.ClaimsService.md#getclaimsbyrequester)
@@ -48,6 +49,8 @@
 ### createClaimRequest
 
 ▸ **createClaimRequest**(`__namedParameters`): `Promise`<`void`\>
+
+**`description`** allows subject to request for credential
 
 #### Parameters
 
@@ -140,6 +143,24 @@ ___
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### getClaimById
+
+▸ **getClaimById**(`claimId`): `Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims_claims_types.Claim.md)\>
+
+**`description`** - Returns claim with the given Id or null if claim does not exist
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claimId` | `string` |
+
+#### Returns
+
+`Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims_claims_types.Claim.md)\>
 
 ___
 

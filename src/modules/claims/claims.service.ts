@@ -104,6 +104,16 @@ export class ClaimsService {
         return this._cacheClient.getClaimsBySubject(did, { isAccepted, namespace });
     }
 
+    /**
+     * @description - Returns claim with the given Id or null if claim does not exist
+     */
+    async getClaimById(claimId: string) {
+        return this._cacheClient.getClaimById(claimId);
+    }
+    /**
+     * @description allows subject to request for credential
+     */
+
     async createClaimRequest({
         claim,
         subject = this._signerService.did,

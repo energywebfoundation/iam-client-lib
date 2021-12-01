@@ -22,6 +22,7 @@
 - [getApplicationsByOwner](modules_cacheClient_ICacheClient.ICacheClient.md#getapplicationsbyowner)
 - [getAssetById](modules_cacheClient_ICacheClient.ICacheClient.md#getassetbyid)
 - [getAssetHistory](modules_cacheClient_ICacheClient.ICacheClient.md#getassethistory)
+- [getClaimById](modules_cacheClient_ICacheClient.ICacheClient.md#getclaimbyid)
 - [getClaimsByIssuer](modules_cacheClient_ICacheClient.ICacheClient.md#getclaimsbyissuer)
 - [getClaimsByRequester](modules_cacheClient_ICacheClient.ICacheClient.md#getclaimsbyrequester)
 - [getClaimsBySubject](modules_cacheClient_ICacheClient.ICacheClient.md#getclaimsbysubject)
@@ -180,6 +181,22 @@ ___
 #### Returns
 
 `Promise`<[`AssetHistory`](modules_assets_assets_types.AssetHistory.md)[]\>
+
+___
+
+### getClaimById
+
+▸ **getClaimById**(`claimId`): `Promise`<`undefined` \| [`Claim`](modules_claims_claims_types.Claim.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claimId` | `string` |
+
+#### Returns
+
+`Promise`<`undefined` \| [`Claim`](modules_claims_claims_types.Claim.md)\>
 
 ___
 

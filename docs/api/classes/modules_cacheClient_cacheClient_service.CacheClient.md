@@ -28,6 +28,7 @@
 - [getApplicationsByOwner](modules_cacheClient_cacheClient_service.CacheClient.md#getapplicationsbyowner)
 - [getAssetById](modules_cacheClient_cacheClient_service.CacheClient.md#getassetbyid)
 - [getAssetHistory](modules_cacheClient_cacheClient_service.CacheClient.md#getassethistory)
+- [getClaimById](modules_cacheClient_cacheClient_service.CacheClient.md#getclaimbyid)
 - [getClaimsByIssuer](modules_cacheClient_cacheClient_service.CacheClient.md#getclaimsbyissuer)
 - [getClaimsByRequester](modules_cacheClient_cacheClient_service.CacheClient.md#getclaimsbyrequester)
 - [getClaimsBySubject](modules_cacheClient_cacheClient_service.CacheClient.md#getclaimsbysubject)
@@ -266,6 +267,26 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[getAssetHistory](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#getassethistory)
+
+___
+
+### getClaimById
+
+▸ **getClaimById**(`claimId`): `Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims_claims_types.Claim.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claimId` | `string` |
+
+#### Returns
+
+`Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims_claims_types.Claim.md)\>
+
+#### Implementation of
+
+[ICacheClient](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md).[getClaimById](../interfaces/modules_cacheClient_ICacheClient.ICacheClient.md#getclaimbyid)
 
 ___
 

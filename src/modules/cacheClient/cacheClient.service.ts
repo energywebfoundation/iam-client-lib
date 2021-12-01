@@ -231,6 +231,11 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
+    async getClaimById(claimId: string): Promise<Claim | undefined> {
+        const { data } = await this.httpClient.get<Claim | undefined>(`/claim/${claimId}`);
+        return data;
+    }
+
     async requestClaim(requester: string, message: IClaimRequest) {
         await this.httpClient.post<void>(`/claim/request/${requester}`, message);
     }
