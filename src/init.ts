@@ -61,13 +61,7 @@ export async function init(signerService: SignerService) {
             ipfsStore?: string,
         ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
             const didRegistry = await DidRegistry.connect(signerService, cacheClient, assetsService, ipfsStore);
-            const claimsService = await ClaimsService.create(
-                signerService,
-                domainsService,
-                cacheClient,
-                didRegistry,
-                messagingService,
-            );
+            const claimsService = await ClaimsService.create(signerService, domainsService, cacheClient, didRegistry);
             return { didRegistry, claimsService };
         }
         return { cacheClient, domainsService, stakingService, assetsService, connectToDidRegistry, stakingPoolService };

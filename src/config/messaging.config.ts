@@ -5,12 +5,14 @@ import { ChainId } from "./chain.config";
 export interface MessagingConfig {
     messagingMethod: MessagingMethod;
     natsServerUrl: string;
+    natsEnvironmentName: string;
 }
 
 const messagingConfig: Record<ChainId, MessagingConfig> = {
     [VOLTA_CHAIN_ID]: {
         messagingMethod: MessagingMethod.Nats,
         natsServerUrl: "https://volta-identityevents.energyweb.org/",
+        natsEnvironmentName: "ewf-volta",
     },
 };
 

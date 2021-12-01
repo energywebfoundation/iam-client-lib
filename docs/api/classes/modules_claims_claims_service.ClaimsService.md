@@ -32,7 +32,7 @@
 
 ### constructor
 
-• **new ClaimsService**(`_signerService`, `_domainsService`, `_cacheClient`, `_didRegistry`, `_messagingService`)
+• **new ClaimsService**(`_signerService`, `_domainsService`, `_cacheClient`, `_didRegistry`)
 
 #### Parameters
 
@@ -42,7 +42,6 @@
 | `_domainsService` | [`DomainsService`](modules_domains_domains_service.DomainsService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cacheClient_cacheClient_service.CacheClient.md) |
 | `_didRegistry` | [`DidRegistry`](modules_didRegistry_didRegistry_service.DidRegistry.md) |
-| `_messagingService` | [`MessagingService`](modules_messaging_messaging_service.MessagingService.md) |
 
 ## Methods
 
@@ -356,7 +355,7 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `domainsService`, `cacheClient`, `didRegistry`, `messagingService`): `Promise`<[`ClaimsService`](modules_claims_claims_service.ClaimsService.md)\>
+▸ `Static` **create**(`signerService`, `domainsService`, `cacheClient`, `didRegistry`): `Promise`<[`ClaimsService`](modules_claims_claims_service.ClaimsService.md)\>
 
 #### Parameters
 
@@ -366,7 +365,6 @@ ___
 | `domainsService` | [`DomainsService`](modules_domains_domains_service.DomainsService.md) |
 | `cacheClient` | [`CacheClient`](modules_cacheClient_cacheClient_service.CacheClient.md) |
 | `didRegistry` | [`DidRegistry`](modules_didRegistry_didRegistry_service.DidRegistry.md) |
-| `messagingService` | [`MessagingService`](modules_messaging_messaging_service.MessagingService.md) |
 
 #### Returns
 

@@ -1,6 +1,6 @@
 {
     "name": "iam-client-lib",
-    "version": "3.3.0-alpha.19",
+    "version": "3.3.0-alpha.22",
     "description": "Library for Decentralized Identity and Access Management",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -33,8 +33,8 @@
         "build:typechain:stakingpool": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/Staking*.json\"",
         "build:typechain:staking-pool": "typechain --target ethers-v5 --out-dir ethers-staking \"./node_modules/@energyweb/staking-pool/dist/contracts/StakingPool.sol/StakingPool.json\"",
         "prepare": "npm run build",
-        "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 1000 -l=10000000",
-        "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 1000 -l=10000000",
+        "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
+        "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
         "test:watch": "npm run start-rpc -- \"jest --coverage --env=./jest.env.js --watchAll\"",
         "test": "npm run start-rpc -- \"jest --no-cache --env=./jest.env.js\"",
         "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\""

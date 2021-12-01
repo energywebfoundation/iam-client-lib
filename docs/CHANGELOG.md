@@ -1,3 +1,29 @@
+# [3.3.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.21...v3.3.0-alpha.22) (2021-11-26)
+
+
+### Features
+
+* **messaging:** disable nats messaging method for Node.js ([febabd2](https://github.com/energywebfoundation/iam-client-lib/commit/febabd295b1dbae2553fea4eef6b965504c67484))
+
+# [3.3.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.20...v3.3.0-alpha.21) (2021-11-25)
+
+
+### Bug Fixes
+
+* **test:** increase faucet capacity ([d0b7ebb](https://github.com/energywebfoundation/iam-client-lib/commit/d0b7ebb90434d6729ade407c263a357d31fbb88f))
+
+# [3.3.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.19...v3.3.0-alpha.20) (2021-11-25)
+
+
+### Bug Fixes
+
+* **cacheClient:** set auth header ([ba9e870](https://github.com/energywebfoundation/iam-client-lib/commit/ba9e8703fb275b6cd2b0d50c50cabff2e0431fda))
+
+
+### Features
+
+* **deps:** update ekc package ([839070a](https://github.com/energywebfoundation/iam-client-lib/commit/839070af1a4a346d3f9b3448593477f8772634f2))
+
 # [3.3.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.18...v3.3.0-alpha.19) (2021-11-23)
 
 
