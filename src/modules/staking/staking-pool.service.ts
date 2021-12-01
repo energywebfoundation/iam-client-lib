@@ -1,4 +1,4 @@
-import { BigNumber, providers, utils } from "ethers";
+import { BigNumber, ContractReceipt, providers, utils } from "ethers";
 import { StakingPool as StakingPoolContract } from "../../../ethers-staking";
 import { StakingPool__factory } from "../../../ethers-staking/factories/StakingPool__factory";
 import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
@@ -61,12 +61,32 @@ export class StakingPoolService {
         ).attach(address);
     }
 
+    async getStart(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).start();
+    }
+
+    async getEnd(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).end();
+    }
+
     async getHardCap(): Promise<BigNumber> {
         return this.pool.connect(this.signerService.signer).hardCap();
     }
 
     async getContributionLimit(): Promise<BigNumber> {
         return this.pool.connect(this.signerService.signer).contributionLimit();
+    }
+
+    /**
+     * @description
+     * @param value
+     */
+    async partialWithdraw(value: BigNumber | number): Promise<ContractReceipt> {
+        value = BigNumber.from(value);
+
+        const transaction = await this.pool.connect(this.signerService.signer).unstake(value);
+
+        return transaction.wait();
     }
 
     /**
