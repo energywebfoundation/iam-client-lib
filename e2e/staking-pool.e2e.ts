@@ -106,7 +106,7 @@ const timeTravel = async (provider: providers.JsonRpcProvider, seconds: number) 
     await provider.send("evm_mine", []);
 };
 
-describe("StakingPool tests", () => {
+xdescribe("StakingPool tests", () => {
     // let domainsService: DomainsService;
     let signerService: SignerService;
     let stakingPoolService: StakingFactoryService;
