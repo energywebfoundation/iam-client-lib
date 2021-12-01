@@ -1,3 +1,22 @@
+# [3.3.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.22...v3.3.0-alpha.23) (2021-12-01)
+
+
+### Bug Fixes
+
+* disable staking-pool tests ([e6af3bb](https://github.com/energywebfoundation/iam-client-lib/commit/e6af3bbf5627cb030e984a35abc19fc47b79ea48))
+* **build:** use github token for pr in dev ([6e83292](https://github.com/energywebfoundation/iam-client-lib/commit/6e832926ccfccef644aa5b4514e94e517d560623))
+* **ci:** set secret for develop publish ([97f94c8](https://github.com/energywebfoundation/iam-client-lib/commit/97f94c8aea9fd60597eedf5adfeb9b2a854091bf))
+* **ci:** set secret to publish develop ([83889cc](https://github.com/energywebfoundation/iam-client-lib/commit/83889cc653ed6e70a55bc7856e476c9043f950dc))
+
+
+### Features
+
+* **claims:** new getClaimById method ([4fddb22](https://github.com/energywebfoundation/iam-client-lib/commit/4fddb2277f1f1b2edaa4e8d76f0b6317d3feff22))
+* **nats:** moving sensitive data away from  NATS ([6fe33d5](https://github.com/energywebfoundation/iam-client-lib/commit/6fe33d5fe5525b9624eb23caec2fa0f137c19dd0))
+* **staking-pool:** add partial withdraw ([7801dc4](https://github.com/energywebfoundation/iam-client-lib/commit/7801dc4aebecd0e09eead3c5284e591477a9a804))
+* **staking-pool:** improve testing, bump staking pool ([6060fb2](https://github.com/energywebfoundation/iam-client-lib/commit/6060fb264877e4b2df1f41f4eb584af147e22a16))
+* add missing properties in asset interface. ([ab40f31](https://github.com/energywebfoundation/iam-client-lib/commit/ab40f31d5e13b9884cc2640ed8a47aba42c5729b))
+
 # [3.3.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.21...v3.3.0-alpha.22) (2021-11-26)
 
 
