@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          token: ${{ github.token }}
+          token: ${{ secrets.SECRET_NAME }}
       - uses: actions/setup-node@v2-beta
         with:
           node-version: "10.22.0"
