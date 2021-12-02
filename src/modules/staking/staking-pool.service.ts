@@ -77,6 +77,10 @@ export class StakingPoolService {
         return this.pool.connect(this.signerService.signer).contributionLimit();
     }
 
+    async getTotalStaked(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).totalStaked();
+    }
+
     /**
      * @description
      * @param value
