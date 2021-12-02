@@ -18,6 +18,7 @@ Abstraction over staking pool smart contract
 - [getHardCap](modules_staking_staking_pool_service.StakingPoolService.md#gethardcap)
 - [getStake](modules_staking_staking_pool_service.StakingPoolService.md#getstake)
 - [getStart](modules_staking_staking_pool_service.StakingPoolService.md#getstart)
+- [getTotalStaked](modules_staking_staking_pool_service.StakingPoolService.md#gettotalstaked)
 - [partialWithdraw](modules_staking_staking_pool_service.StakingPoolService.md#partialwithdraw)
 - [putStake](modules_staking_staking_pool_service.StakingPoolService.md#putstake)
 - [withdraw](modules_staking_staking_pool_service.StakingPoolService.md#withdraw)
@@ -94,6 +95,16 @@ ___
 ### getStart
 
 ▸ **getStart**(): `Promise`<`BigNumber`\>
+
+#### Returns
+
+`Promise`<`BigNumber`\>
+
+___
+
+### getTotalStaked
+
+▸ **getTotalStaked**(): `Promise`<`BigNumber`\>
 
 #### Returns
 
