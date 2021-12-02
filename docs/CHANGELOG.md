@@ -1,3 +1,10 @@
+# [3.3.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.24...v3.3.0-alpha.25) (2021-12-02)
+
+
+### Features
+
+* add method to get total staked value. ([3f367aa](https://github.com/energywebfoundation/iam-client-lib/commit/3f367aa08480d440cd39c829488c7a5d6b7bd7af))
+
 # [3.3.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.23...v3.3.0-alpha.24) (2021-12-01)
 
 # [3.3.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.22...v3.3.0-alpha.23) (2021-12-01)
