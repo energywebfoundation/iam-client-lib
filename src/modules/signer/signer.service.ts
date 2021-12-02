@@ -124,6 +124,19 @@ export class SignerService {
         return receipt;
     }
 
+    /**
+     * Makes a (readonly) call to a smart contract
+     * https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
+     * @param params.to adddress of contract
+     * @param params.data call data
+     * @returns The result of the call
+     */
+    async call({ to, data }: providers.TransactionRequest): Promise<string> {
+        const tx = { to, from: this.address, data };
+        const result = await this._signer.call(tx);
+        return result;
+    }
+
     async signMessage(message: Uint8Array) {
         return this.signer.signMessage(message);
     }

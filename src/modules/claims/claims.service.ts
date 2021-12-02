@@ -63,6 +63,27 @@ export class ClaimsService {
         this._claimManager = chainConfigs()[chainId].claimManagerAddress;
     }
 
+    /**
+     * A utility function to check the blockchain directly if a DID has a role
+     * TODO: fail if the DID chain ID doesn't match the configured signer network connect
+     * @param did The ethr DID to check
+     * @param role The role to check (the full namespace)
+     * @param version The version to check
+     * @returns true if DID has role at the version. false if not.
+     */
+    async hasOnChainRole(did: string, role: string, version: number): Promise<boolean> {
+        const data = this._claimManagerInterface.encodeFunctionData("hasRole", [
+            addressOf(did),
+            namehash(role),
+            version,
+        ]);
+        const result = await this._signerService.call({
+            to: this._claimManager,
+            data,
+        });
+        return Boolean(Number.parseInt(result));
+    }
+
     async getClaimsBySubjects(subjects: string[]) {
         return this._cacheClient.getClaimsBySubjects(subjects);
     }

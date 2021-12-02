@@ -21,6 +21,7 @@
 ### Methods
 
 - [balance](modules_signer_signer_service.SignerService.md#balance)
+- [call](modules_signer_signer_service.SignerService.md#call)
 - [closeConnection](modules_signer_signer_service.SignerService.md#closeconnection)
 - [connect](modules_signer_signer_service.SignerService.md#connect)
 - [emit](modules_signer_signer_service.SignerService.md#emit)
@@ -125,6 +126,27 @@ ___
 #### Returns
 
 `Promise`<`BigNumber`\>
+
+___
+
+### call
+
+▸ **call**(`__namedParameters`): `Promise`<`string`\>
+
+Makes a (readonly) call to a smart contract
+https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `TransactionRequest` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+The result of the call
 
 ___
 

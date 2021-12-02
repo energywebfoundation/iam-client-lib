@@ -196,14 +196,15 @@ describe("Enrollment claim tests", () => {
     test("enrollment by issuer of type DID", async () => {
         const requester = rootOwner;
         const issuer = staticIssuer;
+        const role = `${roleName1}.${root}`;
+        expect(await claimsService.hasOnChainRole(rootOwnerDID, role, version)).toBe(false);
         await enrolAndIssue(requester, issuer, {
             subjectDID: rootOwnerDID,
             claimType: `${roleName1}.${root}`,
         });
 
-        return expect(
-            claimManager.hasRole(addressOf(rootOwnerDID), namehash(`${roleName1}.${root}`), version),
-        ).resolves.toBe(true);
+        expect(claimManager.hasRole(addressOf(rootOwnerDID), namehash(role), version)).resolves.toBe(true);
+        expect(await claimsService.hasOnChainRole(rootOwnerDID, role, version)).toBe(true);
     });
 
     test("asset enrollment by issuer of type DID", async () => {
