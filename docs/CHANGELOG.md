@@ -1,3 +1,10 @@
+# [3.3.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.25...v3.3.0-alpha.26) (2021-12-02)
+
+
+### Features
+
+* update ew-did-reg to 0.6.3-alpha.367.0 ([98f282c](https://github.com/energywebfoundation/iam-client-lib/commit/98f282c03020ad8741085b310aeb406f62814248))
+
 # [3.3.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.24...v3.3.0-alpha.25) (2021-12-02)
 
 
