@@ -229,7 +229,7 @@ export class ClaimsService {
         }
         const { token, subjectAgreement, onChainProof } = claim;
         const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
-            claimData: { claimType: string; claimTypeVersion: number; expiry: number };
+            claimData: { claimType: string; claimTypeVersion: number };
             sub: string;
         };
         const expiry = defaultClaimExpiry;
