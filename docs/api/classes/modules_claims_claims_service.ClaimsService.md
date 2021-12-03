@@ -22,6 +22,7 @@
 - [getClaimsBySubject](modules_claims_claims_service.ClaimsService.md#getclaimsbysubject)
 - [getClaimsBySubjects](modules_claims_claims_service.ClaimsService.md#getclaimsbysubjects)
 - [getUserClaims](modules_claims_claims_service.ClaimsService.md#getuserclaims)
+- [hasOnChainRole](modules_claims_claims_service.ClaimsService.md#hasonchainrole)
 - [init](modules_claims_claims_service.ClaimsService.md#init)
 - [issueClaim](modules_claims_claims_service.ClaimsService.md#issueclaim)
 - [issueClaimRequest](modules_claims_claims_service.ClaimsService.md#issueclaimrequest)
@@ -277,6 +278,29 @@ getUserClaims
 #### Returns
 
 `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry_did_types.ClaimData.md)[]\>
+
+___
+
+### hasOnChainRole
+
+▸ **hasOnChainRole**(`did`, `role`, `version`): `Promise`<`boolean`\>
+
+A utility function to check the blockchain directly if a DID has a role
+TODO: fail if the DID chain ID doesn't match the configured signer network connect
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `did` | `string` | The ethr DID to check |
+| `role` | `string` | The role to check (the full namespace) |
+| `version` | `number` | The version to check |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if DID has role at the version. false if not.
 
 ___
 
