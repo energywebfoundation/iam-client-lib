@@ -223,8 +223,7 @@ export class ClaimsService {
      *
      * @param claimId - id of signed onchain claim
      */
-    async registerOnchain(claimId: Claim["id"]) {
-        const claim = await this.getClaimById(claimId);
+    async registerOnchain(claim: Claim) {
         if (!isIssuedOnchain(claim)) {
             throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
         }
