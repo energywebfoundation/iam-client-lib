@@ -18,6 +18,7 @@
 - [defaultClaimExpiry](modules_claims.md#defaultclaimexpiry)
 - [erc712\_type\_hash](modules_claims.md#erc712_type_hash)
 - [proof\_type\_hash](modules_claims.md#proof_type_hash)
+- [readyToBeRegisteredOnchain](modules_claims.md#readytoberegisteredonchain)
 - [typedMsgPrefix](modules_claims.md#typedmsgprefix)
 
 ## References
@@ -103,6 +104,12 @@ ___
 ### proof\_type\_hash
 
 Re-exports: [proof\_type\_hash](modules_claims_claims_types.md#proof_type_hash)
+
+___
+
+### readyToBeRegisteredOnchain
+
+Re-exports: [readyToBeRegisteredOnchain](modules_claims_claims_types.md#readytoberegisteredonchain)
 
 ___
 

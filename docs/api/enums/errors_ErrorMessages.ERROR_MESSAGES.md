@@ -8,6 +8,7 @@
 
 - [APP\_WITH\_ROLES](errors_ErrorMessages.ERROR_MESSAGES.md#app_with_roles)
 - [CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT](errors_ErrorMessages.ERROR_MESSAGES.md#can_not_update_not_controlled_document)
+- [CLAIM\_WAS\_NOT\_ISSUED](errors_ErrorMessages.ERROR_MESSAGES.md#claim_was_not_issued)
 - [ENS\_TYPE\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_type_not_supported)
 - [ERROR\_IN\_AZURE\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#error_in_azure_provider)
 - [INSUFFICIENT\_BALANCE](errors_ErrorMessages.ERROR_MESSAGES.md#insufficient_balance)
@@ -37,6 +38,12 @@ ___
 ### CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT
 
 • **CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT** = `"Can not update not controlled document"`
+
+___
+
+### CLAIM\_WAS\_NOT\_ISSUED
+
+• **CLAIM\_WAS\_NOT\_ISSUED** = `"Claim was not issued"`
 
 ___
 

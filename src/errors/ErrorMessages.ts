@@ -18,4 +18,5 @@ export enum ERROR_MESSAGES {
     NOT_AUTHORIZED_TO_CHANGE_DOMAIN = "Not authorized to change domain",
     ERROR_IN_AZURE_PROVIDER = "Error in Azure Provider",
     JWT_ALGORITHM_NOT_SUPPORTED = "Jwt algorithm not supported",
+    CLAIM_WAS_NOT_ISSUED = "Claim was not issued",
 }

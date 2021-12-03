@@ -25,12 +25,14 @@ import {
     erc712_type_hash,
     proof_type_hash,
     typedMsgPrefix,
+    Claim,
 } from "./claims.types";
 import { DidRegistry } from "../didRegistry/didRegistry.service";
 import { ClaimData } from "../didRegistry/did.types";
 import { isValidDID } from "../../utils/did";
 import { JWT } from "@ew-did-registry/jwt";
 import { privToPem, KeyType } from "@ew-did-registry/keys";
+import { readyToBeRegisteredOnchain } from "./claims.types";
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, namehash, arrayify } = utils;
 
@@ -241,6 +243,37 @@ export class ClaimsService {
         return this._cacheClient.issueClaim(this._signerService.did, message);
     }
 
+    /**
+     * @description Registers issued onchain claim with Claim manager
+     *
+     * @param claimId - id of signed onchain claim
+     */
+    async registerOnchain(claim: Claim) {
+        if (!readyToBeRegisteredOnchain(claim)) {
+            throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
+        }
+        const { token, subjectAgreement, onChainProof } = claim;
+        const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
+            claimData: { claimType: string; claimTypeVersion: number };
+            sub: string;
+        };
+        const expiry = defaultClaimExpiry;
+        const { claimType: role, claimTypeVersion: version } = claimData;
+        const data = this._claimManagerInterface.encodeFunctionData("register", [
+            addressOf(sub),
+            namehash(role),
+            version,
+            expiry,
+            addressOf(this._signerService.did),
+            subjectAgreement,
+            onChainProof,
+        ]);
+        await this._signerService.send({
+            to: this._claimManager,
+            data,
+        });
+    }
+
     async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
         const message: IClaimRejection = {
             id,
@@ -402,7 +435,7 @@ export class ClaimsService {
     private async createOnChainProof(role: string, version: number, expiry: number, subject: string): Promise<string> {
         const messageId = Buffer.from(typedMsgPrefix, "hex");
 
-        const chainId = await this._signerService.chainId;
+        const chainId = this._signerService.chainId;
         const domainSeparator = utils.keccak256(
             defaultAbiCoder.encode(
                 ["bytes32", "bytes32", "bytes32", "uint256", "address"],

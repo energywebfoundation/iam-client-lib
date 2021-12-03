@@ -27,6 +27,7 @@
 - [issueClaim](modules_claims_claims_service.ClaimsService.md#issueclaim)
 - [issueClaimRequest](modules_claims_claims_service.ClaimsService.md#issueclaimrequest)
 - [publishPublicClaim](modules_claims_claims_service.ClaimsService.md#publishpublicclaim)
+- [registerOnchain](modules_claims_claims_service.ClaimsService.md#registeronchain)
 - [rejectClaimRequest](modules_claims_claims_service.ClaimsService.md#rejectclaimrequest)
 - [create](modules_claims_claims_service.ClaimsService.md#create)
 
@@ -377,6 +378,24 @@ publishPublicClaim
 `Promise`<`string`\>
 
 ulr to ipfs
+
+___
+
+### registerOnchain
+
+▸ **registerOnchain**(`claim`): `Promise`<`void`\>
+
+**`description`** Registers issued onchain claim with Claim manager
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claim` | [`Claim`](../interfaces/modules_claims_claims_types.Claim.md) |
+
+#### Returns
+
+`Promise`<`void`\>
 
 ___
 

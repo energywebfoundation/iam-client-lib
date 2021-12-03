@@ -48,6 +48,35 @@ export interface Claim {
     namespace: string;
 }
 
+export const readyToBeRegisteredOnchain = (
+    claim: any,
+): claim is Required<
+    Pick<
+        Claim,
+        | "id"
+        | "subject"
+        | "claimType"
+        | "claimTypeVersion"
+        | "token"
+        | "subjectAgreement"
+        | "onChainProof"
+        | "isAccepted"
+    >
+> => {
+    const requiredProps = [
+        "id",
+        "subject",
+        "claimType",
+        "ClaimTypeVersion",
+        "token",
+        "subjectAgreement",
+        "onChainProof",
+        "isAccepted",
+    ];
+    const claimProps = Object.keys(claim);
+    return requiredProps.every((p) => claimProps.includes(p));
+};
+
 export const typedMsgPrefix = "1901";
 export const erc712_type_hash = utils.id(
     "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)",
