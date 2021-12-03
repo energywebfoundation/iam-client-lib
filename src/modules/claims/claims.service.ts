@@ -77,11 +77,15 @@ export class ClaimsService {
             namehash(role),
             version,
         ]);
+        // Expect result to be either:
+        // '0x0000000000000000000000000000000000000000000000000000000000000000'
+        // '0x0000000000000000000000000000000000000000000000000000000000000001'
         const result = await this._signerService.call({
             to: this._claimManager,
             data,
         });
-        return Boolean(Number.parseInt(result));
+        const intFromHexString = Number.parseInt(result);
+        return Boolean(intFromHexString);
     }
 
     async getClaimsBySubjects(subjects: string[]) {
