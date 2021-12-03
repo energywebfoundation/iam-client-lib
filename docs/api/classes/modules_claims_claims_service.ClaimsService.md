@@ -359,15 +359,15 @@ ___
 
 ### registerOnchain
 
-▸ **registerOnchain**(`claimId`): `Promise`<`void`\>
+▸ **registerOnchain**(`claim`): `Promise`<`void`\>
 
 **`description`** Registers issued onchain claim with Claim manager
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `claimId` | `string` | id of signed onchain claim |
+| Name | Type |
+| :------ | :------ |
+| `claim` | [`Claim`](../interfaces/modules_claims_claims_types.Claim.md) |
 
 #### Returns
 

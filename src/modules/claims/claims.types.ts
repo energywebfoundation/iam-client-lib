@@ -42,7 +42,7 @@ export interface Claim {
     namespace: string;
 }
 
-export const isIssuedOnchain = (
+export const readyToBeRegisteredOnchain = (
     claim: any,
 ): claim is Required<
     Pick<

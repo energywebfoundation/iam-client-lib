@@ -29,7 +29,7 @@
 
 ### Functions
 
-- [isIssuedOnchain](modules_claims_claims_types.md#isissuedonchain)
+- [readyToBeRegisteredOnchain](modules_claims_claims_types.md#readytoberegisteredonchain)
 
 ## Type aliases
 
@@ -102,9 +102,9 @@ ___
 
 ## Functions
 
-### isIssuedOnchain
+### readyToBeRegisteredOnchain
 
-▸ `Const` **isIssuedOnchain**(`claim`): claim is Required<Pick<Claim, "id" \| "isAccepted" \| "token" \| "claimTypeVersion" \| "claimType" \| "subject" \| "subjectAgreement" \| "onChainProof"\>\>
+▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "id" \| "isAccepted" \| "token" \| "claimTypeVersion" \| "claimType" \| "subject" \| "subjectAgreement" \| "onChainProof"\>\>
 
 #### Parameters
 

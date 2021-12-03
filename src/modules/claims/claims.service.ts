@@ -32,7 +32,7 @@ import { ClaimData } from "../didRegistry/did.types";
 import { isValidDID } from "../../utils/did";
 import { JWT } from "@ew-did-registry/jwt";
 import { privToPem, KeyType } from "@ew-did-registry/keys";
-import { isIssuedOnchain } from ".";
+import { readyToBeRegisteredOnchain } from "./claims.types";
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, namehash, arrayify } = utils;
 
@@ -224,7 +224,7 @@ export class ClaimsService {
      * @param claimId - id of signed onchain claim
      */
     async registerOnchain(claim: Claim) {
-        if (!isIssuedOnchain(claim)) {
+        if (!readyToBeRegisteredOnchain(claim)) {
             throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
         }
         const { token, subjectAgreement, onChainProof } = claim;

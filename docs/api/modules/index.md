@@ -89,11 +89,11 @@
 - [initWithMetamask](index.md#initwithmetamask)
 - [initWithPrivateKeySigner](index.md#initwithprivatekeysigner)
 - [initWithWalletConnect](index.md#initwithwalletconnect)
-- [isIssuedOnchain](index.md#isissuedonchain)
 - [isMetamaskExtensionPresent](index.md#ismetamaskextensionpresent)
 - [isValidDID](index.md#isvaliddid)
 - [parseDID](index.md#parsedid)
 - [proof\_type\_hash](index.md#proof_type_hash)
+- [readyToBeRegisteredOnchain](index.md#readytoberegisteredonchain)
 - [setCacheConfig](index.md#setcacheconfig)
 - [setChainConfig](index.md#setchainconfig)
 - [setMessagingConfig](index.md#setmessagingconfig)
@@ -612,12 +612,6 @@ Re-exports: [initWithWalletConnect](init.md#initwithwalletconnect)
 
 ___
 
-### isIssuedOnchain
-
-Re-exports: [isIssuedOnchain](modules_claims_claims_types.md#isissuedonchain)
-
-___
-
 ### isMetamaskExtensionPresent
 
 Re-exports: [isMetamaskExtensionPresent](modules_signer_metamaskSigner.md#ismetamaskextensionpresent)
@@ -639,6 +633,12 @@ ___
 ### proof\_type\_hash
 
 Re-exports: [proof\_type\_hash](modules_claims_claims_types.md#proof_type_hash)
+
+___
+
+### readyToBeRegisteredOnchain
+
+Re-exports: [readyToBeRegisteredOnchain](modules_claims_claims_types.md#readytoberegisteredonchain)
 
 ___
 
