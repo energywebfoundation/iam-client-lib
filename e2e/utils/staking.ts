@@ -21,7 +21,7 @@ export async function setupStakingPoolFactory(withdrawDelay = defaultWithdrawDel
     ).deployed();
     const rewardPoolAddress = await stakingPoolFactory.rewardPool();
     await replenish(rewardPoolAddress);
-    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address });
+    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address, chainName: "volta" });
 }
 
 export const calculateReward = (

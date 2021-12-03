@@ -28,10 +28,9 @@ const patronRole = "patronrole";
 const provider = new providers.JsonRpcProvider(rpcUrl);
 const rootOwner = Wallet.createRandom().connect(provider);
 const orgOwner = Wallet.createRandom().connect(provider);
-const orgOwnerDid = `did:${Methods.Erc1056}:${orgOwner.address}`;
+const orgOwnerDid = `did:${Methods.Erc1056}:volta:${orgOwner.address}`;
 const patron = Wallet.createRandom().connect(provider);
-const patronDID = `did:${Methods.Erc1056}:${patron.address}`;
-
+const patronDID = `did:${Methods.Erc1056}:volta:${patron.address}`;
 MessagingService.create = (signerService: SignerService) => Promise.resolve(new MessagingService(signerService));
 const mockPublish = jest.fn();
 jest.mock("../src/modules/messaging/messaging.service", () => {
@@ -44,7 +43,7 @@ jest.mock("../src/modules/messaging/messaging.service", () => {
 
 const mockGetRoleDefinition = jest.fn();
 const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string }) => {
-    return { publicKey: [{ id: `did:ethr:${did}-${KeyTags.OWNER}` }] };
+    return { publicKey: [{ id: `did:ethr:volta:${did}-${KeyTags.OWNER}` }] };
 });
 const mockGetApplicationsByOrgNamespace = jest.fn();
 const mockRequestClaim = jest.fn();

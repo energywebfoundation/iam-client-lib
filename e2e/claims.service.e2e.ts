@@ -25,11 +25,11 @@ const { namehash } = utils;
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 const staticIssuer = Wallet.createRandom().connect(provider);
-const staticIssuerDID = `did:${Methods.Erc1056}:${staticIssuer.address}`;
+const staticIssuerDID = `did:${Methods.Erc1056}:volta:${staticIssuer.address}`;
 const dynamicIssuer = Wallet.createRandom().connect(provider);
-const dynamicIssuerDID = `did:${Methods.Erc1056}:${dynamicIssuer.address}`;
+const dynamicIssuerDID = `did:${Methods.Erc1056}:volta:${dynamicIssuer.address}`;
 const rootOwner = Wallet.createRandom().connect(provider);
-const rootOwnerDID = `did:${Methods.Erc1056}:${rootOwner.address}`;
+const rootOwnerDID = `did:${Methods.Erc1056}:volta:${rootOwner.address}`;
 const roleName1 = "myrole1";
 const roleName2 = "myrole2";
 const roleName3 = "myrole3";
@@ -67,7 +67,7 @@ const mockGetRoleDefinition = jest.fn().mockImplementation((namespace: string) =
     return roles[namespace];
 });
 const mockGetDidDocument = jest.fn().mockImplementation((did: string) => {
-    return { publicKey: [{ id: `did:ethr:${did}-${KeyTags.OWNER}` }] }; // all documents are created
+    return { publicKey: [{ id: `did:ethr:volta:${did}-${KeyTags.OWNER}` }] }; // all documents are created
 });
 const mockGetAssetById = jest.fn();
 const mockGetClaimsBySubject = jest.fn();
@@ -212,7 +212,7 @@ describe("Enrollment claim tests", () => {
         mockGetAssetById.mockImplementationOnce(({ id }: { id: string }) => ({ id }));
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
         const assetAddress = await assetsService.registerAsset();
-        const assetDID = `did:${Methods.Erc1056}:${assetAddress}`;
+        const assetDID = `did:${Methods.Erc1056}:volta:${assetAddress}`;
         await enrolAndIssue(rootOwner, staticIssuer, { subjectDID: assetDID, claimType: `${roleName1}.${root}` });
 
         return expect(claimsService.hasOnChainRole(assetDID, `${roleName1}.${root}`, version)).resolves.toBe(true);

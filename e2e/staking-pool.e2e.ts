@@ -32,7 +32,7 @@ jest.mock("../src/modules/messaging/messaging.service", () => {
 
 const mockGetRoleDefinition = jest.fn();
 const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string }) => {
-    return { publicKey: [{ id: `did:ethr:${did}-${KeyTags.OWNER}` }] };
+    return { publicKey: [{ id: `did:ethr:volta:${did}-${KeyTags.OWNER}` }] };
 });
 const mockGetApplicationsByOrgNamespace = jest.fn();
 
@@ -83,7 +83,7 @@ export const setupStakingPoolFactory = async () => {
         value: rewards,
     });
 
-    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address });
+    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address, chainName: "volta" });
 };
 
 const putStake = async (pool: StakingPoolService, amount: number | BigNumber, withAmountCheck = true) => {

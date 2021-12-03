@@ -92,7 +92,7 @@ describe("Domains service", () => {
                 issuerFields: [],
                 issuer: {
                     issuerType: "DID",
-                    did: [`did:${Methods.Erc1056}:${rootOwner.address}`],
+                    did: [`did:${Methods.Erc1056}:volta:${rootOwner.address}`],
                 },
                 metadata: [],
                 roleName,

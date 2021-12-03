@@ -79,6 +79,7 @@ export const setupENS = async (rootOwner: string) => {
     const { chainId } = await provider.getNetwork();
     setChainConfig(chainId, {
         rpcUrl,
+        chainName: "volta",
         ensRegistryAddress: ensRegistry.address,
         ensResolverAddress: ensResolver.address,
         didRegistryAddress: didRegistry.address,

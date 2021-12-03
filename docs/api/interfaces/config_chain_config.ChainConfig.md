@@ -7,6 +7,7 @@
 ### Properties
 
 - [assetManagerAddress](config_chain_config.ChainConfig.md#assetmanageraddress)
+- [chainDisplayName](config_chain_config.ChainConfig.md#chaindisplayname)
 - [chainName](config_chain_config.ChainConfig.md#chainname)
 - [claimManagerAddress](config_chain_config.ChainConfig.md#claimmanageraddress)
 - [didRegistryAddress](config_chain_config.ChainConfig.md#didregistryaddress)
@@ -22,6 +23,12 @@
 ### assetManagerAddress
 
 • **assetManagerAddress**: `string`
+
+___
+
+### chainDisplayName
+
+• **chainDisplayName**: `string`
 
 ___
 

@@ -142,8 +142,10 @@ export class DidRegistry {
      */
     async verifyPublicClaim(token: string, iss: string) {
         const { sub } = this._jwt.decode(token) as Required<JwtPayload>;
-        const holderDoc = await this._cacheClient.getDidDocument(sub, true);
-        const issuerDoc = await this._cacheClient.getDidDocument(iss, true);
+        const [holderDoc, issuerDoc] = await Promise.all([
+            this._cacheClient.getDidDocument(sub, true),
+            this._cacheClient.getDidDocument(iss, true),
+        ]);
         return this._userClaims.verify(token, { holderDoc, issuerDoc });
     }
 
@@ -245,7 +247,7 @@ export class DidRegistry {
             throw new Error(ERROR_MESSAGES.UNKNOWN_PROVIDER);
         }
 
-        this._did = `did:${Methods.Erc1056}:${await signer.getAddress()}`;
+        this._did = `did:${Methods.Erc1056}:${this._signerService.chainName()}:${await signer.getAddress()}`;
         const address = chainConfigs()[this._signerService.chainId].didRegistryAddress;
         this._operator = new Operator(this._identityOwner, { address });
     }
