@@ -25,6 +25,7 @@ import {
     erc712_type_hash,
     proof_type_hash,
     typedMsgPrefix,
+    Claim,
 } from "./claims.types";
 import { DidRegistry } from "../didRegistry/didRegistry.service";
 import { ClaimData } from "../didRegistry/did.types";
@@ -216,6 +217,33 @@ export class ClaimsService {
         return this._cacheClient.issueClaim(this._signerService.did, message);
     }
 
+    /**
+     * @description Registers issued onchain claim with Claim manager
+     */
+    async registerOnchain(claimId: Claim["id"]) {
+        const claim = (await this.getClaimById(claimId)) as Required<Claim>;
+        const { token, subjectAgreement, onChainProof } = claim;
+        const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
+            claimData: { claimType: string; claimTypeVersion: number; expiry: number };
+            sub: string;
+        };
+        const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
+        const { claimType: role, claimTypeVersion: version } = claimData;
+        const data = this._claimManagerInterface.encodeFunctionData("register", [
+            addressOf(sub),
+            namehash(role),
+            version,
+            expiry,
+            addressOf(this._signerService.did),
+            subjectAgreement,
+            onChainProof,
+        ]);
+        await this._signerService.send({
+            to: this._claimManager,
+            data,
+        });
+    }
+
     async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
         const message: IClaimRejection = {
             id,
@@ -377,7 +405,7 @@ export class ClaimsService {
     private async createOnChainProof(role: string, version: number, expiry: number, subject: string): Promise<string> {
         const messageId = Buffer.from(typedMsgPrefix, "hex");
 
-        const chainId = await this._signerService.chainId;
+        const chainId = this._signerService.chainId;
         const domainSeparator = utils.keccak256(
             defaultAbiCoder.encode(
                 ["bytes32", "bytes32", "bytes32", "uint256", "address"],
