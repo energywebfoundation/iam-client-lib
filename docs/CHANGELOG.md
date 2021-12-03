@@ -1,3 +1,10 @@
+# [3.3.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.26...v3.3.0-alpha.27) (2021-12-03)
+
+
+### Features
+
+* **claims.service:** ICL-159 add hasOnChainRole utility ([abe6d86](https://github.com/energywebfoundation/iam-client-lib/commit/abe6d86b590e84094615ecaed1def7625eff2c6f))
+
 # [3.3.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.25...v3.3.0-alpha.26) (2021-12-02)
 
 
