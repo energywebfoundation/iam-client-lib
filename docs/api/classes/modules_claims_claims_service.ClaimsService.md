@@ -365,9 +365,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `claimId` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `claimId` | `string` | id of signed onchain claim |
 
 #### Returns
 

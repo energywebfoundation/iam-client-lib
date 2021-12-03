@@ -27,6 +27,10 @@
 - [proof\_type\_hash](modules_claims_claims_types.md#proof_type_hash)
 - [typedMsgPrefix](modules_claims_claims_types.md#typedmsgprefix)
 
+### Functions
+
+- [isIssuedOnchain](modules_claims_claims_types.md#isissuedonchain)
+
 ## Type aliases
 
 ### IssueClaim
@@ -95,3 +99,19 @@ ___
 ### typedMsgPrefix
 
 • `Const` **typedMsgPrefix**: ``"1901"``
+
+## Functions
+
+### isIssuedOnchain
+
+▸ `Const` **isIssuedOnchain**(`claim`): claim is Required<Pick<Claim, "id" \| "isAccepted" \| "token" \| "claimTypeVersion" \| "claimType" \| "subject" \| "subjectAgreement" \| "onChainProof"\>\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claim` | `any` |
+
+#### Returns
+
+claim is Required<Pick<Claim, "id" \| "isAccepted" \| "token" \| "claimTypeVersion" \| "claimType" \| "subject" \| "subjectAgreement" \| "onChainProof"\>\>

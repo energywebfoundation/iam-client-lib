@@ -32,6 +32,7 @@ import { ClaimData } from "../didRegistry/did.types";
 import { isValidDID } from "../../utils/did";
 import { JWT } from "@ew-did-registry/jwt";
 import { privToPem, KeyType } from "@ew-did-registry/keys";
+import { isIssuedOnchain } from ".";
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, namehash, arrayify } = utils;
 
@@ -219,15 +220,20 @@ export class ClaimsService {
 
     /**
      * @description Registers issued onchain claim with Claim manager
+     *
+     * @param claimId - id of signed onchain claim
      */
     async registerOnchain(claimId: Claim["id"]) {
-        const claim = (await this.getClaimById(claimId)) as Required<Claim>;
+        const claim = await this.getClaimById(claimId);
+        if (!isIssuedOnchain(claim)) {
+            throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
+        }
         const { token, subjectAgreement, onChainProof } = claim;
         const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
             claimData: { claimType: string; claimTypeVersion: number; expiry: number };
             sub: string;
         };
-        const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
+        const expiry = defaultClaimExpiry;
         const { claimType: role, claimTypeVersion: version } = claimData;
         const data = this._claimManagerInterface.encodeFunctionData("register", [
             addressOf(sub),

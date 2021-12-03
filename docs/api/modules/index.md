@@ -89,6 +89,7 @@
 - [initWithMetamask](index.md#initwithmetamask)
 - [initWithPrivateKeySigner](index.md#initwithprivatekeysigner)
 - [initWithWalletConnect](index.md#initwithwalletconnect)
+- [isIssuedOnchain](index.md#isissuedonchain)
 - [isMetamaskExtensionPresent](index.md#ismetamaskextensionpresent)
 - [isValidDID](index.md#isvaliddid)
 - [parseDID](index.md#parsedid)
@@ -608,6 +609,12 @@ ___
 ### initWithWalletConnect
 
 Re-exports: [initWithWalletConnect](init.md#initwithwalletconnect)
+
+___
+
+### isIssuedOnchain
+
+Re-exports: [isIssuedOnchain](modules_claims_claims_types.md#isissuedonchain)
 
 ___
 
