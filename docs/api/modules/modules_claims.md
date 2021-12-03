@@ -5,6 +5,7 @@
 ### References
 
 - [Claim](modules_claims.md#claim)
+- [ClaimEventType](modules_claims.md#claimeventtype)
 - [ClaimsService](modules_claims.md#claimsservice)
 - [IClaimIssuance](modules_claims.md#iclaimissuance)
 - [IClaimRejection](modules_claims.md#iclaimrejection)
@@ -24,6 +25,12 @@
 ### Claim
 
 Re-exports: [Claim](../interfaces/modules_claims_claims_types.Claim.md)
+
+___
+
+### ClaimEventType
+
+Re-exports: [ClaimEventType](../enums/modules_claims_claims_types.ClaimEventType.md)
 
 ___
 

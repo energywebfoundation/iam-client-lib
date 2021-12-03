@@ -24,6 +24,12 @@ export enum RegistrationTypes {
     OnChain = "RegistrationTypes::OnChain",
 }
 
+export enum ClaimEventType {
+    ISSUE_CREDENTIAL = "issue-credential",
+    REJECT_CREDENTIAL = "reject-credential",
+    REQUEST_CREDENTIALS = "request-credential",
+}
+
 export interface Claim {
     id: string;
     requester: string;
