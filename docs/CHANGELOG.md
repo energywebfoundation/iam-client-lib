@@ -1,3 +1,10 @@
+# [3.3.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.29...v3.3.0-alpha.30) (2021-12-03)
+
+
+### Features
+
+* **claims:** register onchain claim optionally ([c7eb237](https://github.com/energywebfoundation/iam-client-lib/commit/c7eb237ff97dce662a2eae20b1b2408496010c59))
+
 # [3.3.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.28...v3.3.0-alpha.29) (2021-12-03)
 
 
