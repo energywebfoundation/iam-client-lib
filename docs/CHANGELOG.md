@@ -1,3 +1,11 @@
+# [3.3.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.28...v3.3.0-alpha.29) (2021-12-03)
+
+
+### Features
+
+* **claim:** move register onchain from issue ([926eb95](https://github.com/energywebfoundation/iam-client-lib/commit/926eb95c094ef5ddb7c3f67a500134262a6658c2))
+* **claims:** check is claim issued ([1cb6d83](https://github.com/energywebfoundation/iam-client-lib/commit/1cb6d83f3ec9a9b804d3ae89ea4a8ccc5d3d1a4f))
+
 # [3.3.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.27...v3.3.0-alpha.28) (2021-12-03)
 
 
