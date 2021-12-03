@@ -50,29 +50,8 @@ export interface Claim {
 
 export const readyToBeRegisteredOnchain = (
     claim: any,
-): claim is Required<
-    Pick<
-        Claim,
-        | "id"
-        | "subject"
-        | "claimType"
-        | "claimTypeVersion"
-        | "token"
-        | "subjectAgreement"
-        | "onChainProof"
-        | "isAccepted"
-    >
-> => {
-    const requiredProps = [
-        "id",
-        "subject",
-        "claimType",
-        "ClaimTypeVersion",
-        "token",
-        "subjectAgreement",
-        "onChainProof",
-        "isAccepted",
-    ];
+): claim is Required<Pick<Claim, "token" | "subjectAgreement" | "onChainProof">> => {
+    const requiredProps = ["token", "subjectAgreement", "onChainProof"];
     const claimProps = Object.keys(claim);
     return requiredProps.every((p) => claimProps.includes(p));
 };

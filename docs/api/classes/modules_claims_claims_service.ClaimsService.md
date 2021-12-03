@@ -340,6 +340,9 @@ ___
 
 ▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
 
+Issue a claim request by signing both off-chain and on-chain request and persisting result to the cache-server.
+Optionally, issue on-chain role can be submitted to the ClaimManager contract as well.
+
 #### Parameters
 
 | Name | Type |
@@ -347,6 +350,7 @@ ___
 | `__namedParameters` | `Object` |
 | `__namedParameters.id` | `string` |
 | `__namedParameters.issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.publishOnChain?` | `boolean` |
 | `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/modules_claims_claims_types.RegistrationTypes.md)[] |
 | `__namedParameters.requester` | `string` |
 | `__namedParameters.subjectAgreement` | `string` |
@@ -391,7 +395,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `claim` | [`Claim`](../interfaces/modules_claims_claims_types.Claim.md) |
+| `claim` | `Pick`<[`Claim`](../interfaces/modules_claims_claims_types.Claim.md), ``"token"`` \| ``"subjectAgreement"`` \| ``"onChainProof"``\> |
 
 #### Returns
 

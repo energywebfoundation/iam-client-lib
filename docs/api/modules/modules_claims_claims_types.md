@@ -105,7 +105,7 @@ ___
 
 ### readyToBeRegisteredOnchain
 
-▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "id" \| "isAccepted" \| "token" \| "claimTypeVersion" \| "claimType" \| "subject" \| "subjectAgreement" \| "onChainProof"\>\>
+▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "token" \| "subjectAgreement" \| "onChainProof"\>\>
 
 #### Parameters
 
@@ -115,4 +115,4 @@ ___
 
 #### Returns
 
-claim is Required<Pick<Claim, "id" \| "isAccepted" \| "token" \| "claimTypeVersion" \| "claimType" \| "subject" \| "subjectAgreement" \| "onChainProof"\>\>
+claim is Required<Pick<Claim, "token" \| "subjectAgreement" \| "onChainProof"\>\>

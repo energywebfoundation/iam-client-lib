@@ -181,6 +181,11 @@ export class ClaimsService {
         await this._cacheClient.requestClaim(subject, message);
     }
 
+    /**
+     * Issue a claim request by signing both off-chain and on-chain request and persisting result to the cache-server.
+     * Optionally, issue on-chain role can be submitted to the ClaimManager contract as well.
+     * @param params.publishOnChain If issuing an on-chain role, then if true then will submit role to chain (incurring tx cost). Default is true
+     */
     async issueClaimRequest({
         requester,
         token,
@@ -188,6 +193,7 @@ export class ClaimsService {
         subjectAgreement,
         registrationTypes,
         issuerFields,
+        publishOnChain = true,
     }: {
         requester: string;
         token: string;
@@ -195,9 +201,10 @@ export class ClaimsService {
         subjectAgreement: string;
         registrationTypes: RegistrationTypes[];
         issuerFields?: { key: string; value: string | number }[];
+        publishOnChain?: boolean;
     }) {
         const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
-            claimData: { claimType: string; claimTypeVersion: number; expiry: number };
+            claimData: { claimType: string; claimTypeVersion: number };
             sub: string;
         };
 
@@ -222,22 +229,12 @@ export class ClaimsService {
         }
         if (registrationTypes.includes(RegistrationTypes.OnChain)) {
             const { claimType: role, claimTypeVersion: version } = claimData;
-            const expiry = claimData.expiry === undefined ? defaultClaimExpiry : claimData.expiry;
+            const expiry = defaultClaimExpiry;
             const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
-            const data = this._claimManagerInterface.encodeFunctionData("register", [
-                addressOf(sub),
-                namehash(role),
-                version,
-                expiry,
-                addressOf(this._signerService.did),
-                subjectAgreement,
-                onChainProof,
-            ]);
-            await this._signerService.send({
-                to: this._claimManager,
-                data,
-            });
             message.onChainProof = onChainProof;
+            if (publishOnChain) {
+                await this.registerOnchain({ token, subjectAgreement, onChainProof });
+            }
         }
 
         return this._cacheClient.issueClaim(this._signerService.did, message);
@@ -248,7 +245,7 @@ export class ClaimsService {
      *
      * @param claimId - id of signed onchain claim
      */
-    async registerOnchain(claim: Claim) {
+    async registerOnchain(claim: Pick<Claim, "token" | "subjectAgreement" | "onChainProof">) {
         if (!readyToBeRegisteredOnchain(claim)) {
             throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
         }

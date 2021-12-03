@@ -147,7 +147,8 @@ describe("Enrollment claim tests", () => {
             subjectDID,
             claimType,
             registrationTypes = [RegistrationTypes.OnChain],
-        }: { subjectDID: string; claimType: string; registrationTypes?: RegistrationTypes[] },
+            publishOnChain = true,
+        }: { subjectDID: string; claimType: string; registrationTypes?: RegistrationTypes[]; publishOnChain?: boolean },
     ) {
         await signerService.connect(requestSigner, ProviderType.PrivateKey);
         const requesterDID = signerService.did;
@@ -160,7 +161,7 @@ describe("Enrollment claim tests", () => {
 
         await signerService.connect(issueSigner, ProviderType.PrivateKey);
         const issuerDID = signerService.did;
-        await claimsService.issueClaimRequest({ ...message });
+        await claimsService.issueClaimRequest({ publishOnChain, ...message });
         const [, data] = mockIssueClaim.mock.calls.pop();
 
         const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = data;
