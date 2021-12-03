@@ -1,3 +1,10 @@
+# [3.3.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.27...v3.3.0-alpha.28) (2021-12-03)
+
+
+### Features
+
+* **nats:** event types and new catch-all message pattern ([a5f460a](https://github.com/energywebfoundation/iam-client-lib/commit/a5f460add711199eaaac55c8f85a772f9b4009c6))
+
 # [3.3.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.26...v3.3.0-alpha.27) (2021-12-03)
 
 
