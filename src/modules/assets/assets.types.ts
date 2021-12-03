@@ -19,9 +19,9 @@ export interface AssetHistory {
 }
 
 export enum AssetHistoryEventType {
-    ASSET_CREATED = "ASSET_CREATED",
-    ASSET_OFFERED = "ASSET_OFFERED",
-    ASSET_OFFER_CANCELED = "ASSET_OFFER_CANCELED",
-    ASSET_TRANSFERRED = "ASSET_TRANSFERRED",
-    ASSET_OFFER_REJECTED = "ASSET_OFFER_REJECTED",
+    ASSET_CREATED = "asset-created",
+    ASSET_OFFERED = "asset-offered",
+    ASSET_OFFER_CANCELED = "asset-offer-canceled",
+    ASSET_TRANSFERRED = "asset-transfered",
+    ASSET_OFFER_REJECTED = "asset-offer-rejected",
 }

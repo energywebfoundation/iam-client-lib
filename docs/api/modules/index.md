@@ -19,6 +19,7 @@
 - [ChangeOwnershipNotPossibleError](index.md#changeownershipnotpossibleerror)
 - [Claim](index.md#claim)
 - [ClaimData](index.md#claimdata)
+- [ClaimEventType](index.md#claimeventtype)
 - [ClaimsFilter](index.md#claimsfilter)
 - [ClaimsService](index.md#claimsservice)
 - [DeletingNamespaceNotPossibleError](index.md#deletingnamespacenotpossibleerror)
@@ -188,6 +189,12 @@ ___
 ### ClaimData
 
 Re-exports: [ClaimData](../interfaces/modules_didRegistry_did_types.ClaimData.md)
+
+___
+
+### ClaimEventType
+
+Re-exports: [ClaimEventType](../enums/modules_claims_claims_types.ClaimEventType.md)
 
 ___
 
