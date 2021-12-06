@@ -142,5 +142,8 @@
         "*.{js,ts,tsx}": [
             "eslint --fix"
         ]
+    },
+    "optionalDependencies": {
+        "fsevents": "^2.3.2"
     }
 }
