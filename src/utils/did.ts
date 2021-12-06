@@ -1,4 +1,4 @@
-import { Methods, isValidErc1056, isValidErc1056EWC, isValidErc1056VOLTA } from "@ew-did-registry/did";
+import { Methods, isValidErc1056EWC, isValidErc1056VOLTA } from "@ew-did-registry/did";
 
 const validators = new Map<string, (did: string) => boolean>();
 
@@ -14,6 +14,5 @@ export function addSupportedDID(method: string, validator: (did: string) => bool
     validators.set(method, validator);
 }
 
-addSupportedDID(Methods.Erc1056, isValidErc1056);
 addSupportedDID(`${Methods.Erc1056}:ewc`, isValidErc1056EWC);
 addSupportedDID(`${Methods.Erc1056}:volta`, isValidErc1056VOLTA);
