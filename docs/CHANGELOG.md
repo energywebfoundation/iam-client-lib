@@ -1,3 +1,20 @@
+# [4.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.31...v4.0.0-alpha.1) (2021-12-06)
+
+
+### Features
+
+* use Chain enum from ew-did-reg/did ([00aeab1](https://github.com/energywebfoundation/iam-client-lib/commit/00aeab1de345ef5c5c6aff17a004f5562cecec7c))
+* **did:** remove support for did:ethr ([5b853ac](https://github.com/energywebfoundation/iam-client-lib/commit/5b853acd05c466c52c27bdfd7735358e0df253b4))
+* **utils/did:** use Chain from ew-did-reg/did ([03b7624](https://github.com/energywebfoundation/iam-client-lib/commit/03b7624cae6b9316d61bdd173c863642a57217a2))
+* add chain name to DID format ([460d5fa](https://github.com/energywebfoundation/iam-client-lib/commit/460d5fa10d678675f5374df607a9aa5fb3795f9b))
+
+
+### BREAKING CHANGES
+
+* **did:** did:ethr is not supported
+iam-client-lib will only be tested on volta and ewc in near future
+mainnet support could be added in the future
+
 # [3.3.0-alpha.31](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.30...v3.3.0-alpha.31) (2021-12-06)
 
 
