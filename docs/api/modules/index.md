@@ -92,7 +92,6 @@
 - [initWithWalletConnect](index.md#initwithwalletconnect)
 - [isMetamaskExtensionPresent](index.md#ismetamaskextensionpresent)
 - [isValidDID](index.md#isvaliddid)
-- [parseDID](index.md#parsedid)
 - [proof\_type\_hash](index.md#proof_type_hash)
 - [readyToBeRegisteredOnchain](index.md#readytoberegisteredonchain)
 - [setCacheConfig](index.md#setcacheconfig)
@@ -628,12 +627,6 @@ ___
 ### isValidDID
 
 Re-exports: [isValidDID](utils_did.md#isvaliddid)
-
-___
-
-### parseDID
-
-Re-exports: [parseDID](utils_did.md#parsedid)
 
 ___
 

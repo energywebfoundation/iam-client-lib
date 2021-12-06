@@ -1,5 +1,6 @@
 import { ContractFactory, Contract, providers, utils, BigNumber } from "ethers";
 import { ethrReg } from "@ew-did-registry/did-ethr-resolver";
+import { Chain } from "@ew-did-registry/did";
 import { DomainNotifier__factory } from "../../ethers/factories/DomainNotifier__factory";
 import type { DomainNotifier } from "../../ethers/DomainNotifier";
 import { RoleDefinitionResolver__factory } from "../../ethers/factories/RoleDefinitionResolver__factory";
@@ -79,6 +80,7 @@ export const setupENS = async (rootOwner: string) => {
     const { chainId } = await provider.getNetwork();
     setChainConfig(chainId, {
         rpcUrl,
+        chainName: Chain.VOLTA,
         ensRegistryAddress: ensRegistry.address,
         ensResolverAddress: ensResolver.address,
         didRegistryAddress: didRegistry.address,

@@ -18,6 +18,7 @@ export class SignerService {
 
     private _chainId: number;
     private _chainName: string;
+    private _chainDisplayName: string;
 
     private _servicesInitializers: ServiceInitializer[] = [];
 
@@ -31,6 +32,7 @@ export class SignerService {
         }
         this._address = await this.signer.getAddress();
         this._chainId = (await this._signer.provider.getNetwork()).chainId;
+        this._chainDisplayName = chainConfigs()[this._chainId].chainDisplayName;
         this._chainName = chainConfigs()[this._chainId].chainName;
         if (this._signer instanceof providers.JsonRpcSigner) {
             this._account = (await this._signer.provider.listAccounts())[0];
@@ -95,7 +97,7 @@ export class SignerService {
     }
 
     get accountInfo(): AccountInfo {
-        return { account: this._account, chainId: this._chainId, chainName: this._chainName };
+        return { account: this._account, chainId: this._chainId, chainName: this._chainDisplayName };
     }
 
     get provider() {
@@ -115,7 +117,7 @@ export class SignerService {
     }
 
     get did() {
-        return `did:${Methods.Erc1056}:${this._address}`;
+        return `did:${Methods.Erc1056}:${this.chainName()}:${this._address}`;
     }
 
     async send({ to, data, value }: providers.TransactionRequest): Promise<providers.TransactionReceipt> {
@@ -171,6 +173,10 @@ export class SignerService {
         return this._publicKey;
     }
 
+    chainName() {
+        return this._chainName;
+    }
+
     async publicKeyAndIdentityToken(): Promise<IPubKeyAndIdentityToken> {
         if (!this._publicKey || !this._identityToken) {
             await this._calculatePubKeyAndIdentityToken();
@@ -189,7 +195,7 @@ export class SignerService {
         const encodedHeader = base64url(JSON.stringify(header));
         const address = this._address;
         const payload = {
-            iss: `did:ethr:${address}`,
+            iss: `did:${Methods.Erc1056}:${this.chainName()}:${address}`,
             claimData: {
                 blockNumber: await this._signer.provider.getBlockNumber(),
             },

@@ -6,20 +6,19 @@
 
 - [addSupportedDID](utils_did.md#addsupporteddid)
 - [isValidDID](utils_did.md#isvaliddid)
-- [parseDID](utils_did.md#parsedid)
 - [supportedDIDMethods](utils_did.md#supporteddidmethods)
 
 ## Functions
 
 ### addSupportedDID
 
-▸ **addSupportedDID**(`method`, `validator`): `void`
+▸ **addSupportedDID**(`methodWithChain`, `validator`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `method` | `Methods` |
+| `methodWithChain` | `string` |
 | `validator` | (`did`: `string`) => `boolean` |
 
 #### Returns
@@ -44,26 +43,10 @@ ___
 
 ___
 
-### parseDID
-
-▸ **parseDID**(`did`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `did` | `string` |
-
-#### Returns
-
-`string`
-
-___
-
 ### supportedDIDMethods
 
-▸ **supportedDIDMethods**(): `Methods`[]
+▸ **supportedDIDMethods**(): `string`[]
 
 #### Returns
 
-`Methods`[]
+`string`[]

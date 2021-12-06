@@ -13,7 +13,6 @@
 - [emptyAddress](utils.md#emptyaddress)
 - [executionEnvironment](utils.md#executionenvironment)
 - [isValidDID](utils.md#isvaliddid)
-- [parseDID](utils.md#parsedid)
 - [supportedDIDMethods](utils.md#supporteddidmethods)
 
 ## References
@@ -69,12 +68,6 @@ ___
 ### isValidDID
 
 Re-exports: [isValidDID](utils_did.md#isvaliddid)
-
-___
-
-### parseDID
-
-Re-exports: [parseDID](utils_did.md#parsedid)
 
 ___
 

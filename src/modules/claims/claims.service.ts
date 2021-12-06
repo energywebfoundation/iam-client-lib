@@ -161,7 +161,7 @@ export class ClaimsService {
         await this.verifyEnrolmentPrerequisites({ subject, role });
 
         // temporarily, until claimIssuer is not removed from Claim entity
-        const issuer = [`did:${Methods.Erc1056}:${emptyAddress}`];
+        const issuer = [`did:${Methods.Erc1056}:${this._signerService.chainName()}:${emptyAddress}`];
 
         const message: IClaimRequest = {
             id: v4(),

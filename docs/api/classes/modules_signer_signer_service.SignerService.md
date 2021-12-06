@@ -22,6 +22,7 @@
 
 - [balance](modules_signer_signer_service.SignerService.md#balance)
 - [call](modules_signer_signer_service.SignerService.md#call)
+- [chainName](modules_signer_signer_service.SignerService.md#chainname)
 - [closeConnection](modules_signer_signer_service.SignerService.md#closeconnection)
 - [connect](modules_signer_signer_service.SignerService.md#connect)
 - [emit](modules_signer_signer_service.SignerService.md#emit)
@@ -147,6 +148,16 @@ https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-
 `Promise`<`string`\>
 
 The result of the call
+
+___
+
+### chainName
+
+▸ **chainName**(): `string`
+
+#### Returns
+
+`string`
 
 ___
 

@@ -1,5 +1,5 @@
 import { IRoleDefinition } from "@energyweb/iam-contracts";
-import { Methods } from "@ew-did-registry/did";
+import { Methods, Chain } from "@ew-did-registry/did";
 import { KeyTags } from "@ew-did-registry/did-resolver-interface";
 
 import { BigNumber, providers, utils, Wallet } from "ethers";
@@ -28,10 +28,9 @@ const patronRole = "patronrole";
 const provider = new providers.JsonRpcProvider(rpcUrl);
 const rootOwner = Wallet.createRandom().connect(provider);
 const orgOwner = Wallet.createRandom().connect(provider);
-const orgOwnerDid = `did:${Methods.Erc1056}:${orgOwner.address}`;
+const orgOwnerDid = `did:${Methods.Erc1056}:${Chain.VOLTA}:${orgOwner.address}`;
 const patron = Wallet.createRandom().connect(provider);
-const patronDID = `did:${Methods.Erc1056}:${patron.address}`;
-
+const patronDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${patron.address}`;
 MessagingService.create = (signerService: SignerService) => Promise.resolve(new MessagingService(signerService));
 const mockPublish = jest.fn();
 jest.mock("../src/modules/messaging/messaging.service", () => {
@@ -44,7 +43,7 @@ jest.mock("../src/modules/messaging/messaging.service", () => {
 
 const mockGetRoleDefinition = jest.fn();
 const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string }) => {
-    return { publicKey: [{ id: `did:ethr:${did}-${KeyTags.OWNER}` }] };
+    return { publicKey: [{ id: `did:${Methods.Erc1056}:${Chain.VOLTA}:${did}-${KeyTags.OWNER}` }] };
 });
 const mockGetApplicationsByOrgNamespace = jest.fn();
 const mockRequestClaim = jest.fn();

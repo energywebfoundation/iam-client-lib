@@ -1,8 +1,8 @@
-import { Methods, isValidErc1056 } from "@ew-did-registry/did";
+import { Methods, Chain, isValidErc1056EWC, isValidErc1056VOLTA } from "@ew-did-registry/did";
 
-const validators = new Map<Methods, (did: string) => boolean>();
+const validators = new Map<string, (did: string) => boolean>();
 
-export function supportedDIDMethods(): Methods[] {
+export function supportedDIDMethods(): string[] {
     return Array.from(validators.keys());
 }
 
@@ -10,16 +10,9 @@ export function isValidDID(did: string): boolean {
     return Array.from(validators.values()).some((v) => v(did));
 }
 
-export function addSupportedDID(method: Methods, validator: (did: string) => boolean) {
-    validators.set(method, validator);
+export function addSupportedDID(methodWithChain: string, validator: (did: string) => boolean) {
+    validators.set(methodWithChain, validator);
 }
 
-export function parseDID(did: string) {
-    const didRegex = new RegExp(`^did:${Methods.Erc1056}:`);
-    if (did && didRegex.test(did) === true) {
-        return did.split(":")[2];
-    }
-    return did;
-}
-
-addSupportedDID(Methods.Erc1056, isValidErc1056);
+addSupportedDID(`${Methods.Erc1056}:${Chain.EWC}`, isValidErc1056EWC);
+addSupportedDID(`${Methods.Erc1056}:${Chain.VOLTA}`, isValidErc1056VOLTA);

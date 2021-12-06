@@ -1,4 +1,5 @@
 import { VoltaAddress1056 } from "@ew-did-registry/did-ethr-resolver";
+import { Chain } from "@ew-did-registry/did";
 import {
     VOLTA_DOMAIN_NOTIFER_ADDRESS,
     VOLTA_ENS_REGISTRY_ADDRESS,
@@ -12,6 +13,7 @@ import { VOLTA_CHAIN_ID } from "../utils/constants";
 
 export interface ChainConfig {
     chainName: string;
+    chainDisplayName: string;
     rpcUrl: string;
     ensRegistryAddress: string;
     ensResolverAddress: string;
@@ -31,7 +33,8 @@ export type ChainId = number;
  */
 const chainConfig: Record<number, ChainConfig> = {
     [VOLTA_CHAIN_ID]: {
-        chainName: "Energy Web Volta Testnet",
+        chainName: Chain.VOLTA,
+        chainDisplayName: "Energy Web Volta Testnet",
         rpcUrl: "https://volta-rpc.energyweb.org",
         ensRegistryAddress: VOLTA_ENS_REGISTRY_ADDRESS,
         ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,

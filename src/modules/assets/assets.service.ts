@@ -1,5 +1,6 @@
 import { utils, providers } from "ethers";
 import { Methods } from "@ew-did-registry/did";
+import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { IdentityManager__factory } from "../../../ethers/factories/IdentityManager__factory";
 import { OfferableIdentity__factory } from "../../../ethers/factories/OfferableIdentity__factory";
 import { ChainConfig, chainConfigs } from "../../config/chain.config";
@@ -28,7 +29,7 @@ export class AssetsService {
     async init() {
         const chainId = this._signerService.chainId;
         this._owner = this._signerService.address;
-        this._did = `did:${Methods.Erc1056}:${this._owner}`;
+        this._did = `did:${Methods.Erc1056}:${this._signerService.chainName()}:${this._owner}`;
         const chainConfig = chainConfigs()[chainId] as ChainConfig;
         this._assetManager = chainConfig.assetManagerAddress;
     }
@@ -47,14 +48,18 @@ export class AssetsService {
                     log.name === this._assetManagerInterface.events["IdentityCreated(address,address,uint256)"].name,
             ) as utils.LogDescription;
         const identity = event.args[0] as string;
-        let asset = await this.getAssetById({ id: `did:ethr:${identity}` });
+        let asset = await this.getAssetById({
+            id: `did:${Methods.Erc1056}:${this._signerService.chainName()}:${identity}`,
+        });
         let loops = 0;
         /*
          * we need to wait until cache server will resolve assets did document
          * which is taking some time
          */
         while (!asset && loops < 20) {
-            asset = await this.getAssetById({ id: `did:${Methods.Erc1056}:${identity}` });
+            asset = await this.getAssetById({
+                id: `did:${Methods.Erc1056}:${this._signerService.chainName()}:${identity}`,
+            });
             await new Promise((resolve) => setTimeout(resolve, 1000));
             loops++;
         }
@@ -67,7 +72,7 @@ export class AssetsService {
      * @param params.offerTo: Address of offer recipient
      */
     async offerAsset({ assetDID, offerTo }: { assetDID: string; offerTo: string }) {
-        const [, , assetContractAddress] = assetDID.split(":");
+        const assetContractAddress = addressOf(assetDID);
         const tx = this.offerAssetTx({ assetContractAddress, offerTo: offerTo });
         await this._signerService.send(tx);
     }
@@ -77,7 +82,7 @@ export class AssetsService {
      * @param params.assetDID: DID of Offered Asset
      */
     async acceptAssetOffer({ assetDID }: { assetDID: string }) {
-        const [, , assetContractAddress] = assetDID.split(":");
+        const assetContractAddress = addressOf(assetDID);
         const tx = this.acceptOfferTx({ assetContractAddress });
         await this._signerService.send(tx);
     }
@@ -87,7 +92,7 @@ export class AssetsService {
      * @param params.assetDID: DID of offered Asset
      */
     async rejectAssetOffer({ assetDID }: { assetDID: string }) {
-        const [, , assetContractAddress] = assetDID.split(":");
+        const assetContractAddress = addressOf(assetDID);
         const tx = this.rejectOfferTx({ assetContractAddress });
         await this._signerService.send(tx);
     }
@@ -97,7 +102,7 @@ export class AssetsService {
      * @param params.assetDID: DID of offered Asset
      */
     async cancelAssetOffer({ assetDID }: { assetDID: string }) {
-        const [, , assetContractAddress] = assetDID.split(":");
+        const assetContractAddress = addressOf(assetDID);
         const tx = this.cancelOfferTx({ assetContractAddress });
         await this._signerService.send(tx);
     }

@@ -159,10 +159,12 @@ export class StakingPool {
             data: this.pool.interface.encodeFunctionData("putStake"),
             value: stake,
         };
-        const balance = await this.signerService.balance();
 
-        const gasPrice = await this.signerService.signer.getGasPrice();
-        const gas = await this.signerService.provider.estimateGas(tx);
+        const [gasPrice, gas, balance] = await Promise.all([
+            this.signerService.signer.getGasPrice(),
+            this.signerService.provider.estimateGas(tx),
+            this.signerService.balance(),
+        ]);
 
         // multiplier 2 chosen arbitrarily because it is not known how reasonably to choose it
         const fee = gasPrice.mul(gas).mul(2);

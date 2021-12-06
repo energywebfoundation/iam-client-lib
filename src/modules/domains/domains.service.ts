@@ -9,6 +9,7 @@ import {
     ResolverContractType,
     DomainHierarchy,
 } from "@energyweb/iam-contracts";
+import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { ENSRegistry } from "../../../ethers/ENSRegistry";
 import { ENSRegistry__factory } from "../../../ethers/factories/ENSRegistry__factory";
 import { chainConfigs } from "../../config/chain.config";
@@ -19,7 +20,6 @@ import {
     ERROR_MESSAGES,
 } from "../../errors";
 import { emptyAddress } from "../../utils/constants";
-import { parseDID } from "../../utils/did";
 import { labelhash } from "../../utils/ENS_hash";
 import { CacheClient } from "../cacheClient/cacheClient.service";
 import { RegistrationTypes } from "../claims/claims.types";
@@ -317,7 +317,7 @@ export class DomainsService {
         newOwner: string;
         returnSteps?: boolean;
     }) {
-        newOwner = parseDID(newOwner);
+        newOwner = addressOf(newOwner);
         const orgNamespaces = [
             `${NamespaceType.Role}.${namespace}`,
             `${NamespaceType.Application}.${namespace}`,
@@ -385,7 +385,7 @@ export class DomainsService {
         newOwner: string;
         returnSteps?: boolean;
     }) {
-        newOwner = parseDID(newOwner);
+        newOwner = addressOf(newOwner);
         const appNamespaces = [`${NamespaceType.Role}.${namespace}`, namespace];
 
         const { alreadyFinished, changeOwnerNamespaces, notOwnedNamespaces } = await this.validateChangeOwnership({
@@ -432,7 +432,7 @@ export class DomainsService {
      *
      */
     async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
-        newOwner = parseDID(newOwner);
+        newOwner = addressOf(newOwner);
         const notOwnedNamespaces = await this.validateOwnership({
             namespace,
             type: NamespaceType.Role,
@@ -651,7 +651,7 @@ export class DomainsService {
         owner: string;
         withRelations?: boolean;
     }) {
-        owner = parseDID(owner);
+        owner = addressOf(owner);
         if (type === NamespaceType.Organization) {
             return this._cacheClient.getOrganizationsByOwner(owner, withRelations);
         }
