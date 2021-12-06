@@ -26,7 +26,7 @@ jobs:
           token: ${{ secrets.SECRET_NAME }}
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: "16.13.1"
+          node-version: "10.22.0"
           registry-url: https://registry.npmjs.org/
 
       - name: Configure Git
