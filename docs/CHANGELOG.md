@@ -1,3 +1,10 @@
+# [3.3.0-alpha.31](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.30...v3.3.0-alpha.31) (2021-12-06)
+
+
+### Features
+
+* update staking pool version, remove tests ([7ecbafd](https://github.com/energywebfoundation/iam-client-lib/commit/7ecbafd0b9ea6f64a200d9d0650be24c58f1c677))
+
 # [3.3.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.29...v3.3.0-alpha.30) (2021-12-03)
 
 
