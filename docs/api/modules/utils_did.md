@@ -12,13 +12,13 @@
 
 ### addSupportedDID
 
-▸ **addSupportedDID**(`method`, `validator`): `void`
+▸ **addSupportedDID**(`methodWithChain`, `validator`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `method` | `string` |
+| `methodWithChain` | `string` |
 | `validator` | (`did`: `string`) => `boolean` |
 
 #### Returns
