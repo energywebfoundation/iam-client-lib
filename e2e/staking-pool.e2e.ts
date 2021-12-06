@@ -1,4 +1,5 @@
 import { KeyTags } from "@ew-did-registry/did-resolver-interface";
+import { Chain } from "@ew-did-registry/did";
 import { BigNumber, providers, utils, Wallet } from "ethers";
 import {
     chainConfigs,
@@ -32,7 +33,7 @@ jest.mock("../src/modules/messaging/messaging.service", () => {
 
 const mockGetRoleDefinition = jest.fn();
 const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string }) => {
-    return { publicKey: [{ id: `did:ethr:volta:${did}-${KeyTags.OWNER}` }] };
+    return { publicKey: [{ id: `did:ethr:${Chain.VOLTA}:${did}-${KeyTags.OWNER}` }] };
 });
 const mockGetApplicationsByOrgNamespace = jest.fn();
 
@@ -83,7 +84,7 @@ export const setupStakingPoolFactory = async () => {
         value: rewards,
     });
 
-    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address, chainName: "volta" });
+    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address, chainName: Chain.VOLTA });
 };
 
 const putStake = async (pool: StakingPoolService, amount: number | BigNumber, withAmountCheck = true) => {

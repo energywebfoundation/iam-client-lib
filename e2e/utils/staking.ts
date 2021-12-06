@@ -2,6 +2,7 @@ import { BigNumber, utils } from "ethers";
 import { deployer, replenish } from "./setup_contracts";
 import { StakingPoolFactory__factory } from "../../ethers/factories/StakingPoolFactory__factory";
 import { chainConfigs, setChainConfig } from "../../src/config/chain.config";
+import { Chain } from "@ew-did-registry/did";
 
 const { parseEther } = utils;
 
@@ -21,7 +22,7 @@ export async function setupStakingPoolFactory(withdrawDelay = defaultWithdrawDel
     ).deployed();
     const rewardPoolAddress = await stakingPoolFactory.rewardPool();
     await replenish(rewardPoolAddress);
-    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address, chainName: "volta" });
+    setChainConfig(chainId, { stakingPoolFactoryAddress: stakingPoolFactory.address, chainName: Chain.VOLTA });
 }
 
 export const calculateReward = (

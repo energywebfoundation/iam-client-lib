@@ -1,6 +1,6 @@
 import { utils, Wallet } from "ethers";
 import { IRoleDefinition, PreconditionType } from "@energyweb/iam-contracts";
-import { Methods } from "@ew-did-registry/did";
+import { Methods, Chain } from "@ew-did-registry/did";
 import {
     DomainsService,
     initWithPrivateKeySigner,
@@ -92,7 +92,7 @@ describe("Domains service", () => {
                 issuerFields: [],
                 issuer: {
                     issuerType: "DID",
-                    did: [`did:${Methods.Erc1056}:volta:${rootOwner.address}`],
+                    did: [`did:${Methods.Erc1056}:${Chain.VOLTA}:${rootOwner.address}`],
                 },
                 metadata: [],
                 roleName,
