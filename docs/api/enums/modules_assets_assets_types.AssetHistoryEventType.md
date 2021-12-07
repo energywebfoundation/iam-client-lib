@@ -16,28 +16,28 @@
 
 ### ASSET\_CREATED
 
-• **ASSET\_CREATED** = `"asset-created"`
+• **ASSET\_CREATED** = `"ASSET_CREATED"`
 
 ___
 
 ### ASSET\_OFFERED
 
-• **ASSET\_OFFERED** = `"asset-offered"`
+• **ASSET\_OFFERED** = `"ASSET_OFFERED"`
 
 ___
 
 ### ASSET\_OFFER\_CANCELED
 
-• **ASSET\_OFFER\_CANCELED** = `"asset-offer-canceled"`
+• **ASSET\_OFFER\_CANCELED** = `"ASSET_OFFER_CANCELED"`
 
 ___
 
 ### ASSET\_OFFER\_REJECTED
 
-• **ASSET\_OFFER\_REJECTED** = `"asset-offer-rejected"`
+• **ASSET\_OFFER\_REJECTED** = `"ASSET_OFFER_REJECTED"`
 
 ___
 
 ### ASSET\_TRANSFERRED
 
-• **ASSET\_TRANSFERRED** = `"asset-transfered"`
+• **ASSET\_TRANSFERRED** = `"ASSET_TRANSFERRED"`
