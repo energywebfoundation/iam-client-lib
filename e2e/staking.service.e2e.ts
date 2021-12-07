@@ -105,7 +105,7 @@ describe("Staking service tests", () => {
         mockGetApplicationsByOrgNamespace.mockReturnValueOnce([]);
         await domainsService.changeOrgOwnership({
             namespace: `${orgName}.${root}`,
-            newOwner: orgOwnerDid,
+            newOwner: orgOwner.address,
         });
 
         const registrationTypes = [RegistrationTypes.OnChain];
@@ -179,7 +179,7 @@ describe("Staking service tests", () => {
         });
         await domainsService.changeOrgOwnership({
             namespace: `${orgName2}.${root}`,
-            newOwner: orgOwnerDid,
+            newOwner: orgOwner.address,
         });
 
         await signerService.connect(orgOwner, ProviderType.PrivateKey);

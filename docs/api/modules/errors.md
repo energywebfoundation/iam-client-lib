@@ -6,6 +6,7 @@
 
 - [ChangeOwnershipNotPossibleError](errors.md#changeownershipnotpossibleerror)
 - [DeletingNamespaceNotPossibleError](errors.md#deletingnamespacenotpossibleerror)
+- [ENSOwnerNotValidAddressError](errors.md#ensownernotvalidaddresserror)
 - [ENSTypeNotSupportedError](errors.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](errors.md#error_messages)
 - [MethodNotAvailableInNodeEnvError](errors.md#methodnotavailableinnodeenverror)
@@ -21,6 +22,12 @@ ___
 ### DeletingNamespaceNotPossibleError
 
 Re-exports: [DeletingNamespaceNotPossibleError](../classes/errors_DeletingNamespaceNotPossibleError.DeletingNamespaceNotPossibleError.md)
+
+___
+
+### ENSOwnerNotValidAddressError
+
+Re-exports: [ENSOwnerNotValidAddressError](../classes/errors_ENSOwnerNotValidAddressError.ENSOwnerNotValidAddressError.md)
 
 ___
 

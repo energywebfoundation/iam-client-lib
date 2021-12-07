@@ -6,6 +6,7 @@ import {
     initWithPrivateKeySigner,
     MessagingService,
     NamespaceType,
+    ENSOwnerNotValidAddressError,
     RegistrationTypes,
     SignerService,
     StakingService,
@@ -127,6 +128,55 @@ describe("Domains service", () => {
             const actualTypes = (await domainsService.registrationTypesOfRoles([roleDomain]))[roleDomain];
             const expectedTypes = new Set([RegistrationTypes.OffChain, RegistrationTypes.OnChain]);
             expect(actualTypes).toEqual(expectedTypes);
+        });
+    });
+
+    /**
+     * EWC/Volta ENS domains can currently only be owned by EWC/Volta (i.e. EVM) addresses.
+     * The ENS contract does not support DID ownership.
+     * See the following for background discussion
+     * - https://energyweb.atlassian.net/browse/SWTCH-790?focusedCommentId=15216
+     * - https://energyweb.atlassian.net/browse/SWTCH-1050
+     * TODO: These tests should probably be unit tests, not e2e,
+     */
+    describe("owner param validation", () => {
+        test("getENSTypesByOwner should throw if owner is not an address", () => {
+            expect(() =>
+                domainsService.getENSTypesByOwner({
+                    type: NamespaceType.Organization,
+                    owner: `did:ethr:volta:${rootOwner.address}`,
+                }),
+            ).toThrow(ENSOwnerNotValidAddressError);
+        });
+
+        test("changeRoleOwnership should throw if newOwner is not an address", async () => {
+            const did = `did:ethr:volta:${rootOwner.address}`;
+            await expect(
+                domainsService.changeRoleOwnership({
+                    namespace: "somerole.roles.energyweb.iam.ewc",
+                    newOwner: did,
+                }),
+            ).rejects.toEqual(new ENSOwnerNotValidAddressError(did));
+        });
+
+        test("changeAppOwnership should throw if newOwner is not an address", async () => {
+            const did = `did:ethr:volta:${rootOwner.address}`;
+            await expect(
+                domainsService.changeAppOwnership({
+                    namespace: "someapp.app.energyweb.iam.ewc",
+                    newOwner: did,
+                }),
+            ).rejects.toEqual(new ENSOwnerNotValidAddressError(did));
+        });
+
+        test("changeOrgOwnership should throw if newOwner is not an address", async () => {
+            const did = `did:ethr:volta:${rootOwner.address}`;
+            await expect(
+                domainsService.changeOrgOwnership({
+                    namespace: "energyweb.iam.ewc",
+                    newOwner: did,
+                }),
+            ).rejects.toEqual(new ENSOwnerNotValidAddressError(did));
         });
     });
 });

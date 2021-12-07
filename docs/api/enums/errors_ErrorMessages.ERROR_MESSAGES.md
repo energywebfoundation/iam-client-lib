@@ -9,6 +9,7 @@
 - [APP\_WITH\_ROLES](errors_ErrorMessages.ERROR_MESSAGES.md#app_with_roles)
 - [CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT](errors_ErrorMessages.ERROR_MESSAGES.md#can_not_update_not_controlled_document)
 - [CLAIM\_WAS\_NOT\_ISSUED](errors_ErrorMessages.ERROR_MESSAGES.md#claim_was_not_issued)
+- [ENS\_OWNER\_NOT\_VALID\_ADDRESS](errors_ErrorMessages.ERROR_MESSAGES.md#ens_owner_not_valid_address)
 - [ENS\_TYPE\_NOT\_SUPPORTED](errors_ErrorMessages.ERROR_MESSAGES.md#ens_type_not_supported)
 - [ERROR\_IN\_AZURE\_PROVIDER](errors_ErrorMessages.ERROR_MESSAGES.md#error_in_azure_provider)
 - [INSUFFICIENT\_BALANCE](errors_ErrorMessages.ERROR_MESSAGES.md#insufficient_balance)
@@ -44,6 +45,12 @@ ___
 ### CLAIM\_WAS\_NOT\_ISSUED
 
 • **CLAIM\_WAS\_NOT\_ISSUED** = `"Claim was not issued"`
+
+___
+
+### ENS\_OWNER\_NOT\_VALID\_ADDRESS
+
+• **ENS\_OWNER\_NOT\_VALID\_ADDRESS** = `"Provided owner is not a valid address. Owner of ENS domain must be an address"`
 
 ___
 

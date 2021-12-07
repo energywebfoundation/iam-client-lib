@@ -25,6 +25,7 @@
 - [DeletingNamespaceNotPossibleError](index.md#deletingnamespacenotpossibleerror)
 - [DidRegistry](index.md#didregistry)
 - [DomainsService](index.md#domainsservice)
+- [ENSOwnerNotValidAddressError](index.md#ensownernotvalidaddresserror)
 - [ENSTypeNotSupportedError](index.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](index.md#error_messages)
 - [EkcSigner](index.md#ekcsigner)
@@ -225,6 +226,12 @@ ___
 ### DomainsService
 
 Re-exports: [DomainsService](../classes/modules_domains_domains_service.DomainsService.md)
+
+___
+
+### ENSOwnerNotValidAddressError
+
+Re-exports: [ENSOwnerNotValidAddressError](../classes/errors_ENSOwnerNotValidAddressError.ENSOwnerNotValidAddressError.md)
 
 ___
 
