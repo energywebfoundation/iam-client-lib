@@ -1,3 +1,11 @@
+# [4.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.1...v4.0.0-alpha.2) (2021-12-07)
+
+
+### Bug Fixes
+
+* **assets:** rollback asset event type to uppercase ([52359cd](https://github.com/energywebfoundation/iam-client-lib/commit/52359cd01bce95ae778b8ddf345e66880070e839))
+* **assets:** rollback asset event type to uppercase ([4b1b314](https://github.com/energywebfoundation/iam-client-lib/commit/4b1b3144c39c0e7c70a0bf7ee399ee26dd71081b))
+
 # [4.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v3.3.0-alpha.31...v4.0.0-alpha.1) (2021-12-06)
 
 
