@@ -1,3 +1,10 @@
+# [4.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.2...v4.0.0-alpha.3) (2021-12-07)
+
+
+### Bug Fixes
+
+* **domains.service:** remove addressOf from owner param ([2458507](https://github.com/energywebfoundation/iam-client-lib/commit/24585076952e7f2e366e62802011d252be41c4fe))
+
 # [4.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.1...v4.0.0-alpha.2) (2021-12-07)
 
 
