@@ -9,7 +9,6 @@ import {
     ResolverContractType,
     DomainHierarchy,
 } from "@energyweb/iam-contracts";
-import { addressOf } from "@ew-did-registry/did-ethr-resolver";
 import { ENSRegistry } from "../../../ethers/ENSRegistry";
 import { ENSRegistry__factory } from "../../../ethers/factories/ENSRegistry__factory";
 import { chainConfigs } from "../../config/chain.config";
@@ -17,6 +16,7 @@ import {
     ChangeOwnershipNotPossibleError,
     DeletingNamespaceNotPossibleError,
     ENSTypeNotSupportedError,
+    ENSOwnerNotValidAddressError,
     ERROR_MESSAGES,
 } from "../../errors";
 import { emptyAddress } from "../../utils/constants";
@@ -26,6 +26,7 @@ import { RegistrationTypes } from "../claims/claims.types";
 import { SignerService } from "../signer/signer.service";
 import { NamespaceType, IOrganization } from "./domains.types";
 import { SearchType } from "../cacheClient/cacheClient.types";
+import { validateAddress } from "../../utils/address";
 
 const { namehash } = utils;
 
@@ -305,8 +306,8 @@ export class DomainsService {
      * changeOrgOwnership
      *
      * @description change owner ship of org subdomain and all org owned roles subdomains
+     * @param params.newOwner address of new owner
      * @returns return array of steps needed to change ownership
-     *
      */
     async changeOrgOwnership({
         namespace,
@@ -317,7 +318,7 @@ export class DomainsService {
         newOwner: string;
         returnSteps?: boolean;
     }) {
-        newOwner = addressOf(newOwner);
+        DomainsService.validateOwnerAddress(newOwner);
         const orgNamespaces = [
             `${NamespaceType.Role}.${namespace}`,
             `${NamespaceType.Application}.${namespace}`,
@@ -373,6 +374,7 @@ export class DomainsService {
      * changeAppOwnership
      *
      * @description change owner ship of app subdomain and all app owned subdomains
+     * @param params.newOwner address of new owner
      * @returns return array of steps needed to change ownership
      *
      */
@@ -385,7 +387,7 @@ export class DomainsService {
         newOwner: string;
         returnSteps?: boolean;
     }) {
-        newOwner = addressOf(newOwner);
+        DomainsService.validateOwnerAddress(newOwner);
         const appNamespaces = [`${NamespaceType.Role}.${namespace}`, namespace];
 
         const { alreadyFinished, changeOwnerNamespaces, notOwnedNamespaces } = await this.validateChangeOwnership({
@@ -429,10 +431,11 @@ export class DomainsService {
      * changeRoleOwnership
      *
      * @description change ownership of role subdomain
+     * @param params.newOwner address of new owner
      *
      */
     async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
-        newOwner = addressOf(newOwner);
+        DomainsService.validateOwnerAddress(newOwner);
         const notOwnedNamespaces = await this.validateOwnership({
             namespace,
             type: NamespaceType.Role,
@@ -641,6 +644,7 @@ export class DomainsService {
 
     /**
      * getENSTypesByOwner
+     * @param params.owner address of owner
      */
     getENSTypesByOwner({
         type,
@@ -651,7 +655,7 @@ export class DomainsService {
         owner: string;
         withRelations?: boolean;
     }) {
-        owner = addressOf(owner);
+        DomainsService.validateOwnerAddress(owner);
         if (type === NamespaceType.Organization) {
             return this._cacheClient.getOrganizationsByOwner(owner, withRelations);
         }
@@ -1013,5 +1017,17 @@ export class DomainsService {
                 };
             }),
         );
+    }
+
+    /**
+     * Checks that a provided owner/newOwner address is a valid ethereum address
+     * @param owner owner address to validate
+     */
+    private static validateOwnerAddress(owner: string) {
+        try {
+            validateAddress(owner);
+        } catch {
+            throw new ENSOwnerNotValidAddressError(owner);
+        }
     }
 }

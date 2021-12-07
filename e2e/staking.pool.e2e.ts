@@ -112,7 +112,7 @@ describe("StakingPool tests", () => {
         mockGetApplicationsByOrgNamespace.mockReturnValueOnce([]);
         await domainsService.changeOrgOwnership({
             namespace: `${orgName}.${root}`,
-            newOwner: orgOwnerDid,
+            newOwner: orgOwner.address,
         });
 
         const registrationTypes = [RegistrationTypes.OnChain];

@@ -19,4 +19,5 @@ export enum ERROR_MESSAGES {
     ERROR_IN_AZURE_PROVIDER = "Error in Azure Provider",
     JWT_ALGORITHM_NOT_SUPPORTED = "Jwt algorithm not supported",
     CLAIM_WAS_NOT_ISSUED = "Claim was not issued",
+    ENS_OWNER_NOT_VALID_ADDRESS = "Provided owner is not a valid address. Owner of ENS domain must be an address",
 }
