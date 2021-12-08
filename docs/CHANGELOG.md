@@ -1,3 +1,10 @@
+# [4.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.3...v4.0.0-alpha.4) (2021-12-08)
+
+
+### Features
+
+* add method for getting ratio from staking pool. ([3daf9c0](https://github.com/energywebfoundation/iam-client-lib/commit/3daf9c03a4bc19cfb3bcb53926ccad61fa62be68))
+
 # [4.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.2...v4.0.0-alpha.3) (2021-12-07)
 
 
