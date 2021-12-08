@@ -65,7 +65,7 @@ jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
     };
 });
 
-describe("StakingPool tests", () => {
+xdescribe("StakingPool tests", () => {
     let stakingService: StakingService;
     let domainsService: DomainsService;
     let signerService: SignerService;

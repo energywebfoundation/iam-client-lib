@@ -9,7 +9,7 @@ import {
     ProviderType,
     SignerService,
 } from "./modules/signer";
-import { StakingFactoryService, StakingService } from "./modules/staking";
+import { StakingFactoryService } from "./modules/staking";
 import { DidRegistry } from "./modules/didRegistry";
 import { MessagingService } from "./modules/messaging";
 import { CacheClient } from "./modules/cacheClient";
@@ -53,7 +53,7 @@ export async function init(signerService: SignerService) {
         await cacheClient.init();
         await cacheClient.login();
         const domainsService = await DomainsService.create(signerService, cacheClient);
-        const stakingService = await StakingService.create(signerService, domainsService);
+        // const stakingService = await StakingService.create(signerService, domainsService);
         const stakingPoolService = await StakingFactoryService.create(signerService, domainsService);
         const assetsService = await AssetsService.create(signerService, cacheClient);
 
@@ -64,7 +64,7 @@ export async function init(signerService: SignerService) {
             const claimsService = await ClaimsService.create(signerService, domainsService, cacheClient, didRegistry);
             return { didRegistry, claimsService };
         }
-        return { cacheClient, domainsService, stakingService, assetsService, connectToDidRegistry, stakingPoolService };
+        return { cacheClient, domainsService, assetsService, connectToDidRegistry, stakingPoolService };
     }
 
     return {
