@@ -81,6 +81,10 @@ export class StakingPoolService {
         return this.pool.connect(this.signerService.signer).totalStaked();
     }
 
+    async getRatio(): Promise<BigNumber> {
+        return this.pool.connect(this.signerService.signer).hourlyRatio();
+    }
+
     /**
      * @description
      * @param value
