@@ -3,6 +3,8 @@ import { IMessage } from "../messaging/messaging.types";
 
 export interface IClaimRequest extends IMessage {
     token: string;
+    claimType: string;
+    claimTypeVersion: string;
     registrationTypes: RegistrationTypes[];
     subjectAgreement?: string;
 }

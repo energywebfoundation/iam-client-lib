@@ -169,6 +169,8 @@ export class ClaimsService {
             claimIssuer: issuer,
             requester: this._signerService.did,
             registrationTypes,
+            claimType: role,
+            claimTypeVersion: version.toString(),
         };
 
         if (registrationTypes.includes(RegistrationTypes.OnChain)) {

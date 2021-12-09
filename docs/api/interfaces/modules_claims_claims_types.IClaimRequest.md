@@ -13,6 +13,8 @@
 ### Properties
 
 - [claimIssuer](modules_claims_claims_types.IClaimRequest.md#claimissuer)
+- [claimType](modules_claims_claims_types.IClaimRequest.md#claimtype)
+- [claimTypeVersion](modules_claims_claims_types.IClaimRequest.md#claimtypeversion)
 - [id](modules_claims_claims_types.IClaimRequest.md#id)
 - [registrationTypes](modules_claims_claims_types.IClaimRequest.md#registrationtypes)
 - [requester](modules_claims_claims_types.IClaimRequest.md#requester)
@@ -28,6 +30,18 @@
 #### Inherited from
 
 [IMessage](modules_messaging_messaging_types.IMessage.md).[claimIssuer](modules_messaging_messaging_types.IMessage.md#claimissuer)
+
+___
+
+### claimType
+
+• **claimType**: `string`
+
+___
+
+### claimTypeVersion
+
+• **claimTypeVersion**: `string`
 
 ___
 
