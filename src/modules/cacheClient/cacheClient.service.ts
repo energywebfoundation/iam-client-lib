@@ -56,21 +56,20 @@ export class CacheClient implements ICacheClient {
             }
             if (await this.isAuthenticated()) {
                 this.refresh_token = refreshToken;
-                return;
             }
-        } catch {}
-
-        const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
-        const {
-            data: { refreshToken, token },
-        } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
-            identityToken: pubKeyAndIdentityToken.identityToken,
-        });
-        if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        } catch {
+            const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
+            const {
+                data: { refreshToken, token },
+            } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
+                identityToken: pubKeyAndIdentityToken.identityToken,
+            });
+            if (!this.isBrowser) {
+                this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            }
+            this.refresh_token = refreshToken;
+            this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
         }
-        this.refresh_token = refreshToken;
-        this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
 
         this.failedRequests = this.failedRequests.filter((callback) => callback());
     }
