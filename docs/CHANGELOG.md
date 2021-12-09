@@ -1,3 +1,10 @@
+# [4.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.5...v4.0.0-alpha.6) (2021-12-09)
+
+
+### Bug Fixes
+
+* **claims:** enrich claim request with type and version ([a633530](https://github.com/energywebfoundation/iam-client-lib/commit/a63353051d4afe51ff27bf1a5a38f468b4ffe1cf))
+
 # [4.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.4...v4.0.0-alpha.5) (2021-12-09)
 
 
