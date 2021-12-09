@@ -1,3 +1,10 @@
+# [4.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.4...v4.0.0-alpha.5) (2021-12-09)
+
+
+### Bug Fixes
+
+* resume failed requests ([f53a5d9](https://github.com/energywebfoundation/iam-client-lib/commit/f53a5d972963b801e334a862f5a80bc4abb46d9b))
+
 # [4.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.3...v4.0.0-alpha.4) (2021-12-08)
 
 
