@@ -30,15 +30,11 @@ export class MessagingService {
             this._natsEnvironmentName = natsEnvironmentName;
             this._jsonCodec = JSONCodec();
             try {
-                let protocol = "ws";
-                if (natsServerUrl.indexOf("https://") === 0) {
-                    protocol = "wss";
-                }
                 const timeout = 3000;
                 // this race condition duplicate timeout is there because unable to catch the error that occurs when NATS.ws timeouts
                 const connection = await Promise.race<NatsConnection | undefined>([
                     connect({
-                        servers: `${protocol}://${natsServerUrl}`,
+                        servers: natsServerUrl.replace("http", "ws"),
                         timeout,
                         pingInterval: 50 * 1000,
                     }),
