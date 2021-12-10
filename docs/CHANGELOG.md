@@ -1,3 +1,10 @@
+# [4.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.7...v4.0.0-alpha.8) (2021-12-10)
+
+
+### Bug Fixes
+
+* **claim:** register with issuer ([6ad22df](https://github.com/energywebfoundation/iam-client-lib/commit/6ad22df243995f3d6410ab40cf1ab4599a1cf3c4))
+
 # [4.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.6...v4.0.0-alpha.7) (2021-12-10)
 
 
