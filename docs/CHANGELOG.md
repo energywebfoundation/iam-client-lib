@@ -1,3 +1,10 @@
+# [4.0.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.8...v4.0.0-alpha.9) (2021-12-10)
+
+
+### Bug Fixes
+
+* **nats:** changed subject mask to ensure all events for did are captured ([3959f54](https://github.com/energywebfoundation/iam-client-lib/commit/3959f54707fde3dc5177600eaf398014bda9eeee))
+
 # [4.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.7...v4.0.0-alpha.8) (2021-12-10)
 
 
