@@ -1,7 +1,7 @@
 import { Wallet, providers } from "ethers";
 import { AxiosError } from "axios";
 import { KeyType } from "@ew-did-registry/keys";
-import { JWT, JwtPayload } from "@ew-did-registry/jwt";
+import { JWT } from "@ew-did-registry/jwt";
 import { ProxyOperator } from "@ew-did-registry/proxyidentity";
 import { addressOf, EwSigner, Operator } from "@ew-did-registry/did-ethr-resolver";
 import {
@@ -15,7 +15,7 @@ import {
 import { DIDDocumentFull, IDIDDocumentFull } from "@ew-did-registry/did-document";
 import { DidStore } from "@ew-did-registry/did-ipfs-store";
 import { Methods } from "@ew-did-registry/did";
-import { ClaimsIssuer, ClaimsUser, IPublicClaim } from "@ew-did-registry/claims";
+import { ClaimsIssuer, ClaimsUser, IPublicClaim, ProofVerifier } from "@ew-did-registry/claims";
 import { SignerService } from "../signer/signer.service";
 import { ERROR_MESSAGES } from "../../errors";
 import { CacheClient } from "../cacheClient/cacheClient.service";
@@ -141,12 +141,9 @@ export class DidRegistry {
      *
      */
     async verifyPublicClaim(token: string, iss: string) {
-        const { sub } = this._jwt.decode(token) as Required<JwtPayload>;
-        const [holderDoc, issuerDoc] = await Promise.all([
-            this._cacheClient.getDidDocument(sub, true),
-            this._cacheClient.getDidDocument(iss, true),
-        ]);
-        return this._userClaims.verify(token, { holderDoc, issuerDoc });
+        const issuerDoc = await this._cacheClient.getDidDocument(iss, true);
+        const verifier = new ProofVerifier(issuerDoc);
+        return verifier.verifyAssertionProof(token);
     }
 
     /**

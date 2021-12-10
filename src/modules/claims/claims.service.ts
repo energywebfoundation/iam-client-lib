@@ -367,7 +367,7 @@ export class ClaimsService {
             sub = this._signerService.did;
         }
 
-        if (!(await this._didRegistry.verifyPublicClaim(token, iss))) {
+        if ((await this._didRegistry.verifyPublicClaim(token, iss)) !== iss) {
             throw new Error("Incorrect signature");
         }
 
