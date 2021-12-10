@@ -1,3 +1,11 @@
+# [4.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.6...v4.0.0-alpha.7) (2021-12-10)
+
+
+### Bug Fixes
+
+* **nats:** fix http to ws replacement ([17de265](https://github.com/energywebfoundation/iam-client-lib/commit/17de2654d3f8d3918394329588e3ad824813fc3b))
+* **nats:** fix http to ws replacement ([af16531](https://github.com/energywebfoundation/iam-client-lib/commit/af16531e1afb7d39c49628341ea83c8c5830f01c))
+
 # [4.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.5...v4.0.0-alpha.6) (2021-12-09)
 
 
