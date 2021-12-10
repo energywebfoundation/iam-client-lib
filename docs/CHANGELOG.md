@@ -1,3 +1,10 @@
+# [4.0.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.9...v4.0.0-alpha.10) (2021-12-10)
+
+
+### Bug Fixes
+
+* **cacheClient:** trigging release of previous commit ([c1445f6](https://github.com/energywebfoundation/iam-client-lib/commit/c1445f65f23f3d1dc5587c21d5409ec66c9cef60))
+
 # [4.0.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.8...v4.0.0-alpha.9) (2021-12-10)
 
 
