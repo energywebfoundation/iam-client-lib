@@ -395,7 +395,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `claim` | `Pick`<[`Claim`](../interfaces/modules_claims_claims_types.Claim.md), ``"token"`` \| ``"subjectAgreement"`` \| ``"onChainProof"``\> |
+| `claim` | `Pick`<[`Claim`](../interfaces/modules_claims_claims_types.Claim.md), ``"token"`` \| ``"subjectAgreement"`` \| ``"onChainProof"`` \| ``"acceptedBy"``\> |
 
 #### Returns
 

@@ -50,7 +50,7 @@ export class MessagingService {
     }
 
     async subscribeTo({
-        subject = `<.${this._signerService.did}.${this._natsEnvironmentName}`,
+        subject = `*.*.${this._signerService.did}.${this._natsEnvironmentName}`,
         messageHandler,
     }: {
         subject?: string;
