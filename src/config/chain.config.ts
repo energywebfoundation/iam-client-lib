@@ -12,7 +12,7 @@ import {
 import { VOLTA_CHAIN_ID } from "../utils/constants";
 
 export interface ChainConfig {
-    chainName: string;
+    chainName: Chain;
     chainDisplayName: string;
     rpcUrl: string;
     ensRegistryAddress: string;
