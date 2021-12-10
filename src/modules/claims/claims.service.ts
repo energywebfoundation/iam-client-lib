@@ -235,7 +235,12 @@ export class ClaimsService {
             const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
             message.onChainProof = onChainProof;
             if (publishOnChain) {
-                await this.registerOnchain({ token, subjectAgreement, onChainProof });
+                await this.registerOnchain({
+                    token,
+                    subjectAgreement,
+                    onChainProof,
+                    acceptedBy: this._signerService.did,
+                });
             }
         }
 
@@ -247,11 +252,11 @@ export class ClaimsService {
      *
      * @param claimId - id of signed onchain claim
      */
-    async registerOnchain(claim: Pick<Claim, "token" | "subjectAgreement" | "onChainProof">) {
+    async registerOnchain(claim: Pick<Claim, "token" | "subjectAgreement" | "onChainProof" | "acceptedBy">) {
         if (!readyToBeRegisteredOnchain(claim)) {
             throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
         }
-        const { token, subjectAgreement, onChainProof } = claim;
+        const { token, subjectAgreement, onChainProof, acceptedBy } = claim;
         const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
             claimData: { claimType: string; claimTypeVersion: number };
             sub: string;
@@ -263,7 +268,7 @@ export class ClaimsService {
             namehash(role),
             version,
             expiry,
-            addressOf(this._signerService.did),
+            addressOf(acceptedBy),
             subjectAgreement,
             onChainProof,
         ]);
