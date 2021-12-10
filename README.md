@@ -91,7 +91,7 @@ const {
 } = await connectToCacheServer()
 ```
 
-3. Connecting to DID registry. If the document does not exist yet, a transaction will have to be sent
+3. Connecting to DID registry.
 
 ```js
 const {
