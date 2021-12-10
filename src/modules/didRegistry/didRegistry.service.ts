@@ -22,7 +22,6 @@ import { CacheClient } from "../cacheClient/cacheClient.service";
 import { ClaimData } from "../didRegistry/did.types";
 import { chainConfigs } from "../../config/chain.config";
 import { AssetsService } from "../assets/assets.service";
-import { compareDID } from "../../utils/did";
 
 const { JsonRpcProvider } = providers;
 
