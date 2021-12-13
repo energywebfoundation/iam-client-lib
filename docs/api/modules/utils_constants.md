@@ -4,6 +4,11 @@
 
 ### Variables
 
+- [ENERGYWEB](utils_constants.md#energyweb)
+- [ENERGYWEB\_OWNER\_DID](utils_constants.md#energyweb_owner_did)
+- [ENERGYWEB\_ROOT](utils_constants.md#energyweb_root)
+- [EWC](utils_constants.md#ewc)
+- [IAM](utils_constants.md#iam)
 - [VOLTA\_CHAIN\_ID](utils_constants.md#volta_chain_id)
 - [defaultAzureProxyUrl](utils_constants.md#defaultazureproxyurl)
 - [defaultBridgeUrl](utils_constants.md#defaultbridgeurl)
@@ -11,6 +16,36 @@
 - [emptyAddress](utils_constants.md#emptyaddress)
 
 ## Variables
+
+### ENERGYWEB
+
+• `Const` **ENERGYWEB**: ``"energyweb"``
+
+___
+
+### ENERGYWEB\_OWNER\_DID
+
+• `Const` **ENERGYWEB\_OWNER\_DID**: ``"did:ethr:volta:0xc56e810fE6715C6c6F0818bb16DAF1fE6A0121e2"``
+
+___
+
+### ENERGYWEB\_ROOT
+
+• `Const` **ENERGYWEB\_ROOT**: ``"dmitryfesenko.iam.ewc"``
+
+___
+
+### EWC
+
+• `Const` **EWC**: ``"ewc"``
+
+___
+
+### IAM
+
+• `Const` **IAM**: ``"iam"``
+
+___
 
 ### VOLTA\_CHAIN\_ID
 

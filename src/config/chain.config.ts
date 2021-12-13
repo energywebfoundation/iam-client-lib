@@ -35,7 +35,7 @@ const chainConfig: Record<number, ChainConfig> = {
     [VOLTA_CHAIN_ID]: {
         chainName: Chain.VOLTA,
         chainDisplayName: "Energy Web Volta Testnet",
-        rpcUrl: "https://volta-rpc.energyweb.org",
+        rpcUrl: "https://volta-rpc-vkn5r5zx4ke71f9hcu0c.energyweb.org/",
         ensRegistryAddress: VOLTA_ENS_REGISTRY_ADDRESS,
         ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
         ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,

@@ -26,6 +26,7 @@ import { RegistrationTypes } from "../claims/claims.types";
 import { SignerService } from "../signer/signer.service";
 import { NamespaceType, IOrganization } from "./domains.types";
 import { SearchType } from "../cacheClient/cacheClient.types";
+import { IApp } from ".";
 import { validateAddress } from "../../utils/address";
 
 const { namehash } = utils;
@@ -313,10 +314,12 @@ export class DomainsService {
         namespace,
         newOwner,
         returnSteps = false,
+        withSubdomains = false,
     }: {
         namespace: string;
         newOwner: string;
         returnSteps?: boolean;
+        withSubdomains?: boolean;
     }) {
         DomainsService.validateOwnerAddress(newOwner);
         const orgNamespaces = [
@@ -339,7 +342,15 @@ export class DomainsService {
                   domain: `${NamespaceType.Application}.${namespace}`,
               });
         if (apps && apps.length > 0) {
-            throw new Error("You are not able to change ownership of organization with registered apps");
+            if (!withSubdomains) {
+                throw new Error("You are not able to change ownership of organization with registered apps");
+            } else {
+                for await (const app of apps) {
+                    const namespace = (<IApp>app).namespace || <string>app;
+                    console.log(`>>> transfering ${namespace} to ${newOwner}`);
+                    await this.changeAppOwnership({ namespace, newOwner, returnSteps });
+                }
+            }
         }
 
         if (alreadyFinished.length > 0) {
@@ -388,7 +399,8 @@ export class DomainsService {
         returnSteps?: boolean;
     }) {
         DomainsService.validateOwnerAddress(newOwner);
-        const appNamespaces = [`${NamespaceType.Role}.${namespace}`, namespace];
+        const roles = await this.getRolesByNamespace({ namespace, parentType: NamespaceType.Application });
+        const appNamespaces = [...roles.map((r) => r.namespace), `${NamespaceType.Role}.${namespace}`, namespace];
 
         const { alreadyFinished, changeOwnerNamespaces, notOwnedNamespaces } = await this.validateChangeOwnership({
             newOwner,
@@ -404,6 +416,7 @@ export class DomainsService {
         }
 
         const steps = changeOwnerNamespaces.map((namespace) => {
+            console.log(`>>> transfering ${namespace} to ${newOwner}`);
             const tx = this.changeDomainOwnerTx({ newOwner, namespace });
             return {
                 tx,

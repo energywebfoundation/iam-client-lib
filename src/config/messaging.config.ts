@@ -11,7 +11,7 @@ export interface MessagingConfig {
 const messagingConfig: Record<ChainId, MessagingConfig> = {
     [VOLTA_CHAIN_ID]: {
         messagingMethod: MessagingMethod.Nats,
-        natsServerUrl: "https://volta-identityevents.energyweb.org/",
+        natsServerUrl: "https://identityevents-dev.energyweb.org/",
         natsEnvironmentName: "ewf-volta",
     },
 };

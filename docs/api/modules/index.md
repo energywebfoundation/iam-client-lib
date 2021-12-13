@@ -25,11 +25,16 @@
 - [DeletingNamespaceNotPossibleError](index.md#deletingnamespacenotpossibleerror)
 - [DidRegistry](index.md#didregistry)
 - [DomainsService](index.md#domainsservice)
+- [ENERGYWEB](index.md#energyweb)
+- [ENERGYWEB\_OWNER\_DID](index.md#energyweb_owner_did)
+- [ENERGYWEB\_ROOT](index.md#energyweb_root)
 - [ENSOwnerNotValidAddressError](index.md#ensownernotvalidaddresserror)
 - [ENSTypeNotSupportedError](index.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](index.md#error_messages)
+- [EWC](index.md#ewc)
 - [EkcSigner](index.md#ekcsigner)
 - [ExecutionEnvironment](index.md#executionenvironment)
+- [IAM](index.md#iam)
 - [IApp](index.md#iapp)
 - [ICacheClient](index.md#icacheclient)
 - [IClaimIssuance](index.md#iclaimissuance)
@@ -229,6 +234,24 @@ Re-exports: [DomainsService](../classes/modules_domains_domains_service.DomainsS
 
 ___
 
+### ENERGYWEB
+
+Re-exports: [ENERGYWEB](utils_constants.md#energyweb)
+
+___
+
+### ENERGYWEB\_OWNER\_DID
+
+Re-exports: [ENERGYWEB\_OWNER\_DID](utils_constants.md#energyweb_owner_did)
+
+___
+
+### ENERGYWEB\_ROOT
+
+Re-exports: [ENERGYWEB\_ROOT](utils_constants.md#energyweb_root)
+
+___
+
 ### ENSOwnerNotValidAddressError
 
 Re-exports: [ENSOwnerNotValidAddressError](../classes/errors_ENSOwnerNotValidAddressError.ENSOwnerNotValidAddressError.md)
@@ -247,6 +270,12 @@ Re-exports: [ERROR\_MESSAGES](../enums/errors_ErrorMessages.ERROR_MESSAGES.md)
 
 ___
 
+### EWC
+
+Re-exports: [EWC](utils_constants.md#ewc)
+
+___
+
 ### EkcSigner
 
 Re-exports: [EkcSigner](../classes/modules_signer_ekcSigner.EkcSigner.md)
@@ -256,6 +285,12 @@ ___
 ### ExecutionEnvironment
 
 Re-exports: [ExecutionEnvironment](../enums/utils_detectEnvironment.ExecutionEnvironment.md)
+
+___
+
+### IAM
+
+Re-exports: [IAM](utils_constants.md#iam)
 
 ___
 
