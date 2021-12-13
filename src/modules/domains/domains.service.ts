@@ -26,7 +26,6 @@ import { RegistrationTypes } from "../claims/claims.types";
 import { SignerService } from "../signer/signer.service";
 import { NamespaceType, IOrganization } from "./domains.types";
 import { SearchType } from "../cacheClient/cacheClient.types";
-import { IApp } from ".";
 import { validateAddress } from "../../utils/address";
 
 const { namehash } = utils;
@@ -336,18 +335,13 @@ export class DomainsService {
             throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
         }
 
-        const apps = this._cacheClient
-            ? await this.getAppsOfOrg(namespace)
-            : await this.getSubdomains({
-                  domain: `${NamespaceType.Application}.${namespace}`,
-              });
+        const apps = await this.getAppsOfOrg(namespace);
+        // @todo fix /org/namespace/suborgs and transfer suborganizations
         if (apps && apps.length > 0) {
             if (!withSubdomains) {
                 throw new Error("You are not able to change ownership of organization with registered apps");
             } else {
-                for await (const app of apps) {
-                    const namespace = (<IApp>app).namespace || <string>app;
-                    console.log(`>>> transfering ${namespace} to ${newOwner}`);
+                for await (const { namespace } of apps) {
                     await this.changeAppOwnership({ namespace, newOwner, returnSteps });
                 }
             }
@@ -416,7 +410,6 @@ export class DomainsService {
         }
 
         const steps = changeOwnerNamespaces.map((namespace) => {
-            console.log(`>>> transfering ${namespace} to ${newOwner}`);
             const tx = this.changeDomainOwnerTx({ newOwner, namespace });
             return {
                 tx,
