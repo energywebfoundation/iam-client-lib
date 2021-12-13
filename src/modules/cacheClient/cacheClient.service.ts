@@ -54,23 +54,22 @@ export class CacheClient implements ICacheClient {
             if (!this.isBrowser) {
                 this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             }
-            if (await this.isAuthenticated()) {
-                this.refresh_token = refreshToken;
-                return;
-            }
-        } catch {}
+            await this.checkAuthentication();
+            this.refresh_token = refreshToken;
+        } catch {
+            const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
+            const {
+                data: { refreshToken, token },
+            } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
+                identityToken: pubKeyAndIdentityToken.identityToken,
+            });
 
-        const pubKeyAndIdentityToken = await this._signerService.publicKeyAndIdentityToken();
-        const {
-            data: { refreshToken, token },
-        } = await this.httpClient.post<{ token: string; refreshToken: string }>("/login", {
-            identityToken: pubKeyAndIdentityToken.identityToken,
-        });
-        if (!this.isBrowser) {
-            this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            if (!this.isBrowser) {
+                this.httpClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            }
+            this.refresh_token = refreshToken;
+            this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
         }
-        this.refresh_token = refreshToken;
-        this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
 
         this.failedRequests = this.failedRequests.filter((callback) => callback());
     }
@@ -108,7 +107,9 @@ export class CacheClient implements ICacheClient {
     }
 
     async login() {
-        if (!(await this.isAuthenticated())) {
+        try {
+            await this.checkAuthentication();
+        } catch {
             await this.authenticate();
         }
     }
@@ -311,12 +312,7 @@ export class CacheClient implements ICacheClient {
      *
      * @todo specific endpoint on cache server to return login info instead of error
      */
-    private async isAuthenticated(): Promise<boolean> {
-        try {
-            await this.httpClient.get<Asset[]>(`${TEST_LOGIN_ENDPOINT}${this._signerService.did}`);
-            return true;
-        } catch (_) {
-            return false;
-        }
+    private async checkAuthentication(): Promise<void> {
+        await this.httpClient.get<Asset[]>(`${TEST_LOGIN_ENDPOINT}${this._signerService.did}`);
     }
 }
