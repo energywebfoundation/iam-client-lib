@@ -4,12 +4,7 @@
 
 ### References
 
-- [ENERGYWEB](utils.md#energyweb)
-- [ENERGYWEB\_OWNER\_DID](utils.md#energyweb_owner_did)
-- [ENERGYWEB\_ROOT](utils.md#energyweb_root)
-- [EWC](utils.md#ewc)
 - [ExecutionEnvironment](utils.md#executionenvironment)
-- [IAM](utils.md#iam)
 - [VOLTA\_CHAIN\_ID](utils.md#volta_chain_id)
 - [addSupportedDID](utils.md#addsupporteddid)
 - [defaultAzureProxyUrl](utils.md#defaultazureproxyurl)
@@ -22,39 +17,9 @@
 
 ## References
 
-### ENERGYWEB
-
-Re-exports: [ENERGYWEB](utils_constants.md#energyweb)
-
-___
-
-### ENERGYWEB\_OWNER\_DID
-
-Re-exports: [ENERGYWEB\_OWNER\_DID](utils_constants.md#energyweb_owner_did)
-
-___
-
-### ENERGYWEB\_ROOT
-
-Re-exports: [ENERGYWEB\_ROOT](utils_constants.md#energyweb_root)
-
-___
-
-### EWC
-
-Re-exports: [EWC](utils_constants.md#ewc)
-
-___
-
 ### ExecutionEnvironment
 
 Re-exports: [ExecutionEnvironment](../enums/utils_detectEnvironment.ExecutionEnvironment.md)
-
-___
-
-### IAM
-
-Re-exports: [IAM](utils_constants.md#iam)
 
 ___
 
