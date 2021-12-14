@@ -26,7 +26,7 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
     await domainsService.createApplication({
         appName: stakingApp,
         namespace: `apps.${ENERGYWEB_AUTH_EWC}`,
-        data: { appName: stakingApp, websiteUrl: "https://staking-staging.energyweb.org/" },
+        data: { appName: stakingApp, websiteUrl: "http://stake-ewt.io/" },
     });
     console.log(`>>> Application ${stakingApp} is created`);
     const stakingOwnerRole = "owner";
