@@ -96,6 +96,7 @@ changeOrgOwnership
 | `__namedParameters.namespace` | `string` |
 | `__namedParameters.newOwner` | `string` |
 | `__namedParameters.returnSteps?` | `boolean` |
+| `__namedParameters.withSubdomains?` | `boolean` |
 
 #### Returns
 

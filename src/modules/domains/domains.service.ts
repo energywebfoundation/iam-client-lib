@@ -313,10 +313,12 @@ export class DomainsService {
         namespace,
         newOwner,
         returnSteps = false,
+        withSubdomains = false,
     }: {
         namespace: string;
         newOwner: string;
         returnSteps?: boolean;
+        withSubdomains?: boolean;
     }) {
         DomainsService.validateOwnerAddress(newOwner);
         const orgNamespaces = [
@@ -333,13 +335,17 @@ export class DomainsService {
             throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
         }
 
-        const apps = this._cacheClient
-            ? await this.getAppsOfOrg(namespace)
-            : await this.getSubdomains({
-                  domain: `${NamespaceType.Application}.${namespace}`,
-              });
+        const apps = await this.getAppsOfOrg(namespace);
+        // @todo fix /org/namespace/suborgs and transfer suborganizations 
+        // https://energyweb.atlassian.net/browse/ICS-135
         if (apps && apps.length > 0) {
-            throw new Error("You are not able to change ownership of organization with registered apps");
+            if (!withSubdomains) {
+                throw new Error("You are not able to change ownership of organization with registered apps");
+            } else {
+                for await (const { namespace } of apps) {
+                    await this.changeAppOwnership({ namespace, newOwner, returnSteps });
+                }
+            }
         }
 
         if (alreadyFinished.length > 0) {
@@ -388,7 +394,8 @@ export class DomainsService {
         returnSteps?: boolean;
     }) {
         DomainsService.validateOwnerAddress(newOwner);
-        const appNamespaces = [`${NamespaceType.Role}.${namespace}`, namespace];
+        const roles = await this.getRolesByNamespace({ namespace, parentType: NamespaceType.Application });
+        const appNamespaces = [...roles.map((r) => r.namespace), `${NamespaceType.Role}.${namespace}`, namespace];
 
         const { alreadyFinished, changeOwnerNamespaces, notOwnedNamespaces } = await this.validateChangeOwnership({
             newOwner,

@@ -1,9 +1,13 @@
+import { EWC_CHAIN_ID, VOLTA_CHAIN_ID } from "@energyweb/iam-contracts";
 import { CacheServerClientOptions } from "../modules/cacheClient/cacheClient.types";
-import { VOLTA_CHAIN_ID } from "../utils/constants";
 
 const cacheConfig: Record<number, CacheServerClientOptions> = {
     [VOLTA_CHAIN_ID]: {
-        url: "https://volta-identitycache.energyweb.org/v1",
+        url: "https://volta-identitycache.energyweb.org/v1/",
+        cacheServerSupportsAuth: true,
+    },
+    [EWC_CHAIN_ID]: {
+        url: "https://identitycache.energyweb.org/v1/",
         cacheServerSupportsAuth: true,
     },
 };
