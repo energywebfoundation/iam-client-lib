@@ -1,3 +1,18 @@
+# [4.0.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.10...v4.0.0-alpha.11) (2021-12-14)
+
+
+### Bug Fixes
+
+* revert config changes from dev to volta ([adafda4](https://github.com/energywebfoundation/iam-client-lib/commit/adafda4f44ebf4aa6c08f99909c1f5048693ac1c))
+
+
+### Features
+
+* **cache.config:** add EWC config ([f42ba11](https://github.com/energywebfoundation/iam-client-lib/commit/f42ba117a87b443ab65c7a42b9fbfd4c30d37db8))
+* **chain.config:** add EWC config ([6353a20](https://github.com/energywebfoundation/iam-client-lib/commit/6353a200724d919ad3ca881e1e00237059ae5e82))
+* create energyweb under authewc ([19f65bb](https://github.com/energywebfoundation/iam-client-lib/commit/19f65bb4917995729e0617479becc090402e5b58))
+* scripts to create and transfer energyweb ([b03155d](https://github.com/energywebfoundation/iam-client-lib/commit/b03155dece231109a2f184be63b198c7c7c6e1cd))
+
 # [4.0.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.9...v4.0.0-alpha.10) (2021-12-10)
 
 
