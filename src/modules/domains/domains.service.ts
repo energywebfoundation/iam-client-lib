@@ -336,7 +336,8 @@ export class DomainsService {
         }
 
         const apps = await this.getAppsOfOrg(namespace);
-        // @todo fix /org/namespace/suborgs and transfer suborganizations
+        // @todo fix /org/namespace/suborgs and transfer suborganizations 
+        // https://energyweb.atlassian.net/browse/ICS-135
         if (apps && apps.length > 0) {
             if (!withSubdomains) {
                 throw new Error("You are not able to change ownership of organization with registered apps");
