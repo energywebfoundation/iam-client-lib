@@ -19,6 +19,7 @@ export interface IClaimIssuance extends IMessage {
 
 export interface IClaimRejection extends IMessage {
     isRejected: boolean;
+    rejectionReason?: string;
 }
 
 export enum RegistrationTypes {
