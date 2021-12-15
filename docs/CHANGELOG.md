@@ -1,3 +1,10 @@
+# [4.0.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.11...v4.0.0-alpha.12) (2021-12-15)
+
+
+### Bug Fixes
+
+* disable staking pool initialization ([78c7815](https://github.com/energywebfoundation/iam-client-lib/commit/78c781512df09e5d91f575034856450fe40f6698))
+
 # [4.0.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.10...v4.0.0-alpha.11) (2021-12-14)
 
 
