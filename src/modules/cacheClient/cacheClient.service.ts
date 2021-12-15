@@ -76,7 +76,7 @@ export class CacheClient implements ICacheClient {
     }
 
     /**
-     * @description Interceptor of authentication errors. Schedules failed request and starts authentication
+     * @description Interceptor of authentication errors. Queues failed requests and starts authentication process.
      * 
      * @param error Intercepted response from failed request
      * 
