@@ -278,12 +278,21 @@ export class ClaimsService {
         });
     }
 
-    async rejectClaimRequest({ id, requesterDID }: { id: string; requesterDID: string }) {
+    async rejectClaimRequest({
+        id,
+        requesterDID,
+        rejectionReason,
+    }: {
+        id: string;
+        requesterDID: string;
+        rejectionReason?: string;
+    }) {
         const message: IClaimRejection = {
             id,
             requester: requesterDID,
             claimIssuer: [this._signerService.did],
             isRejected: true,
+            rejectionReason,
         };
 
         return this._cacheClient.rejectClaim(this._signerService.did, message);

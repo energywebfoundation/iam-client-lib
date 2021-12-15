@@ -413,6 +413,7 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.id` | `string` |
+| `__namedParameters.rejectionReason?` | `string` |
 | `__namedParameters.requesterDID` | `string` |
 
 #### Returns
