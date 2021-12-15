@@ -1,5 +1,5 @@
-import { utils, BigNumber, providers } from "ethers";
-import { StakingPoolFactory, StakingPool as StakingPoolContract } from "../../../ethers";
+import { BigNumber, providers, utils } from "ethers";
+import { StakingPool as StakingPoolContract, StakingPoolFactory } from "../../../ethers";
 import { StakingPoolFactory__factory } from "../../../ethers/factories/StakingPoolFactory__factory";
 import { StakingPool__factory } from "../../../ethers/factories/StakingPool__factory";
 import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
@@ -56,6 +56,7 @@ export class StakingService {
     async init() {
         const chainId = this._signerService.chainId;
         this._stakingPoolFactoryAddress = chainConfigs()[chainId].stakingPoolFactoryAddress;
+
         this._stakingPoolFactory = new StakingPoolFactory__factory(
             StakingPoolFactory__factory.createInterface(),
             StakingPoolFactory__factory.bytecode,

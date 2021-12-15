@@ -17,6 +17,7 @@ import { DomainsService } from "./modules/domains";
 import { AssetsService } from "./modules/assets";
 import { ClaimsService } from "./modules/claims";
 import { defaultAzureProxyUrl, defaultBridgeUrl, defaultKmsServerUrl } from "./utils";
+import { chainConfigs } from "./config";
 
 export async function initWithPrivateKeySigner(privateKey: string, rpcUrl: string) {
     const signerService = await fromPrivateKey(privateKey, rpcUrl);
@@ -49,12 +50,24 @@ export async function init(signerService: SignerService) {
     const messagingService = await MessagingService.create(signerService);
 
     async function connectToCacheServer() {
+        const chainId = signerService.chainId;
+        const stakingPoolFactoryAddress = chainConfigs()[chainId].stakingPoolFactoryAddress;
+
         const cacheClient = new CacheClient(signerService);
         await cacheClient.init();
         await cacheClient.login();
         const domainsService = await DomainsService.create(signerService, cacheClient);
-        const stakingService = await StakingService.create(signerService, domainsService);
-        const stakingPoolService = await StakingFactoryService.create(signerService, domainsService);
+
+        const stakingAddressProvided = stakingPoolFactoryAddress && stakingPoolFactoryAddress.length;
+
+        const stakingService = stakingAddressProvided
+            ? await StakingService.create(signerService, domainsService)
+            : null;
+
+        const stakingPoolService = stakingAddressProvided
+            ? await StakingFactoryService.create(signerService, domainsService)
+            : null;
+
         const assetsService = await AssetsService.create(signerService, cacheClient);
 
         async function connectToDidRegistry(
