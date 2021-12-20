@@ -119,7 +119,7 @@ describe("StakingPool tests", () => {
         await signerService.connect(patron, ProviderType.PrivateKey);
         mockGetRoleDefinition.mockReturnValueOnce(data);
         await claimsService.createClaimRequest({
-            claim: { claimType: `${patronRole}.${root}`, claimTypeVersion: 1, fields: [] },
+            claim: { claimType: `${patronRole}.${root}`, claimTypeVersion: 1, requestorFields: [] },
             registrationTypes,
         });
 

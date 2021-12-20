@@ -153,7 +153,7 @@ describe("Enrollment claim tests", () => {
         await signerService.connect(requestSigner, ProviderType.PrivateKey);
         const requesterDID = signerService.did;
         await claimsService.createClaimRequest({
-            claim: { claimType, claimTypeVersion: version, fields: [{ key: "temperature", value: 36 }] },
+            claim: { claimType, claimTypeVersion: version, requestorFields: [{ key: "temperature", value: 36 }] },
             registrationTypes,
             subject: subjectDID,
         });
@@ -318,7 +318,7 @@ describe("Enrollment claim tests", () => {
 
         const registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain];
         await claimsService.createClaimRequest({
-            claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: 1, fields: [] },
+            claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: 1, requestorFields: [] },
             registrationTypes,
         });
         const [, message] = mockRequestClaim.mock.calls.pop();
