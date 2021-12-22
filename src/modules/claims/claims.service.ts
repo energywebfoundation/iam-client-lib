@@ -494,7 +494,7 @@ export class ClaimsService {
         );
         const agreement_type_hash = id("Agreement(address subject,bytes32 role,uint256 version)");
 
-        const chainId = await this._signerService.chainId;
+        const chainId = this._signerService.chainId;
         const domainSeparator = keccak256(
             defaultAbiCoder.encode(
                 ["bytes32", "bytes32", "bytes32", "uint256", "address"],

@@ -7,11 +7,13 @@ import { chainConfigs } from "../../config/chain.config";
 import { ExecutionEnvironment, executionEnvironment } from "../../utils/detectEnvironment";
 import { IPubKeyAndIdentityToken, ProviderType, ProviderEvent, AccountInfo, PUBLIC_KEY } from "./signer.types";
 import { EkcSigner } from "./ekcSigner";
+import { computeAddress } from "ethers/lib/utils";
 
-const { arrayify, keccak256, recoverPublicKey, computeAddress, computePublicKey, getAddress, hashMessage } = utils;
+const { arrayify, keccak256, recoverPublicKey, getAddress, hashMessage, verifyMessage } = utils;
 export type ServiceInitializer = () => Promise<void>;
 export class SignerService {
     private _publicKey: string;
+    private _isEthSigner = true;
     private _identityToken: string;
     private _address: string;
     private _account: string;
@@ -139,8 +141,19 @@ export class SignerService {
         return result;
     }
 
+    /**
+     * @description Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign)
+     * Signing method is determined based on previous signing
+     *
+     * @param message Message should have binary representation to avoid confusion of text with hexadecimal binary data
+     */
     async signMessage(message: Uint8Array) {
-        return this.signer.signMessage(message);
+        const messageHash = this._isEthSigner ? message : arrayify(hashMessage(message));
+        const sig = await this.signer.signMessage(messageHash);
+        if (getAddress(this._address) !== getAddress(verifyMessage(message, sig))) {
+            throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
+        }
+        return sig;
     }
 
     async connect(signer: Required<ethers.Signer>, providerType: ProviderType) {
@@ -206,25 +219,22 @@ export class SignerService {
         // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
         // keccak256 hash is applied for Metamask to display a coherent hex value when signing
         const message = arrayify(keccak256(token));
-        const sig = await this.signMessage(message);
-        const recoverValidatedPublicKey = (signedMessage: Uint8Array): string | undefined => {
-            const publicKey = recoverPublicKey(signedMessage, sig);
-            if (getAddress(address) === getAddress(computeAddress(publicKey))) {
-                return computePublicKey(publicKey, true).slice(2);
-            }
-            return undefined;
-        };
-
         // Computation of the digest in order to recover the public key under the assumption
         // that signature was performed as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
-        // In the event that the wallet isn't prefixing & hashing message as per spec, attempt recovery without digest
         const digest = arrayify(hashMessage(message));
-        const publicKey = recoverValidatedPublicKey(digest) ?? recoverValidatedPublicKey(message);
-        if (publicKey) {
-            this._publicKey = publicKey;
-            this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(sig)}`;
+        const sig = await this._signer.signMessage(message);
+        const keyFromMessage = recoverPublicKey(message, sig);
+        const keyFromDigest = recoverPublicKey(digest, sig);
+        if (getAddress(this._address) === computeAddress(keyFromMessage)) {
+            this._publicKey = keyFromMessage;
+            this._isEthSigner = false;
+        } else if (getAddress(this._address) === computeAddress(keyFromDigest)) {
+            this._publicKey = keyFromDigest;
+            this._isEthSigner = true;
         } else {
-            throw new Error(ERROR_MESSAGES.PUBLIC_KEY_NOT_RECOVERED);
+            throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
         }
+
+        this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(sig)}`;
     }
 }
