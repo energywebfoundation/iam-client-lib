@@ -141,7 +141,7 @@ export class DidRegistry {
      *
      */
     async verifyPublicClaim(token: string, iss: string) {
-        const issuerDoc = await this._cacheClient.getDidDocument(iss, true);
+        const issuerDoc = await this.getDidDocument({ did: iss, includeClaims: true });
         const verifier = new ProofVerifier(issuerDoc);
         return verifier.verifyAssertionProof(token);
     }

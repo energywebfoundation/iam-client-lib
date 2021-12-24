@@ -18,7 +18,7 @@ export function addSupportedDID(methodWithChain: string, validator: (did: string
 addSupportedDID(`${Methods.Erc1056}:${Chain.EWC}`, isValidErc1056EWC);
 addSupportedDID(`${Methods.Erc1056}:${Chain.VOLTA}`, isValidErc1056VOLTA);
 
-// matches both legacy (without chain specifier) and actual DID
+// matches both legacy (without chain specifier) and chain specific DID
 export const didPattern = "^(?:did:(?<method>[a-z0-9]+?):)((?<chain>[a-z0-9]+?):)?(?<id>0x[A-Fa-f0-9]{40})$";
 
 /**
