@@ -77,9 +77,9 @@ export class CacheClient implements ICacheClient {
 
     /**
      * @description Interceptor of authentication errors. Queues failed requests and starts authentication process.
-     * 
+     *
      * @param error Intercepted response from failed request
-     * 
+     *
      * @returns Promise, which resolves with result of resending of failed request
      */
     async handleError(error: AxiosError) {
@@ -110,7 +110,7 @@ export class CacheClient implements ICacheClient {
     }
 
     /**
-     * Verifies current session and establishes new one if needed 
+     * Verifies current session and establishes new one if needed
      * https://energyweb.atlassian.net/wiki/spaces/MYEN/pages/2303295607/ICL-+ICS+Auth+Process
      */
     async login() {
@@ -242,8 +242,8 @@ export class CacheClient implements ICacheClient {
         return data;
     }
 
-    async requestClaim(requester: string, message: IClaimRequest) {
-        await this.httpClient.post<void>(`/claim/request/${requester}`, message);
+    async requestClaim(message: IClaimRequest) {
+        await this.httpClient.post<void>("/claim/request", message);
     }
 
     async issueClaim(issuer: string, message: IClaimIssuance) {

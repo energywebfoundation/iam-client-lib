@@ -550,13 +550,12 @@ ___
 
 ### requestClaim
 
-▸ **requestClaim**(`requester`, `message`): `Promise`<`void`\>
+▸ **requestClaim**(`message`): `Promise`<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `requester` | `string` |
 | `message` | [`IClaimRequest`](modules_claims_claims_types.IClaimRequest.md) |
 
 #### Returns
