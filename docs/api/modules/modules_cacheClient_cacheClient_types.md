@@ -52,4 +52,4 @@ ___
 
 ### TEST\_LOGIN\_ENDPOINT
 
-• `Const` **TEST\_LOGIN\_ENDPOINT**: ``"/assets/owner/"``
+• `Const` **TEST\_LOGIN\_ENDPOINT**: ``"/auth/status"``

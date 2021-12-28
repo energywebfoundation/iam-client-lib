@@ -28,4 +28,4 @@ export enum SearchType {
     Role = "Role",
 }
 
-export const TEST_LOGIN_ENDPOINT = "/assets/owner/";
+export const TEST_LOGIN_ENDPOINT = "/auth/status";
