@@ -5,6 +5,7 @@ const config: Config = {
         typescript2: {
             tsconfigOverride: {
                 include: ["src", "ethers"],
+                exclude: ["e2e"],
             },
         },
     },

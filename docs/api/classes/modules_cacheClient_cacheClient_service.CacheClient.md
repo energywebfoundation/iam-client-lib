@@ -660,17 +660,19 @@ ___
 
 ▸ **handleError**(`error`): `Promise`<`unknown`\>
 
-**`description`** At the time hanldes only authentication errors. Schedules failed requests and starts authentication
+**`description`** Interceptor of authentication errors. Queues failed requests and starts authentication process.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `AxiosError`<`any`\> |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `error` | `AxiosError`<`any`\> | Intercepted response from failed request |
 
 #### Returns
 
 `Promise`<`unknown`\>
+
+Promise, which resolves with result of resending of failed request
 
 ___
 
@@ -722,6 +724,9 @@ ___
 ### login
 
 ▸ **login**(): `Promise`<`void`\>
+
+Verifies current session and establishes new one if needed
+https://energyweb.atlassian.net/wiki/spaces/MYEN/pages/2303295607/ICL-+ICS+Auth+Process
 
 #### Returns
 
