@@ -16,33 +16,39 @@ In the context of IAM Client Library, a claim is submitted by a requester to an 
 1. Take on a role within an application or organization. This is known as a [Role Claim](#role-claim). 
 2. Obtain a temporary credential used to authenticate to the cache server. This is known as an [Authentication Claim](#authentication-claim). 
 
+
+
 The issuer is responsible for verifying and issuing the claim. 
-
-
 
 ## Role Claim
 
-The most common credential type in Switchboard is the role claim. A role claim is a presentation of a credential in order to take on a role within an application or an organization. 
+The most common credential type in Switchboard is the role claim. A role claim is a presentation of a credential in order to take on a role within an application or an organization.  
+
+The subject of the claim can be the requester, or it can be an asset that the requester is requesting a claim on behalf of. 
+
+### Roles
 
 In the Claim interface, the role is defined in the claimType:
 
+```
 export interface IClaimRequest extends IMessage {
     token: string;
-    **claimType: string;**
+    claimType: string; //CLAIM TYPE
     claimTypeVersion: string;
     registrationTypes: RegistrationTypes[];
     subjectAgreement?: string;
 }
+```
 
-The claimType is a string composed of the role name and the namespace to which the role belongs to.  
+The claimType is a string composed of the **role name** and the **namespace** to which the role belongs to.  
 
-Examples: 
+Example: 
 **"email.roles.kyc.apps.OKE.iam.ewc"**
 
 Namespaced roles are persisted in the Role Repository in the [IAM Cache Server](https://energy-web-foundation.gitbook.io/energy-web/technology/the-stack/utility-layer-1#identity-access-and-management-iam-cache-server). 
 
 ### Role Claim Data Persistence
-The IAM Client library's Claim Service saves claim data to IPFS as an encoded JWT token, and links it to the user's DID Document (read more on this [below](#off-Chain-registration)).  
+The IAM Client library's Claim Service saves claim data to IPFS as an encoded JWT token, The IPFS record is linked to the user's DID document through a service endpoint (read more on this [below](#off-Chain-registration)).  
 
 Claim data is also persisted by the [IAM Cache Server](https://github.com/energywebfoundation/iam-cache-server/tree/master/src/modules/claim) in the Role Claim Repository. The IAM Client library's Claim Service methods post claim data to the Cache Server, where the data is persisted by the Cache Server's Claims Service methods. View the Cache Server's [Claim Service on GitHub](https://github.com/energywebfoundation/iam-cache-server/blob/master/src/modules/claim/claim.service.ts#L422). 
 
@@ -187,7 +193,7 @@ The registerOnChain method registers the role with the ClaimManager smart contra
 
 In the [ClaimManager contract's register method](https://github.com/energywebfoundation/iam-contracts/blob/83932a8fee56010482b50047ea5a20da37b758da/contracts/roles/ClaimManager.sol#L89), the claim data is added to the 'roles' mapping and can then be accessed and read by other smart contracts on the blockchain. 
 
-**Note** An issuer can directly issue a claim directly without a request. This is done through the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). **This method does not handle On-Chain registration**. 
+**Note:** An issuer can directly issue a claim directly without a request. This is done through the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). **This method does not handle On-Chain registration**. 
 
 ### 3. Alternatives to Claim Issuance
 
