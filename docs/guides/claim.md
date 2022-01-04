@@ -7,18 +7,18 @@
 
 At the most fundamental level, a claim is a statement about a subject. A claim is a component of a Verifiable Credential, which is the web3 standard for digital credentials in a decentralized ecosystem.  
 
-* See the W3 documentation for Claims [here](https://www.w3.org/TR/vc-data-model/#claims)
++ See the W3 documentation for Claims [here](https://www.w3.org/TR/vc-data-model/#claims)
 + See the W3 documentation for Verifiable Credentials [here](https://www.w3.org/TR/vc-data-model/)
-+ Read more about Verifiable Credentials and their role in IAM Client Library and Switchboard [here](https://app.gitbook.com/o/-MaVNTC0phnhS2JhwPF0/s/-M_pXALj14Egb-5Bal_p/foundational-concepts/self-sovereign-identity#verifiable-credentials-vcs). 
++ Read more about Verifiable Credentials and their role in IAM Client Library and Switchboard [here](https://app.gitbook.com/o/-MaVNTC0phnhS2JhwPF0/s/-M_pXALj14Egb-5Bal_p/foundational-concepts/self-sovereign-identity#verifiable-credentials-vcs) 
 
 In the context of IAM Client Library, a claim is submitted by a requester to an issuer for a subject, in order to prove that the subject has the correct credentials to either: 
 
 1. Take on a role within an application or organization. This is known as a [Role Claim](#role-claim). 
 2. Obtain a temporary credential used to authenticate to the cache server. This is known as an [Authentication Claim](#authentication-claim). 
 
-The issuer is resposible for verifying and issuing the claim. 
+The issuer is responsible for verifying and issuing the claim. 
 
-An issuer can directly issue a claim directly without a request. This is done through the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
+
 
 ## Role Claim
 
@@ -187,6 +187,8 @@ The registerOnChain method registers the role with the ClaimManager smart contra
 
 In the [ClaimManager contract's register method](https://github.com/energywebfoundation/iam-contracts/blob/83932a8fee56010482b50047ea5a20da37b758da/contracts/roles/ClaimManager.sol#L89), the claim data is added to the 'roles' mapping and can then be accessed and read by other smart contracts on the blockchain. 
 
+**Note** An issuer can directly issue a claim directly without a request. This is done through the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). **This method does not handle On-Chain registration**. 
+
 ### 3. Alternatives to Claim Issuance
 
 #### Reject Claim
@@ -218,7 +220,7 @@ The rejectClaimRequest method is used for an Issuer to reject a claim request:
 The rejection message (of type IClaimRejection) is sent to the Cache Server. [The Cache Server handles the claim rejection](https://github.com/energywebfoundation/iam-cache-server/blob/07a0053cd10ad16739cc331f043b18cc5dfc0dc4/src/modules/claim/claim.controller.ts#L172) and notifies the requester that the claim has been rejected via [NATS](https://nats.io/about/).  
 
 #### Delete Claim
-The deleteClaimRequest method is used for a requester to delete a claim request:
+The deleteClaimRequest method is used to delete a claim request:
 ```
    async deleteClaim({ id }: { id: string }) {
         await this._cacheClient.deleteClaim(id);
