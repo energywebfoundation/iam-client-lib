@@ -332,15 +332,6 @@ Additional data which issuer might need to add to enrolled claim. When `publishO
 will be immediately registered after approvement, otherwise it will be stored on cache server and will be sent to chain
 later on with `ClaimService.registerOnChain`.
 
-
-Example of authentication token:
-```
- {
-    iss: 'did:ethr:volta:0xc56e...',
-    claimData: { blockNumber: 15133056 }
-  }
-```
-
 ## Authentication Claim
 An Authentication Claim is a temporary credential used to authenticate to the IAM Cache Server. If the user is not authenticated, they must authenticate using their pulic key:
 
@@ -386,8 +377,15 @@ An Authentication Claim is a temporary credential used to authenticate to the IA
         }
     }
 ```
-[source](https://github.com/energywebfoundation/iam-client-lib/blob/f9c1a12e888de6ebb4e2589fe49c489bee84af78/src/modules/signer/signer.service.ts?_pjax=%23js-repo-pjax-container%2C%20div%5Bitemtype%3D%22http%3A%2F%2Fschema.org%2FSoftwareSourceCode%22%5D%20main%2C%20%5Bdata-pjax-container%5D#L190)
+[source](https://github.com/energywebfoundation/iam-client-lib/blob/f9c1a12e888de6ebb4e2589fe49c489bee84af78/src/modules/signer/signer.service.ts?_pjax=%23js-repo-pjax-container%2C%20div%5Bitemtype%3D%22http%3A%2F%2Fschema.org%2FSoftwareSourceCode%22%5D%20main%2C%20%5Bdata-pjax-container%5D#L190) 
 
+Example of authentication token:
+```
+ {
+    iss: 'did:ethr:volta:0xc56e...',
+    claimData: { blockNumber: 15133056 }
+  }
+```
 
 ## Claims Service Public APIs:
 
