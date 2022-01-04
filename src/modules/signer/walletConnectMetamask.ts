@@ -24,7 +24,6 @@ export const createWalletConnectProvider = (bridge: string, infuraId?: string) =
         rpc,
         connector: new Connector({ bridge, qrcodeModal: QRCodeModal }),
         infuraId,
-        chainId: 73799,
     });
     return walletConnectProvider;
 };

@@ -121,6 +121,7 @@ describe("Enrollment claim tests", () => {
         await setupENS(await rootOwner.getAddress());
         let connectToCacheServer;
         ({ signerService, connectToCacheServer } = await initWithPrivateKeySigner(rootOwner.privateKey, rpcUrl));
+        await signerService.publicKeyAndIdentityToken();
         const chainId = signerService.chainId;
         claimManager = new ClaimManager__factory(rootOwner).attach(chainConfigs()[chainId].claimManagerAddress);
         let connectToDidRegistry;

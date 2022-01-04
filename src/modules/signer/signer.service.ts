@@ -5,7 +5,14 @@ import { Methods } from "@ew-did-registry/did";
 import { ERROR_MESSAGES } from "../../errors/ErrorMessages";
 import { chainConfigs } from "../../config/chain.config";
 import { ExecutionEnvironment, executionEnvironment } from "../../utils/detectEnvironment";
-import { IPubKeyAndIdentityToken, ProviderType, ProviderEvent, AccountInfo, PUBLIC_KEY } from "./signer.types";
+import {
+    IPubKeyAndIdentityToken,
+    ProviderType,
+    ProviderEvent,
+    AccountInfo,
+    PUBLIC_KEY,
+    IS_ETH_SIGNER,
+} from "./signer.types";
 import { EkcSigner } from "./ekcSigner";
 import { computeAddress } from "ethers/lib/utils";
 
@@ -13,7 +20,7 @@ const { arrayify, keccak256, recoverPublicKey, getAddress, hashMessage, verifyMe
 export type ServiceInitializer = () => Promise<void>;
 export class SignerService {
     private _publicKey: string;
-    private _isEthSigner = true;
+    private _isEthSigner: boolean;
     private _identityToken: string;
     private _address: string;
     private _account: string;
@@ -40,6 +47,13 @@ export class SignerService {
             this._account = (await this._signer.provider.listAccounts())[0];
         } else if (this._signer instanceof Wallet) {
             this._account = this._address;
+        }
+        // browser is responsible for clearing of isEthSigner on logout
+        if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
+            const isEthSigner = localStorage.getItem(IS_ETH_SIGNER);
+            if (isEthSigner) {
+                this._isEthSigner = Boolean(isEthSigner);
+            }
         }
         /**
          * @todo provide general way to initialize with previously saved key
@@ -94,6 +108,10 @@ export class SignerService {
         return this._signer;
     }
 
+    get isEthSigner () {
+        return this._isEthSigner;
+    }
+
     get address() {
         return this._address;
     }
@@ -143,11 +161,15 @@ export class SignerService {
 
     /**
      * @description Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign)
-     * Whether or not to hash the message prior to signature is determined by signature performed during login
+     * Whether or not to hash the message prior to signature is determined by signature performed during login.
+     * When running in browser `isEthSigner` variable should be stored in local storage
      *
      * @param message The message to be signed. The message should have binary representation to avoid confusion of text with hexadecimal binary data
      */
     async signMessage(message: Uint8Array) {
+        if (this._isEthSigner === undefined) {
+            throw new Error(ERROR_MESSAGES.IS_ETH_SIGNER_NOT_SET);
+        }
         const messageHash = this._isEthSigner ? message : arrayify(hashMessage(message));
         const sig = await this.signer.signMessage(messageHash);
         if (getAddress(this._address) !== getAddress(verifyMessage(message, sig))) {

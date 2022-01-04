@@ -20,4 +20,5 @@ export enum ERROR_MESSAGES {
     JWT_ALGORITHM_NOT_SUPPORTED = "Jwt algorithm not supported",
     CLAIM_WAS_NOT_ISSUED = "Claim was not issued",
     ENS_OWNER_NOT_VALID_ADDRESS = "Provided owner is not a valid address. Owner of ENS domain must be an address",
+    IS_ETH_SIGNER_NOT_SET = "Can not determine if signer is conformant with eth_sign specification",
 }
