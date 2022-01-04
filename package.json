@@ -94,7 +94,7 @@
     },
     "devDependencies": {
         "@babel/core": "7.12.10",
-        "@babel/plugin-transform-regenerator": "7.12.1",
+        "@babel/plugin-transform-regenerator": "7.16.7",
         "@babel/preset-env": "7.12.11",
         "@energyweb/km-crypto": "file:energyweb-km-crypto-v1.0.0.tgz",
         "@energyweb/km-utils": "file:energyweb-km-utils-v1.0.0.tgz",
