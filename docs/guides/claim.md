@@ -16,8 +16,6 @@ In the context of IAM Client Library, a claim is submitted by a requester to an 
 1. Take on a role within an application or organization. This is known as a [Role Claim](#role-claim). 
 2. Obtain a temporary credential used to authenticate to the cache server. This is known as an [Authentication Claim](#authentication-claim). 
 
-
-
 The issuer is responsible for verifying and issuing the claim. 
 
 ## Role Claim
@@ -48,8 +46,11 @@ Example:
 Namespaced roles are persisted in the Role Repository in the [IAM Cache Server](https://energy-web-foundation.gitbook.io/energy-web/technology/the-stack/utility-layer-1#identity-access-and-management-iam-cache-server). 
 
 ### Role Claim Data Persistence
-The IAM Client library's Claim Service saves claim data to IPFS as an encoded JWT token, The IPFS record is linked to the user's DID document through a service endpoint (read more on this [below](#off-Chain-registration)).  
 
+#### Blockchain
+Depending on if the requester wants to register the claim On-Chain and/or Off-Chain, The IAM Client library's Claim Service saves claim data either to [IPFS](https://ipfs.io) as an encoded JWT token, or in the ClaimManager smart contract's registry. This is discussed [below](#off-chain-registration).  
+
+#### Repository
 Claim data is also persisted by the [IAM Cache Server](https://github.com/energywebfoundation/iam-cache-server/tree/master/src/modules/claim) in the Role Claim Repository. The IAM Client library's Claim Service methods post claim data to the Cache Server, where the data is persisted by the Cache Server's Claims Service methods. View the Cache Server's [Claim Service on GitHub](https://github.com/energywebfoundation/iam-cache-server/blob/master/src/modules/claim/claim.service.ts#L422). 
 
 ### 1. Requesting Claims
@@ -88,8 +89,9 @@ The IAM cache server then:
 See the Cache Server request handler [here](https://github.com/energywebfoundation/iam-cache-server/blob/07a0053cd10ad16739cc331f043b18cc5dfc0dc4/src/modules/claim/claim.controller.ts#L112). 
 
 ### 2. Issuing Claims
-If the subject's enrolment request is valid, the Issuer can approve and issue a Claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
+If the subject's enrolment request is valid, the Issuer can approve and issue the claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
 
+#### Registering Claims on the Blockchain
 The claim request has an array of [RegistrationTypes]((../api/interfaces/modules_claims_claims_types.Claim.md#registrationtypes)). A claim can be registered:  
 
 1. On-Chain only
@@ -140,7 +142,7 @@ async publishPublicClaim({ token }: { token: string }) {
 **Note:** While this data is public on the blockchain, it is not accessible to any external smart contracts. 
 
 #### On-Chain Registration
-If a claim request has On-Chain registration, the claim is registered using the ClaimManager smart contract. You can view the ClaimManager smart contract on GitHub [here](https://github.com/energywebfoundation/iam-contracts/blob/master/contracts/roles/ClaimManager.sol). 
+If a claim request has On-Chain registration, the claim is persisted in the ClaimManager smart contract's registory. You can view the ClaimManager smart contract on GitHub [here](https://github.com/energywebfoundation/iam-contracts/blob/master/contracts/roles/ClaimManager.sol). 
 
 ```
 if (registrationTypes.includes(RegistrationTypes.OnChain)) {
@@ -160,7 +162,7 @@ if (registrationTypes.includes(RegistrationTypes.OnChain)) {
 ```
 [source](https://github.com/energywebfoundation/iam-client-lib/blob/f9c1a12e888de6ebb4e2589fe49c489bee84af78/src/modules/claims/claims.service.ts?_pjax=%23js-repo-pjax-container%2C%20div%5Bitemtype%3D%22http%3A%2F%2Fschema.org%2FSoftwareSourceCode%22%5D%20main%2C%20%5Bdata-pjax-container%5D#L176)
 
-The registerOnChain method registers the role with the ClaimManager smart contract:
+The registerOnChain method registers the role with the ClaimManager smart contract using the smart contract's 'register' method:
 
 ```
     async registerOnchain(claim: Pick<Claim, "token" | "subjectAgreement" | "onChainProof" | "acceptedBy">) {
@@ -191,7 +193,7 @@ The registerOnChain method registers the role with the ClaimManager smart contra
 ```
 [source](https://github.com/energywebfoundation/iam-client-lib/blob/f9c1a12e888de6ebb4e2589fe49c489bee84af78/src/modules/claims/claims.service.ts?_pjax=%23js-repo-pjax-container%2C%20div%5Bitemtype%3D%22http%3A%2F%2Fschema.org%2FSoftwareSourceCode%22%5D%20main%2C%20%5Bdata-pjax-container%5D#L255)
 
-In the [ClaimManager contract's register method](https://github.com/energywebfoundation/iam-contracts/blob/83932a8fee56010482b50047ea5a20da37b758da/contracts/roles/ClaimManager.sol#L89), the claim data is added to the 'roles' mapping and can then be accessed and read by other smart contracts on the blockchain. 
+In the [ClaimManager contract's register method](https://github.com/energywebfoundation/iam-contracts/blob/83932a8fee56010482b50047ea5a20da37b758da/contracts/roles/ClaimManager.sol#L89), the claim data is added to the 'roles' mapping, and can then be accessed and read by other smart contracts on the blockchain. 
 
 **Note:** An issuer can directly issue a claim directly without a request. This is done through the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). **This method does not handle On-Chain registration**. 
 
