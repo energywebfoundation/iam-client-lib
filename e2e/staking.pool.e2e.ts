@@ -123,7 +123,7 @@ describe("StakingPool tests", () => {
             registrationTypes,
         });
 
-        const [, message] = mockRequestClaim.mock.calls.pop();
+        const [message] = mockRequestClaim.mock.calls.pop();
         const { id, subjectAgreement, token } = message;
 
         await signerService.connect(orgOwner, ProviderType.PrivateKey);
