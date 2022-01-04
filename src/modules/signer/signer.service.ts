@@ -143,9 +143,9 @@ export class SignerService {
 
     /**
      * @description Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign)
-     * Signing method is determined based on previous signing
+     * Whether or not to hash the message prior to signature is determined by signature performed during login
      *
-     * @param message Message should have binary representation to avoid confusion of text with hexadecimal binary data
+     * @param message The message to be signed. The message should have binary representation to avoid confusion of text with hexadecimal binary data
      */
     async signMessage(message: Uint8Array) {
         const messageHash = this._isEthSigner ? message : arrayify(hashMessage(message));
