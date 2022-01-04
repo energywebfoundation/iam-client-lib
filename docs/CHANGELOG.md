@@ -1,3 +1,5 @@
+# [4.0.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.14...v4.0.0-alpha.15) (2022-01-04)
+
 # [4.0.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.13...v4.0.0-alpha.14) (2021-12-15)
 
 # [4.0.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.12...v4.0.0-alpha.13) (2021-12-15)
