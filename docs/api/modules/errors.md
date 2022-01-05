@@ -9,6 +9,7 @@
 - [ENSOwnerNotValidAddressError](errors.md#ensownernotvalidaddresserror)
 - [ENSTypeNotSupportedError](errors.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](errors.md#error_messages)
+- [MalformedDIDError](errors.md#malformeddiderror)
 - [MethodNotAvailableInNodeEnvError](errors.md#methodnotavailableinnodeenverror)
 
 ## References
@@ -40,6 +41,12 @@ ___
 ### ERROR\_MESSAGES
 
 Re-exports: [ERROR\_MESSAGES](../enums/errors_ErrorMessages.ERROR_MESSAGES.md)
+
+___
+
+### MalformedDIDError
+
+Re-exports: [MalformedDIDError](../classes/errors_MalformedDIDError.MalformedDIDError.md)
 
 ___
 

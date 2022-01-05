@@ -7,9 +7,11 @@
 - [ExecutionEnvironment](utils.md#executionenvironment)
 - [VOLTA\_CHAIN\_ID](utils.md#volta_chain_id)
 - [addSupportedDID](utils.md#addsupporteddid)
+- [compareDID](utils.md#comparedid)
 - [defaultAzureProxyUrl](utils.md#defaultazureproxyurl)
 - [defaultBridgeUrl](utils.md#defaultbridgeurl)
 - [defaultKmsServerUrl](utils.md#defaultkmsserverurl)
+- [didPattern](utils.md#didpattern)
 - [emptyAddress](utils.md#emptyaddress)
 - [executionEnvironment](utils.md#executionenvironment)
 - [isValidDID](utils.md#isvaliddid)
@@ -35,6 +37,12 @@ Re-exports: [addSupportedDID](utils_did.md#addsupporteddid)
 
 ___
 
+### compareDID
+
+Re-exports: [compareDID](utils_did.md#comparedid)
+
+___
+
 ### defaultAzureProxyUrl
 
 Re-exports: [defaultAzureProxyUrl](utils_constants.md#defaultazureproxyurl)
@@ -50,6 +58,12 @@ ___
 ### defaultKmsServerUrl
 
 Re-exports: [defaultKmsServerUrl](utils_constants.md#defaultkmsserverurl)
+
+___
+
+### didPattern
+
+Re-exports: [didPattern](utils_did.md#didpattern)
 
 ___
 
