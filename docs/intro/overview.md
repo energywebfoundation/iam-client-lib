@@ -13,7 +13,7 @@ Identity in EW_DOS is established through a [Decentralized Identity (DID)](https
 
 Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-use-cases/#dfn-did-documents). The DID Document contains information on the DID subject such as its public keys and authentication mechanisms, attributes and claims. Only the owner of the DID can update this information. 
 
-The IAM Client Library's DID Registry Service manages high-level functions to create, fetch and update DIDs and DID Documents.
+The IAM Client Library's DID Registry Service provides high-level functions to create, fetch and update DIDs and DID Documents.
 
 
 IAM Client Library's Claims Service handles the request and issuance of claims. See documentation on Claims Service [here](../guides/claim.md).
