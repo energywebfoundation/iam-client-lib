@@ -1,10 +1,10 @@
 # Claims
-
 + [Claim Interface](../api/interfaces/modules_claims_claims_types.Claim.md)
 + [Claim Request Interface](../api/interfaces/modules_claims_claims_types.IClaimRequest.md)
 + [Claim Issuance Interface](../api/interfaces/modules_claims_claims_types.IClaimIssuance.md)
 + [Claims Service API documentation](../api/classes/modules_claims_claims_service.ClaimsService.md)
 
+## Overview
 At the most fundamental level, a claim is a statement about a subject. A claim is a component of a Verifiable Credential, which is the web3 standard for digital credentials in a decentralized ecosystem.  
 
 + See the W3 documentation for Claims [here](https://www.w3.org/TR/vc-data-model/#claims)
