@@ -29,7 +29,7 @@ import {
 } from "./claims.types";
 import { DidRegistry } from "../didRegistry/didRegistry.service";
 import { ClaimData } from "../didRegistry/did.types";
-import { isValidDID } from "../../utils/did";
+import { compareDID, isValidDID } from "../../utils/did";
 import { JWT } from "@ew-did-registry/jwt";
 import { privToPem, KeyType } from "@ew-did-registry/keys";
 import { readyToBeRegisteredOnchain } from "./claims.types";
@@ -375,8 +375,8 @@ export class ClaimsService {
         if (!sub || sub.length === 0 || !isValidDID(sub)) {
             sub = this._signerService.did;
         }
-
-        if (!(await this._didRegistry.verifyPublicClaim(token, iss))) {
+        const verifiedDid = await this._didRegistry.verifyPublicClaim(token, iss);
+        if (!verifiedDid || !compareDID(verifiedDid, iss)) {
             throw new Error("Incorrect signature");
         }
 

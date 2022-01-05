@@ -1,15 +1,7 @@
-import { ENSTypeNotSupportedError } from "./ENSTypeNotSupportedError";
-import { MethodNotAvailableInNodeEnvError } from "./MethodNotAvailableInNodeError";
-import { ChangeOwnershipNotPossibleError } from "./ChangeOwnershipNotPossibleError";
-import { DeletingNamespaceNotPossibleError } from "./DeletingNamespaceNotPossibleError";
-import { ENSOwnerNotValidAddressError } from "./ENSOwnerNotValidAddressError";
-import { ERROR_MESSAGES } from "./ErrorMessages";
-
-export {
-    ENSTypeNotSupportedError,
-    MethodNotAvailableInNodeEnvError,
-    ChangeOwnershipNotPossibleError,
-    DeletingNamespaceNotPossibleError,
-    ENSOwnerNotValidAddressError,
-    ERROR_MESSAGES,
-};
+export { ENSTypeNotSupportedError } from "./ENSTypeNotSupportedError";
+export { MethodNotAvailableInNodeEnvError } from "./MethodNotAvailableInNodeError";
+export { ChangeOwnershipNotPossibleError } from "./ChangeOwnershipNotPossibleError";
+export { DeletingNamespaceNotPossibleError } from "./DeletingNamespaceNotPossibleError";
+export { ENSOwnerNotValidAddressError } from "./ENSOwnerNotValidAddressError";
+export { ERROR_MESSAGES } from "./ErrorMessages";
+export { MalformedDIDError } from "./MalformedDIDError";
