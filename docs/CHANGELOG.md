@@ -1,3 +1,10 @@
+# [4.0.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.15...v4.0.0-alpha.16) (2022-01-05)
+
+
+### Bug Fixes
+
+* **did:** verify public claim ([f0df566](https://github.com/energywebfoundation/iam-client-lib/commit/f0df5667da0cc9c11c2c63d8c83e585e6690d8ae))
+
 # [4.0.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.14...v4.0.0-alpha.15) (2022-01-04)
 
 # [4.0.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.13...v4.0.0-alpha.14) (2021-12-15)
