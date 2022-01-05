@@ -100,7 +100,7 @@ The claim request has an array of [RegistrationTypes]((../api/interfaces/modules
 
 In both On-Chain and Off-Chain registration, the claim is technically saved to the blockchain. However, Off-Chain registration is saved to [IPFS](https://ipfs.io/) and is linked to the user's DID Document, but this data is not able to be accessed by other smart contracts. 
 
-#### Off-Chain Registration
+##### Off-Chain Registration
 If a claim request has Off-Chain registration, the publishPublicClaim method saves the claim in IPFS as an encoded JWT token. The user's DID document is updated with a link to this IPFS record in the DID Document's service array. To read more about storing Verifiable Credentials on IPFS and referencing them in a user's DID Document on the Energy Web Chain, see our documentation [here](https://energy-web-foundation.gitbook.io/energy-web/technology/the-stack/trust-layer-energy-web-chain/ipfs-in-ew-dos#storing-verifiable-credentials-on-ipfs). 
 
 ```
@@ -141,7 +141,7 @@ async publishPublicClaim({ token }: { token: string }) {
 
 **Note:** While this data is public on the blockchain, it is not accessible to any external smart contracts. 
 
-#### On-Chain Registration
+##### On-Chain Registration
 If a claim request has On-Chain registration, the claim is persisted in the ClaimManager smart contract's registory. You can view the ClaimManager smart contract on GitHub [here](https://github.com/energywebfoundation/iam-contracts/blob/master/contracts/roles/ClaimManager.sol). 
 
 ```
