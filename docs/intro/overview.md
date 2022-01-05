@@ -13,12 +13,10 @@ Identity in EW_DOS is established through a [Decentralized Identity (DID)](https
 
 Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-use-cases/#dfn-did-documents). The DID Document contains information on the DID subject such as its public keys and authentication mechanisms, attributes and claims. Only the owner of the DID can update this information. 
 
-The iam-client-lib manages high-level functions related to the DIDs and DID Documents:
-- [getDID](../api/classes/iam.IAM.md#getdid)
-- [getDidDocument](../api/classes/iam.IAM.md#getdiddocument)
-- [updateDidDocument](../api/classes/iam.IAM.md#updatediddocument)
-- [revokeDidDocument](../api/classes/iam.IAM.md#revokediddocument)
+The IAM Client Library's DID Registry Service manages high-level functions to create, fetch and update DIDs and DID Documents.
 
+
+IAM Client Library's Claims Service handles the request and issuance of claims. See documentation on Claims Service [here](../guides/claim.md).
 
 ## Claims
 
@@ -30,13 +28,10 @@ Once an authority verifies a claim, a VC can then be used as an official record 
 
 Verified claims are referenced in a user's DID document by a hash, and the full credential data is stored off-chain in a decentralized file system called [IPFS](https://ipfs.io/)
 
-INSERT EXAMPLE
+IAM Client Library's Claims Service handles the request and issuance of claims. See documentation on Claims Service [here](../guides/claim.md). 
 
 
-The iam-client-lib performs the high-level functions related to claims:
-- [createPublicClaim](../api/classes/iam.IAM.md#createpublicclaim) 
-- [issuePublicClaim](../api/classes/iam.IAM.md#issuepublicclaim)
-- [publishPublicClaim](../api/classes/iam.IAM.md#publishpublicclaim)
-- [verifyPublicClaim](../api/classes/iam.IAM.md#verifypublicclaim) 
+
+ 
 
 
