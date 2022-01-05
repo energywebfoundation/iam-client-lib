@@ -10,7 +10,7 @@ nav:
       - "Application": guides/application.md
       - "Asset": guides/asset.md
       - "Organization": guides/organization.md
-      - "Role": guides/role.md
+      - "Claims": guides/claim.md
   - API: api/modules.md
   - CHANGELOG: CHANGELOG.md
 theme:
