@@ -1,0 +1,13 @@
+{
+    "assignees": ["JGiter"],
+    "reviewers": ["JGiter", "jrhender"],
+    "semanticCommits": "enabled",
+    "semanticCommitType": "build",
+    "labels": ["dependencies"],
+    "packageRules": [
+        {
+            "matchPackagePatterns": ["(.*?)"],
+            "groupName": "Dependencies"
+        }
+    ]
+}
