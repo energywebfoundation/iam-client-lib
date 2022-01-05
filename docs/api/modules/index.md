@@ -40,6 +40,7 @@
 - [IPubKeyAndIdentityToken](index.md#ipubkeyandidentitytoken)
 - [IRole](index.md#irole)
 - [IssueClaim](index.md#issueclaim)
+- [MalformedDIDError](index.md#malformeddiderror)
 - [MessagingConfig](index.md#messagingconfig)
 - [MessagingMethod](index.md#messagingmethod)
 - [MessagingService](index.md#messagingservice)
@@ -70,11 +71,13 @@
 - [agreement\_type\_hash](index.md#agreement_type_hash)
 - [cacheConfigs](index.md#cacheconfigs)
 - [chainConfigs](index.md#chainconfigs)
+- [compareDID](index.md#comparedid)
 - [createWalletConnectProvider](index.md#createwalletconnectprovider)
 - [defaultAzureProxyUrl](index.md#defaultazureproxyurl)
 - [defaultBridgeUrl](index.md#defaultbridgeurl)
 - [defaultClaimExpiry](index.md#defaultclaimexpiry)
 - [defaultKmsServerUrl](index.md#defaultkmsserverurl)
+- [didPattern](index.md#didpattern)
 - [emptyAddress](index.md#emptyaddress)
 - [erc712\_type\_hash](index.md#erc712_type_hash)
 - [executionEnvironment](index.md#executionenvironment)
@@ -319,6 +322,12 @@ Re-exports: [IssueClaim](modules_claims_claims_types.md#issueclaim)
 
 ___
 
+### MalformedDIDError
+
+Re-exports: [MalformedDIDError](../classes/errors_MalformedDIDError.MalformedDIDError.md)
+
+___
+
 ### MessagingConfig
 
 Re-exports: [MessagingConfig](../interfaces/config_messaging_config.MessagingConfig.md)
@@ -499,6 +508,12 @@ Re-exports: [chainConfigs](config_chain_config.md#chainconfigs)
 
 ___
 
+### compareDID
+
+Re-exports: [compareDID](utils_did.md#comparedid)
+
+___
+
 ### createWalletConnectProvider
 
 Re-exports: [createWalletConnectProvider](modules_signer_walletConnectMetamask.md#createwalletconnectprovider)
@@ -526,6 +541,12 @@ ___
 ### defaultKmsServerUrl
 
 Re-exports: [defaultKmsServerUrl](utils_constants.md#defaultkmsserverurl)
+
+___
+
+### didPattern
+
+Re-exports: [didPattern](utils_did.md#didpattern)
 
 ___
 

@@ -34,7 +34,7 @@ ___
 
 ### chainName
 
-• **chainName**: `string`
+• **chainName**: `Chain`
 
 ___
 

@@ -210,7 +210,7 @@ ___
 
 ### verifyPublicClaim
 
-▸ **verifyPublicClaim**(`token`, `iss`): `Promise`<`IPublicClaim` \| `IPrivateClaim`\>
+▸ **verifyPublicClaim**(`token`, `iss`): `Promise`<``null`` \| `string`\>
 
 verifyPublicClaim
 
@@ -225,7 +225,7 @@ verifyPublicClaim
 
 #### Returns
 
-`Promise`<`IPublicClaim` \| `IPrivateClaim`\>
+`Promise`<``null`` \| `string`\>
 
 public claim data
 

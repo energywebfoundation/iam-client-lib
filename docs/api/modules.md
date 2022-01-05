@@ -14,6 +14,7 @@
 - [errors/ENSOwnerNotValidAddressError](modules/errors_ENSOwnerNotValidAddressError.md)
 - [errors/ENSTypeNotSupportedError](modules/errors_ENSTypeNotSupportedError.md)
 - [errors/ErrorMessages](modules/errors_ErrorMessages.md)
+- [errors/MalformedDIDError](modules/errors_MalformedDIDError.md)
 - [errors/MethodNotAvailableInNodeError](modules/errors_MethodNotAvailableInNodeError.md)
 - [index](modules/index.md)
 - [init](modules/init.md)
