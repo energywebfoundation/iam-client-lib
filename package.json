@@ -1,6 +1,6 @@
 {
     "name": "iam-client-lib",
-    "version": "4.0.0-alpha.15",
+    "version": "4.0.0-alpha.16",
     "description": "Library for Decentralized Identity and Access Management",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -121,7 +121,7 @@
         "jest-config": "^26.4.2",
         "jest-environment-node": "^27.1.0",
         "jwt-decode": "^3.1.2",
-        "lint-staged": "^11.1.1",
+        "lint-staged": "^12.1.5",
         "patch-package": "^6.4.7",
         "prettier": "^2.3.2",
         "rimraf": "^3.0.2",
