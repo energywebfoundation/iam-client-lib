@@ -16,8 +16,6 @@ Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-u
 The IAM Client Library's DID Registry Service provides high-level functions to create, fetch and update DIDs and DID Documents.
 
 
-IAM Client Library's Claims Service handles the request and issuance of claims. See documentation on Claims Service [here](../guides/claim.md).
-
 ## Claims
 
 Decentralized Identifiers can make claims to prove an attribute about themselves. A claim is also known as a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/).
