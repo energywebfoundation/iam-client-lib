@@ -1,3 +1,10 @@
+# [4.0.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.19...v4.0.0-alpha.20) (2022-01-07)
+
+
+### Features
+
+* **cache-client:** update test login endpoint ([09d8a6b](https://github.com/energywebfoundation/iam-client-lib/commit/09d8a6b51664613353bb8f107f4a2a3d0d9eecb9))
+
 # [4.0.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.18...v4.0.0-alpha.19) (2022-01-07)
 
 
