@@ -48,7 +48,7 @@ export class SignerService {
         } else if (this._signer instanceof Wallet) {
             this._account = this._address;
         }
-        // browser is responsible for clearing of isEthSigner on logout
+        // web app is responsible for clearing of isEthSigner on logout
         if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
             const isEthSigner = localStorage.getItem(IS_ETH_SIGNER);
             if (isEthSigner) {
