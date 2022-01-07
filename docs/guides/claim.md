@@ -1,10 +1,10 @@
 # Claims
-
 + [Claim Interface](../api/interfaces/modules_claims_claims_types.Claim.md)
 + [Claim Request Interface](../api/interfaces/modules_claims_claims_types.IClaimRequest.md)
 + [Claim Issuance Interface](../api/interfaces/modules_claims_claims_types.IClaimIssuance.md)
 + [Claims Service API documentation](../api/classes/modules_claims_claims_service.ClaimsService.md)
 
+## Overview
 At the most fundamental level, a claim is a statement about a subject. A claim is a component of a Verifiable Credential, which is the web3 standard for digital credentials in a decentralized ecosystem.  
 
 + See the W3 documentation for Claims [here](https://www.w3.org/TR/vc-data-model/#claims)
@@ -92,7 +92,7 @@ See the Cache Server request handler [here](https://github.com/energywebfoundati
 If the subject's enrolment request is valid, the Issuer can approve and issue the claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
 
 #### Registering Claims on the Blockchain
-The claim request has an array of [RegistrationTypes]((../api/interfaces/modules_claims_claims_types.Claim.md#registrationtypes)). A claim can be registered:  
+A claim request has an array of [RegistrationTypes]((../api/interfaces/modules_claims_claims_types.Claim.md#registrationtypes)). A claim can be registered:  
 
 1. On-Chain only
 2. Off-Chain only
@@ -100,8 +100,8 @@ The claim request has an array of [RegistrationTypes]((../api/interfaces/modules
 
 In both On-Chain and Off-Chain registration, the claim is technically saved to the blockchain. However, Off-Chain registration is saved to [IPFS](https://ipfs.io/) and is linked to the user's DID Document, but this data is not able to be accessed by other smart contracts. 
 
-#### Off-Chain Registration
-If a claim request has Off-Chain registration, the publishPublicClaim method saves the claim in IPFS as an encoded JWT token. The user's DID document is updated with a link to this IPFS record in the DID Document's service array. To read more about storing Verifiable Credentials on IPFS and referencing them in a user's DID Document on the Energy Web Chain, see our documentation [here](https://energy-web-foundation.gitbook.io/energy-web/technology/the-stack/trust-layer-energy-web-chain/ipfs-in-ew-dos#storing-verifiable-credentials-on-ipfs). 
+##### Off-Chain Registration
+If a claim request requires Off-Chain registration, the publishPublicClaim method saves the claim in IPFS as an encoded JWT token. The user's DID document is updated with a link to this IPFS record in the DID Document's service array. To read more about storing Verifiable Credentials on IPFS and referencing them in a user's DID Document on the Energy Web Chain, see our documentation [here](https://energy-web-foundation.gitbook.io/energy-web/technology/the-stack/trust-layer-energy-web-chain/ipfs-in-ew-dos#storing-verifiable-credentials-on-ipfs). 
 
 ```
 async publishPublicClaim({ token }: { token: string }) {
@@ -141,8 +141,8 @@ async publishPublicClaim({ token }: { token: string }) {
 
 **Note:** While this data is public on the blockchain, it is not accessible to any external smart contracts. 
 
-#### On-Chain Registration
-If a claim request has On-Chain registration, the claim is persisted in the ClaimManager smart contract's registory. You can view the ClaimManager smart contract on GitHub [here](https://github.com/energywebfoundation/iam-contracts/blob/master/contracts/roles/ClaimManager.sol). 
+##### On-Chain Registration
+If a claim request requires On-Chain registration, the claim is persisted in the ClaimManager smart contract's registory. You can view the ClaimManager smart contract on GitHub [here](https://github.com/energywebfoundation/iam-contracts/blob/master/contracts/roles/ClaimManager.sol). 
 
 ```
 if (registrationTypes.includes(RegistrationTypes.OnChain)) {
@@ -395,7 +395,7 @@ Example of authentication token:
   }
 ```
 
-## Claims Service Public APIs:
+## Claims Service Public APIs
 
 -   [getClaimsId](../api/classes/modules_claims_claims_service.ClaimsService.md#getclaimid)
 -   [getClaimsByIssuer](../api/classes/modules_claims_claims_service.ClaimsService.md#getclaimsbyissuer)
