@@ -180,7 +180,7 @@ export class ClaimsService {
             message.subjectAgreement = await this.approveRolePublishing({ subject, role, version });
         }
 
-        await this._cacheClient.requestClaim(subject, message);
+        await this._cacheClient.requestClaim(message);
     }
 
     /**

@@ -33,7 +33,7 @@ export interface ICacheClient {
     getClaimsByRequester: (requester: string, filter?: ClaimsFilter) => Promise<Claim[]>;
     getClaimsBySubject: (subject: string, filter?: ClaimsFilter) => Promise<Claim[]>;
     getClaimById: (claimId: string) => Promise<Claim | undefined>;
-    requestClaim: (requester: string, message: IClaimRequest) => Promise<void>;
+    requestClaim: (message: IClaimRequest) => Promise<void>;
     issueClaim: (issuer: string, message: IClaimIssuance) => Promise<void>;
     rejectClaim: (issuer: string, message: IClaimRejection) => Promise<void>;
     deleteClaim: (claimId: string) => Promise<void>;

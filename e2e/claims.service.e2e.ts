@@ -139,7 +139,7 @@ describe("Enrollment claim tests", () => {
             returnSteps: false,
         });
         ({ didRegistry, claimsService } = await connectToDidRegistry());
-        Reflect.set(didRegistry, '_cacheClient', undefined);
+        Reflect.set(didRegistry, "_cacheClient", undefined);
     });
 
     async function enrolAndIssue(
@@ -166,7 +166,7 @@ describe("Enrollment claim tests", () => {
             registrationTypes,
             subject: subjectDID,
         });
-        const [, message] = mockRequestClaim.mock.calls.pop();
+        const [message] = mockRequestClaim.mock.calls.pop();
 
         await signerService.connect(issueSigner, ProviderType.PrivateKey);
         const issuerDID = signerService.did;
@@ -334,7 +334,12 @@ describe("Enrollment claim tests", () => {
         const subjectDID = rootOwnerDID;
         const claimType = `${roleName1}.${root}`;
         const registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain];
-        const issuerFields = [
+        await claimsService.createClaimRequest({
+            claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: 1, fields: [] },
+            registrationTypes,
+        });
+
+        const issuerFields: { key: string; value: string | number }[] = [
             {
                 key: "document ID",
                 value: "ASG 123222",
