@@ -1,3 +1,10 @@
+# [4.0.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.18...v4.0.0-alpha.19) (2022-01-07)
+
+
+### Features
+
+* **cache-client:** update cache client interface ([78f4517](https://github.com/energywebfoundation/iam-client-lib/commit/78f451785fcb1d27db1f5afbb0847337fd6c79ba))
+
 # [4.0.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.17...v4.0.0-alpha.18) (2022-01-05)
 
 # [4.0.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.16...v4.0.0-alpha.17) (2022-01-05)
