@@ -12,6 +12,9 @@
         "@typechain/ethers-v5",
         "typechain"
     ],
+    "major": {
+        "enabled": false
+    },
     "packageRules": [
         {
             "matchPackagePatterns": ["(.*?)"],
