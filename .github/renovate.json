@@ -4,6 +4,17 @@
     "semanticCommits": "enabled",
     "semanticCommitType": "build",
     "labels": ["dependencies"],
+    "ignoreDeps": [
+        "@ensdomains/ens",
+        "@gnosis.pm/safe-apps-provider",
+        "@gnosis.pm/safe-apps-sdk",
+        "ethers",
+        "@typechain/ethers-v5",
+        "typechain"
+    ],
+    "major": {
+        "enabled": false
+    },
     "packageRules": [
         {
             "matchPackagePatterns": ["(.*?)"],
