@@ -37,7 +37,8 @@
         "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
         "test:watch": "npm run start-rpc -- \"jest --coverage --env=./jest.env.js --watchAll\"",
         "test": "npm run start-rpc -- \"jest --no-cache --env=./jest.env.js\"",
-        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\""
+        "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\"",
+        "preinstall": "npx npm-force-resolutions"
     },
     "keywords": [
         "decentralized",
@@ -122,6 +123,7 @@
         "jest-environment-node": "^27.1.0",
         "jwt-decode": "^3.1.2",
         "lint-staged": "^11.1.1",
+        "npm-force-resolutions": "0.0.10",
         "patch-package": "^6.4.7",
         "prettier": "^2.3.2",
         "rimraf": "^3.0.2",
@@ -146,5 +148,20 @@
     },
     "optionalDependencies": {
         "fsevents": "^2.3.2"
+    },
+    "resolutions": {
+        "axios": "0.24.0",
+        "ansi-regex": "5.0.1",
+        "highlight.js": "11.3.1",
+        "@ethersproject/bignumber": "5.5.0",
+        "json-schema": "0.4.0",
+        "tar": "6.1.11",
+        "elliptic": "6.5.4",
+        "y18n": "5.0.8",
+        "ws": "8.4.0",
+        "nth-check": "2.0.1",
+        "yargs-parser": "20.2.9",
+        "node-fetch": "2.6.6",
+        "underscore": "^1.13.2"
     }
 }
