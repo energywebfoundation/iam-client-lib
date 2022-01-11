@@ -54,6 +54,8 @@
 
 **`description`** allows subject to request for credential
 
+**`deprecated`** fields - use requestorFields instead
+
 #### Parameters
 
 | Name | Type |
@@ -62,8 +64,9 @@
 | `__namedParameters.claim` | `Object` |
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
-| `__namedParameters.claim.fields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.claim.fields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.claim.issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.claim.requestorFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.registrationTypes?` | [`RegistrationTypes`](../enums/modules_claims_claims_types.RegistrationTypes.md)[] |
 | `__namedParameters.subject?` | `string` |
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { utils, Wallet } from "ethers";
 import jsonwebtoken from "jsonwebtoken";
 import { v4 } from "uuid";
@@ -139,6 +140,7 @@ export class ClaimsService {
     }
     /**
      * @description allows subject to request for credential
+     * @deprecated fields - use requestorFields instead
      */
 
     async createClaimRequest({
@@ -149,14 +151,18 @@ export class ClaimsService {
         claim: {
             claimType: string;
             claimTypeVersion: number;
-            fields: { key: string; value: string | number }[];
+            fields?: { key: string; value: string | number }[];
+            requestorFields?: { key: string; value: string | number }[];
             issuerFields?: { key: string; value: string | number }[];
         };
         subject?: string;
         registrationTypes?: RegistrationTypes[];
     }) {
         const { claimType: role, claimTypeVersion: version } = claim;
-        const token = await this._didRegistry.createPublicClaim({ data: claim, subject });
+        const { fields, ...strippedClaim } = claim;
+        const data = { ...strippedClaim, requestorFields: claim.requestorFields || fields || [] };
+
+        const token = await this._didRegistry.createPublicClaim({ data, subject });
 
         await this.verifyEnrolmentPrerequisites({ subject, role });
 
