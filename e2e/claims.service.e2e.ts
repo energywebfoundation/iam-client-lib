@@ -162,8 +162,9 @@ describe("Enrollment claim tests", () => {
     ) {
         await signerService.connect(requestSigner, ProviderType.PrivateKey);
         const requesterDID = signerService.did;
+        const requestorFields = [{ key: "temperature", value: 36 }];
         await claimsService.createClaimRequest({
-            claim: { claimType, claimTypeVersion: version, requestorFields: [{ key: "temperature", value: 36 }] },
+            claim: { claimType, claimTypeVersion: version, requestorFields },
             registrationTypes,
             subject: subjectDID,
         });
@@ -187,6 +188,7 @@ describe("Enrollment claim tests", () => {
                 claimType,
                 claimTypeVersion: version,
                 issuerFields,
+                requestorFields,
             });
 
             expect(claimData).not.toContain({
