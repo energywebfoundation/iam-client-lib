@@ -2,7 +2,7 @@ export enum ERROR_MESSAGES {
     UNKNOWN_PROVIDER = "Unknown provider type",
     ENS_TYPE_NOT_SUPPORTED = "ENS type not supported",
     WALLET_PROVIDER_NOT_SUPPORTED = "Wallet provider must be a supported value",
-    PUBLIC_KEY_NOT_RECOVERED = "Public key not recovered",
+    NON_ETH_SIGN_SIGNATURE = "Signature is not eth_sign verifiable",
     ORG_WITH_APPS = "You are not able to remove organization with registered apps",
     ORG_WITH_ROLES = "You are not able to remove organization with registered roles",
     APP_WITH_ROLES = "You are not able to remove application with registered roles",
@@ -20,4 +20,5 @@ export enum ERROR_MESSAGES {
     JWT_ALGORITHM_NOT_SUPPORTED = "Jwt algorithm not supported",
     CLAIM_WAS_NOT_ISSUED = "Claim was not issued",
     ENS_OWNER_NOT_VALID_ADDRESS = "Provided owner is not a valid address. Owner of ENS domain must be an address",
+    IS_ETH_SIGNER_NOT_SET = "Can not determine if signer is conformant with eth_sign specification",
 }

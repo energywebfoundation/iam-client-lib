@@ -78,6 +78,7 @@ describe("StakingPool tests", () => {
         await setupStakingPoolFactory();
         let connectToCacheServer;
         ({ connectToCacheServer, signerService } = await initWithPrivateKeySigner(rootOwner.privateKey, rpcUrl));
+        await signerService.publicKeyAndIdentityToken();
         let connectToDidRegistry;
         ({ domainsService, stakingService, connectToDidRegistry } = await connectToCacheServer());
         const { claimsService } = await connectToDidRegistry();

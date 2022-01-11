@@ -32,3 +32,4 @@ export type AccountInfo = {
 };
 
 export const PUBLIC_KEY = "PublicKey";
+export const IS_ETH_SIGNER = "isEthSigner";
