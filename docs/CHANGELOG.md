@@ -1,3 +1,17 @@
+# [4.0.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.24...v4.0.0-alpha.25) (2022-01-11)
+
+
+### Bug Fixes
+
+* **test:** expect requestorField in claim ([a5fe8af](https://github.com/energywebfoundation/iam-client-lib/commit/a5fe8af7d6769f28aff1d46e73cec1d78031b774))
+* ensure eth_sign signature ([5b4dec3](https://github.com/energywebfoundation/iam-client-lib/commit/5b4dec39f66dd642936bb0e8ef533f199b0f59f7))
+
+
+### Features
+
+* get isEthSigner from browser ([96de2d8](https://github.com/energywebfoundation/iam-client-lib/commit/96de2d8203e8e38a41c9d65cd98c47fb12cf33d5))
+* **claims:** rename fields to requestorFields for better readibility ([1f90d7c](https://github.com/energywebfoundation/iam-client-lib/commit/1f90d7c4e78913c3a8ae080470546f3ba7a612b5))
+
 # [4.0.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.23...v4.0.0-alpha.24) (2022-01-11)
 
 # [4.0.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.22...v4.0.0-alpha.23) (2022-01-10)
