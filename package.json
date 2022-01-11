@@ -161,7 +161,7 @@
         "ws": "8.4.0",
         "nth-check": "2.0.1",
         "yargs-parser": "20.2.9",
-        "node-fetch": "2.6.6",
+        "node-fetch": "2.6.5",
         "underscore": "^1.13.2"
     }
 }
