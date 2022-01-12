@@ -2,11 +2,11 @@
 
 [Organization Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)
 
-**Organization** is basic type in EnergyWeb domains tree. Its main purpose is to be a host.
+**Organization** is basic type in EnergyWeb domains tree. Its main purpose is to be a root that can group other domains, such as apps and roles.
 All other domains such as applications and roles should have parent organization.
-If needed organization can include other sub-organizations.Organization is represented by
-[`IOrganization`](../api/interfaces/IOrganization.md) interface. Organization can
-be created either as way to structure system or group correlated entities along with permissions hieararchy.
+If needed organization can include other sub-organizations. Organization is represented by
+[`IOrganization`](../api/interfaces/IOrganization.md) interface. Organizations can
+be created either as way to structure system or group correlated entities along with permissions hierarchy.
 Organization owner as well as its components owners can be changed.
 Example of organization
 

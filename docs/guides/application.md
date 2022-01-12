@@ -1,16 +1,31 @@
 # Application
-[Application Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IApp.md  
 
-/*
-TO DO: 
-//Define Application in context of iam-client-lib/Switchboard
+[Application Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IApp.md
 
-//Give an example(s) of an Application
-*/
+**Application** represents service provided by parent organization. The only domain type contained by application is Role.
+Application domain is described by [IApplication](../docs/interfaces/IApplication.md).
+Example of application
+
+```
+{
+  "id": 347,
+  "name": "verification",
+  "owner": "0x627306090abaB3A6e1400e9345bC60c78a8BEf57",
+  "namespace": "verification.apps.energyweb.iam.ewc",
+  "namehash": "0x39f219f48798d619edc9d5ab0f5f802a86383b57a99965722a4cb9d83d3fd16a",
+  "definition": {
+    "appName": "IAM KYC App",
+    "logoUrl": "",
+    "websiteUrl": "https://www.energyweb.org/",
+    "description": ""
+  }
+}
+```
+
+`namespace` is ENS name of application
 
 ## Public APIs
-- [getAppsByOrgNamespace](../api/classes/iam.IAM.md#getappsbyorgnamespace)
-- [createApplication](../api/classes/iam.IAM.md#createapplication)
-- [deleteApplication](../api/classes/iam.IAM.md#deleteapplication)
 
-
+-   [getAppsByOrgNamespace](../api/classes/iam.IAM.md#getappsbyorgnamespace)
+-   [createApplication](../api/classes/iam.IAM.md#createapplication)
+-   [deleteApplication](../api/classes/iam.IAM.md#deleteapplication)
