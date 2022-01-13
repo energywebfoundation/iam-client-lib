@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "lint": "npx eslint ./src/**/*.ts ./test/**/*.ts",
+    "lint": "eslint ./src/**/*.ts ./e2e/**/*.ts",
     "prebuild": "rimraf dist ethers",
     "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist",
     "build:node": "npm run build:nats_node && bili --format cjs",
