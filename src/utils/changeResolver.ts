@@ -3,7 +3,7 @@ import { DomainHierarchy } from '@energyweb/iam-contracts';
 import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factory';
 import { PublicResolver__factory } from '../../ethers/factories/PublicResolver__factory';
 import { NODE_FIELDS_KEY } from '../modules/domains';
-import { labelhash } from './ENS_hash';
+import { labelhash } from './ensHash';
 
 const { JsonRpcProvider } = providers;
 

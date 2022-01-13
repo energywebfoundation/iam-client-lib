@@ -20,7 +20,7 @@ import {
   ERROR_MESSAGES,
 } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
-import { labelhash } from '../../utils/ENS_hash';
+import { labelhash } from '../../utils/ensHash';
 import { CacheClient } from '../cacheClient/cacheClient.service';
 import { RegistrationTypes } from '../claims/claims.types';
 import { SignerService } from '../signer/signer.service';

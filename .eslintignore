@@ -11,5 +11,3 @@ compiled
 .rpt2_cache
 docs
 jest.setup.js
-.prettierrc.js
-.eslintrc.js
