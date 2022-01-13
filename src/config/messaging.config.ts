@@ -1,19 +1,19 @@
-import { MessagingMethod } from "../modules/messaging/messaging.types";
-import { VOLTA_CHAIN_ID } from "../utils/constants";
-import { ChainId } from "./chain.config";
+import { MessagingMethod } from '../modules/messaging/messaging.types';
+import { VOLTA_CHAIN_ID } from '../utils/constants';
+import { ChainId } from './chain.config';
 
 export interface MessagingConfig {
-    messagingMethod: MessagingMethod;
-    natsServerUrl: string;
-    natsEnvironmentName: string;
+  messagingMethod: MessagingMethod;
+  natsServerUrl: string;
+  natsEnvironmentName: string;
 }
 
 const messagingConfig: Record<ChainId, MessagingConfig> = {
-    [VOLTA_CHAIN_ID]: {
-        messagingMethod: MessagingMethod.Nats,
-        natsServerUrl: "https://volta-identityevents.energyweb.org/",
-        natsEnvironmentName: "ewf-volta",
-    },
+  [VOLTA_CHAIN_ID]: {
+    messagingMethod: MessagingMethod.Nats,
+    natsServerUrl: 'https://volta-identityevents.energyweb.org/',
+    natsEnvironmentName: 'ewf-volta',
+  },
 };
 
 /**
@@ -21,7 +21,7 @@ const messagingConfig: Record<ChainId, MessagingConfig> = {
  * Configuration must be set before constructing `IAM`
  */
 export const setMessagingConfig = (chainId: ChainId, options: Partial<MessagingConfig>) => {
-    messagingConfig[chainId] = { ...messagingConfig[chainId], ...options };
+  messagingConfig[chainId] = { ...messagingConfig[chainId], ...options };
 };
 
 export const getMessagingConfig = () => ({ ...messagingConfig });

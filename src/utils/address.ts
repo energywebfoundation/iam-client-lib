@@ -1,4 +1,4 @@
-import { utils } from "ethers";
+import { utils } from 'ethers';
 
 /**
  * Validate that address is valid ethereum address.
@@ -8,5 +8,5 @@ import { utils } from "ethers";
  * @param address address to verify
  */
 export function validateAddress(address: string) {
-    utils.getAddress(address);
+  utils.getAddress(address);
 }

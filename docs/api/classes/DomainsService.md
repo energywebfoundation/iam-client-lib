@@ -151,7 +151,7 @@ ___
 
 ### createApplication
 
-▸ **createApplication**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = "Set subdomain for application"; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **createApplication**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = 'Set subdomain for application'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
 
 createApp
 
@@ -171,13 +171,13 @@ createApp
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` = "Set subdomain for application"; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| { `info`: `string` = 'Set subdomain for application'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
 
 ___
 
 ### createOrganization
 
-▸ **createOrganization**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = "Create organization subdomain"; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **createOrganization**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = 'Create organization subdomain'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
 
 createOrganization
 
@@ -197,13 +197,13 @@ createOrganization
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` = "Create organization subdomain"; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| { `info`: `string` = 'Create organization subdomain'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
 
 ___
 
 ### createRole
 
-▸ **createRole**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = "Create subdomain for role"; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **createRole**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = 'Create subdomain for role'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
 
 createRole
 
@@ -221,7 +221,7 @@ createRole
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` = "Create subdomain for role"; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| { `info`: `string` = 'Create subdomain for role'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
 
 information (true/false) if the role was created
 

@@ -1,2 +1,2 @@
-export * from "./domains.service";
-export * from "./domains.types";
+export * from './domains.service';
+export * from './domains.types';

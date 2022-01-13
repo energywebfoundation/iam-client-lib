@@ -37,7 +37,7 @@
 | `_signerService` | [`SignerService`](SignerService.md) | `undefined` |
 | `_cacheClient` | [`CacheClient`](CacheClient.md) | `undefined` |
 | `_assetsService` | [`AssetsService`](AssetsService.md) | `undefined` |
-| `_ipfsUrl` | `string` | `"https://ipfs.infura.io:5001/api/v0/"` |
+| `_ipfsUrl` | `string` | `'https://ipfs.infura.io:5001/api/v0/'` |
 
 ## Accessors
 
