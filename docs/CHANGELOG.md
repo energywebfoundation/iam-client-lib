@@ -1,3 +1,10 @@
+## [4.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0...v4.0.1-alpha.1) (2022-01-14)
+
+
+### Bug Fixes
+
+* **ci:** fetch latest master before merge ([47fee38](https://github.com/energywebfoundation/iam-client-lib/commit/47fee38c9ab818785e0c08de24bd68efb51100ec))
+
 # [4.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0...v4.0.0) (2022-01-14)
 
 
