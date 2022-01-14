@@ -1,3 +1,97 @@
+# [4.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0...v4.0.0) (2022-01-14)
+
+
+### Bug Fixes
+
+* **test:** expect requestorField in claim ([a5fe8af](https://github.com/energywebfoundation/iam-client-lib/commit/a5fe8af7d6769f28aff1d46e73cec1d78031b774))
+* disable staking pool initialization ([78c7815](https://github.com/energywebfoundation/iam-client-lib/commit/78c781512df09e5d91f575034856450fe40f6698))
+* ensure eth_sign signature ([5b4dec3](https://github.com/energywebfoundation/iam-client-lib/commit/5b4dec39f66dd642936bb0e8ef533f199b0f59f7))
+* revert config changes from dev to volta ([adafda4](https://github.com/energywebfoundation/iam-client-lib/commit/adafda4f44ebf4aa6c08f99909c1f5048693ac1c))
+* **assets:** rollback asset event type to uppercase ([52359cd](https://github.com/energywebfoundation/iam-client-lib/commit/52359cd01bce95ae778b8ddf345e66880070e839))
+* **assets:** rollback asset event type to uppercase ([4b1b314](https://github.com/energywebfoundation/iam-client-lib/commit/4b1b3144c39c0e7c70a0bf7ee399ee26dd71081b))
+* **build:** use github token for pr in dev ([6e83292](https://github.com/energywebfoundation/iam-client-lib/commit/6e832926ccfccef644aa5b4514e94e517d560623))
+* **cache:** separate failed test reloging from unauthenticated ([d07a084](https://github.com/energywebfoundation/iam-client-lib/commit/d07a0849f4cdbfe6ea420c06231a659ed695eeb3))
+* **cacheClient:** recalculate identity token on login ([aaaf929](https://github.com/energywebfoundation/iam-client-lib/commit/aaaf9291ffa5e679b14bd8c215731442104a95c9))
+* **cacheClient:** set auth header ([ba9e870](https://github.com/energywebfoundation/iam-client-lib/commit/ba9e8703fb275b6cd2b0d50c50cabff2e0431fda))
+* **cacheClient:** test cache login ([dec430f](https://github.com/energywebfoundation/iam-client-lib/commit/dec430f0e5d2f334eb77a0d809f7b0a408d8c4c1))
+* **cacheClient:** trigging release of previous commit ([c1445f6](https://github.com/energywebfoundation/iam-client-lib/commit/c1445f65f23f3d1dc5587c21d5409ec66c9cef60))
+* **ci:** set secret for develop publish ([97f94c8](https://github.com/energywebfoundation/iam-client-lib/commit/97f94c8aea9fd60597eedf5adfeb9b2a854091bf))
+* **ci:** set secret to publish develop ([83889cc](https://github.com/energywebfoundation/iam-client-lib/commit/83889cc653ed6e70a55bc7856e476c9043f950dc))
+* **claim:** register with issuer ([6ad22df](https://github.com/energywebfoundation/iam-client-lib/commit/6ad22df243995f3d6410ab40cf1ab4599a1cf3c4))
+* **claim:** stripped fields from issueClaim function ([b4bf01e](https://github.com/energywebfoundation/iam-client-lib/commit/b4bf01ec8015c6ac4604b93767b331842199f36e))
+* **claims:** enrich claim request with type and version ([a633530](https://github.com/energywebfoundation/iam-client-lib/commit/a63353051d4afe51ff27bf1a5a38f468b4ffe1cf))
+* **claims:** remove fields from claims ([8a0c91b](https://github.com/energywebfoundation/iam-client-lib/commit/8a0c91b7704b07bc167df001e3bef74be0ddf63e))
+* **did:** verify public claim ([f0df566](https://github.com/energywebfoundation/iam-client-lib/commit/f0df5667da0cc9c11c2c63d8c83e585e6690d8ae))
+* **didRegistry:** update owned document ([7f69fdb](https://github.com/energywebfoundation/iam-client-lib/commit/7f69fdbb69b0380a4d9bfa41d76613b1c0b1dc51))
+* **domains.service:** remove addressOf from owner param ([2458507](https://github.com/energywebfoundation/iam-client-lib/commit/24585076952e7f2e366e62802011d252be41c4fe))
+* **domainsService:** save chain id ([6e4255a](https://github.com/energywebfoundation/iam-client-lib/commit/6e4255a8ca88a8ac442d0ff9ca037c3794b7ebeb))
+* **issuerFields:** fix to issuerFields on publishPublicClaim ([f3b32f9](https://github.com/energywebfoundation/iam-client-lib/commit/f3b32f9602da70827ed24472e55f8c56ee4f4c36))
+* **jest:** make work of the npm test:watch and test:watch:windows ([6a799b5](https://github.com/energywebfoundation/iam-client-lib/commit/6a799b5e9a7605c037e8a0c1364fa69499813cc3))
+* **messaging:** subsribe to channels from claims channel ([4788a97](https://github.com/energywebfoundation/iam-client-lib/commit/4788a9782efda7be2e6ccc55bc6f30ad5b83fcbb))
+* **nats:** changed subject mask to ensure all events for did are captured ([3959f54](https://github.com/energywebfoundation/iam-client-lib/commit/3959f54707fde3dc5177600eaf398014bda9eeee))
+* **nats:** fix http to ws replacement ([17de265](https://github.com/energywebfoundation/iam-client-lib/commit/17de2654d3f8d3918394329588e3ad824813fc3b))
+* **nats:** fix http to ws replacement ([af16531](https://github.com/energywebfoundation/iam-client-lib/commit/af16531e1afb7d39c49628341ea83c8c5830f01c))
+* disable staking-pool tests ([e6af3bb](https://github.com/energywebfoundation/iam-client-lib/commit/e6af3bbf5627cb030e984a35abc19fc47b79ea48))
+* resume failed requests ([f53a5d9](https://github.com/energywebfoundation/iam-client-lib/commit/f53a5d972963b801e334a862f5a80bc4abb46d9b))
+* **signer:** listen to wallet events ([dca58b1](https://github.com/energywebfoundation/iam-client-lib/commit/dca58b10ea5fb18f3e0ff47f4017960f9fb3f8ad))
+* **test:** increase faucet capacity ([d0b7ebb](https://github.com/energywebfoundation/iam-client-lib/commit/d0b7ebb90434d6729ade407c263a357d31fbb88f))
+* merge updated master to develop ([5f1a3fc](https://github.com/energywebfoundation/iam-client-lib/commit/5f1a3fcf136782030e5f5928b306a03a69ce805a))
+
+
+### Code Refactoring
+
+* replace IAM and IAMBase with modules ([aa037a0](https://github.com/energywebfoundation/iam-client-lib/commit/aa037a0be9e8b2416e467ac5f2828a0f38abd6cd))
+
+
+### Features
+
+* **cache-client:** update cache client interface ([78f4517](https://github.com/energywebfoundation/iam-client-lib/commit/78f451785fcb1d27db1f5afbb0847337fd6c79ba))
+* **cache-client:** update test login endpoint ([09d8a6b](https://github.com/energywebfoundation/iam-client-lib/commit/09d8a6b51664613353bb8f107f4a2a3d0d9eecb9))
+* get isEthSigner from browser ([96de2d8](https://github.com/energywebfoundation/iam-client-lib/commit/96de2d8203e8e38a41c9d65cd98c47fb12cf33d5))
+* **cache.config:** add EWC config ([f42ba11](https://github.com/energywebfoundation/iam-client-lib/commit/f42ba117a87b443ab65c7a42b9fbfd4c30d37db8))
+* **chain.config:** add EWC config ([6353a20](https://github.com/energywebfoundation/iam-client-lib/commit/6353a200724d919ad3ca881e1e00237059ae5e82))
+* **claims:** rejection reason while rejecting the claim ([ae82f18](https://github.com/energywebfoundation/iam-client-lib/commit/ae82f18c25081bbf0618efcfac9ee0fd22d7c7f0))
+* **claims:** rename fields to requestorFields for better readibility ([1f90d7c](https://github.com/energywebfoundation/iam-client-lib/commit/1f90d7c4e78913c3a8ae080470546f3ba7a612b5))
+* add chain name to DID format ([460d5fa](https://github.com/energywebfoundation/iam-client-lib/commit/460d5fa10d678675f5374df607a9aa5fb3795f9b))
+* add hardcap to staking pool, improve tests ([65dd861](https://github.com/energywebfoundation/iam-client-lib/commit/65dd861347570fea3efa45c57ace5ebb4ab8acf6))
+* add issuance of Role without previous request ([7ca982d](https://github.com/energywebfoundation/iam-client-lib/commit/7ca982d36473c693712687ba84be506e51f12fa9))
+* add method for getting ratio from staking pool. ([3daf9c0](https://github.com/energywebfoundation/iam-client-lib/commit/3daf9c03a4bc19cfb3bcb53926ccad61fa62be68))
+* add method to get total staked value. ([3f367aa](https://github.com/energywebfoundation/iam-client-lib/commit/3f367aa08480d440cd39c829488c7a5d6b7bd7af))
+* add missing properties in asset interface. ([ab40f31](https://github.com/energywebfoundation/iam-client-lib/commit/ab40f31d5e13b9884cc2640ed8a47aba42c5729b))
+* create energyweb under authewc ([19f65bb](https://github.com/energywebfoundation/iam-client-lib/commit/19f65bb4917995729e0617479becc090402e5b58))
+* ES256 delegate ([a3a9ba8](https://github.com/energywebfoundation/iam-client-lib/commit/a3a9ba8fa884757a38d50986fa6a431bda840b6b))
+* integrate staking-pool ([0173b27](https://github.com/energywebfoundation/iam-client-lib/commit/0173b27cfccbe0419d3d11d20f4f1002f8f26093))
+* retrieve roles by issuer ICS-86 ([597ea1e](https://github.com/energywebfoundation/iam-client-lib/commit/597ea1e69697c7b2b1eb2e9a7ea0eb67f9cf611c))
+* scripts to create and transfer energyweb ([b03155d](https://github.com/energywebfoundation/iam-client-lib/commit/b03155dece231109a2f184be63b198c7c7c6e1cd))
+* sign with EKC ([ea2c3b3](https://github.com/energywebfoundation/iam-client-lib/commit/ea2c3b3c001d1abf7e88d386f74ef329fa023c57))
+* update staking pool version, remove tests ([7ecbafd](https://github.com/energywebfoundation/iam-client-lib/commit/7ecbafd0b9ea6f64a200d9d0650be24c58f1c677))
+* use Chain enum from ew-did-reg/did ([00aeab1](https://github.com/energywebfoundation/iam-client-lib/commit/00aeab1de345ef5c5c6aff17a004f5562cecec7c))
+* **claim:** move register onchain from issue ([926eb95](https://github.com/energywebfoundation/iam-client-lib/commit/926eb95c094ef5ddb7c3f67a500134262a6658c2))
+* **claims:** check is claim issued ([1cb6d83](https://github.com/energywebfoundation/iam-client-lib/commit/1cb6d83f3ec9a9b804d3ae89ea4a8ccc5d3d1a4f))
+* **claims:** issuer fields ([0b7d6c4](https://github.com/energywebfoundation/iam-client-lib/commit/0b7d6c45f096a057c6d9d8b131c42745bfa336c9))
+* **claims:** key value list when issuing credential to asset ([ab72d0d](https://github.com/energywebfoundation/iam-client-lib/commit/ab72d0d6d09d26f699cf368715e72a92f9b208c6))
+* **claims:** new getClaimById method ([4fddb22](https://github.com/energywebfoundation/iam-client-lib/commit/4fddb2277f1f1b2edaa4e8d76f0b6317d3feff22))
+* **claims:** register onchain claim optionally ([c7eb237](https://github.com/energywebfoundation/iam-client-lib/commit/c7eb237ff97dce662a2eae20b1b2408496010c59))
+* **claims.service:** ICL-159 add hasOnChainRole utility ([abe6d86](https://github.com/energywebfoundation/iam-client-lib/commit/abe6d86b590e84094615ecaed1def7625eff2c6f))
+* **deps:** update ekc package ([839070a](https://github.com/energywebfoundation/iam-client-lib/commit/839070af1a4a346d3f9b3448593477f8772634f2))
+* **did:** remove support for did:ethr ([5b853ac](https://github.com/energywebfoundation/iam-client-lib/commit/5b853acd05c466c52c27bdfd7735358e0df253b4))
+* **DID:** remove did document creation upon initialization ([b2feede](https://github.com/energywebfoundation/iam-client-lib/commit/b2feede866bd255166b8a03e391f1f01d1f7737b))
+* **messaging:** disable nats messaging method for Node.js ([febabd2](https://github.com/energywebfoundation/iam-client-lib/commit/febabd295b1dbae2553fea4eef6b965504c67484))
+* **nats:** event types and new catch-all message pattern ([a5f460a](https://github.com/energywebfoundation/iam-client-lib/commit/a5f460add711199eaaac55c8f85a772f9b4009c6))
+* **nats:** moving sensitive data away from  NATS ([6fe33d5](https://github.com/energywebfoundation/iam-client-lib/commit/6fe33d5fe5525b9624eb23caec2fa0f137c19dd0))
+* **staking-pool:** add partial withdraw ([7801dc4](https://github.com/energywebfoundation/iam-client-lib/commit/7801dc4aebecd0e09eead3c5284e591477a9a804))
+* **utils/did:** use Chain from ew-did-reg/did ([03b7624](https://github.com/energywebfoundation/iam-client-lib/commit/03b7624cae6b9316d61bdd173c863642a57217a2))
+* update ew-did-reg to 0.6.3-alpha.367.0 ([98f282c](https://github.com/energywebfoundation/iam-client-lib/commit/98f282c03020ad8741085b310aeb406f62814248))
+* **staking-pool:** improve testing, bump staking pool ([6060fb2](https://github.com/energywebfoundation/iam-client-lib/commit/6060fb264877e4b2df1f41f4eb584af147e22a16))
+
+
+### BREAKING CHANGES
+
+* **did:** did:ethr is not supported
+iam-client-lib will only be tested on volta and ewc in near future
+mainnet support could be added in the future
+* initialize modules in order
+
 # [4.0.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.26...v4.0.0-alpha.27) (2022-01-13)
 
 # [4.0.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0-alpha.25...v4.0.0-alpha.26) (2022-01-12)
