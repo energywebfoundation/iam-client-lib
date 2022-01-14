@@ -68,5 +68,6 @@ jobs:
         run: |
           git checkout develop
           sudo chown $(id -u) .git/logs/refs/heads/develop
+          git fetch
           git merge origin/master
           git push origin develop
