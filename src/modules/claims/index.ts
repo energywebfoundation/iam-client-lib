@@ -1,2 +1,2 @@
-export * from "./claims.service";
-export * from "./claims.types";
+export * from './claims.service';
+export * from './claims.types';

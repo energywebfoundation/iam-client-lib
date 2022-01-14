@@ -1,31 +1,31 @@
-import { AssetHistoryEventType } from "../assets";
+import { AssetHistoryEventType } from '../assets';
 
 export enum Order {
-    "ASC" = "ASC",
-    "DESC" = "DESC",
+  'ASC' = 'ASC',
+  'DESC' = 'DESC',
 }
 
 export interface CacheServerClientOptions {
-    url: string;
-    cacheServerSupportsAuth?: boolean;
+  url: string;
+  cacheServerSupportsAuth?: boolean;
 }
 
 export type ClaimsFilter = {
-    isAccepted?: boolean;
-    namespace?: string;
+  isAccepted?: boolean;
+  namespace?: string;
 };
 
 export type AssetsFilter = {
-    order?: Order;
-    take?: number;
-    skip?: number;
-    type?: AssetHistoryEventType;
+  order?: Order;
+  take?: number;
+  skip?: number;
+  type?: AssetHistoryEventType;
 };
 
 export enum SearchType {
-    App = "App",
-    Org = "Org",
-    Role = "Role",
+  App = 'App',
+  Org = 'Org',
+  Role = 'Role',
 }
 
-export const TEST_LOGIN_ENDPOINT = "/auth/status";
+export const TEST_LOGIN_ENDPOINT = '/auth/status';

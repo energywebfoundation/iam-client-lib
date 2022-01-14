@@ -1,29 +1,33 @@
-import { IRoleDefinition } from "@energyweb/iam-contracts";
-import { Methods, Chain } from "@ew-did-registry/did";
-import { KeyTags } from "@ew-did-registry/did-resolver-interface";
+import { IRoleDefinition } from '@energyweb/iam-contracts';
+import { Methods, Chain } from '@ew-did-registry/did';
+import { KeyTags } from '@ew-did-registry/did-resolver-interface';
 
-import { BigNumber, providers, utils, Wallet } from "ethers";
+import { BigNumber, providers, utils, Wallet } from 'ethers';
 import {
-    DomainsService,
-    initWithPrivateKeySigner,
-    MessagingService,
-    ProviderType,
-    RegistrationTypes,
-    SignerService,
-    StakeStatus,
-    StakingPool,
-    StakingService,
-} from "../src";
-import { calculateReward, defaultPrincipalThreshold, setupStakingPoolFactory } from "./utils/staking";
-import { replenish, root, rpcUrl, setupENS } from "./utils/setup_contracts";
+  DomainsService,
+  initWithPrivateKeySigner,
+  MessagingService,
+  ProviderType,
+  RegistrationTypes,
+  SignerService,
+  StakeStatus,
+  StakingPool,
+  StakingService,
+} from '../src';
+import {
+  calculateReward,
+  defaultPrincipalThreshold,
+  setupStakingPoolFactory,
+} from './utils/staking';
+import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
 
 const { parseEther } = utils;
 
 const defaultMinStakingPeriod = 1;
 const patronRewardPortion = 1000;
-const orgName = "orgname";
+const orgName = 'orgname';
 const orgDomain = `${orgName}.${root}`;
-const patronRole = "patronrole";
+const patronRole = 'patronrole';
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 const rootOwner = Wallet.createRandom().connect(provider);
@@ -31,218 +35,226 @@ const orgOwner = Wallet.createRandom().connect(provider);
 const orgOwnerDid = `did:${Methods.Erc1056}:${Chain.VOLTA}:${orgOwner.address}`;
 const patron = Wallet.createRandom().connect(provider);
 const patronDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${patron.address}`;
-MessagingService.create = (signerService: SignerService) => Promise.resolve(new MessagingService(signerService));
+MessagingService.create = (signerService: SignerService) =>
+  Promise.resolve(new MessagingService(signerService));
 const mockPublish = jest.fn();
-jest.mock("../src/modules/messaging/messaging.service", () => {
-    return {
-        MessagingService: jest.fn().mockImplementation(() => {
-            return { publish: mockPublish };
-        }),
-    };
+jest.mock('../src/modules/messaging/messaging.service', () => {
+  return {
+    MessagingService: jest.fn().mockImplementation(() => {
+      return { publish: mockPublish };
+    }),
+  };
 });
 
 const mockGetRoleDefinition = jest.fn();
 const mockGetDidDocument = jest.fn().mockImplementation(({ did }: { did: string }) => {
-    return { publicKey: [{ id: `did:${Methods.Erc1056}:${Chain.VOLTA}:${did}-${KeyTags.OWNER}` }] };
+  return { publicKey: [{ id: `did:${Methods.Erc1056}:${Chain.VOLTA}:${did}-${KeyTags.OWNER}` }] };
 });
 const mockGetApplicationsByOrgNamespace = jest.fn();
 const mockRequestClaim = jest.fn();
 
-jest.mock("../src/modules/cacheClient/cacheClient.service", () => {
-    return {
-        CacheClient: jest.fn().mockImplementation(() => {
-            return {
-                getRoleDefinition: mockGetRoleDefinition,
-                getDidDocument: mockGetDidDocument,
-                getApplicationsByOrganization: mockGetApplicationsByOrgNamespace,
-                init: jest.fn(),
-                login: jest.fn(),
-                requestClaim: mockRequestClaim,
-                issueClaim: jest.fn(),
-            };
-        }),
-    };
+jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
+  return {
+    CacheClient: jest.fn().mockImplementation(() => {
+      return {
+        getRoleDefinition: mockGetRoleDefinition,
+        getDidDocument: mockGetDidDocument,
+        getApplicationsByOrganization: mockGetApplicationsByOrgNamespace,
+        init: jest.fn(),
+        login: jest.fn(),
+        requestClaim: mockRequestClaim,
+        issueClaim: jest.fn(),
+      };
+    }),
+  };
 });
 
-describe("StakingPool tests", () => {
-    let stakingService: StakingService;
-    let domainsService: DomainsService;
-    let signerService: SignerService;
-    let pool: StakingPool;
+describe('StakingPool tests', () => {
+  let stakingService: StakingService;
+  let domainsService: DomainsService;
+  let signerService: SignerService;
+  let pool: StakingPool;
 
-    beforeAll(async () => {
-        await replenish(orgOwner.address);
-        await replenish(patron.address);
-        await replenish(rootOwner.address);
-        await setupENS(rootOwner.address);
-        await setupStakingPoolFactory();
-        let connectToCacheServer;
-        ({ connectToCacheServer, signerService } = await initWithPrivateKeySigner(rootOwner.privateKey, rpcUrl));
-        await signerService.publicKeyAndIdentityToken();
-        let connectToDidRegistry;
-        ({ domainsService, stakingService, connectToDidRegistry } = await connectToCacheServer());
-        const { claimsService } = await connectToDidRegistry();
+  beforeAll(async () => {
+    await replenish(orgOwner.address);
+    await replenish(patron.address);
+    await replenish(rootOwner.address);
+    await setupENS(rootOwner.address);
+    await setupStakingPoolFactory();
+    let connectToCacheServer;
+    ({ connectToCacheServer, signerService } = await initWithPrivateKeySigner(
+      rootOwner.privateKey,
+      rpcUrl
+    ));
+    await signerService.publicKeyAndIdentityToken();
+    let connectToDidRegistry;
+    ({ domainsService, stakingService, connectToDidRegistry } = await connectToCacheServer());
+    const { claimsService } = await connectToDidRegistry();
 
-        const data: IRoleDefinition = {
-            fields: [],
-            issuerFields: [],
-            issuer: {
-                issuerType: "DID",
-                did: [orgOwnerDid],
-            },
-            metadata: [],
-            roleName: patronRole,
-            roleType: "test",
-            version: 1,
-            enrolmentPreconditions: [],
-        };
+    const data: IRoleDefinition = {
+      fields: [],
+      issuerFields: [],
+      issuer: {
+        issuerType: 'DID',
+        did: [orgOwnerDid],
+      },
+      metadata: [],
+      roleName: patronRole,
+      roleType: 'test',
+      version: 1,
+      enrolmentPreconditions: [],
+    };
 
-        await domainsService.createRole({
-            roleName: patronRole,
-            namespace: root,
-            data,
-        });
-
-        await domainsService.createOrganization({
-            orgName,
-            namespace: root,
-            data: { orgName },
-            returnSteps: false,
-        });
-
-        mockGetApplicationsByOrgNamespace.mockReturnValueOnce([]);
-        await domainsService.changeOrgOwnership({
-            namespace: `${orgName}.${root}`,
-            newOwner: orgOwner.address,
-        });
-
-        const registrationTypes = [RegistrationTypes.OnChain];
-        await signerService.connect(patron, ProviderType.PrivateKey);
-        mockGetRoleDefinition.mockReturnValueOnce(data);
-        await claimsService.createClaimRequest({
-            claim: { claimType: `${patronRole}.${root}`, claimTypeVersion: 1, requestorFields: [] },
-            registrationTypes,
-        });
-
-        const [message] = mockRequestClaim.mock.calls.pop();
-        const { id, subjectAgreement, token } = message;
-
-        await signerService.connect(orgOwner, ProviderType.PrivateKey);
-        mockGetRoleDefinition.mockReturnValueOnce(data);
-        await claimsService.issueClaimRequest({
-            id,
-            registrationTypes,
-            requester: patronDID,
-            subjectAgreement,
-            token,
-        });
+    await domainsService.createRole({
+      roleName: patronRole,
+      namespace: root,
+      data,
     });
 
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        await setupStakingPoolFactory();
-        await stakingService.init();
-        await launchPool();
-        await signerService.connect(patron, ProviderType.PrivateKey);
-        await replenish(patron.address);
+    await domainsService.createOrganization({
+      orgName,
+      namespace: root,
+      data: { orgName },
+      returnSteps: false,
     });
 
-    async function launchPool(
-        minStakingPeriod = defaultMinStakingPeriod,
-        principalThreshold = defaultPrincipalThreshold,
-    ) {
-        await replenish(orgOwner.address, principalThreshold);
-        await signerService.connect(orgOwner, ProviderType.PrivateKey);
-        await stakingService.launchPool({
-            org: orgDomain,
-            minStakingPeriod,
-            patronRewardPortion,
-            patronRoles: [`${patronRole}.${root}`],
-            principal: principalThreshold,
-        });
-        pool = (await stakingService.getPool(orgDomain)) as StakingPool;
-    }
-
-    it("patron should be able to stake", async () => {
-        const amount = parseEther("0.1");
-        await pool.putStake(amount);
-        return expect(pool.getStake()).resolves.toMatchObject({ status: StakeStatus.STAKING });
+    mockGetApplicationsByOrgNamespace.mockReturnValueOnce([]);
+    await domainsService.changeOrgOwnership({
+      namespace: `${orgName}.${root}`,
+      newOwner: orgOwner.address,
     });
 
-    it("should not be able to stake without having patron role", async () => {
-        const nonPatron = Wallet.createRandom().connect(provider);
-        await replenish(await nonPatron.getAddress());
-        await signerService.connect(nonPatron, ProviderType.PrivateKey);
-        return expect(pool.putStake(parseEther("0.1"))).rejects.toThrow(
-            "StakingPool: patron is not registered with patron role",
-        );
+    const registrationTypes = [RegistrationTypes.OnChain];
+    await signerService.connect(patron, ProviderType.PrivateKey);
+    mockGetRoleDefinition.mockReturnValueOnce(data);
+    await claimsService.createClaimRequest({
+      claim: { claimType: `${patronRole}.${root}`, claimTypeVersion: 1, requestorFields: [] },
+      registrationTypes,
     });
 
-    it("should reject when stake amount isn't provided", async () => {
-        return expect(pool.putStake(parseEther("0"))).rejects.toThrow("StakingPool: stake amount is not provided");
-    });
+    const [message] = mockRequestClaim.mock.calls.pop();
+    const { id, subjectAgreement, token } = message;
 
-    it("should be able to stake whole balance", async () => {
-        const stake = await signerService.balance();
-        await pool.putStake(stake);
-        return expect(pool.getStake()).resolves.toMatchObject({ status: StakeStatus.STAKING });
+    await signerService.connect(orgOwner, ProviderType.PrivateKey);
+    mockGetRoleDefinition.mockReturnValueOnce(data);
+    await claimsService.issueClaimRequest({
+      id,
+      registrationTypes,
+      requester: patronDID,
+      subjectAgreement,
+      token,
     });
+  });
 
-    it("stake should not be replenished", async () => {
-        await pool.putStake(parseEther("0.1"));
-        return expect(pool.putStake(parseEther("0.1"))).rejects.toThrow(
-            "StakingPool: Replenishment of the stake is not allowed",
-        );
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    await setupStakingPoolFactory();
+    await stakingService.init();
+    await launchPool();
+    await signerService.connect(patron, ProviderType.PrivateKey);
+    await replenish(patron.address);
+  });
+
+  async function launchPool(
+    minStakingPeriod = defaultMinStakingPeriod,
+    principalThreshold = defaultPrincipalThreshold
+  ) {
+    await replenish(orgOwner.address, principalThreshold);
+    await signerService.connect(orgOwner, ProviderType.PrivateKey);
+    await stakingService.launchPool({
+      org: orgDomain,
+      minStakingPeriod,
+      patronRewardPortion,
+      patronRoles: [`${patronRole}.${root}`],
+      principal: principalThreshold,
     });
+    pool = (await stakingService.getPool(orgDomain)) as StakingPool;
+  }
 
-    it("staker should be able to request withdraw", async () => {
-        await pool.putStake(parseEther("0.1"));
-        const requestDelay = await pool.requestWithdrawDelay();
-        await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
-        await pool.requestWithdraw();
-        return expect(pool.getStake()).resolves.toMatchObject({ status: StakeStatus.WITHDRAWING });
-    });
+  it('patron should be able to stake', async () => {
+    const amount = parseEther('0.1');
+    await pool.putStake(amount);
+    return expect(pool.getStake()).resolves.toMatchObject({ status: StakeStatus.STAKING });
+  });
 
-    it("can't request withdraw when no stake", async () => {
-        return expect(pool.requestWithdraw()).rejects.toThrow("StakingPool: No stake to withdraw");
-    });
+  it('should not be able to stake without having patron role', async () => {
+    const nonPatron = Wallet.createRandom().connect(provider);
+    await replenish(await nonPatron.getAddress());
+    await signerService.connect(nonPatron, ProviderType.PrivateKey);
+    return expect(pool.putStake(parseEther('0.1'))).rejects.toThrow(
+      'StakingPool: patron is not registered with patron role'
+    );
+  });
 
-    it("can't request withdraw until minimum staking period is last", async () => {
-        await setupStakingPoolFactory();
-        await launchPool(10);
-        await signerService.connect(patron, ProviderType.PrivateKey);
-        await pool.putStake(parseEther("0.1"));
-        return expect(pool.requestWithdraw()).rejects.toThrow("StakingPool: Minimum staking period is not expired yet");
-    });
+  it("should reject when stake amount isn't provided", async () => {
+    return expect(pool.putStake(parseEther('0'))).rejects.toThrow(
+      'StakingPool: stake amount is not provided'
+    );
+  });
 
-    it("withdraw can't be requested twice", async () => {
-        await pool.putStake(parseEther("0.1"));
-        const requestDelay = await pool.requestWithdrawDelay();
-        await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
-        await pool.requestWithdraw();
-        return expect(pool.requestWithdraw()).rejects.toThrow("StakingPool: No stake to withdraw");
-    });
+  it('should be able to stake whole balance', async () => {
+    const stake = await signerService.balance();
+    await pool.putStake(stake);
+    return expect(pool.getStake()).resolves.toMatchObject({ status: StakeStatus.STAKING });
+  });
 
-    it("stake can be withdrawn", async () => {
-        const stake = parseEther("0.1");
-        await pool.putStake(stake);
-        const depositStart = (await pool.getStake()).depositStart;
-        const requestDelay = await pool.requestWithdrawDelay();
-        await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
-        await pool.requestWithdraw();
-        const depositEnd = (await pool.getStake()).depositEnd;
-        const expectedReward = calculateReward(
-            stake,
-            depositEnd.sub(depositStart),
-            BigNumber.from(patronRewardPortion),
-        );
+  it('stake should not be replenished', async () => {
+    await pool.putStake(parseEther('0.1'));
+    return expect(pool.putStake(parseEther('0.1'))).rejects.toThrow(
+      'StakingPool: Replenishment of the stake is not allowed'
+    );
+  });
 
-        expect(await pool.checkReward()).toEqual(expectedReward);
-        const withdrawalDelay = await pool.withdrawalDelay();
-        await new Promise((resolve) => setTimeout(resolve, 1000 * withdrawalDelay));
-        const balanceBeforeWithdraw = await patron.getBalance();
-        await pool.withdraw();
-        const balanceAfterWithdraw = await patron.getBalance();
-        expect(balanceAfterWithdraw.eq(balanceBeforeWithdraw.add(stake).add(expectedReward)));
-    });
+  it('staker should be able to request withdraw', async () => {
+    await pool.putStake(parseEther('0.1'));
+    const requestDelay = await pool.requestWithdrawDelay();
+    await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
+    await pool.requestWithdraw();
+    return expect(pool.getStake()).resolves.toMatchObject({ status: StakeStatus.WITHDRAWING });
+  });
+
+  it("can't request withdraw when no stake", async () => {
+    return expect(pool.requestWithdraw()).rejects.toThrow('StakingPool: No stake to withdraw');
+  });
+
+  it("can't request withdraw until minimum staking period is last", async () => {
+    await setupStakingPoolFactory();
+    await launchPool(10);
+    await signerService.connect(patron, ProviderType.PrivateKey);
+    await pool.putStake(parseEther('0.1'));
+    return expect(pool.requestWithdraw()).rejects.toThrow(
+      'StakingPool: Minimum staking period is not expired yet'
+    );
+  });
+
+  it("withdraw can't be requested twice", async () => {
+    await pool.putStake(parseEther('0.1'));
+    const requestDelay = await pool.requestWithdrawDelay();
+    await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
+    await pool.requestWithdraw();
+    return expect(pool.requestWithdraw()).rejects.toThrow('StakingPool: No stake to withdraw');
+  });
+
+  it('stake can be withdrawn', async () => {
+    const stake = parseEther('0.1');
+    await pool.putStake(stake);
+    const depositStart = (await pool.getStake()).depositStart;
+    const requestDelay = await pool.requestWithdrawDelay();
+    await new Promise((resolve) => setTimeout(resolve, 1000 * requestDelay));
+    await pool.requestWithdraw();
+    const depositEnd = (await pool.getStake()).depositEnd;
+    const expectedReward = calculateReward(
+      stake,
+      depositEnd.sub(depositStart),
+      BigNumber.from(patronRewardPortion)
+    );
+
+    expect(await pool.checkReward()).toEqual(expectedReward);
+    const withdrawalDelay = await pool.withdrawalDelay();
+    await new Promise((resolve) => setTimeout(resolve, 1000 * withdrawalDelay));
+    const balanceBeforeWithdraw = await patron.getBalance();
+    await pool.withdraw();
+    const balanceAfterWithdraw = await patron.getBalance();
+    expect(balanceAfterWithdraw.eq(balanceBeforeWithdraw.add(stake).add(expectedReward)));
+  });
 });
