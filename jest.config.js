@@ -2,13 +2,13 @@ module.exports = {
     verbose: true,
     transform: {
         "\\.(ts|tsx)$": "ts-jest",
-        "\\.mjs$": "babel-jest",
+        "\\.(mjs|js)$": "babel-jest",
     },
-    transformIgnorePatterns: ["node_modules/.+\\.!mjs$"],
+    transformIgnorePatterns: ["node_modules/!(@energyweb/ekc)", "node_modules/.+\\.!(mjs)$"],
     testEnvironment: "node",
-    testRegex: "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    testRegex: "(/(e2e|src)/(.|\\.)*\\.(e2e|spec)\\.ts$)",
     moduleFileExtensions: ["ts", "tsx", "js", "json"],
-    coveragePathIgnorePatterns: ["/node_modules/", "/test/"],
+    coveragePathIgnorePatterns: ["/node_modules/", "/e2e/", "/test/"],
     coverageThreshold: {
         global: {
             branches: 0,
@@ -18,4 +18,5 @@ module.exports = {
         },
     },
     collectCoverageFrom: ["src/*.{js,ts}"],
+    setupFilesAfterEnv: ["./jest.setup.js"],
 };

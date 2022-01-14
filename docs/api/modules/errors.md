@@ -4,23 +4,15 @@
 
 ### References
 
-- [CacheClientNotProvidedError](errors.md#cacheclientnotprovidederror)
 - [ChangeOwnershipNotPossibleError](errors.md#changeownershipnotpossibleerror)
 - [DeletingNamespaceNotPossibleError](errors.md#deletingnamespacenotpossibleerror)
-- [ENSRegistryNotInitializedError](errors.md#ensregistrynotinitializederror)
-- [ENSResolverNotInitializedError](errors.md#ensresolvernotinitializederror)
+- [ENSOwnerNotValidAddressError](errors.md#ensownernotvalidaddresserror)
 - [ENSTypeNotSupportedError](errors.md#enstypenotsupportederror)
 - [ERROR\_MESSAGES](errors.md#error_messages)
+- [MalformedDIDError](errors.md#malformeddiderror)
 - [MethodNotAvailableInNodeEnvError](errors.md#methodnotavailableinnodeenverror)
-- [NATSConnectionNotEstablishedError](errors.md#natsconnectionnotestablishederror)
 
 ## References
-
-### CacheClientNotProvidedError
-
-Re-exports: [CacheClientNotProvidedError](../classes/errors_CacheClientNotProvided.CacheClientNotProvidedError.md)
-
-___
 
 ### ChangeOwnershipNotPossibleError
 
@@ -34,21 +26,15 @@ Re-exports: [DeletingNamespaceNotPossibleError](../classes/errors_DeletingNamesp
 
 ___
 
-### ENSRegistryNotInitializedError
+### ENSOwnerNotValidAddressError
 
-Re-exports: [ENSRegistryNotInitializedError](../classes/errors_ENSRegistryNotInitializedError.ENSRegistryNotInitializedError.md)
-
-___
-
-### ENSResolverNotInitializedError
-
-Re-exports: [ENSResolverNotInitializedError](../classes/errors_ENSResolverNotInitializedError.ENSResolverNotInitializedError.md)
+Re-exports: [ENSOwnerNotValidAddressError](../classes/errors_ENSOwnerNotValidAddressError.ENSOwnerNotValidAddressError.md)
 
 ___
 
 ### ENSTypeNotSupportedError
 
-Re-exports: [ENSTypeNotSupportedError](../classes/errors_ENSTypeNOtSupportedError.ENSTypeNotSupportedError.md)
+Re-exports: [ENSTypeNotSupportedError](../classes/errors_ENSTypeNotSupportedError.ENSTypeNotSupportedError.md)
 
 ___
 
@@ -58,12 +44,12 @@ Re-exports: [ERROR\_MESSAGES](../enums/errors_ErrorMessages.ERROR_MESSAGES.md)
 
 ___
 
-### MethodNotAvailableInNodeEnvError
+### MalformedDIDError
 
-Re-exports: [MethodNotAvailableInNodeEnvError](../classes/errors_MethodNotAvailableInNodeError.MethodNotAvailableInNodeEnvError.md)
+Re-exports: [MalformedDIDError](../classes/errors_MalformedDIDError.MalformedDIDError.md)
 
 ___
 
-### NATSConnectionNotEstablishedError
+### MethodNotAvailableInNodeEnvError
 
-Re-exports: [NATSConnectionNotEstablishedError](../classes/errors_NatsConnectionNotEstablishedError.NATSConnectionNotEstablishedError.md)
+Re-exports: [MethodNotAvailableInNodeEnvError](../classes/errors_MethodNotAvailableInNodeError.MethodNotAvailableInNodeEnvError.md)

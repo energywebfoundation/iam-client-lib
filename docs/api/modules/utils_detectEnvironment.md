@@ -8,13 +8,13 @@
 
 ### Functions
 
-- [detectExecutionEnvironment](utils_detectEnvironment.md#detectexecutionenvironment)
+- [executionEnvironment](utils_detectEnvironment.md#executionenvironment)
 
 ## Functions
 
-### detectExecutionEnvironment
+### executionEnvironment
 
-▸ `Const` **detectExecutionEnvironment**(): `ExecutionEnvironment`
+▸ `Const` **executionEnvironment**(): `ExecutionEnvironment`
 
 #### Returns
 

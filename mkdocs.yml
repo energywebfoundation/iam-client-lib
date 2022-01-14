@@ -6,11 +6,11 @@ nav:
       - "Architecture": intro/architecture.md
       - "Domain Hierarchy": intro/domainhierarchy.md
   - "Guides":
-      - "Authentication": guides/authentication.md
+      - "Initialization": guides/initialization.md
       - "Application": guides/application.md
       - "Asset": guides/asset.md
       - "Organization": guides/organization.md
-      - "Role": guides/role.md
+      - "Claims": guides/claim.md
   - API: api/modules.md
   - CHANGELOG: CHANGELOG.md
 theme:

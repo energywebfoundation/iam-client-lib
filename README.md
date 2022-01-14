@@ -1,6 +1,7 @@
 <p align="center">
   <img src="https://github.com/energywebfoundation/iam-client-lib/actions/workflows/deploy.yml/badge.svg" />
 </p>
+
 # Identity and Access Management (IAM) Client Library
 
 TypeScript library to be used within decentralized applications for authentication and authorization using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
@@ -44,103 +45,59 @@ Prerelease version
 npm i iam-client-lib@canary
 ```
 
-### Sample Config for browsers (TypeScript)
+### Initialization
+
+Because of dependencies between modules they should be initialized in right order.
+This is achieved by accessing module initializer from initialization function of required module. 
+
+1. Initializing signer service. It will initialize staking and messaging services and allow to connect to cache server
 
 ```js
-import {
-  IAM,
-  WalletProvider,
-  setCacheClientOptions,
-  setChainConfig,
-  setMessagingOptions,
-  MessagingMethod,
-} from 'iam-client-lib'
-
-export class App {
-    private _iam: IAM;
-
-    constructor() {
-      // IAM has builtin default settings for VOLTA CHAIN
-
-      // If you want to change default cache server config or add config for your network
-      setCacheClientOptions(1111, {
-        url: 'https://some-cache-server.com/',
-        cacheServerSupportsAuth: true,
-      })
-
-      // If you want to change default chain config or add config for your network
-      setChainConfig(1111, {
-        didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
-        ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
-        ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
-        rpcUrl: 'http://some-rpc.com',
-      })
-
-      // If you want to change default messaging config or add config for your network
-      setMessagingOptions(1111, {
-        messagingMethod: MessagingMethod.Nats,
-        natsServerUrl: 'https://some-exchange-server.com',
-      })
-
-      // create IAM instance
-      this._iam = new IAM();
-    }
-
-    async initializeIAM() {
-      // this will show connection modal and authenticate
-      const { did, connected } = await this._iam.initializeConnection({
-        walletProvider: WalletProvider.MetaMask,
-      });
-
-      // after successfully authentication you can retrieve the signer
-      const signer = this._iam.getSigner();
-    }
-
+  const {
+      signerService,
+      stakingService,
+      messagingService,
+      connectToCacheServer,
+      isSessionActive,
+      storeSession
+  } = await initWithPrivateKeySigner(privateKey, rpcUrl)
 ```
 
-### Sample Config for Node.js (TypeScript)
+2. Connecting to cache server. Depending on signer type signature might be requested
 
 ```js
-import { IAM } from 'iam-client-lib'
+// IAM has builtin default settings for VOLTA CHAIN, which can overriden
+setChainConfig(1111, {
+    didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
+    ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
+    ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
+    rpcUrl: 'http://some-rpc.com',
+})
 
-export class App {
-    private _iam: IAM;
+setMessagingOptions(1111, {
+    messagingMethod: MessagingMethod.Nats,
+    natsServerUrl: 'https://some-exchange-server.com'
+})
 
-    constructor() {
-     // IAM has builtin default settings for VOLTA CHAIN
+setCacheClientOptions(1111, {
+    url: 'https://some-cache-server.com/',
+    cacheServerSupportsAuth: true,
+})
 
-      // If you want to change default cache server config or add config for your network
-      setCacheClientOptions(1111, {
-        url: 'https://some-cache-server.com/',
-        cacheServerSupportsAuth: true,
-      })
+const {
+    cacheClient,
+    domainsService,
+    connectToDidRegistry
+} = await connectToCacheServer()
+```
 
-      // If you want to change default chain config or add config for your network
-      setChainConfig(1111, {
-        didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
-        ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
-        ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
-        rpcUrl: 'http://some-rpc.com',
-      })
+3. Connecting to DID registry.
 
-      // create IAM instance
-      this._iam = new IAM({
-        // only for Node.js env you need to pass rpcUrl in the constructor
-        rpcUrl: 'http://some-rpc.com',
-        privateKey: '9945c05be0b1b7b35b7cec937e78c6552ecedca764b53a772547d94a687db929'
-      });
-    }
-
-
-
-    async initializeIAM() {
-      // this will authenticate
-      const { did, connected } = await this._iam.initializeConnection();
-
-      // after successfully authentication you can retrieve the signer
-      const signer = this._iam.getSigner();
-    }
-
+```js
+const {
+    didRegistry,
+    claimsService
+} = await connectToDidRegistry()
 ```
 
 ## Development
@@ -173,9 +130,9 @@ npm run build
 
 ## Active Maintainers
 
-- [Ahmed Ibrahim](https://github.com/ahmedolaibrahim)
-- [John Henderson](https://github.com/jrhender)
-- [Dmitry Fesenko](https://github.com/JGiter)
+* [Ahmed Ibrahim](https://github.com/ahmedolaibrahim)
+* [John Henderson](https://github.com/jrhender)
+* [Dmitry Fesenko](https://github.com/JGiter)
 
 ## Contributing
 

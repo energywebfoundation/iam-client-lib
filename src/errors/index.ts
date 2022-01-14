@@ -1,21 +1,7 @@
-import { CacheClientNotProvidedError } from "./CacheClientNotProvided";
-import { ENSTypeNotSupportedError } from "./ENSTypeNOtSupportedError";
-import { MethodNotAvailableInNodeEnvError } from "./MethodNotAvailableInNodeError";
-import { NATSConnectionNotEstablishedError } from "./NatsConnectionNotEstablishedError";
-import { ENSRegistryNotInitializedError } from "./ENSRegistryNotInitializedError";
-import { ENSResolverNotInitializedError } from "./ENSResolverNotInitializedError";
-import { ChangeOwnershipNotPossibleError } from "./ChangeOwnershipNotPossibleError";
-import { DeletingNamespaceNotPossibleError } from "./DeletingNamespaceNotPossibleError";
-import { ERROR_MESSAGES } from "./ErrorMessages";
-
-export {
-    CacheClientNotProvidedError,
-    ENSTypeNotSupportedError,
-    MethodNotAvailableInNodeEnvError,
-    NATSConnectionNotEstablishedError,
-    ENSRegistryNotInitializedError,
-    ENSResolverNotInitializedError,
-    ChangeOwnershipNotPossibleError,
-    DeletingNamespaceNotPossibleError,
-    ERROR_MESSAGES,
-};
+export { ENSTypeNotSupportedError } from "./ENSTypeNotSupportedError";
+export { MethodNotAvailableInNodeEnvError } from "./MethodNotAvailableInNodeError";
+export { ChangeOwnershipNotPossibleError } from "./ChangeOwnershipNotPossibleError";
+export { DeletingNamespaceNotPossibleError } from "./DeletingNamespaceNotPossibleError";
+export { ENSOwnerNotValidAddressError } from "./ENSOwnerNotValidAddressError";
+export { ERROR_MESSAGES } from "./ErrorMessages";
+export { MalformedDIDError } from "./MalformedDIDError";

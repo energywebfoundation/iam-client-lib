@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
+      - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
 
@@ -47,7 +47,7 @@ jobs:
         run: npm run build
 
       - name: Npm Run Test
-        run: npm run test:prod
+        run: npm run test
 
       - name: Deploy on develop branch
         if: github.ref == 'refs/heads/develop'
@@ -63,7 +63,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Commit to develop branch and merge to master branch
+      - name: Merge master into develop
+        if: github.ref == 'refs/heads/master'
         run: |
           git checkout develop
           sudo chown $(id -u) .git/logs/refs/heads/develop

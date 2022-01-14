@@ -2,29 +2,58 @@
 
 ## Table of contents
 
+### Variables
+
+- [didPattern](utils_did.md#didpattern)
+
 ### Functions
 
 - [addSupportedDID](utils_did.md#addsupporteddid)
+- [compareDID](utils_did.md#comparedid)
 - [isValidDID](utils_did.md#isvaliddid)
-- [parseDID](utils_did.md#parsedid)
 - [supportedDIDMethods](utils_did.md#supporteddidmethods)
+
+## Variables
+
+### didPattern
+
+• `Const` **didPattern**: ``"^(?:did:(?<method>[a-z0-9]+?):)((?<chain>[a-z0-9]+?):)?(?<id>0x[A-Fa-f0-9]{40})$"``
 
 ## Functions
 
 ### addSupportedDID
 
-▸ **addSupportedDID**(`method`, `validator`): `void`
+▸ **addSupportedDID**(`methodWithChain`, `validator`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `method` | `Methods` |
+| `methodWithChain` | `string` |
 | `validator` | (`did`: `string`) => `boolean` |
 
 #### Returns
 
 `void`
+
+___
+
+### compareDID
+
+▸ **compareDID**(`didA`, `didB`): `boolean`
+
+**`description`** For verification which envolves legacy and chain-specific DID's
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `didA` | `string` |
+| `didB` | `string` |
+
+#### Returns
+
+`boolean`
 
 ___
 
@@ -44,26 +73,10 @@ ___
 
 ___
 
-### parseDID
-
-▸ **parseDID**(`did`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `did` | `string` |
-
-#### Returns
-
-`string`
-
-___
-
 ### supportedDIDMethods
 
-▸ **supportedDIDMethods**(): `Methods`[]
+▸ **supportedDIDMethods**(): `string`[]
 
 #### Returns
 
-`Methods`[]
+`string`[]
