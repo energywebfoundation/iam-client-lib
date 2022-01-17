@@ -416,10 +416,12 @@ export class ClaimsService {
   }
 
   /**
-   * createSelfSignedClaim
+   * @description Creates claim with `data` and adds it to `subject` document. Signer must own or control subject
    *
-   * @description creates self signed claim and upload the data to ipfs
+   * @param data claim payload
+   * @param subject DID of claim subject
    *
+   * @returns claim url
    */
   async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
     const token = await this._didRegistry.createPublicClaim({ data, subject });
