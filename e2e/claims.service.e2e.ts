@@ -21,6 +21,7 @@ import {
 import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
 import { ClaimManager } from '../ethers/ClaimManager';
+import { ProofVerifier } from '@ew-did-registry/claims';
 
 const { namehash } = utils;
 
@@ -70,6 +71,7 @@ const mockGetRoleDefinition = jest.fn().mockImplementation((namespace: string) =
 const mockCachedDocument = jest.fn().mockImplementation((did: string) => {
   return { publicKey: [{ id: `did:${Methods.Erc1056}:${Chain.VOLTA}:${did}-${KeyTags.OWNER}` }] }; // all documents are created
 });
+const mockGetCachedOwnedAssets = jest.fn();
 const mockGetAssetById = jest.fn();
 const mockGetClaimsBySubject = jest.fn();
 const mockRequestClaim = jest.fn();
@@ -82,6 +84,7 @@ jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
         getRoleDefinition: mockGetRoleDefinition,
         getDidDocument: mockCachedDocument,
         getAssetById: mockGetAssetById,
+        getOwnedAssets: mockGetCachedOwnedAssets,
         getClaimsBySubject: mockGetClaimsBySubject,
         init: jest.fn(),
         login: jest.fn(),
@@ -149,260 +152,303 @@ describe('Enrollment claim tests', () => {
     Reflect.set(didRegistry, '_cacheClient', undefined);
   });
 
-  async function enrolAndIssue(
-    requestSigner: Required<ethers.Signer>,
-    issueSigner: Required<ethers.Signer>,
-    {
-      subjectDID,
-      claimType,
-      registrationTypes = [RegistrationTypes.OnChain],
-      publishOnChain = true,
-      issuerFields,
-    }: {
-      subjectDID: string;
-      claimType: string;
-      registrationTypes?: RegistrationTypes[];
-      publishOnChain?: boolean;
-      issuerFields?: Record<string, string | number>[];
-    }
-  ) {
-    await signerService.connect(requestSigner, ProviderType.PrivateKey);
-    const requesterDID = signerService.did;
-    const requestorFields = [{ key: 'temperature', value: 36 }];
-    await claimsService.createClaimRequest({
-      claim: { claimType, claimTypeVersion: version, requestorFields },
-      registrationTypes,
-      subject: subjectDID,
-    });
-    const [message] = mockRequestClaim.mock.calls.pop();
-
-    await signerService.connect(issueSigner, ProviderType.PrivateKey);
-    const issuerDID = signerService.did;
-    await claimsService.issueClaimRequest({ publishOnChain, issuerFields, ...message });
-    const [, issuedClaim] = <[string, Required<IClaimIssuance>]>mockIssueClaim.mock.calls.pop();
-
-    const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = issuedClaim;
-
-    if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      expect(issuedToken).not.toBeUndefined();
-
-      const { claimData, signer, did } = (await didRegistry.decodeJWTToken({
-        token: issuedToken,
-      })) as { [key: string]: string };
-
-      expect(claimData).toEqual({
+  describe('Enrollment tests', () => {
+    async function enrolAndIssue(
+      requestSigner: Required<ethers.Signer>,
+      issueSigner: Required<ethers.Signer>,
+      {
+        subjectDID,
         claimType,
-        claimTypeVersion: version,
+        registrationTypes = [RegistrationTypes.OnChain],
+        publishOnChain = true,
         issuerFields,
-        requestorFields,
+      }: {
+        subjectDID: string;
+        claimType: string;
+        registrationTypes?: RegistrationTypes[];
+        publishOnChain?: boolean;
+        issuerFields?: Record<string, string | number>[];
+      }
+    ) {
+      await signerService.connect(requestSigner, ProviderType.PrivateKey);
+      const requesterDID = signerService.did;
+      const requestorFields = [{ key: 'temperature', value: 36 }];
+      await claimsService.createClaimRequest({
+        claim: { claimType, claimTypeVersion: version, requestorFields },
+        registrationTypes,
+        subject: subjectDID,
       });
+      const [message] = mockRequestClaim.mock.calls.pop();
 
-      expect(claimData).not.toContain({
-        fields: [{ key: 'temperature', value: 36 }],
-      });
+      await signerService.connect(issueSigner, ProviderType.PrivateKey);
+      const issuerDID = signerService.did;
+      await claimsService.issueClaimRequest({ publishOnChain, issuerFields, ...message });
+      const [, issuedClaim] = <[string, Required<IClaimIssuance>]>mockIssueClaim.mock.calls.pop();
 
-      expect(signer).toBe(issuerDID);
-      expect(did).toBe(requesterDID);
+      const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = issuedClaim;
+
+      if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+        expect(issuedToken).toBeDefined();
+
+        const { claimData, signer, did } = (await didRegistry.decodeJWTToken({
+          token: issuedToken,
+        })) as { [key: string]: string };
+
+        expect(claimData).toEqual({
+          claimType,
+          claimTypeVersion: version,
+          issuerFields,
+          requestorFields,
+        });
+
+        expect(claimData).not.toContain({
+          fields: [{ key: 'temperature', value: 36 }],
+        });
+
+        expect(signer).toBe(issuerDID);
+        expect(did).toBe(requesterDID);
+      }
+
+      expect(requester).toEqual(requesterDID);
+      expect(claimIssuer).toEqual([issuerDID]);
+
+      registrationTypes.includes(RegistrationTypes.OnChain) &&
+        expect(onChainProof).toHaveLength(132);
+
+      expect(acceptedBy).toBe(issuerDID);
+
+      return issuedClaim;
     }
 
-    expect(requester).toEqual(requesterDID);
-    expect(claimIssuer).toEqual([issuerDID]);
+    test('enrollment by issuer of type DID', async () => {
+      const requester = rootOwner;
+      const issuer = staticIssuer;
+      const subjectDID = rootOwnerDID;
+      const role = `${roleName1}.${root}`;
+      const claimType = `${roleName1}.${root}`;
+      expect(await claimsService.hasOnChainRole(rootOwnerDID, role, version)).toBe(false);
+      await enrolAndIssue(requester, issuer, {
+        subjectDID,
+        claimType,
+      });
 
-    registrationTypes.includes(RegistrationTypes.OnChain) && expect(onChainProof).toHaveLength(132);
-
-    expect(acceptedBy).toBe(issuerDID);
-
-    return issuedClaim;
-  }
-
-  test('enrollment by issuer of type DID', async () => {
-    const requester = rootOwner;
-    const issuer = staticIssuer;
-    const subjectDID = rootOwnerDID;
-    const role = `${roleName1}.${root}`;
-    const claimType = `${roleName1}.${root}`;
-    expect(await claimsService.hasOnChainRole(rootOwnerDID, role, version)).toBe(false);
-    await enrolAndIssue(requester, issuer, {
-      subjectDID,
-      claimType,
+      expect(await claimManager.hasRole(addressOf(subjectDID), namehash(role), version)).toBe(true);
+      expect(await claimsService.hasOnChainRole(subjectDID, role, version)).toBe(true);
     });
 
-    expect(claimManager.hasRole(addressOf(subjectDID), namehash(role), version)).resolves.toBe(
-      true
-    );
-    expect(await claimsService.hasOnChainRole(subjectDID, role, version)).toBe(true);
-  });
+    test('asset enrollment by issuer of type DID', async () => {
+      mockGetAssetById.mockImplementationOnce(({ id }: { id: string }) => ({ id }));
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      const assetAddress = await assetsService.registerAsset();
+      const assetDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${assetAddress}`;
+      await enrolAndIssue(rootOwner, staticIssuer, {
+        subjectDID: assetDID,
+        claimType: `${roleName1}.${root}`,
+      });
 
-  test('asset enrollment by issuer of type DID', async () => {
-    mockGetAssetById.mockImplementationOnce(({ id }: { id: string }) => ({ id }));
-    await signerService.connect(rootOwner, ProviderType.PrivateKey);
-    const assetAddress = await assetsService.registerAsset();
-    const assetDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${assetAddress}`;
-    await enrolAndIssue(rootOwner, staticIssuer, {
-      subjectDID: assetDID,
-      claimType: `${roleName1}.${root}`,
+      return expect(
+        await claimsService.hasOnChainRole(assetDID, `${roleName1}.${root}`, version)
+      ).toBe(true);
     });
 
-    return expect(
-      claimsService.hasOnChainRole(assetDID, `${roleName1}.${root}`, version)
-    ).resolves.toBe(true);
-  });
+    test('enrollment by issuer of type ROLE', async () => {
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await domainsService.createRole({
+        roleName: roleName2,
+        namespace,
+        data: roles[`${roleName2}.${root}`],
+        returnSteps: false,
+      });
 
-  test('enrollment by issuer of type ROLE', async () => {
-    await signerService.connect(rootOwner, ProviderType.PrivateKey);
-    await domainsService.createRole({
-      roleName: roleName2,
-      namespace,
-      data: roles[`${roleName2}.${root}`],
-      returnSteps: false,
+      await enrolAndIssue(dynamicIssuer, staticIssuer, {
+        subjectDID: dynamicIssuerDID,
+        claimType: `${roleName1}.${root}`,
+      });
+
+      expect(
+        await claimManager.hasRole(
+          addressOf(dynamicIssuerDID),
+          namehash(`${roleName1}.${root}`),
+          version
+        )
+      );
+
+      await enrolAndIssue(rootOwner, dynamicIssuer, {
+        subjectDID: rootOwnerDID,
+        claimType: `${roleName2}.${root}`,
+      });
+
+      return expect(
+        await claimsService.hasOnChainRole(rootOwnerDID, `${roleName2}.${root}`, version)
+      ).toBe(true);
     });
 
-    await enrolAndIssue(dynamicIssuer, staticIssuer, {
-      subjectDID: dynamicIssuerDID,
-      claimType: `${roleName1}.${root}`,
-    });
+    test('should enrol when prerequisites are met', async () => {
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await domainsService.createRole({
+        roleName: roleName3,
+        namespace,
+        data: roles[`${roleName3}.${root}`],
+        returnSteps: false,
+      });
 
-    expect(
-      await claimManager.hasRole(
-        addressOf(dynamicIssuerDID),
-        namehash(`${roleName1}.${root}`),
-        version
-      )
-    );
+      const role1Claim = {
+        claimType: `${roleName1}.${root}`,
+        isAccepted: true,
+      };
+      await enrolAndIssue(rootOwner, staticIssuer, {
+        subjectDID: rootOwnerDID,
+        claimType: `${roleName1}.${root}`,
+      });
+      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
+      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify issuance
 
-    await enrolAndIssue(rootOwner, dynamicIssuer, {
-      subjectDID: rootOwnerDID,
-      claimType: `${roleName2}.${root}`,
-    });
-
-    return expect(
-      claimsService.hasOnChainRole(rootOwnerDID, `${roleName2}.${root}`, version)
-    ).resolves.toBe(true);
-  });
-
-  test('should enrol when prerequisites are met', async () => {
-    await signerService.connect(rootOwner, ProviderType.PrivateKey);
-    await domainsService.createRole({
-      roleName: roleName3,
-      namespace,
-      data: roles[`${roleName3}.${root}`],
-      returnSteps: false,
-    });
-
-    const role1Claim = {
-      claimType: `${roleName1}.${root}`,
-      isAccepted: true,
-    };
-    await enrolAndIssue(rootOwner, staticIssuer, {
-      subjectDID: rootOwnerDID,
-      claimType: `${roleName1}.${root}`,
-    });
-    mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
-    mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify issuance
-
-    await enrolAndIssue(rootOwner, staticIssuer, {
-      subjectDID: rootOwnerDID,
-      claimType: `${roleName3}.${root}`,
-    });
-    return expect(
-      claimsService.hasOnChainRole(rootOwnerDID, `${roleName3}.${root}`, version)
-    ).resolves.toBe(true);
-  });
-
-  test('should reject to enrol when prerequisites are not met', async () => {
-    await signerService.connect(rootOwner, ProviderType.PrivateKey);
-    await domainsService.createRole({
-      roleName: roleName3,
-      namespace,
-      data: roles[`${roleName3}.${root}`],
-      returnSteps: false,
-    });
-
-    mockGetClaimsBySubject.mockImplementationOnce(() => []);
-    mockGetClaimsBySubject.mockImplementationOnce(() => []);
-
-    return expect(
-      enrolAndIssue(rootOwner, staticIssuer, {
+      await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${roleName3}.${root}`,
-      })
-    ).rejects.toEqual(new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET));
-  });
+      });
+      return expect(
+        await claimsService.hasOnChainRole(rootOwnerDID, `${roleName3}.${root}`, version)
+      ).toBe(true);
+    });
 
-  describe('Publishing onchain', () => {
-    const registrationTypes = [RegistrationTypes.OnChain];
-    const claimType = `${roleName1}.${root}`;
-    const role1Claim = {
-      claimType,
-      isAccepted: true,
-    };
+    test('should reject to enrol when prerequisites are not met', async () => {
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await domainsService.createRole({
+        roleName: roleName3,
+        namespace,
+        data: roles[`${roleName3}.${root}`],
+        returnSteps: false,
+      });
 
-    test('should be able to issue and publish onchain', async () => {
-      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
+      mockGetClaimsBySubject.mockImplementationOnce(() => []);
+      mockGetClaimsBySubject.mockImplementationOnce(() => []);
 
-      await enrolAndIssue(rootOwner, staticIssuer, {
-        subjectDID: rootOwnerDID,
+      return expect(
+        enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType: `${roleName3}.${root}`,
+        })
+      ).rejects.toEqual(new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET));
+    });
+
+    describe('Publishing onchain', () => {
+      const registrationTypes = [RegistrationTypes.OnChain];
+      const claimType = `${roleName1}.${root}`;
+      const role1Claim = {
+        claimType,
+        isAccepted: true,
+      };
+
+      test('should be able to issue and publish onchain', async () => {
+        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
+
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes,
+          publishOnChain: true,
+        });
+        expect(await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)).toBe(true);
+      });
+
+      test('should be able to issue without publishing onchain', async () => {
+        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]);
+
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes,
+          publishOnChain: false,
+        });
+        expect(await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)).toBe(false);
+      });
+    });
+
+    test('should issue claim request with additional issuer fields', async () => {
+      const requester = rootOwner;
+      const issuer = staticIssuer;
+      const subject = rootOwner;
+      const subjectDID = rootOwnerDID;
+      const claimType = `${roleName1}.${root}`;
+      const registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain];
+      await claimsService.createClaimRequest({
+        claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: 1, requestorFields: [] },
+        registrationTypes,
+      });
+
+      const issuerFields: { key: string; value: string | number }[] = [
+        {
+          key: 'document ID',
+          value: 'ASG 123222',
+        },
+        {
+          key: 'DOB',
+          value: '1990-01-07',
+        },
+      ];
+
+      const { issuedToken } = await enrolAndIssue(requester, issuer, {
+        subjectDID,
         claimType,
         registrationTypes,
-        publishOnChain: true,
+        issuerFields,
       });
-      expect(await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)).toBe(true);
-    });
 
-    test('should be able to issue without publishing onchain', async () => {
-      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]);
+      const data = didRegistry.jwt.decode(issuedToken) as { claimData: { issuerFields } };
+      expect(data.claimData.issuerFields).toEqual(issuerFields);
 
-      await enrolAndIssue(rootOwner, staticIssuer, {
-        subjectDID: rootOwnerDID,
-        claimType,
-        registrationTypes,
-        publishOnChain: false,
-      });
-      expect(await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)).toBe(false);
+      let subjectDoc = await didRegistry.getDidDocument({ did: subjectDID, includeClaims: true });
+      mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+
+      await signerService.connect(subject, ProviderType.PrivateKey);
+      const claimUrl = await claimsService.publishPublicClaim({ token: issuedToken });
+
+      subjectDoc = await didRegistry.getDidDocument({ did: subjectDID, includeClaims: true });
+      expect(
+        subjectDoc.service.find((s) => s.serviceEndpoint === claimUrl && s.claimType === claimType)
+      ).toBeDefined();
     });
   });
 
-  test('should issue claim request with additional issuer fields', async () => {
-    const requester = rootOwner;
-    const issuer = staticIssuer;
-    const subject = rootOwner;
-    const subjectDID = rootOwnerDID;
-    const claimType = `${roleName1}.${root}`;
-    const registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain];
-    await claimsService.createClaimRequest({
-      claim: { claimType: `${roleName1}.${root}`, claimTypeVersion: 1, requestorFields: [] },
-      registrationTypes,
+  describe('Selfsigned claim tests', () => {
+    test('Selfsigned claim should be verified', async () => {
+      const claimUrl = await claimsService.createSelfSignedClaim({
+        data: { claimType: roleName1 },
+        subject: rootOwnerDID,
+      });
+      const claim = await didRegistry.ipfsStore.get(claimUrl);
+
+      const document = await didRegistry.getDidDocument();
+      const proofVerivier = new ProofVerifier(document);
+
+      expect(await proofVerivier.verifyAuthenticationProof(claim)).toEqual(document.id);
     });
 
-    const issuerFields: { key: string; value: string | number }[] = [
-      {
-        key: 'document ID',
-        value: 'ASG 123222',
-      },
-      {
-        key: 'DOB',
-        value: '1990-01-07',
-      },
-    ];
+    test('Should be able to create selfsigned claim for owned identity', async () => {
+      const assetDID = `did:${Methods.Erc1056}:${
+        Chain.VOLTA
+      }:${await assetsService.registerAsset()}`;
 
-    const { issuedToken } = await enrolAndIssue(requester, issuer, {
-      subjectDID,
-      claimType,
-      registrationTypes,
-      issuerFields,
+      mockGetCachedOwnedAssets.mockResolvedValueOnce([
+        { document: { id: assetDID }, id: assetDID },
+      ]);
+      const claimType = 'test claim';
+      const claimUrl = await claimsService.createSelfSignedClaim({
+        data: { claimType },
+        subject: assetDID,
+      });
+      const claim = await didRegistry.ipfsStore.get(claimUrl);
+
+      const ownerDoc = await didRegistry.getDidDocument({ did: rootOwnerDID, includeClaims: true });
+      const proofVerivier = new ProofVerifier(ownerDoc);
+
+      expect(await proofVerivier.verifyAuthenticationProof(claim)).toEqual(ownerDoc.id);
+
+      const assetDoc = await didRegistry.getDidDocument({ did: assetDID, includeClaims: true });
+      expect(
+        assetDoc.service.find((s) => s.claimType === claimType && s.serviceEndpoint === claimUrl)
+      ).toBeDefined();
     });
-
-    const data = didRegistry.jwt.decode(issuedToken) as { claimData: { issuerFields } };
-    expect(data.claimData.issuerFields).toEqual(issuerFields);
-
-    const subjectDoc = await didRegistry.getDidDocument({ did: subjectDID, includeClaims: true });
-    mockCachedDocument.mockResolvedValueOnce(subjectDoc);
-
-    await signerService.connect(subject, ProviderType.PrivateKey);
-    const claimUrl = await claimsService.publishPublicClaim({ token: issuedToken });
-
-    expect(
-      subjectDoc.service.find((s) => s.serviceEndpoint === claimUrl && s.claimType === claimType)
-    );
   });
 });
