@@ -79,7 +79,7 @@
     "@gnosis.pm/safe-apps-sdk": "4.3.0",
     "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/ethereum-provider": "^1.6.6",
-    "axios": "^0.24.0",
+    "axios": "^0.25.0",
     "base64url": "^3.0.1",
     "concurrently": "^6.1.0",
     "eth-ens-namehash": "^2.0.8",
