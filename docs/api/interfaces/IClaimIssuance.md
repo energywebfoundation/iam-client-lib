@@ -12,6 +12,8 @@
 
 - [acceptedBy](IClaimIssuance.md#acceptedby)
 - [claimIssuer](IClaimIssuance.md#claimissuer)
+- [claimType](IClaimIssuance.md#claimtype)
+- [claimTypeVersion](IClaimIssuance.md#claimtypeversion)
 - [id](IClaimIssuance.md#id)
 - [issuedToken](IClaimIssuance.md#issuedtoken)
 - [onChainProof](IClaimIssuance.md#onchainproof)
@@ -32,6 +34,18 @@ ___
 #### Inherited from
 
 [IMessage](IMessage.md).[claimIssuer](IMessage.md#claimissuer)
+
+___
+
+### claimType
+
+• `Optional` **claimType**: `string`
+
+___
+
+### claimTypeVersion
+
+• `Optional` **claimTypeVersion**: `string`
 
 ___
 

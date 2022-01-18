@@ -27,6 +27,7 @@
 - [publishPublicClaim](ClaimsService.md#publishpublicclaim)
 - [registerOnchain](ClaimsService.md#registeronchain)
 - [rejectClaimRequest](ClaimsService.md#rejectclaimrequest)
+- [validatePublishPublicClaimRequest](ClaimsService.md#validatepublishpublicclaimrequest)
 - [create](ClaimsService.md#create)
 
 ## Constructors
@@ -112,11 +113,9 @@ ___
 
 ### createSelfSignedClaim
 
-▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`undefined` \| `string`\>
 
-createSelfSignedClaim
-
-**`description`** creates self signed claim and upload the data to ipfs
+**`description`** Creates claim with `data` and adds it to `subject` document. Signer must own or control subject
 
 #### Parameters
 
@@ -128,7 +127,9 @@ createSelfSignedClaim
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<`undefined` \| `string`\>
+
+claim url
 
 ___
 
@@ -318,7 +319,7 @@ ___
 
 ### issueClaim
 
-▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **issueClaim**(`__namedParameters`): `Promise`<`undefined` \| `string`\>
 
 #### Parameters
 
@@ -329,11 +330,12 @@ ___
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
 | `__namedParameters.claim.issuerFields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] |
 | `__namedParameters.subject` | `string` |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<`undefined` \| `string`\>
 
 ___
 
@@ -365,7 +367,7 @@ ___
 
 ### publishPublicClaim
 
-▸ **publishPublicClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **publishPublicClaim**(`__namedParameters`): `Promise`<`undefined` \| `string`\>
 
 publishPublicClaim
 
@@ -376,11 +378,13 @@ publishPublicClaim
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.token` | `string` |
+| `__namedParameters.claimType?` | `string` |
+| `__namedParameters.registrationTypes?` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] |
+| `__namedParameters.token?` | `string` |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<`undefined` \| `string`\>
 
 ulr to ipfs
 
@@ -420,6 +424,24 @@ ___
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### validatePublishPublicClaimRequest
+
+▸ **validatePublishPublicClaimRequest**(`registrationTypes`, `token?`, `claimType?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `registrationTypes` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] |
+| `token?` | `string` |
+| `claimType?` | `string` |
+
+#### Returns
+
+`void`
 
 ___
 
