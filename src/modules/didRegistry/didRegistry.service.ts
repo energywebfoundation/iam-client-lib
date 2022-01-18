@@ -193,7 +193,7 @@ export class DidRegistry {
         { address: didContractAddress },
         addressOf(assetDID)
       );
-      const update = await operator.update(did, didAttribute, updateData);
+      const update = await operator.update(assetDID, didAttribute, updateData);
 
       return Boolean(update);
     }
