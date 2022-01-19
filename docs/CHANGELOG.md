@@ -1,3 +1,21 @@
+## [4.0.1-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1-alpha.3...v4.0.1-alpha.4) (2022-01-18)
+
+
+### Bug Fixes
+
+* **didRegistry:** update asset document ([f219a5e](https://github.com/energywebfoundation/iam-client-lib/commit/f219a5e32b7dc6174fa6e87726d74c2189b01f34))
+
+## [4.0.1-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1-alpha.2...v4.0.1-alpha.3) (2022-01-17)
+
+## [4.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1-alpha.1...v4.0.1-alpha.2) (2022-01-14)
+
+## [4.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0...v4.0.1-alpha.1) (2022-01-14)
+
+
+### Bug Fixes
+
+* **ci:** fetch latest master before merge ([47fee38](https://github.com/energywebfoundation/iam-client-lib/commit/47fee38c9ab818785e0c08de24bd68efb51100ec))
+
 # [4.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v3.2.0...v4.0.0) (2022-01-14)
 
 

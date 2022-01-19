@@ -1,2 +1,2 @@
-export * from "./didRegistry.service";
-export * from "./did.types";
+export * from './didRegistry.service';
+export * from './did.types';

@@ -1,5 +1,5 @@
-import inquirer from "inquirer";
-import { changeResolver, ChangeResolverParams } from "../src/utils/change_resolver";
+import inquirer from 'inquirer';
+import { changeResolver, ChangeResolverParams } from '../src/utils/changeResolver';
 
 const askParams = async (): Promise<ChangeResolverParams> => {
   const questions = [
@@ -13,7 +13,7 @@ const askParams = async (): Promise<ChangeResolverParams> => {
         } else {
           return 'Root not provided';
         }
-      }
+      },
     },
     {
       name: 'privateKey',
@@ -25,7 +25,7 @@ const askParams = async (): Promise<ChangeResolverParams> => {
         } else {
           return 'Private key is not provided';
         }
-      }
+      },
     },
     {
       name: 'rpcUrl',
@@ -37,7 +37,7 @@ const askParams = async (): Promise<ChangeResolverParams> => {
         } else {
           return 'Rpc url not provided';
         }
-      }
+      },
     },
     {
       name: 'resolverAddr',
@@ -49,7 +49,7 @@ const askParams = async (): Promise<ChangeResolverParams> => {
         } else {
           return 'Ens resolver address not provided';
         }
-      }
+      },
     },
     {
       name: 'registryAddr',
@@ -61,7 +61,7 @@ const askParams = async (): Promise<ChangeResolverParams> => {
         } else {
           return 'Ens registry address not provided';
         }
-      }
+      },
     },
     {
       name: 'newResolverAddr',
@@ -73,15 +73,16 @@ const askParams = async (): Promise<ChangeResolverParams> => {
         } else {
           return 'New Ens resolver address not provided';
         }
-      }
-    }
+      },
+    },
   ];
   return inquirer.prompt(questions);
 };
 
-askParams().then((params) => {
-  console.log('params:', params);
-  return changeResolver(params);
-})
+askParams()
+  .then((params) => {
+    console.log('params:', params);
+    return changeResolver(params);
+  })
   .then(() => console.log('Resolver successfuly replaced'))
   .catch((e) => console.error('Error replacing resolver:', e));

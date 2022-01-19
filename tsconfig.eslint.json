@@ -1,0 +1,3 @@
+{
+  "include": [".eslintrc.js", ".prettierrc.js", "scripts/**/*.ts", "bili.config.ts"]
+}

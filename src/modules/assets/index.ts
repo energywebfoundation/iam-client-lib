@@ -1,2 +1,2 @@
-export * from "./assets.service";
-export * from "./assets.types";
+export * from './assets.service';
+export * from './assets.types';
