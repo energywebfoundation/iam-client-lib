@@ -1,3 +1,10 @@
+## [4.0.2-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.1...v4.0.2-alpha.2) (2022-01-20)
+
+
+### Bug Fixes
+
+* setup nats connection options ([5d65ab6](https://github.com/energywebfoundation/iam-client-lib/commit/5d65ab6a0ad1b256bbf82e7e5ce258ad3fdd839f))
+
 ## [4.0.2-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1...v4.0.2-alpha.1) (2022-01-19)
 
 ## [4.0.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0...v4.0.1) (2022-01-19)
