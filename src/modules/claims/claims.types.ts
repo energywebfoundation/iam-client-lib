@@ -55,12 +55,34 @@ export interface Claim {
 }
 
 export const readyToBeRegisteredOnchain = (
-  claim: object
-): claim is Required<Pick<Claim, 'onChainProof' | 'acceptedBy' | 'subjectAgreement'>> => {
-  const requiredProps = ['onChainProof', 'acceptedBy', 'subjectAgreement'];
+  claim: any
+): Required<
+  Pick<
+    Claim,
+    | 'claimType'
+    | 'claimTypeVersion'
+    | 'subject'
+    | 'onChainProof'
+    | 'acceptedBy'
+    | 'subjectAgreement'
+  >
+> => {
+  const requiredProps = [
+    'claimType',
+    'claimTypeVersion',
+    'subject',
+    'onChainProof',
+    'acceptedBy',
+    'subjectAgreement',
+  ];
   const claimProps = Object.keys(claim);
 
-  return requiredProps.every((p) => claimProps.includes(p));
+  const missingProps = requiredProps.filter((p) => !claimProps.includes(p));
+  if (missingProps.length > 0)
+    throw new Error(
+      'CANNOT REGISTER ON CHAIN. THE FOLLOWING PROPS ARE MISSING: ' + JSON.stringify(missingProps)
+    );
+  return claim;
 };
 
 export const typedMsgPrefix = '1901';

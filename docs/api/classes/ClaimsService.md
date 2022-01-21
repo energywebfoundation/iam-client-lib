@@ -27,7 +27,6 @@
 - [publishPublicClaim](ClaimsService.md#publishpublicclaim)
 - [registerOnchain](ClaimsService.md#registeronchain)
 - [rejectClaimRequest](ClaimsService.md#rejectclaimrequest)
-- [validatePublishPublicClaimRequest](ClaimsService.md#validatepublishpublicclaimrequest)
 - [create](ClaimsService.md#create)
 
 ## Constructors
@@ -53,7 +52,7 @@
 
 **`description`** allows subject to request for credential
 
-**`deprecated`** fields - use requestorFields instead
+**`field`** { claim: fields }  - @deprecated - use requestorFields instead
 
 #### Parameters
 
@@ -367,20 +366,22 @@ ___
 
 ### publishPublicClaim
 
-▸ **publishPublicClaim**(`__namedParameters`): `Promise`<`undefined` \| `string`\>
+▸ **publishPublicClaim**(`token`): `Promise`<`undefined` \| `string`\>
 
 publishPublicClaim
 
-**`description`** store claim data in ipfs and save url to DID document services
+**`description`** publishes claim off-chain (by storing claim data in ipfs and save url to DID document services
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claimType?` | `string` |
-| `__namedParameters.registrationTypes?` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] |
-| `__namedParameters.token?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `token` | `Object` | @deprecated - use claim with claimType instead |
+| `token.claim` | `Object` | - |
+| `token.claim.claimType?` | `string` | - |
+| `token.claim.token?` | `string` | - |
+| `token.registrationTypes?` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] | - |
+| `token.token?` | `string` | - |
 
 #### Returns
 
@@ -398,9 +399,16 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `claim` | `Pick`<[`Claim`](../interfaces/Claim.md), ``"token"`` \| ``"subjectAgreement"`` \| ``"onChainProof"`` \| ``"acceptedBy"``\> |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `claim` | `Object` | id of signed onchain claim. |
+| `claim.acceptedBy?` | `string` | - |
+| `claim.claimType?` | `string` | - |
+| `claim.claimTypeVersion?` | `string` | - |
+| `claim.onChainProof?` | `string` | - |
+| `claim.subject?` | `string` | - |
+| `claim.subjectAgreement?` | `string` | - |
+| `claim.token?` | `string` | - |
 
 #### Returns
 
@@ -424,24 +432,6 @@ ___
 #### Returns
 
 `Promise`<`void`\>
-
-___
-
-### validatePublishPublicClaimRequest
-
-▸ **validatePublishPublicClaimRequest**(`registrationTypes`, `token?`, `claimType?`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `registrationTypes` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] |
-| `token?` | `string` |
-| `claimType?` | `string` |
-
-#### Returns
-
-`void`
 
 ___
 

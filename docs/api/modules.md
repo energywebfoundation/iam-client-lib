@@ -653,17 +653,17 @@ ___
 
 ### readyToBeRegisteredOnchain
 
-▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "subjectAgreement" \| "onChainProof" \| "acceptedBy"\>\>
+▸ `Const` **readyToBeRegisteredOnchain**(`claim`): `Required`<`Pick`<[`Claim`](interfaces/Claim.md), ``"subject"`` \| ``"claimTypeVersion"`` \| ``"claimType"`` \| ``"onChainProof"`` \| ``"acceptedBy"`` \| ``"subjectAgreement"``\>\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `claim` | `object` |
+| `claim` | `any` |
 
 #### Returns
 
-claim is Required<Pick<Claim, "subjectAgreement" \| "onChainProof" \| "acceptedBy"\>\>
+`Required`<`Pick`<[`Claim`](interfaces/Claim.md), ``"subject"`` \| ``"claimTypeVersion"`` \| ``"claimType"`` \| ``"onChainProof"`` \| ``"acceptedBy"`` \| ``"subjectAgreement"``\>\>
 
 ___
 

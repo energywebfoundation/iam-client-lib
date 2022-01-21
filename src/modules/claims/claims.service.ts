@@ -26,7 +26,6 @@ import {
   erc712_type_hash,
   proof_type_hash,
   typedMsgPrefix,
-  Claim,
 } from './claims.types';
 import { DidRegistry } from '../didRegistry/didRegistry.service';
 import { ClaimData } from '../didRegistry/did.types';
@@ -146,11 +145,11 @@ export class ClaimsService {
   async getClaimById(claimId: string) {
     return this._cacheClient.getClaimById(claimId);
   }
+
   /**
    * @description allows subject to request for credential
-   * @deprecated fields - use requestorFields instead
+   * @field { claim: fields }  - @deprecated - use requestorFields instead
    */
-
   async createClaimRequest({
     claim,
     subject = this._signerService.did,
@@ -231,6 +230,8 @@ export class ClaimsService {
       requester,
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
+      claimType: claimData.claimType,
+      claimTypeVersion: claimData.claimTypeVersion.toString(),
     };
     const strippedClaimData = this.stripClaimData(claimData);
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
@@ -262,53 +263,56 @@ export class ClaimsService {
   }
 
   /**
-   * @description Registers issued onchain claim with Claim manager
    *
-   * @param claimId - id of signed onchain claim
+   * @param token optional token containing claimType, version and subject
+   * @returns claim params obtained from token
    */
-  async registerOnchain(
-    claim: Pick<Claim, 'token' | 'subjectAgreement' | 'onChainProof' | 'acceptedBy'>
-  ) {
-    if (!readyToBeRegisteredOnchain(claim) || !claim.token) {
-      throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
+  private getClaimTypeFromToken(token?: string) {
+    if (token) {
+      const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
+        claimData: { claimType: string; claimTypeVersion: string };
+        sub: string;
+      };
+      return { ...claimData, subject: sub };
     }
-
-    const { claimData, sub } = this._didRegistry.jwt.decode(claim.token) as {
-      claimData: { claimType: string; claimTypeVersion: number };
-      sub: string;
-    };
-
-    await this.performRegisterOnchain({
-      ...claim,
-      claimType: claimData.claimType,
-      claimTypeVersion: claimData.claimTypeVersion.toString(),
-      subject: sub,
-    });
+    return {};
   }
 
   /**
    * @description Registers issued onchain claim with Claim manager
    *
-   * @param claimId - id of signed onchain claim
+   * @param claim - id of signed onchain claim.
+   * @param token - @deprecated use subject, claimType, claimTypeVersion instead. Token should get removed and subject, claimType, claimTypeVersion should be required.
    */
-  private async performRegisterOnchain(
-    claim: Pick<
-      Claim,
-      | 'subject'
-      | 'claimType'
-      | 'claimTypeVersion'
-      | 'subjectAgreement'
-      | 'onChainProof'
-      | 'acceptedBy'
-    >
-  ) {
-    if (!readyToBeRegisteredOnchain(claim)) {
-      throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED + ':' + JSON.stringify(claim));
+  async registerOnchain(claim: {
+    claimType?: string;
+    claimTypeVersion?: string;
+    token?: string;
+    subjectAgreement?: string;
+    onChainProof?: string;
+    acceptedBy?: string;
+    subject?: string;
+  }) {
+    // backward compatibility with token
+    claim = { ...claim, ...this.getClaimTypeFromToken(claim.token) };
+
+    if (
+      !claim.subjectAgreement &&
+      claim.subject === this._signerService.did &&
+      claim.claimType &&
+      claim.claimTypeVersion
+    ) {
+      claim.subjectAgreement = await this.approveRolePublishing({
+        subject: this._signerService.did,
+        role: claim.claimType as string,
+        version: +claim.claimTypeVersion,
+      });
     }
-    const { subjectAgreement, onChainProof, acceptedBy, subject, claimType, claimTypeVersion } =
-      claim;
 
     const expiry = defaultClaimExpiry;
+    const { subject, claimTypeVersion, claimType, acceptedBy, subjectAgreement, onChainProof } =
+      readyToBeRegisteredOnchain(claim);
+
     const data = this._claimManagerInterface.encodeFunctionData('register', [
       addressOf(subject),
       namehash(claimType),
@@ -413,64 +417,60 @@ export class ClaimsService {
     return v4();
   }
 
-  validatePublishPublicClaimRequest(
+  /**
+   *
+   * @description validates publish public claim parameters depending on off or on chain registration type. Throws relevant error on invalid data.
+   *
+   */
+  private validatePublishPublicClaimRequest(
     registrationTypes: RegistrationTypes[],
-    token?: string,
-    claimType?: string
+    claim: { token?: string; claimType?: string }
   ) {
-    if (registrationTypes.includes(RegistrationTypes.OnChain) && !claimType) {
-      throw new Error('claimType required for on-chain registration');
+    if (registrationTypes.includes(RegistrationTypes.OnChain) && !claim.claimType) {
+      throw new Error(ERROR_MESSAGES.CLAIM_TYPE_REQUIRED_FOR_ON_CHAIN_REGISTRATION);
     }
-    if (registrationTypes.includes(RegistrationTypes.OffChain) && !token) {
-      throw new Error('Token required for on-chain registration');
+    if (registrationTypes.includes(RegistrationTypes.OffChain) && !claim.token) {
+      throw new Error(ERROR_MESSAGES.TOKEN_REQUIRED_FOR_OFF_CHAIN_REGISTRATION);
     }
   }
 
   /**
    * publishPublicClaim
    *
-   * @description store claim data in ipfs and save url to DID document services
+   * @description publishes claim off-chain (by storing claim data in ipfs and save url to DID document services
    * @returns ulr to ipfs
+   * @param token - @deprecated - use claim with claimType instead
    *
    */
   async publishPublicClaim({
-    token,
-    claimType,
+    token, // backward compatibility
     registrationTypes = [RegistrationTypes.OffChain],
+    claim,
   }: {
     token?: string;
-    claimType?: string;
     registrationTypes?: RegistrationTypes[];
+    claim: { token?: string; claimType?: string };
   }) {
-    this.validatePublishPublicClaimRequest(registrationTypes, token, claimType);
+    claim.token = claim.token || token;
+    this.validatePublishPublicClaimRequest(registrationTypes, claim);
     let url: string | undefined = undefined;
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const claims = await this.getClaimsBySubject({
         did: this._signerService.did,
-        namespace: claimType,
+        namespace: claim.claimType,
         isAccepted: true,
       });
       if (claims.length < 1) {
-        throw new Error('Claim not found');
+        throw new Error(ERROR_MESSAGES.CLAIM_NOT_FOUND);
       }
       const claimData = claims[0];
-      const subjectAgreement = await this.approveRolePublishing({
-        subject: this._signerService.did,
-        role: claimData.claimType,
-        version: +claimData.claimTypeVersion,
-      });
-      await this.performRegisterOnchain({
-        claimType: claimData.claimType,
-        claimTypeVersion: claimData.claimTypeVersion,
-        subject: this._signerService.did,
-        subjectAgreement,
-        onChainProof: claimData.onChainProof,
-        acceptedBy: claimData.acceptedBy,
-      });
+      await this.registerOnchain(claimData);
     }
 
+    // add scenario for offchain without request based on claimType instead of token
+    // can we break API so that register on chain required only claim type and claim type version and subject
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      token = token as string;
+      const token = claim.token as string;
       const payload = (await this._didRegistry.decodeJWTToken({ token })) as {
         iss: string;
         sub: string;
@@ -516,7 +516,7 @@ export class ClaimsService {
    */
   async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
     const token = await this._didRegistry.createPublicClaim({ data, subject });
-    return this.publishPublicClaim({ token });
+    return this.publishPublicClaim({ claim: { token } });
   }
 
   /**

@@ -221,7 +221,6 @@ describe('Enrollment claim tests', () => {
     }
 
     async function enrolAndIssueWithoutRequest(
-      requestSigner: Required<ethers.Signer>,
       issueSigner: Required<ethers.Signer>,
       {
         subjectDID,
@@ -278,16 +277,17 @@ describe('Enrollment claim tests', () => {
       }
       if (registrationTypes.includes(RegistrationTypes.OnChain)) {
         expect(onChainProof).toHaveLength(132);
-        await signerService.connect(requestSigner, ProviderType.PrivateKey);
+        
         const mockedClaim = {
           claimType,
           isApproved: true,
           onChainProof,
           claimTypeVersion: version,
           acceptedBy: issuerDID,
+          subject: requesterDID,
         };
         mockGetClaimsBySubject.mockReset().mockImplementationOnce(() => [mockedClaim]);
-        await claimsService.publishPublicClaim({ claimType, registrationTypes });
+        
       }
       expect(requester).toEqual(subjectDID);
       expect(claimIssuer).toEqual([issuerDID]);
@@ -397,8 +397,8 @@ describe('Enrollment claim tests', () => {
         returnSteps: false,
       });
 
-      mockGetClaimsBySubject.mockImplementationOnce(() => []);
-      mockGetClaimsBySubject.mockImplementationOnce(() => []);
+      mockGetClaimsBySubject.mockImplementation(() => []);
+      //mockGetClaimsBySubject.mockImplementationOnce(() => []);
 
       return expect(
         enrolAndIssue(rootOwner, staticIssuer, {
@@ -413,7 +413,9 @@ describe('Enrollment claim tests', () => {
       const claimType = `${roleName1}.${root}`;
       const role1Claim = {
         claimType,
+        claimTypeVersion: version,
         isAccepted: true,
+        subject: rootOwnerDID,
       };
 
       test('should be able to issue and publish onchain', async () => {
@@ -429,18 +431,20 @@ describe('Enrollment claim tests', () => {
       });
 
       test('should be able to issue and publish onchain without request', async () => {
-        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
+        mockGetClaimsBySubject.mockImplementation(() => [role1Claim]); // to verify requesting
 
-        await enrolAndIssueWithoutRequest(rootOwner, staticIssuer, {
+        await enrolAndIssueWithoutRequest(staticIssuer, {
           subjectDID: rootOwnerDID,
           claimType,
           registrationTypes,
         });
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        await claimsService.publishPublicClaim({ claim: {claimType} , registrationTypes });
         expect(await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)).toBe(true);
       });
 
       test('should be able to issue without publishing onchain', async () => {
-        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]);
+        mockGetClaimsBySubject.mockImplementation(() => [role1Claim]);
 
         await enrolAndIssue(rootOwner, staticIssuer, {
           subjectDID: rootOwnerDID,
@@ -489,7 +493,7 @@ describe('Enrollment claim tests', () => {
       mockCachedDocument.mockResolvedValueOnce(subjectDoc);
 
       await signerService.connect(subject, ProviderType.PrivateKey);
-      const claimUrl = await claimsService.publishPublicClaim({ token: issuedToken });
+      const claimUrl = await claimsService.publishPublicClaim({ claim: { token: issuedToken } });
 
       subjectDoc = await didRegistry.getDidDocument({ did: subjectDID, includeClaims: true });
       expect(

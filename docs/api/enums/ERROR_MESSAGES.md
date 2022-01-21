@@ -6,6 +6,8 @@
 
 - [APP\_WITH\_ROLES](ERROR_MESSAGES.md#app_with_roles)
 - [CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT](ERROR_MESSAGES.md#can_not_update_not_controlled_document)
+- [CLAIM\_NOT\_FOUND](ERROR_MESSAGES.md#claim_not_found)
+- [CLAIM\_TYPE\_REQUIRED\_FOR\_ON\_CHAIN\_REGISTRATION](ERROR_MESSAGES.md#claim_type_required_for_on_chain_registration)
 - [CLAIM\_WAS\_NOT\_ISSUED](ERROR_MESSAGES.md#claim_was_not_issued)
 - [ENS\_OWNER\_NOT\_VALID\_ADDRESS](ERROR_MESSAGES.md#ens_owner_not_valid_address)
 - [ENS\_TYPE\_NOT\_SUPPORTED](ERROR_MESSAGES.md#ens_type_not_supported)
@@ -23,6 +25,7 @@
 - [ROLE\_NOT\_EXISTS](ERROR_MESSAGES.md#role_not_exists)
 - [ROLE\_PREREQUISITES\_NOT\_MET](ERROR_MESSAGES.md#role_prerequisites_not_met)
 - [STAKE\_WAS\_NOT\_PUT](ERROR_MESSAGES.md#stake_was_not_put)
+- [TOKEN\_REQUIRED\_FOR\_OFF\_CHAIN\_REGISTRATION](ERROR_MESSAGES.md#token_required_for_off_chain_registration)
 - [UNKNOWN\_PROVIDER](ERROR_MESSAGES.md#unknown_provider)
 - [WALLET\_PROVIDER\_NOT\_SUPPORTED](ERROR_MESSAGES.md#wallet_provider_not_supported)
 - [WITHDRAWAL\_WAS\_NOT\_REQUESTED](ERROR_MESSAGES.md#withdrawal_was_not_requested)
@@ -38,6 +41,18 @@ ___
 ### CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT
 
 • **CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT** = `"Can not update not controlled document"`
+
+___
+
+### CLAIM\_NOT\_FOUND
+
+• **CLAIM\_NOT\_FOUND** = `"Claim not found"`
+
+___
+
+### CLAIM\_TYPE\_REQUIRED\_FOR\_ON\_CHAIN\_REGISTRATION
+
+• **CLAIM\_TYPE\_REQUIRED\_FOR\_ON\_CHAIN\_REGISTRATION** = `"claimType required for on-chain registration"`
 
 ___
 
@@ -140,6 +155,12 @@ ___
 ### STAKE\_WAS\_NOT\_PUT
 
 • **STAKE\_WAS\_NOT\_PUT** = `"Stake was not put"`
+
+___
+
+### TOKEN\_REQUIRED\_FOR\_OFF\_CHAIN\_REGISTRATION
+
+• **TOKEN\_REQUIRED\_FOR\_OFF\_CHAIN\_REGISTRATION** = `"token required for off-chain registration"`
 
 ___
 
