@@ -93,9 +93,9 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/core": "7.16.7",
+    "@babel/core": "7.16.12",
     "@babel/plugin-transform-regenerator": "7.16.7",
-    "@babel/preset-env": "7.16.8",
+    "@babel/preset-env": "7.16.11",
     "@energyweb/eslint-config": "^0.0.0",
     "@energyweb/km-crypto": "file:energyweb-km-crypto-v1.0.0.tgz",
     "@energyweb/km-utils": "file:energyweb-km-utils-v1.0.0.tgz",
