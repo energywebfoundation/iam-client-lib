@@ -11,7 +11,7 @@ export interface IClaimRequest extends IMessage {
 
 export interface IClaimIssuance extends IMessage {
   // issuedToken is is only provided in the case of off-chain role
-  issuedToken?: string; 
+  issuedToken?: string;
   // onChainProof is only provided in case of on-chain role
   onChainProof?: string;
   claimType?: string;
@@ -51,12 +51,12 @@ export interface Claim {
   isAccepted: boolean;
   acceptedBy?: string;
   isRejected?: boolean;
-  namespace: string;g, 
+  namespace: string;
 }
 
 export const readyToBeRegisteredOnchain = (
   claim: any
-): Required<
+): claim is Required<
   Pick<
     Claim,
     | 'claimType'
@@ -77,12 +77,7 @@ export const readyToBeRegisteredOnchain = (
   ];
   const claimProps = Object.keys(claim);
 
-  const missingProps = requiredProps.filter((p) => !claimProps.includes(p));
-  if (missingProps.length > 0)
-    throw new Error(
-      'CANNOT REGISTER ON CHAIN. THE FOLLOWING PROPS ARE MISSING: ' + JSON.stringify(missingProps)
-    );
-  return claim;
+  return requiredProps.every((p) => claimProps.includes(p));
 };
 
 export const typedMsgPrefix = '1901';

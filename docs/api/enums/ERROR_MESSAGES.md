@@ -6,7 +6,6 @@
 
 - [APP\_WITH\_ROLES](ERROR_MESSAGES.md#app_with_roles)
 - [CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT](ERROR_MESSAGES.md#can_not_update_not_controlled_document)
-- [CLAIM\_NOT\_FOUND](ERROR_MESSAGES.md#claim_not_found)
 - [CLAIM\_TYPE\_REQUIRED\_FOR\_ON\_CHAIN\_REGISTRATION](ERROR_MESSAGES.md#claim_type_required_for_on_chain_registration)
 - [CLAIM\_WAS\_NOT\_ISSUED](ERROR_MESSAGES.md#claim_was_not_issued)
 - [ENS\_OWNER\_NOT\_VALID\_ADDRESS](ERROR_MESSAGES.md#ens_owner_not_valid_address)
@@ -22,6 +21,7 @@
 - [ONCHAIN\_ROLE\_VERSION\_NOT\_SPECIFIED](ERROR_MESSAGES.md#onchain_role_version_not_specified)
 - [ORG\_WITH\_APPS](ERROR_MESSAGES.md#org_with_apps)
 - [ORG\_WITH\_ROLES](ERROR_MESSAGES.md#org_with_roles)
+- [PUBLISH\_NOT\_ISSUED\_CLAIM](ERROR_MESSAGES.md#publish_not_issued_claim)
 - [ROLE\_NOT\_EXISTS](ERROR_MESSAGES.md#role_not_exists)
 - [ROLE\_PREREQUISITES\_NOT\_MET](ERROR_MESSAGES.md#role_prerequisites_not_met)
 - [STAKE\_WAS\_NOT\_PUT](ERROR_MESSAGES.md#stake_was_not_put)
@@ -41,12 +41,6 @@ ___
 ### CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT
 
 • **CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT** = `"Can not update not controlled document"`
-
-___
-
-### CLAIM\_NOT\_FOUND
-
-• **CLAIM\_NOT\_FOUND** = `"Claim not found"`
 
 ___
 
@@ -137,6 +131,12 @@ ___
 ### ORG\_WITH\_ROLES
 
 • **ORG\_WITH\_ROLES** = `"You are not able to remove organization with registered roles"`
+
+___
+
+### PUBLISH\_NOT\_ISSUED\_CLAIM
+
+• **PUBLISH\_NOT\_ISSUED\_CLAIM** = `"Claim to publish has not been issued"`
 
 ___
 

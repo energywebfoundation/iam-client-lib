@@ -653,7 +653,7 @@ ___
 
 ### readyToBeRegisteredOnchain
 
-▸ `Const` **readyToBeRegisteredOnchain**(`claim`): `Required`<`Pick`<[`Claim`](interfaces/Claim.md), ``"subject"`` \| ``"claimTypeVersion"`` \| ``"claimType"`` \| ``"onChainProof"`` \| ``"acceptedBy"`` \| ``"subjectAgreement"``\>\>
+▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
 
 #### Parameters
 
@@ -663,7 +663,7 @@ ___
 
 #### Returns
 
-`Required`<`Pick`<[`Claim`](interfaces/Claim.md), ``"subject"`` \| ``"claimTypeVersion"`` \| ``"claimType"`` \| ``"onChainProof"`` \| ``"acceptedBy"`` \| ``"subjectAgreement"``\>\>
+claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
 
 ___
 

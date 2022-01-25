@@ -118,7 +118,7 @@ describe('Enrollment claim tests', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-
+    //mockGetClaimsBySubject.mockReset();
     await replenish(await staticIssuer.getAddress());
     await replenish(await rootOwner.getAddress());
     await replenish(await dynamicIssuer.getAddress());
@@ -220,7 +220,7 @@ describe('Enrollment claim tests', () => {
       return issuedClaim;
     }
 
-    async function enrolAndIssueWithoutRequest(
+    async function issueWithoutRequest(
       issueSigner: Required<ethers.Signer>,
       {
         subjectDID,
@@ -256,7 +256,7 @@ describe('Enrollment claim tests', () => {
 
       expect(did).toBe(issuerDID);
 
-      const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } = issuedClaim;
+      const { issuedToken, requester, claimIssuer, acceptedBy } = issuedClaim;
 
       if (registrationTypes.includes(RegistrationTypes.OffChain)) {
         expect(issuedToken).toBeDefined();
@@ -275,19 +275,7 @@ describe('Enrollment claim tests', () => {
         expect(signer).toBe(issuerDID);
         expect(did).toBe(requesterDID);
       }
-      if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-        expect(onChainProof).toHaveLength(132);
 
-        const mockedClaim = {
-          claimType,
-          isApproved: true,
-          onChainProof,
-          claimTypeVersion: version,
-          acceptedBy: issuerDID,
-          subject: requesterDID,
-        };
-        mockGetClaimsBySubject.mockReset().mockImplementationOnce(() => [mockedClaim]);
-      }
       expect(requester).toEqual(subjectDID);
       expect(claimIssuer).toEqual([issuerDID]);
       expect(acceptedBy).toBe(issuerDID);
@@ -429,14 +417,25 @@ describe('Enrollment claim tests', () => {
       });
 
       test('should be able to issue and publish onchain without request', async () => {
-        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
 
-        await enrolAndIssueWithoutRequest(staticIssuer, {
+        const claim = await issueWithoutRequest(staticIssuer, {
           subjectDID: rootOwnerDID,
           claimType,
           registrationTypes,
         });
+        expect(claim.onChainProof).toHaveLength(132);
+
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const mockedClaim = {
+          claimType,
+          isApproved: true,
+          onChainProof: claim.onChainProof,
+          claimTypeVersion: version,
+          acceptedBy: claim.acceptedBy,
+          subject: rootOwnerDID,
+        };
+        mockGetClaimsBySubject.mockReset().mockImplementationOnce(() => [mockedClaim]);
+
         await claimsService.publishPublicClaim({ claim: { claimType }, registrationTypes });
         expect(await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)).toBe(true);
       });
@@ -502,10 +501,10 @@ describe('Enrollment claim tests', () => {
 
   describe('Selfsigned claim tests', () => {
     test('Selfsigned claim should be verified', async () => {
-      const claimUrl = (await claimsService.createSelfSignedClaim({
+      const claimUrl = await claimsService.createSelfSignedClaim({
         data: { claimType: roleName1 },
         subject: rootOwnerDID,
-      })) as string;
+      });
       const claim = await didRegistry.ipfsStore.get(claimUrl);
 
       const document = await didRegistry.getDidDocument();
@@ -523,10 +522,10 @@ describe('Enrollment claim tests', () => {
         { document: { id: assetDID }, id: assetDID },
       ]);
       const claimType = 'test claim';
-      const claimUrl = (await claimsService.createSelfSignedClaim({
+      const claimUrl = await claimsService.createSelfSignedClaim({
         data: { claimType },
         subject: assetDID,
-      })) as string;
+      });
       const claim = await didRegistry.ipfsStore.get(claimUrl);
 
       const ownerDoc = await didRegistry.getDidDocument({ did: rootOwnerDID, includeClaims: true });

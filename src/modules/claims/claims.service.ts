@@ -230,8 +230,6 @@ export class ClaimsService {
       requester,
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
-      claimType: claimData.claimType,
-      claimTypeVersion: claimData.claimTypeVersion.toString(),
     };
     const strippedClaimData = this.stripClaimData(claimData);
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
@@ -267,15 +265,12 @@ export class ClaimsService {
    * @param token optional token containing claimType, version and subject
    * @returns claim params obtained from token
    */
-  private getClaimTypeFromToken(token?: string) {
-    if (token) {
-      const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
-        claimData: { claimType: string; claimTypeVersion: string };
-        sub: string;
-      };
-      return { ...claimData, subject: sub };
-    }
-    return {};
+  private extractClaimRequest(token: string) {
+    const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
+      claimData: { claimType: string; claimTypeVersion: string };
+      sub: string;
+    };
+    return { ...claimData, subject: sub };
   }
 
   /**
@@ -289,12 +284,12 @@ export class ClaimsService {
     claimTypeVersion?: string;
     token?: string;
     subjectAgreement?: string;
-    onChainProof?: string;
-    acceptedBy?: string;
+    onChainProof: string;
+    acceptedBy: string;
     subject?: string;
   }) {
     // backward compatibility with token
-    claim = { ...claim, ...this.getClaimTypeFromToken(claim.token) };
+    if (claim.token) claim = { ...claim, ...this.extractClaimRequest(claim.token) };
 
     if (
       !claim.subjectAgreement &&
@@ -309,9 +304,11 @@ export class ClaimsService {
       });
     }
 
-    const expiry = defaultClaimExpiry;
-    const { subject, claimTypeVersion, claimType, acceptedBy, subjectAgreement, onChainProof } =
-      readyToBeRegisteredOnchain(claim);
+    if (!readyToBeRegisteredOnchain(claim)) {
+        throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
+      }
+    const { subject, claimTypeVersion, claimType, acceptedBy, subjectAgreement, onChainProof } = claim;
+      const expiry = defaultClaimExpiry;
 
     const data = this._claimManagerInterface.encodeFunctionData('register', [
       addressOf(subject),
@@ -435,9 +432,8 @@ export class ClaimsService {
   }
 
   /**
-   * publishPublicClaim
    *
-   * @description publishes claim off-chain (by storing claim data in ipfs and save url to DID document services
+   * @description publishes claim off-chain (by storing claim data in ipfs and save url to DID document services) or registering on-chain depending on registrationTypes values.
    * @returns ulr to ipfs
    * @param token - @deprecated - use claim with claimType instead
    *
@@ -461,10 +457,15 @@ export class ClaimsService {
         isAccepted: true,
       });
       if (claims.length < 1) {
-        throw new Error(ERROR_MESSAGES.CLAIM_NOT_FOUND);
+        throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
       }
+
       const claimData = claims[0];
-      await this.registerOnchain(claimData);
+      await this.registerOnchain({
+        ...claimData,
+        onChainProof: claimData.onChainProof as string,
+        acceptedBy: claimData.acceptedBy as string,
+      });
     }
 
     // add scenario for offchain without request based on claimType instead of token
@@ -516,7 +517,7 @@ export class ClaimsService {
    */
   async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
     const token = await this._didRegistry.createPublicClaim({ data, subject });
-    return this.publishPublicClaim({ claim: { token } });
+    return (await this.publishPublicClaim({ claim: { token } })) as string;
   }
 
   /**

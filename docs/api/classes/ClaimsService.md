@@ -112,7 +112,7 @@ ___
 
 ### createSelfSignedClaim
 
-▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`undefined` \| `string`\>
+▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`string`\>
 
 **`description`** Creates claim with `data` and adds it to `subject` document. Signer must own or control subject
 
@@ -126,7 +126,7 @@ ___
 
 #### Returns
 
-`Promise`<`undefined` \| `string`\>
+`Promise`<`string`\>
 
 claim url
 
@@ -368,9 +368,7 @@ ___
 
 ▸ **publishPublicClaim**(`token`): `Promise`<`undefined` \| `string`\>
 
-publishPublicClaim
-
-**`description`** publishes claim off-chain (by storing claim data in ipfs and save url to DID document services
+**`description`** publishes claim off-chain (by storing claim data in ipfs and save url to DID document services) or registering on-chain depending on registrationTypes values.
 
 #### Parameters
 
@@ -402,10 +400,10 @@ ___
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `claim` | `Object` | id of signed onchain claim. |
-| `claim.acceptedBy?` | `string` | - |
+| `claim.acceptedBy` | `string` | - |
 | `claim.claimType?` | `string` | - |
 | `claim.claimTypeVersion?` | `string` | - |
-| `claim.onChainProof?` | `string` | - |
+| `claim.onChainProof` | `string` | - |
 | `claim.subject?` | `string` | - |
 | `claim.subjectAgreement?` | `string` | - |
 | `claim.token?` | `string` | - |
