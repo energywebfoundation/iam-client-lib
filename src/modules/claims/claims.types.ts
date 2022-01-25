@@ -11,7 +11,7 @@ export interface IClaimRequest extends IMessage {
 
 export interface IClaimIssuance extends IMessage {
   // issuedToken is is only provided in the case of off-chain role
-  issuedToken?: string;
+  issuedToken?: string; 
   // onChainProof is only provided in case of on-chain role
   onChainProof?: string;
   claimType?: string;
@@ -51,7 +51,7 @@ export interface Claim {
   isAccepted: boolean;
   acceptedBy?: string;
   isRejected?: boolean;
-  namespace: string;
+  namespace: string;g, 
 }
 
 export const readyToBeRegisteredOnchain = (

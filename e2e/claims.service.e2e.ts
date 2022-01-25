@@ -277,7 +277,7 @@ describe('Enrollment claim tests', () => {
       }
       if (registrationTypes.includes(RegistrationTypes.OnChain)) {
         expect(onChainProof).toHaveLength(132);
-        
+
         const mockedClaim = {
           claimType,
           isApproved: true,
@@ -287,7 +287,6 @@ describe('Enrollment claim tests', () => {
           subject: requesterDID,
         };
         mockGetClaimsBySubject.mockReset().mockImplementationOnce(() => [mockedClaim]);
-        
       }
       expect(requester).toEqual(subjectDID);
       expect(claimIssuer).toEqual([issuerDID]);
@@ -397,8 +396,7 @@ describe('Enrollment claim tests', () => {
         returnSteps: false,
       });
 
-      mockGetClaimsBySubject.mockImplementation(() => []);
-      //mockGetClaimsBySubject.mockImplementationOnce(() => []);
+      mockGetClaimsBySubject.mockImplementationOnce(() => []);
 
       return expect(
         enrolAndIssue(rootOwner, staticIssuer, {
@@ -431,7 +429,7 @@ describe('Enrollment claim tests', () => {
       });
 
       test('should be able to issue and publish onchain without request', async () => {
-        mockGetClaimsBySubject.mockImplementation(() => [role1Claim]); // to verify requesting
+        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
 
         await enrolAndIssueWithoutRequest(staticIssuer, {
           subjectDID: rootOwnerDID,
@@ -439,12 +437,12 @@ describe('Enrollment claim tests', () => {
           registrationTypes,
         });
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
-        await claimsService.publishPublicClaim({ claim: {claimType} , registrationTypes });
+        await claimsService.publishPublicClaim({ claim: { claimType }, registrationTypes });
         expect(await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)).toBe(true);
       });
 
       test('should be able to issue without publishing onchain', async () => {
-        mockGetClaimsBySubject.mockImplementation(() => [role1Claim]);
+        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]);
 
         await enrolAndIssue(rootOwner, staticIssuer, {
           subjectDID: rootOwnerDID,

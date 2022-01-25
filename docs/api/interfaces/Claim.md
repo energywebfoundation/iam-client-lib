@@ -8,6 +8,7 @@
 - [claimIssuer](Claim.md#claimissuer)
 - [claimType](Claim.md#claimtype)
 - [claimTypeVersion](Claim.md#claimtypeversion)
+- [g](Claim.md#g)
 - [id](Claim.md#id)
 - [isAccepted](Claim.md#isaccepted)
 - [isRejected](Claim.md#isrejected)
@@ -43,6 +44,12 @@ ___
 ### claimTypeVersion
 
 • **claimTypeVersion**: `string`
+
+___
+
+### g
+
+• **g**: `any`
 
 ___
 
