@@ -1,3 +1,10 @@
+## [4.0.2-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.3...v4.0.2-alpha.4) (2022-01-26)
+
+
+### Bug Fixes
+
+* **claim:** fix issuing a claim with on-chain and off-chain request ([6d30ae1](https://github.com/energywebfoundation/iam-client-lib/commit/6d30ae10b60913f4311c4ceb1569e8ecb8b7a4f9))
+
 ## [4.0.2-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.2...v4.0.2-alpha.3) (2022-01-25)
 
 ## [4.0.2-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.1...v4.0.2-alpha.2) (2022-01-20)
