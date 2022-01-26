@@ -57,7 +57,7 @@ ___
 
 ### subscribeTo
 
-▸ **subscribeTo**(`__namedParameters`): `Promise`<`number`\>
+▸ **subscribeTo**(`__namedParameters`): `Promise`<`undefined` \| `number`\>
 
 #### Parameters
 
@@ -69,7 +69,7 @@ ___
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`<`undefined` \| `number`\>
 
 ___
 
