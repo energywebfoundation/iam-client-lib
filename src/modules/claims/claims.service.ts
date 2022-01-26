@@ -233,16 +233,7 @@ export class ClaimsService {
       acceptedBy: this._signerService.did,
     };
     const strippedClaimData = this.stripClaimData(claimData);
-    if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      const publicClaim: IPublicClaim = {
-        did: sub,
-        signer: this._signerService.did,
-        claimData: { ...strippedClaimData, ...(issuerFields && { issuerFields }) },
-      };
-      message.issuedToken = await this._didRegistry.issuePublicClaim({
-        publicClaim,
-      });
-    }
+
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claimData;
       const expiry = defaultClaimExpiry;
@@ -258,7 +249,18 @@ export class ClaimsService {
       }
     }
 
-    return this._cacheClient.issueClaim(this._signerService.did, message);
+    if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      const publicClaim: IPublicClaim = {
+        did: sub,
+        signer: this._signerService.did,
+        claimData: { ...strippedClaimData, ...(issuerFields && { issuerFields }) },
+      };
+      message.issuedToken = await this._didRegistry.issuePublicClaim({
+        publicClaim,
+      });
+    }
+
+    await this._cacheClient.issueClaim(this._signerService.did, message);
   }
 
   /**

@@ -114,9 +114,7 @@ ___
 
 ▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`string`\>
 
-createSelfSignedClaim
-
-**`description`** creates self signed claim and upload the data to ipfs
+**`description`** Creates claim with `data` and adds it to `subject` document. Signer must own or control subject
 
 #### Parameters
 
@@ -129,6 +127,8 @@ createSelfSignedClaim
 #### Returns
 
 `Promise`<`string`\>
+
+claim url
 
 ___
 
