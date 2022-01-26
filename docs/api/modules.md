@@ -653,17 +653,17 @@ ___
 
 ### readyToBeRegisteredOnchain
 
-▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "token" \| "subjectAgreement" \| "onChainProof" \| "acceptedBy"\>\>
+▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `claim` | `object` |
+| `claim` | `any` |
 
 #### Returns
 
-claim is Required<Pick<Claim, "token" \| "subjectAgreement" \| "onChainProof" \| "acceptedBy"\>\>
+claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
 
 ___
 

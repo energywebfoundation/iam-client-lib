@@ -14,6 +14,9 @@ export interface IClaimIssuance extends IMessage {
   issuedToken?: string;
   // onChainProof is only provided in case of on-chain role
   onChainProof?: string;
+  claimType?: string;
+  claimTypeVersion?: string;
+
   acceptedBy: string;
 }
 
@@ -52,10 +55,28 @@ export interface Claim {
 }
 
 export const readyToBeRegisteredOnchain = (
-  claim: object
-): claim is Required<Pick<Claim, 'token' | 'subjectAgreement' | 'onChainProof' | 'acceptedBy'>> => {
-  const requiredProps = ['token', 'subjectAgreement', 'onChainProof', 'acceptedBy'];
+  claim: any
+): claim is Required<
+  Pick<
+    Claim,
+    | 'claimType'
+    | 'claimTypeVersion'
+    | 'subject'
+    | 'onChainProof'
+    | 'acceptedBy'
+    | 'subjectAgreement'
+  >
+> => {
+  const requiredProps = [
+    'claimType',
+    'claimTypeVersion',
+    'subject',
+    'onChainProof',
+    'acceptedBy',
+    'subjectAgreement',
+  ];
   const claimProps = Object.keys(claim);
+
   return requiredProps.every((p) => claimProps.includes(p));
 };
 
