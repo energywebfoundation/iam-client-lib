@@ -1,3 +1,17 @@
+# [4.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.5...v4.1.0-alpha.1) (2022-01-26)
+
+
+### Bug Fixes
+
+* **tests:** changes in e2e tests ([5087651](https://github.com/energywebfoundation/iam-client-lib/commit/5087651c89b5ed914bc139216d456fef8b0e15e3))
+
+
+### Features
+
+* **claims:** enable on chain enrolment without previous request ([b80446d](https://github.com/energywebfoundation/iam-client-lib/commit/b80446da278d7435d98723ef8f1bede5b4aa22d2))
+* **claims:** made accetpedBy and onChainProof requred for registerOnchain ([3db931b](https://github.com/energywebfoundation/iam-client-lib/commit/3db931b974a9074aaff956556ac0811188141808))
+* **claims:** refactor towards unify off-chain and on-chain registration ([57151bf](https://github.com/energywebfoundation/iam-client-lib/commit/57151bf6d0cb193f814df60376ba2db921e53cf6))
+
 ## [4.0.2-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.4...v4.0.2-alpha.5) (2022-01-26)
 
 ## [4.0.2-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.3...v4.0.2-alpha.4) (2022-01-26)
