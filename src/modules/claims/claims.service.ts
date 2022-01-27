@@ -23,9 +23,6 @@ import {
   IClaimRequest,
   RegistrationTypes,
   defaultClaimExpiry,
-  erc712_type_hash,
-  proof_type_hash,
-  typedMsgPrefix,
 } from './claims.types';
 import { DidRegistry } from '../didRegistry/didRegistry.service';
 import { ClaimData } from '../didRegistry/did.types';
@@ -33,6 +30,7 @@ import { compareDID, isValidDID } from '../../utils/did';
 import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
+import { typedClaimRequestHash, typedMsgPrefix } from '../../utils/eip712';
 
 const { id, keccak256, defaultAbiCoder, solidityKeccak256, namehash, arrayify } = utils;
 
@@ -569,35 +567,18 @@ export class ClaimsService {
     expiry: number,
     subject: string
   ): Promise<string> {
-    const messageId = Buffer.from(typedMsgPrefix, 'hex');
-
     const chainId = this._signerService.chainId;
-    const domainSeparator = utils.keccak256(
-      defaultAbiCoder.encode(
-        ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-        [erc712_type_hash, utils.id('Claim Manager'), utils.id('1.0'), chainId, this._claimManager]
-      )
-    );
 
-    const proofHash = solidityKeccak256(
-      ['bytes', 'bytes32', 'bytes32'],
-      [
-        messageId,
-        domainSeparator,
-        utils.keccak256(
-          defaultAbiCoder.encode(
-            ['bytes32', 'address', 'bytes32', 'uint', 'uint', 'address'],
-            [
-              proof_type_hash,
-              addressOf(subject),
-              namehash(role),
-              version,
-              expiry,
-              this._signerService.address,
-            ]
-          )
-        ),
-      ]
+    const proofHash = typedClaimRequestHash(
+      {
+        role,
+        version,
+        expiry,
+        subject,
+        issuer: this._signerService.did,
+        claimManager: this._claimManager,
+      },
+      chainId
     );
 
     return canonizeSig(await this._signerService.signMessage(arrayify(proofHash)));

@@ -1,4 +1,3 @@
-import { utils } from 'ethers';
 import { IMessage } from '../messaging/messaging.types';
 
 export interface IClaimRequest extends IMessage {
@@ -80,16 +79,6 @@ export const readyToBeRegisteredOnchain = (
   return requiredProps.every((p) => claimProps.includes(p));
 };
 
-export const typedMsgPrefix = '1901';
-export const erc712_type_hash = utils.id(
-  'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
-);
-export const agreement_type_hash = utils.id(
-  'Agreement(address subject,bytes32 role,uint256 version)'
-);
-export const proof_type_hash = utils.id(
-  'Proof(address subject,bytes32 role,uint256 version,uint256 expiry,address issuer)'
-);
 export const defaultClaimExpiry = Number.MAX_SAFE_INTEGER - 1; // constraint of ethers.BigNumber
 
 export type RequestClaim = { requester: string; message: IClaimRequest };

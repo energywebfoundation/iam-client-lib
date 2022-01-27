@@ -17,10 +17,12 @@ import {
   DidRegistry,
   MessagingService,
   IClaimIssuance,
+  defaultClaimExpiry,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
 import { ProofVerifier } from '@ew-did-registry/claims';
+import { recoverOnChainProofSigner } from '../src/utils/eip712';
 import { ClaimManager } from '../ethers/ClaimManager';
 
 const { namehash } = utils;
@@ -214,6 +216,20 @@ describe('Enrollment claim tests', () => {
 
       registrationTypes.includes(RegistrationTypes.OnChain) &&
         expect(onChainProof).toHaveLength(132);
+      expect(
+        recoverOnChainProofSigner(
+          onChainProof,
+          {
+            role: claimType,
+            version,
+            expiry: defaultClaimExpiry,
+            subject: subjectDID,
+            issuer: issuerDID,
+            claimManager: claimManager.address,
+          },
+          signerService.chainId
+        )
+      ).toEqual(addressOf(issuerDID));
 
       expect(acceptedBy).toBe(issuerDID);
 
