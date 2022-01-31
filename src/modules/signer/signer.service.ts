@@ -51,8 +51,10 @@ export class SignerService {
     // web app is responsible for clearing of isEthSigner on logout
     if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
       const isEthSigner = localStorage.getItem(IS_ETH_SIGNER);
-      if (isEthSigner) {
-        this._isEthSigner = Boolean(isEthSigner);
+      if (isEthSigner === 'true') {
+        this._isEthSigner = true;
+      } else if (isEthSigner === 'false') {
+        this._isEthSigner = false;
       }
     }
     /**
