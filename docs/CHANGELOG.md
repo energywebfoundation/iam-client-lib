@@ -20,8 +20,15 @@
 ### Features
 
 * **claims:** enable on chain enrolment without previous request ([b80446d](https://github.com/energywebfoundation/iam-client-lib/commit/b80446da278d7435d98723ef8f1bede5b4aa22d2))
-* **claims:** made accetpedBy and onChainProof requred for registerOnchain ([3db931b](https://github.com/energywebfoundation/iam-client-lib/commit/3db931b974a9074aaff956556ac0811188141808))
+* **claims:** made acceptedBy and onChainProof requred for registerOnchain ([3db931b](https://github.com/energywebfoundation/iam-client-lib/commit/3db931b974a9074aaff956556ac0811188141808))
 * **claims:** refactor towards unify off-chain and on-chain registration ([57151bf](https://github.com/energywebfoundation/iam-client-lib/commit/57151bf6d0cb193f814df60376ba2db921e53cf6))
+
+
+### BREAKING CHANGES
+
+* `claim` parameter of `registerOnChain` is extended with `subject`, `claimType` and `claimTypeVersion` optional properties, which should be specified when `token` is not 
+* argument of `issueClaim` is extended with `registrationTypes` by default set to `[RegistrationTypes.OffChain]` and required `subject`
+* argument of `publishPublicClaim` is extended with `registrationTypes` by default set to `[RegistrationTypes.OffChain]` and property `claim: {token?: string; claimType?: string}`
 
 ## [4.0.2-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.4...v4.0.2-alpha.5) (2022-01-26)
 
