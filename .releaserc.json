@@ -51,13 +51,6 @@
         "assets": ["package.json", "docs/CHANGELOG.md"]
       }
     ],
-    [
-      "@semantic-release/github",
-      {
-        "assets": [
-          { "path": "dist", "label": "iam-client-lib (${nextRelease.gitTag}) distribution" }
-        ]
-      }
-    ]
+    "@semantic-release/github"
   ]
 }
