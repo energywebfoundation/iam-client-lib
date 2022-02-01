@@ -103,6 +103,7 @@
     "@energyweb/prettier-config": "^0.0.0",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.1",
+    "@semantic-release/github": "^7.2.3",
     "@typechain/ethers-v5": "7.2.0",
     "@types/jest": "^26.0.13",
     "@types/lodash.difference": "^4.5.6",
