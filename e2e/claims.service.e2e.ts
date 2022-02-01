@@ -13,7 +13,6 @@ import {
   RegistrationTypes,
   SignerService,
   chainConfigs,
-  StakingService,
   DidRegistry,
   MessagingService,
   IClaimIssuance,
@@ -105,8 +104,6 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
     }),
   };
 });
-
-StakingService.create = jest.fn();
 
 describe('Enrollment claim tests', () => {
   let claimsService: ClaimsService;
