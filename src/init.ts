@@ -9,7 +9,7 @@ import {
   ProviderType,
   SignerService,
 } from './modules/signer';
-import { StakingFactoryService, StakingService } from './modules/staking';
+import { StakingFactoryService } from './modules/staking';
 import { DidRegistry } from './modules/didRegistry';
 import { MessagingService } from './modules/messaging';
 import { CacheClient } from './modules/cacheClient';
@@ -63,10 +63,6 @@ export async function init(signerService: SignerService) {
 
     const stakingAddressProvided = stakingPoolFactoryAddress && stakingPoolFactoryAddress.length;
 
-    const stakingService = stakingAddressProvided
-      ? await StakingService.create(signerService, domainsService)
-      : null;
-
     const stakingPoolService = stakingAddressProvided
       ? await StakingFactoryService.create(signerService, domainsService)
       : null;
@@ -93,7 +89,6 @@ export async function init(signerService: SignerService) {
     return {
       cacheClient,
       domainsService,
-      stakingService,
       assetsService,
       connectToDidRegistry,
       stakingPoolService,

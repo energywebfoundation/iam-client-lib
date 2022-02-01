@@ -9,7 +9,6 @@ import {
   ENSOwnerNotValidAddressError,
   RegistrationTypes,
   SignerService,
-  StakingService,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
 
@@ -30,8 +29,6 @@ jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
 
 MessagingService.create = (signerService: SignerService) =>
   Promise.resolve(new MessagingService(signerService));
-StakingService.create = (signerService: SignerService, domainsService: DomainsService) =>
-  Promise.resolve(new StakingService(signerService, domainsService));
 
 describe('Domains service', () => {
   let domainsService: DomainsService;
