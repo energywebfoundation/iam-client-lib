@@ -5,18 +5,24 @@
 ### Properties
 
 - [definition](IApp.md#definition)
+- [id](IApp.md#id)
 - [isOwnedByCurrentUser](IApp.md#isownedbycurrentuser)
 - [name](IApp.md#name)
 - [namespace](IApp.md#namespace)
 - [owner](IApp.md#owner)
 - [roles](IApp.md#roles)
-- [uid](IApp.md#uid)
 
 ## Properties
 
 ### definition
 
 • **definition**: `IAppDefinition`
+
+___
+
+### id
+
+• **id**: `string`
 
 ___
 
@@ -47,9 +53,3 @@ ___
 ### roles
 
 • `Optional` **roles**: [`IRole`](IRole.md)[]
-
-___
-
-### uid
-
-• **uid**: `string`
