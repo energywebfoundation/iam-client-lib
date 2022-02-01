@@ -1,3 +1,15 @@
+# [4.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.6...v4.1.0-alpha.7) (2022-02-01)
+
+
+### Code Refactoring
+
+* **staking:** clean old staking ([697ff51](https://github.com/energywebfoundation/iam-client-lib/commit/697ff5121c619961b51cca9277db00c5cfc16399))
+
+
+### BREAKING CHANGES
+
+* **staking:** StakingService is obsolete
+
 # [4.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.5...v4.1.0-alpha.6) (2022-02-01)
 
 
