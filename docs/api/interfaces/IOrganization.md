@@ -6,13 +6,13 @@
 
 - [apps](IOrganization.md#apps)
 - [definition](IOrganization.md#definition)
+- [id](IOrganization.md#id)
 - [isOwnedByCurrentUser](IOrganization.md#isownedbycurrentuser)
 - [name](IOrganization.md#name)
 - [namespace](IOrganization.md#namespace)
 - [owner](IOrganization.md#owner)
 - [roles](IOrganization.md#roles)
 - [subOrgs](IOrganization.md#suborgs)
-- [uid](IOrganization.md#uid)
 
 ## Properties
 
@@ -25,6 +25,12 @@ ___
 ### definition
 
 • **definition**: `IOrganizationDefinition`
+
+___
+
+### id
+
+• **id**: `string`
 
 ___
 
@@ -61,9 +67,3 @@ ___
 ### subOrgs
 
 • `Optional` **subOrgs**: [`IOrganization`](IOrganization.md)[]
-
-___
-
-### uid
-
-• **uid**: `string`
