@@ -7,11 +7,11 @@ import {
   VOLTA_RESOLVER_V1_ADDRESS,
   VOLTA_IDENTITY_MANAGER_ADDRESS,
   VOLTA_CLAIM_MANAGER_ADDRESS,
-  VOLTA_STAKING_POOL_FACTORY_ADDRESS,
   EWC_CHAIN_ID,
 } from '@energyweb/iam-contracts';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 
+const VOLTA_STAKING_POOL_FACTORY_ADDRESS = '0x4b2A127680320eD980beAa7aD9b2447B96BC32fC';
 export interface ChainConfig {
   chainName: Chain;
   chainDisplayName: string;
