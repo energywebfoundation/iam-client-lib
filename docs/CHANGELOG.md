@@ -1,3 +1,10 @@
+# [4.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.7...v4.1.0-alpha.8) (2022-02-02)
+
+
+### Bug Fixes
+
+* **docs:** add breaking changes v4.1 logs ([5761ccb](https://github.com/energywebfoundation/iam-client-lib/commit/5761ccbbf2bbc8e42775876db6155e0a95815086))
+
 # [4.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.6...v4.1.0-alpha.7) (2022-02-01)
 
 
