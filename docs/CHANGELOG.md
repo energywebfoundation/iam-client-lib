@@ -1,3 +1,10 @@
+# [4.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.8...v4.1.0-alpha.9) (2022-02-08)
+
+
+### Bug Fixes
+
+* adopt correct role, app, org interfaces ([b1141eb](https://github.com/energywebfoundation/iam-client-lib/commit/b1141eb93ef99acd5637a47960d2c7fc6223231b))
+
 # [4.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.7...v4.1.0-alpha.8) (2022-02-02)
 
 
