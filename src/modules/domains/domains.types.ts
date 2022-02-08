@@ -7,7 +7,7 @@ export enum NamespaceType {
 }
 
 export interface IRole {
-  id: string;
+  id: number;
   name: string;
   namespace: string;
   owner: string;
@@ -16,7 +16,7 @@ export interface IRole {
 }
 
 export interface IOrganization {
-  id: string;
+  id: number;
   name: string;
   namespace: string;
   owner: string;
@@ -28,7 +28,7 @@ export interface IOrganization {
 }
 
 export interface IApp {
-  id: string;
+  id: number;
   name: string;
   namespace: string;
   owner: string;
