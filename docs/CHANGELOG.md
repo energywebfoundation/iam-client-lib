@@ -1,3 +1,10 @@
+# [4.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.9...v4.1.0-alpha.10) (2022-02-09)
+
+
+### Bug Fixes
+
+* change return type for `getAllowedRolesByIssuer` ([742f744](https://github.com/energywebfoundation/iam-client-lib/commit/742f744004e2e69bd5141adfa9fabe0a03511381))
+
 # [4.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.8...v4.1.0-alpha.9) (2022-02-08)
 
 
