@@ -283,7 +283,7 @@ export class CacheClient implements ICacheClient {
   }
 
   async getAllowedRolesByIssuer(did: string) {
-    const { data } = await this.httpClient.get<string[]>(`/claim/issuer/roles/allowed/${did}`);
+    const { data } = await this.httpClient.get<IRole[]>(`/claim/issuer/roles/allowed/${did}`);
     return data;
   }
 

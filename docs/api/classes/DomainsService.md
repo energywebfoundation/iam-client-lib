@@ -294,7 +294,7 @@ ___
 
 ### getAllowedRolesByIssuer
 
-▸ **getAllowedRolesByIssuer**(`did`): `Promise`<`string`[]\>
+▸ **getAllowedRolesByIssuer**(`did`): `Promise`<[`IRole`](../interfaces/IRole.md)[]\>
 
 getAllowedRolesByIssuer
 
@@ -308,7 +308,7 @@ getAllowedRolesByIssuer
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`<[`IRole`](../interfaces/IRole.md)[]\>
 
 array of roles that the DID can issue
 
