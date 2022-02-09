@@ -132,7 +132,7 @@ ___
 
 ### getAllowedRolesByIssuer
 
-▸ **getAllowedRolesByIssuer**(`did`): `Promise`<`string`[]\>
+▸ **getAllowedRolesByIssuer**(`did`): `Promise`<[`IRole`](../interfaces/IRole.md)[]\>
 
 #### Parameters
 
@@ -142,7 +142,7 @@ ___
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`<[`IRole`](../interfaces/IRole.md)[]\>
 
 ___
 
