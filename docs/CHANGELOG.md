@@ -1,3 +1,10 @@
+# [4.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.12...v4.1.0-alpha.13) (2022-02-11)
+
+
+### Features
+
+* **roles:** requestorFields in setRoleDefinition ([afac516](https://github.com/energywebfoundation/iam-client-lib/commit/afac51654325cd9383ae15951f798ed8bf7d05a6))
+
 # [4.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.11...v4.1.0-alpha.12) (2022-02-10)
 
 # [4.1.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.10...v4.1.0-alpha.11) (2022-02-10)
