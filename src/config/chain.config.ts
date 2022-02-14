@@ -8,6 +8,13 @@ import {
   VOLTA_IDENTITY_MANAGER_ADDRESS,
   VOLTA_CLAIM_MANAGER_ADDRESS,
   EWC_CHAIN_ID,
+  EWC_ADDRESS_1056,
+  EWC_CLAIM_MANAGER_ADDRESS,
+  EWC_DOMAIN_NOTIFER_ADDRESS,
+  EWC_ENS_REGISTRY_ADDRESS,
+  EWC_IDENTITY_MANAGER_ADDRESS,
+  EWC_PUBLIC_RESOLVER_ADDRESS,
+  EWC_RESOLVER_V1_ADDRESS,
 } from '@energyweb/iam-contracts';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 
@@ -27,15 +34,6 @@ export interface ChainConfig {
 }
 
 export type ChainId = number;
-
-// TODO: Would be better if some of these were in @energyweb/iam-contracts
-const EWC_CLAIM_MANAGER_ADDRESS = '0x23b026631A6f265d17CFee8aa6ced1B244f3920C';
-const EWC_ENS_REGISTRY_ADDRESS = '0x0A6d64413c07E10E890220BBE1c49170080C6Ca0';
-const EWC_RESOLVER_V1_ADDRESS = '0x70ad37DfeB1C05290F4bBd22188FA19Bc154A0ea';
-const EWC_PUBLIC_RESOLVER_ADDRESS = '0xA517983Bd4Af4DF0Ed9b52DA4BC405d0A95eE7E2';
-const EWC_DOMAIN_NOTIFER_ADDRESS = '0x5491Db3cC1f3AFf6C229e061735F92936004da3c';
-const EWC_IDENTITY_MANAGER_ADDRESS = '0x2d1569f3a2006d21c0dc60eb13c8557b63ce5a8d';
-const EwcAddress1056 = '0xE29672f34e92b56C9169f9D485fFc8b9A136BCE4';
 
 /**
  * Set of parameters to configure connection to chain with id received from wallet.
@@ -64,7 +62,7 @@ const chainConfig: Record<number, ChainConfig> = {
     ensPublicResolverAddress: EWC_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: EWC_DOMAIN_NOTIFER_ADDRESS,
     assetManagerAddress: EWC_IDENTITY_MANAGER_ADDRESS,
-    didRegistryAddress: EwcAddress1056,
+    didRegistryAddress: EWC_ADDRESS_1056,
     claimManagerAddress: EWC_CLAIM_MANAGER_ADDRESS,
     stakingPoolFactoryAddress: '', // This is not deployed on EWC
   },
