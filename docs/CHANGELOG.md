@@ -1,3 +1,10 @@
+# [4.1.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.13...v4.1.0-alpha.14) (2022-02-14)
+
+
+### Features
+
+* get EWC chain config from `iam-contracts` ([32236d0](https://github.com/energywebfoundation/iam-client-lib/commit/32236d0cdbddd961cb19d43aab4679800acbb756))
+
 # [4.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.12...v4.1.0-alpha.13) (2022-02-11)
 
 
