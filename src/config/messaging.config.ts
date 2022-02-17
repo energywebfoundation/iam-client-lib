@@ -1,3 +1,4 @@
+import { EWC_CHAIN_ID } from '@energyweb/iam-contracts';
 import { MessagingMethod } from '../modules/messaging/messaging.types';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 import { ChainId } from './chain.config';
@@ -13,6 +14,11 @@ const messagingConfig: Record<ChainId, MessagingConfig> = {
     messagingMethod: MessagingMethod.Nats,
     natsServerUrl: 'https://identityevents-dev.energyweb.org/',
     natsEnvironmentName: 'ewf-volta',
+  },
+  [EWC_CHAIN_ID]: {
+    messagingMethod: MessagingMethod.Nats,
+    natsServerUrl: 'https://identityevents.energyweb.org/',
+    natsEnvironmentName: 'ewf-prod',
   },
 };
 
