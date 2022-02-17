@@ -67,7 +67,10 @@ export async function changeResolver({
 
   const migrate = async (node: string) => {
     await registry.setResolver(utils.namehash(node), newResolverAddr);
-    await newResolver.setName(utils.namehash(node), await resolver.name(utils.namehash(node)));
+    await newResolver.setName(
+      utils.namehash(node),
+      await resolver.name(utils.namehash(node))
+    );
     await newResolver.setText(
       utils.namehash(node),
       NODE_FIELDS_KEY,

@@ -18,7 +18,8 @@ import {
 } from '@energyweb/iam-contracts';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 
-const VOLTA_STAKING_POOL_FACTORY_ADDRESS = '0x4b2A127680320eD980beAa7aD9b2447B96BC32fC';
+const VOLTA_STAKING_POOL_FACTORY_ADDRESS =
+  '0x4b2A127680320eD980beAa7aD9b2447B96BC32fC';
 export interface ChainConfig {
   chainName: Chain;
   chainDisplayName: string;
@@ -74,6 +75,9 @@ export const chainConfigs = () => ({ ...chainConfig });
  * Used to override existing chain configuration or add a missing one
  * Configuration must be set before constructing `IAM`
  */
-export const setChainConfig = (chainId: ChainId, config: Partial<ChainConfig>) => {
+export const setChainConfig = (
+  chainId: ChainId,
+  config: Partial<ChainConfig>
+) => {
   chainConfig[chainId] = { ...chainConfig[chainId], ...config };
 };
