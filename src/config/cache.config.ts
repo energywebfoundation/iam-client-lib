@@ -16,7 +16,10 @@ const cacheConfig: Record<number, CacheServerClientOptions> = {
  * Used to override existing cache server configuration or add a missing one
  * Configuration must be set before constructing `IAM`
  */
-export const setCacheConfig = (chainId: number, options: Partial<CacheServerClientOptions>) => {
+export const setCacheConfig = (
+  chainId: number,
+  options: Partial<CacheServerClientOptions>
+) => {
   cacheConfig[chainId] = { ...cacheConfig[chainId], ...options };
 };
 

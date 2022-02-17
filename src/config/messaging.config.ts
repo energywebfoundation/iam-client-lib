@@ -26,7 +26,10 @@ const messagingConfig: Record<ChainId, MessagingConfig> = {
  * Used to override existing messaging configuration or add a missing one
  * Configuration must be set before constructing `IAM`
  */
-export const setMessagingConfig = (chainId: ChainId, options: Partial<MessagingConfig>) => {
+export const setMessagingConfig = (
+  chainId: ChainId,
+  options: Partial<MessagingConfig>
+) => {
   messagingConfig[chainId] = { ...messagingConfig[chainId], ...options };
 };
 

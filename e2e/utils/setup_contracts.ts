@@ -34,13 +34,19 @@ let claimManager: ClaimManager;
 export const deployer = provider.getSigner(0);
 
 const deployDidRegistry = async () => {
-  const didContractFactory = new ContractFactory(didContractAbi, didContractBytecode, deployer);
+  const didContractFactory = new ContractFactory(
+    didContractAbi,
+    didContractBytecode,
+    deployer
+  );
   didRegistry = await didContractFactory.deploy();
 };
 
 const deployEns = async () => {
   ensRegistry = await new ENSRegistry__factory(deployer).deploy();
-  domainNotifer = await new DomainNotifier__factory(deployer).deploy(ensRegistry.address);
+  domainNotifer = await new DomainNotifier__factory(deployer).deploy(
+    ensRegistry.address
+  );
   ensResolver = await new RoleDefinitionResolver__factory(deployer).deploy(
     ensRegistry.address,
     domainNotifer.address
@@ -55,13 +61,18 @@ const deployIdentityManager = async (): Promise<void> => {
 };
 
 const deployClaimManager = async (): Promise<void> => {
-  claimManager = await (await new ClaimManager__factory(deployer).deploy()).deployed();
+  claimManager = await (
+    await new ClaimManager__factory(deployer).deploy()
+  ).deployed();
   claimManager.initialize(didRegistry.address, ensRegistry.address);
 };
 
 export const root = 'ewc';
 
-export const replenish = async (acc: string, amount: BigNumber | string = '3.0') => {
+export const replenish = async (
+  acc: string,
+  amount: BigNumber | string = '3.0'
+) => {
   if (typeof amount === 'string') {
     amount = parseEther(amount);
   }
