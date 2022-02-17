@@ -15,6 +15,7 @@ import {
   EWC_IDENTITY_MANAGER_ADDRESS,
   EWC_PUBLIC_RESOLVER_ADDRESS,
   EWC_RESOLVER_V1_ADDRESS,
+  VOLTA_RESOLVER_V2_ADDRESS,
 } from '@energyweb/iam-contracts';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 
@@ -24,6 +25,7 @@ export interface ChainConfig {
   chainDisplayName: string;
   rpcUrl: string;
   ensRegistryAddress: string;
+  ensResolverV2Address: string;
   ensResolverAddress: string;
   ensPublicResolverAddress: string;
   domainNotifierAddress: string;
@@ -45,6 +47,7 @@ const chainConfig: Record<number, ChainConfig> = {
     chainDisplayName: 'Energy Web Volta Testnet',
     rpcUrl: 'https://volta-rpc.energyweb.org/',
     ensRegistryAddress: VOLTA_ENS_REGISTRY_ADDRESS,
+    ensResolverV2Address: VOLTA_RESOLVER_V2_ADDRESS,
     ensResolverAddress: VOLTA_RESOLVER_V1_ADDRESS,
     ensPublicResolverAddress: VOLTA_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: VOLTA_DOMAIN_NOTIFER_ADDRESS,
@@ -58,6 +61,7 @@ const chainConfig: Record<number, ChainConfig> = {
     chainDisplayName: 'Energy Web Chain',
     rpcUrl: 'https://rpc.energyweb.org/',
     ensRegistryAddress: EWC_ENS_REGISTRY_ADDRESS,
+    ensResolverV2Address: '',
     ensResolverAddress: EWC_RESOLVER_V1_ADDRESS,
     ensPublicResolverAddress: EWC_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: EWC_DOMAIN_NOTIFER_ADDRESS,

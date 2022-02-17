@@ -9,13 +9,13 @@ import {
   ENSOwnerNotValidAddressError,
   RegistrationTypes,
   SignerService,
-} from '../src';
-import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
+} from '../../src';
+import { replenish, root, rpcUrl, setupENS } from '../utils/setup_contracts';
 
 const { namehash } = utils;
 
 const mockGetRoleDefinition = jest.fn();
-jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
+jest.mock('../../src/modules/cacheClient/cacheClient.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
       return {

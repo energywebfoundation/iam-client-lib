@@ -625,9 +625,7 @@ export class DomainsService {
   }
 
   /**
-   * getRoleDefinition
-   *
-   * @description get role definition form ens domain metadata record
+   * @description get cached domain definition
    * @returns metadata string or empty string when there is no metadata
    *
    */
