@@ -1,3 +1,10 @@
+# [4.1.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.17...v4.1.0-alpha.18) (2022-02-18)
+
+
+### Bug Fixes
+
+* **core:** requestor fields typo fix ([0e7ea17](https://github.com/energywebfoundation/iam-client-lib/commit/0e7ea177bff52bfbf1cf2f2ba943745fad4f71f3))
+
 # [4.1.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.16...v4.1.0-alpha.17) (2022-02-17)
 
 
