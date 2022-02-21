@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@energyweb/ekc": "^0.6.5",
-    "@energyweb/iam-contracts": "^4.3.1",
+    "@energyweb/iam-contracts": "^4.4.0",
     "@energyweb/staking-pool": "^1.0.0-rc.14",
     "@ensdomains/ens": "^0.6.2",
     "@ethersproject/abstract-provider": "5.4.1",
