@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./e2e/**/*.ts",
     "prebuild": "rimraf dist ethers",
-    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist",
+    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" \"patches/**/*.patch\" dist",
     "build:node": "bili --format cjs",
     "build:front_end": "bili --format esm",
     "build:ts": "npm run build:front_end && npm run build:node",
@@ -29,6 +29,7 @@
     "build:typechain:publicresolver": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/PublicResolver.json\"",
     "build:typechain:staking-pool": "typechain --target ethers-v5 --out-dir ethers-staking \"./node_modules/@energyweb/staking-pool/dist/contracts/StakingPool.sol/StakingPool.json\"",
     "prepare": "npm run build && patch-package",
+    "postinstall": "patch-package && echo postinstall done",
     "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
     "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
     "test:watch": "npm run start-rpc -- \"jest --coverage --env=./jest.env.js --watchAll\"",
@@ -85,6 +86,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash.difference": "^4.5.0",
     "nats.ws": "^1.7.1",
+    "patch-package": "^6.4.7",
     "qs": "^6.9.4",
     "tslib": "^2.0.3",
     "uuid": "^7.0.3"
@@ -124,7 +126,6 @@
     "jest-environment-node": "^27.1.0",
     "jwt-decode": "^3.1.2",
     "lint-staged": "^11.1.1",
-    "patch-package": "^6.4.7",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "rollup-plugin-typescript2": "^0.31.0",
