@@ -657,7 +657,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `claim` | `any` |
+| `claim` | `Record`<`string`, `unknown`\> |
 
 #### Returns
 
