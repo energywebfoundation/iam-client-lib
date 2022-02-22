@@ -11,9 +11,10 @@
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./e2e/**/*.ts",
     "prebuild": "rimraf dist ethers",
-    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" \"patches/**/*.patch\" dist",
+    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist && npm run build:patches",
     "build:node": "bili --format cjs",
     "build:front_end": "bili --format esm",
+    "build:patches": "copyfiles \"patches/**/*.patch\" dist && node scripts/patches-build.js",
     "build:ts": "npm run build:front_end && npm run build:node",
     "build:api_docs": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true",
     "build:contracts": "npm run build:typechain:ens && npm run build:typechain:did && npm run build:typechain:roles && npm run build:typechain:staking",
