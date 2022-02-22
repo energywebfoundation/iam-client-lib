@@ -29,7 +29,7 @@
     "build:typechain:publicresolver": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/iam-contracts/dist/contracts/PublicResolver.json\"",
     "build:typechain:staking-pool": "typechain --target ethers-v5 --out-dir ethers-staking \"./node_modules/@energyweb/staking-pool/dist/contracts/StakingPool.sol/StakingPool.json\"",
     "prepare": "npm run build && patch-package",
-    "postinstall": "patch-package && echo postinstall done",
+    "postinstall": "patch-package --patch-dir node_modules/iam-client-lib/dist/patches --error-on-fail",
     "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
     "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
     "test:watch": "npm run start-rpc -- \"jest --coverage --env=./jest.env.js --watchAll\"",
