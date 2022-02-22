@@ -1,3 +1,10 @@
+# [4.1.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.22...v4.1.0-alpha.23) (2022-02-22)
+
+
+### Features
+
+* migrate definitions to resolver_v2 ([fdf373c](https://github.com/energywebfoundation/iam-client-lib/commit/fdf373cda22b6ea06189b7bae0d718b6b66b777b))
+
 # [4.1.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.21...v4.1.0-alpha.22) (2022-02-22)
 
 # [4.1.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.20...v4.1.0-alpha.21) (2022-02-21)
