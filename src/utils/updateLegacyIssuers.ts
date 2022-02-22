@@ -35,7 +35,7 @@ export const updateLegacyIssuers = async (
     ensResolverV2Address,
   } = await initDomains(signer, chainId);
 
-  const updated = new Array();
+  const updated: Record<string, unknown>[] = [];
   const update = async (domain: string) => {
     const domainHash = namehash(domain);
     const def = await domainReader.read({ node: domainHash });
@@ -43,7 +43,10 @@ export const updateLegacyIssuers = async (
       domain,
       mode: 'FIRSTLEVEL',
     });
-    if (DomainReader.isOrgDefinition(def) || DomainReader.isAppDefinition(def)) {
+    if (
+      DomainReader.isOrgDefinition(def) ||
+      DomainReader.isAppDefinition(def)
+    ) {
       subnodes = subnodes.concat(
         await domainHierarchy.getSubdomainsUsingResolver({
           domain: `roles.${domain}`,
@@ -63,7 +66,9 @@ export const updateLegacyIssuers = async (
     const resolver = await ensRegistry.resolver(domainHash);
     if (resolver !== ensResolverV2Address) {
       if (!dryRun) {
-        await (await ensRegistry.setResolver(domain, ensResolverV2Address)).wait();
+        await (
+          await ensRegistry.setResolver(domain, ensResolverV2Address)
+        ).wait();
       }
       let updateDomainTx;
       if (DomainReader.isRoleDefinition(def)) {
@@ -76,18 +81,30 @@ export const updateLegacyIssuers = async (
           issuer: {
             ...def.issuer,
             did: did?.map((d) =>
-              isValidDID(d) ? d : `did:${Methods.Erc1056}:${chainName}:${d.split(':').slice(-1)}`
+              isValidDID(d)
+                ? d
+                : `did:${Methods.Erc1056}:${chainName}:${d
+                    .split(':')
+                    .slice(-1)}`
             ),
           },
           version: parseInt(version.toString(), 10),
         };
         updated.push({ domain, legacyDef: def, updatedDef });
-        updateDomainTx = transactionFactory.newRole({ domain, roleDefinition: updatedDef });
+        updateDomainTx = transactionFactory.newRole({
+          domain,
+          roleDefinition: updatedDef,
+        });
       } else {
-        updateDomainTx = transactionFactory.newDomain({ domain, domainDefinition: def });
+        updateDomainTx = transactionFactory.newDomain({
+          domain,
+          domainDefinition: def,
+        });
       }
       if (!dryRun) {
-        await (await signer.connect(provider).sendTransaction(updateDomainTx)).wait();
+        await (
+          await signer.connect(provider).sendTransaction(updateDomainTx)
+        ).wait();
       }
     }
 
@@ -98,12 +115,18 @@ export const updateLegacyIssuers = async (
       const owner = await ensRegistry.owner(nodeHash);
       if (!dryRun) {
         await (
-          await ensRegistry.setSubnodeOwner(domainHash, labelHash, await signer.getAddress())
+          await ensRegistry.setSubnodeOwner(
+            domainHash,
+            labelHash,
+            await signer.getAddress()
+          )
         ).wait();
       }
       await update(nodeName);
       if (!dryRun) {
-        await (await ensRegistry.setSubnodeOwner(domainHash, labelHash, owner)).wait();
+        await (
+          await ensRegistry.setSubnodeOwner(domainHash, labelHash, owner)
+        ).wait();
       }
     }
   };

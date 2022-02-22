@@ -1,3 +1,24 @@
+# [4.1.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.20...v4.1.0-alpha.21) (2022-02-21)
+
+# [4.1.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.19...v4.1.0-alpha.20) (2022-02-18)
+
+# [4.1.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.18...v4.1.0-alpha.19) (2022-02-18)
+
+# [4.1.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.17...v4.1.0-alpha.18) (2022-02-18)
+
+
+### Bug Fixes
+
+* **core:** requestor fields typo fix ([0e7ea17](https://github.com/energywebfoundation/iam-client-lib/commit/0e7ea177bff52bfbf1cf2f2ba943745fad4f71f3))
+
+# [4.1.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.16...v4.1.0-alpha.17) (2022-02-17)
+
+
+### Features
+
+* **config:** add default EWC messaging config ([e225e4e](https://github.com/energywebfoundation/iam-client-lib/commit/e225e4ece6fc29f166d22a52a5126317cb6a47e1))
+* **config:** update default volta chain config ([69b3763](https://github.com/energywebfoundation/iam-client-lib/commit/69b37635daced08f5a92dcba9d9a85ff77a8cd28))
+
 # [4.1.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.15...v4.1.0-alpha.16) (2022-02-16)
 
 

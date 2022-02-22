@@ -18,7 +18,11 @@ describe.skip('Domains migration', () => {
   test(
     'Role definitions should be migrated',
     async () => {
-      const updatedDomains = await updateLegacyIssuers(root, rootOwner, VOLTA_CHAIN_ID);
+      const updatedDomains = await updateLegacyIssuers(
+        root,
+        rootOwner,
+        VOLTA_CHAIN_ID
+      );
       updatedDomains.forEach((d) => {
         console.group(d.domain);
         console.log('def:', util.inspect(d.legacyDef, { depth: 5 }));

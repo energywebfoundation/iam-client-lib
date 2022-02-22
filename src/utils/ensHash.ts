@@ -4,7 +4,9 @@ import { normalize } from 'eth-ens-namehash';
 
 export function decodeLabelhash(hash: string) {
   if (!(hash.startsWith('[') && hash.endsWith(']'))) {
-    throw Error('Expected encoded labelhash to start and end with square brackets');
+    throw Error(
+      'Expected encoded labelhash to start and end with square brackets'
+    );
   }
 
   if (hash.length !== 66) {
