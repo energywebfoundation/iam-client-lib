@@ -55,7 +55,7 @@ export interface Claim {
 }
 
 export const readyToBeRegisteredOnchain = (
-  claim: any
+  claim: Record<string, unknown>
 ): claim is Required<
   Pick<
     Claim,

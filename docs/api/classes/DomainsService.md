@@ -362,9 +362,7 @@ ___
 
 ▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
-getRoleDefinition
-
-**`description`** get role definition form ens domain metadata record
+**`description`** get cached domain definition
 
 #### Parameters
 
