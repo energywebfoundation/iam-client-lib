@@ -1,3 +1,5 @@
+# [4.1.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.23...v4.1.0-alpha.24) (2022-02-22)
+
 # [4.1.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.22...v4.1.0-alpha.23) (2022-02-22)
 
 
