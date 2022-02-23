@@ -27,6 +27,19 @@ export * from './errors';
 export * from './config';
 export * from './utils';
 
-export { PubKeyType, DIDAttribute } from '@ew-did-registry/did-resolver-interface';
+export {
+  PubKeyType,
+  DIDAttribute,
+} from '@ew-did-registry/did-resolver-interface';
 
-export { PreconditionType, IRoleDefinition } from '@energyweb/iam-contracts';
+export {
+  PreconditionType,
+  IRoleDefinition,
+  IAppDefinition,
+  IFieldDefinition,
+  IIssuerDefinition,
+  IOrganizationDefinition,
+  IRevokerDefinition,
+  IRoleDefinitionText,
+  IRoleDefinitionV2,
+} from '@energyweb/iam-contracts';
