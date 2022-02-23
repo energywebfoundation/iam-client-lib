@@ -42,7 +42,10 @@ export class DomainsService {
   private _ensPublicResolverAddress: string;
   private _ttl = BigNumber.from(0);
 
-  constructor(private _signerService: SignerService, private _cacheClient: CacheClient) {
+  constructor(
+    private _signerService: SignerService,
+    private _cacheClient: CacheClient
+  ) {
     this._signerService.onInit(this.init.bind(this));
   }
 
@@ -120,7 +123,10 @@ export class DomainsService {
     }
     // Standard update
     await this._signerService.send({
-      ...this._domainDefinitionTransactionFactory.editDomain({ domain, domainDefinition: data }),
+      ...this._domainDefinitionTransactionFactory.editDomain({
+        domain,
+        domainDefinition: data,
+      }),
     });
   }
 
@@ -150,7 +156,11 @@ export class DomainsService {
     }
     const steps = [
       {
-        tx: this.createSubdomainTx({ domain: namespace, nodeName: orgName, owner: this._owner }),
+        tx: this.createSubdomainTx({
+          domain: namespace,
+          nodeName: orgName,
+          owner: this._owner,
+        }),
         info: 'Create organization subdomain',
       },
       {
@@ -169,7 +179,9 @@ export class DomainsService {
         info: 'Create roles subdomain for organization',
       },
       {
-        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: rolesDomain }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({
+          domain: rolesDomain,
+        }),
         info: 'Register reverse name for roles subdomain',
       },
       {
@@ -181,7 +193,9 @@ export class DomainsService {
         info: 'Create app subdomain for organization',
       },
       {
-        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({ domain: appsDomain }),
+        tx: this._domainDefinitionTransactionFactory.setDomainNameTx({
+          domain: appsDomain,
+        }),
         info: 'Register reverse name for app subdomain',
       },
     ].map((step) => ({
@@ -283,7 +297,11 @@ export class DomainsService {
     const from = await this.getOwner({ namespace });
     const steps = [
       {
-        tx: this.createSubdomainTx({ domain: namespace, nodeName: roleName, owner: from }),
+        tx: this.createSubdomainTx({
+          domain: namespace,
+          nodeName: roleName,
+          owner: from,
+        }),
         info: 'Create subdomain for role',
       },
       {
@@ -343,7 +361,10 @@ export class DomainsService {
       });
 
     if (notOwnedNamespaces.length > 0) {
-      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
+      throw new ChangeOwnershipNotPossibleError({
+        namespace,
+        notOwnedNamespaces,
+      });
     }
 
     const apps = await this.getAppsOfOrg(namespace);
@@ -424,7 +445,10 @@ export class DomainsService {
       });
 
     if (notOwnedNamespaces.length > 0) {
-      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
+      throw new ChangeOwnershipNotPossibleError({
+        namespace,
+        notOwnedNamespaces,
+      });
     }
 
     if (alreadyFinished.length > 0) {
@@ -462,16 +486,27 @@ export class DomainsService {
    * @param params.newOwner address of new owner
    *
    */
-  async changeRoleOwnership({ namespace, newOwner }: { namespace: string; newOwner: string }) {
+  async changeRoleOwnership({
+    namespace,
+    newOwner,
+  }: {
+    namespace: string;
+    newOwner: string;
+  }) {
     DomainsService.validateOwnerAddress(newOwner);
     const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: NamespaceType.Role,
     });
     if (notOwnedNamespaces.length > 0) {
-      throw new ChangeOwnershipNotPossibleError({ namespace, notOwnedNamespaces });
+      throw new ChangeOwnershipNotPossibleError({
+        namespace,
+        notOwnedNamespaces,
+      });
     }
-    await this._signerService.send(this.changeDomainOwnerTx({ namespace, newOwner }));
+    await this._signerService.send(
+      this.changeDomainOwnerTx({ namespace, newOwner })
+    );
   }
 
   /**
@@ -498,7 +533,9 @@ export class DomainsService {
 
     const roles = this._cacheClient
       ? await this._cacheClient.getOrganizationRoles(namespace)
-      : await this.getSubdomains({ domain: `${NamespaceType.Role}.${namespace}` });
+      : await this.getSubdomains({
+          domain: `${NamespaceType.Role}.${namespace}`,
+        });
 
     if (roles && roles.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_ROLES);
@@ -516,7 +553,10 @@ export class DomainsService {
       });
 
     if (notOwnedNamespaces.length > 0) {
-      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
+      throw new DeletingNamespaceNotPossibleError({
+        namespace,
+        notOwnedNamespaces,
+      });
     }
 
     if (alreadyFinished.length > 0) {
@@ -562,7 +602,9 @@ export class DomainsService {
   }) {
     const roles = this._cacheClient
       ? await this._cacheClient.getApplicationRoles(namespace)
-      : await this.getSubdomains({ domain: `${NamespaceType.Role}.${namespace}` });
+      : await this.getSubdomains({
+          domain: `${NamespaceType.Role}.${namespace}`,
+        });
 
     if (roles && roles.length > 0) {
       throw new Error(ERROR_MESSAGES.APP_WITH_ROLES);
@@ -576,7 +618,10 @@ export class DomainsService {
       });
 
     if (notOwnedNamespaces.length > 0) {
-      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
+      throw new DeletingNamespaceNotPossibleError({
+        namespace,
+        notOwnedNamespaces,
+      });
     }
 
     if (alreadyFinished.length > 0) {
@@ -619,7 +664,10 @@ export class DomainsService {
       type: NamespaceType.Role,
     });
     if (notOwnedNamespaces.length > 0) {
-      throw new DeletingNamespaceNotPossibleError({ namespace, notOwnedNamespaces });
+      throw new DeletingNamespaceNotPossibleError({
+        namespace,
+        notOwnedNamespaces,
+      });
     }
     await this._signerService.send(this.deleteDomainTx({ namespace }));
   }
@@ -746,7 +794,12 @@ export class DomainsService {
    */
   async getOrgHierarchy(namespace: string): Promise<IOrganization> {
     const org = await this._cacheClient.getOrgHierarchy(namespace);
-    [org, ...(org.subOrgs || []), ...(org.apps || []), ...(org.roles || [])].forEach(
+    [
+      org,
+      ...(org.subOrgs || []),
+      ...(org.apps || []),
+      ...(org.roles || []),
+    ].forEach(
       (domain) => (domain.isOwnedByCurrentUser = domain.owner === this._owner)
     );
     return org;
@@ -810,7 +863,13 @@ export class DomainsService {
    * @returns true or false whatever the passed is user is a owner of domain
    *
    */
-  async isOwner({ domain, user = this._owner }: { domain: string; user?: string }) {
+  async isOwner({
+    domain,
+    user = this._owner,
+  }: {
+    domain: string;
+    user?: string;
+  }) {
     const domainHash = namehash(domain);
     const owner = await this._ensRegistry.owner(domainHash);
     return owner === user;
@@ -823,7 +882,13 @@ export class DomainsService {
    * @returns true or false whatever the passed is user is a owner of org, app or role
    *
    */
-  async validateOwnership({ namespace, type }: { namespace: string; type: NamespaceType }) {
+  async validateOwnership({
+    namespace,
+    type,
+  }: {
+    namespace: string;
+    type: NamespaceType;
+  }) {
     return this.nonOwnedNodesOf({ namespace, type, owner: this._owner });
   }
 
@@ -860,7 +925,11 @@ export class DomainsService {
     );
   }
 
-  protected async validateDeletePossibility({ namespaces }: { namespaces: string[] }) {
+  protected async validateDeletePossibility({
+    namespaces,
+  }: {
+    namespaces: string[];
+  }) {
     const namespacesOwners = await this.namespacesWithRelations(namespaces);
     return namespacesOwners.reduce(
       (acc, { namespace, owner }) => {
@@ -912,8 +981,17 @@ export class DomainsService {
       };
       // Need to use newRole/newDomain as need to set reverse domain name
       const updateDomain = DomainReader.isRoleDefinition(data)
-        ? this._domainDefinitionTransactionFactory.newRole({ domain, roleDefinition: data })
-        : this._domainDefinitionTransactionFactory.newDomain({ domain, domainDefinition: data });
+        ? this._domainDefinitionTransactionFactory.newRole({
+            domain,
+            roleDefinition: {
+              ...data,
+              version: parseInt(data.version.toString(), 10),
+            },
+          })
+        : this._domainDefinitionTransactionFactory.newDomain({
+            domain,
+            domainDefinition: data,
+          });
       await this._signerService.send(updateResolverTransaction);
       await this._signerService.send(updateDomain);
       return true;
@@ -921,13 +999,18 @@ export class DomainsService {
     return false;
   }
 
-  async registrationTypesOfRoles(roles: string[]): Promise<Record<string, Set<RegistrationTypes>>> {
+  async registrationTypesOfRoles(
+    roles: string[]
+  ): Promise<Record<string, Set<RegistrationTypes>>> {
     const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
       (acc, role) => ({ ...acc, [role]: new Set() }),
       {}
     );
     for await (const role of roles) {
-      const def = await this.getDefinition({ type: NamespaceType.Role, namespace: role });
+      const def = await this.getDefinition({
+        type: NamespaceType.Role,
+        namespace: role,
+      });
       if (!DomainReader.isRoleDefinition(def)) {
         continue;
       }
@@ -1003,7 +1086,11 @@ export class DomainsService {
     };
   }
 
-  protected deleteSubdomainTx({ namespace }: { namespace: string }): EncodedCall {
+  protected deleteSubdomainTx({
+    namespace,
+  }: {
+    namespace: string;
+  }): EncodedCall {
     const namespaceArray = namespace.split('.');
     const node = namespaceArray.slice(1).join('.');
     const label = namespaceArray[0];
@@ -1049,7 +1136,11 @@ export class DomainsService {
     owner: string;
   }) {
     if (
-      ![NamespaceType.Role, NamespaceType.Application, NamespaceType.Organization].includes(type)
+      ![
+        NamespaceType.Role,
+        NamespaceType.Application,
+        NamespaceType.Organization,
+      ].includes(type)
     ) {
       throw new Error(ERROR_MESSAGES.ENS_TYPE_NOT_SUPPORTED);
     }
@@ -1059,8 +1150,10 @@ export class DomainsService {
         : type === NamespaceType.Application
         ? [namespace, NamespaceType.Application]
         : [namespace, NamespaceType.Application, NamespaceType.Organization];
-    return Promise.all(namespacesToCheck.map((ns) => this.getOwner({ namespace: ns }))).then(
-      (owners) => owners.filter((o) => ![owner, emptyAddress].includes(o))
+    return Promise.all(
+      namespacesToCheck.map((ns) => this.getOwner({ namespace: ns }))
+    ).then((owners) =>
+      owners.filter((o) => ![owner, emptyAddress].includes(o))
     );
   }
 
