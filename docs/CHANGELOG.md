@@ -1,3 +1,11 @@
+## [4.1.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.27...v4.1.0-alpha.28) (2022-02-23)
+
+
+### Bug Fixes
+
+* revert postinstall script with `patch-package` ([99f889f](https://github.com/energywebfoundation/iam-client-lib/commit/99f889f7be5f57790ca578eb4218eabf4dae8a24))
+* update string role version to int ([2365d96](https://github.com/energywebfoundation/iam-client-lib/commit/2365d96c5431669691d7956f2685c88361d42d19))
+
 ## [4.1.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.26...v4.1.0-alpha.27) (2022-02-22)
 
 ## [4.1.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.25...v4.1.0-alpha.26) (2022-02-22)
