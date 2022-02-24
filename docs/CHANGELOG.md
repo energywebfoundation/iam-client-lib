@@ -1,3 +1,10 @@
+## [4.1.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.29...v4.1.0-alpha.30) (2022-02-24)
+
+
+### Bug Fixes
+
+* apply patches by git command ([9f00e68](https://github.com/energywebfoundation/iam-client-lib/commit/9f00e68445a631cca61e1ee4d377f460744f9397))
+
 ## [4.1.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.28...v4.1.0-alpha.29) (2022-02-23)
 
 ## [4.1.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.27...v4.1.0-alpha.28) (2022-02-23)
