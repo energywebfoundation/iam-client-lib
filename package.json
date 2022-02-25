@@ -100,7 +100,7 @@
     "@energyweb/km-crypto": "file:energyweb-km-crypto-v1.0.0.tgz",
     "@energyweb/km-utils": "file:energyweb-km-utils-v1.0.0.tgz",
     "@energyweb/prettier-config": "^0.0.1",
-    "@energyweb/semantic-release-config": "^1.0.1",
+    "@energyweb/semantic-release-config": "^1.0.2",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
