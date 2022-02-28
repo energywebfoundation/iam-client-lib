@@ -4,6 +4,7 @@ import { Chain } from '@ew-did-registry/did';
 import { DomainNotifier__factory } from '../../ethers/factories/DomainNotifier__factory';
 import type { DomainNotifier } from '../../ethers/DomainNotifier';
 import { RoleDefinitionResolver__factory } from '../../ethers/factories/RoleDefinitionResolver__factory';
+import { RoleDefinitionResolverV2__factory } from '../../ethers/factories/RoleDefinitionResolverV2__factory';
 import type { RoleDefinitionResolver } from '../../ethers/RoleDefinitionResolver';
 import { ENSRegistry } from '../../ethers/ENSRegistry';
 import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factory';
@@ -14,6 +15,7 @@ import { ClaimManager__factory } from '../../ethers/factories/ClaimManager__fact
 import { ClaimManager } from '../../ethers/ClaimManager';
 import { setChainConfig } from '../../src/config/chain.config';
 import { labelhash } from '../../src/utils/ensHash';
+import { RoleDefinitionResolverV2 } from '../../ethers/RoleDefinitionResolverV2';
 
 const { JsonRpcProvider } = providers;
 const { parseEther, namehash } = utils;
@@ -27,6 +29,7 @@ const provider = new JsonRpcProvider(rpcUrl);
 let didRegistry: Contract;
 let ensRegistry: ENSRegistry;
 let ensResolver: RoleDefinitionResolver;
+let ensResolverV2: RoleDefinitionResolverV2;
 let domainNotifer: DomainNotifier;
 let assetsManager: IdentityManager;
 let claimManager: ClaimManager;
@@ -48,6 +51,10 @@ const deployEns = async () => {
     ensRegistry.address
   );
   ensResolver = await new RoleDefinitionResolver__factory(deployer).deploy(
+    ensRegistry.address,
+    domainNotifer.address
+  );
+  ensResolverV2 = await new RoleDefinitionResolverV2__factory(deployer).deploy(
     ensRegistry.address,
     domainNotifer.address
   );
@@ -93,6 +100,7 @@ export const setupENS = async (rootOwner: string) => {
     rpcUrl,
     chainName: Chain.VOLTA,
     ensRegistryAddress: ensRegistry.address,
+    ensResolverV2Address: ensResolverV2.address,
     ensResolverAddress: ensResolver.address,
     didRegistryAddress: didRegistry.address,
     assetManagerAddress: assetsManager.address,
@@ -103,7 +111,7 @@ export const setupENS = async (rootOwner: string) => {
     namehash(''),
     labelhash(root),
     rootOwner,
-    ensResolver.address,
+    ensResolverV2.address,
     BigNumber.from(0)
   );
   await tx.wait();
