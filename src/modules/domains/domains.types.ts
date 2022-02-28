@@ -45,6 +45,7 @@ export interface IApp {
 
 export const NODE_FIELDS_KEY = 'metadata';
 
+// TODO: remove once all of the VOLTA roles have been migrated to v2
 export function castToV2(
   roleDef: IRoleDefinition | IRoleDefinitionV2
 ): IRoleDefinitionV2 {
