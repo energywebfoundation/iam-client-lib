@@ -1,3 +1,10 @@
+## [4.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0...v4.2.0-alpha.1) (2022-02-28)
+
+
+### Features
+
+* upgrade resolver to v2 ([f708e40](https://github.com/energywebfoundation/iam-client-lib/commit/f708e4063ca46a055bc3a9bab49f4d9ae29b9bee))
+
 ## [4.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1...v4.1.0) (2022-02-28)
 
 
