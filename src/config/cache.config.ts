@@ -3,7 +3,7 @@ import { CacheServerClientOptions } from '../modules/cacheClient/cacheClient.typ
 
 const cacheConfig: Record<number, CacheServerClientOptions> = {
   [VOLTA_CHAIN_ID]: {
-    url: 'https://identitycache-dev.energyweb.org/v1/',
+    url: 'https://identitycache-staging.energyweb.org/v1/',
     cacheServerSupportsAuth: true,
   },
   [EWC_CHAIN_ID]: {
