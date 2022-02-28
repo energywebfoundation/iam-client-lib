@@ -1,3 +1,10 @@
+## [4.1.0-alpha.36](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.35...v4.1.0-alpha.36) (2022-02-28)
+
+
+### Bug Fixes
+
+* **cache.config:** default for volta should be staging ([111d440](https://github.com/energywebfoundation/iam-client-lib/commit/111d44081a4dec67156ecfc384ccef8842711aca))
+
 ## [4.1.0-alpha.35](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.34...v4.1.0-alpha.35) (2022-02-25)
 
 ## [4.1.0-alpha.34](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.33...v4.1.0-alpha.34) (2022-02-25)
