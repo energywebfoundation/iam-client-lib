@@ -1,3 +1,44 @@
+## [4.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1...v4.1.0) (2022-02-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **staking:** StakingService is obsolete
+
+### Features
+
+* **claims:** enable on chain enrolment without previous request ([b80446d](https://github.com/energywebfoundation/iam-client-lib/commit/b80446da278d7435d98723ef8f1bede5b4aa22d2))
+* **claims:** made accetpedBy and onChainProof requred for registerOnchain ([3db931b](https://github.com/energywebfoundation/iam-client-lib/commit/3db931b974a9074aaff956556ac0811188141808))
+* **claims:** refactor towards unify off-chain and on-chain registration ([57151bf](https://github.com/energywebfoundation/iam-client-lib/commit/57151bf6d0cb193f814df60376ba2db921e53cf6))
+* **config:** add default EWC messaging config ([e225e4e](https://github.com/energywebfoundation/iam-client-lib/commit/e225e4ece6fc29f166d22a52a5126317cb6a47e1))
+* **config:** update default volta chain config ([69b3763](https://github.com/energywebfoundation/iam-client-lib/commit/69b37635daced08f5a92dcba9d9a85ff77a8cd28))
+* get EWC chain config from `iam-contracts` ([32236d0](https://github.com/energywebfoundation/iam-client-lib/commit/32236d0cdbddd961cb19d43aab4679800acbb756))
+* migrate definitions to resolver_v2 ([fdf373c](https://github.com/energywebfoundation/iam-client-lib/commit/fdf373cda22b6ea06189b7bae0d718b6b66b777b))
+* **roles:** requestorFields in setRoleDefinition ([afac516](https://github.com/energywebfoundation/iam-client-lib/commit/afac51654325cd9383ae15951f798ed8bf7d05a6))
+
+
+### Bug Fixes
+
+* adopt correct role, app, org interfaces ([b1141eb](https://github.com/energywebfoundation/iam-client-lib/commit/b1141eb93ef99acd5637a47960d2c7fc6223231b))
+* apply patches by git command ([9f00e68](https://github.com/energywebfoundation/iam-client-lib/commit/9f00e68445a631cca61e1ee4d377f460744f9397))
+* **cache.config:** default for volta should be staging ([111d440](https://github.com/energywebfoundation/iam-client-lib/commit/111d44081a4dec67156ecfc384ccef8842711aca))
+* change return type for `getAllowedRolesByIssuer` ([742f744](https://github.com/energywebfoundation/iam-client-lib/commit/742f744004e2e69bd5141adfa9fabe0a03511381))
+* **claim:** fix issuing a claim with on-chain and off-chain request ([6d30ae1](https://github.com/energywebfoundation/iam-client-lib/commit/6d30ae10b60913f4311c4ceb1569e8ecb8b7a4f9))
+* **core:** requestor fields typo fix ([0e7ea17](https://github.com/energywebfoundation/iam-client-lib/commit/0e7ea177bff52bfbf1cf2f2ba943745fad4f71f3))
+* **core:** requestor fields typo fix ([85400d6](https://github.com/energywebfoundation/iam-client-lib/commit/85400d6f2403b2cbf2dfbfbc0d814db16c571403))
+* **docs:** add breaking changes v4.1 logs ([5761ccb](https://github.com/energywebfoundation/iam-client-lib/commit/5761ccbbf2bbc8e42775876db6155e0a95815086))
+* fix role, app, org interfaces ([ab3dea2](https://github.com/energywebfoundation/iam-client-lib/commit/ab3dea253d957757e09fdc7b2d87de98a3c41a7f))
+* revert postinstall script with `patch-package` ([99f889f](https://github.com/energywebfoundation/iam-client-lib/commit/99f889f7be5f57790ca578eb4218eabf4dae8a24))
+* setup nats connection options ([5d65ab6](https://github.com/energywebfoundation/iam-client-lib/commit/5d65ab6a0ad1b256bbf82e7e5ce258ad3fdd839f))
+* **signer:** convert local strorage isEthSigner to boolean ([187f2e9](https://github.com/energywebfoundation/iam-client-lib/commit/187f2e9e83b39128a0fe761d3d93e1029ad6fdd4))
+* **tests:** changes in e2e tests ([5087651](https://github.com/energywebfoundation/iam-client-lib/commit/5087651c89b5ed914bc139216d456fef8b0e15e3))
+* update string role version to int ([2365d96](https://github.com/energywebfoundation/iam-client-lib/commit/2365d96c5431669691d7956f2685c88361d42d19))
+
+
+### Code Refactoring
+
+* **staking:** clean old staking ([697ff51](https://github.com/energywebfoundation/iam-client-lib/commit/697ff5121c619961b51cca9277db00c5cfc16399))
+
 ## [4.1.0-alpha.36](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.35...v4.1.0-alpha.36) (2022-02-28)
 
 
