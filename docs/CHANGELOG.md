@@ -1,3 +1,196 @@
+## [4.1.0-alpha.36](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.35...v4.1.0-alpha.36) (2022-02-28)
+
+
+### Bug Fixes
+
+* **cache.config:** default for volta should be staging ([111d440](https://github.com/energywebfoundation/iam-client-lib/commit/111d44081a4dec67156ecfc384ccef8842711aca))
+
+## [4.1.0-alpha.35](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.34...v4.1.0-alpha.35) (2022-02-25)
+
+## [4.1.0-alpha.34](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.33...v4.1.0-alpha.34) (2022-02-25)
+
+## [4.1.0-alpha.33](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.32...v4.1.0-alpha.33) (2022-02-25)
+
+## [4.1.0-alpha.32](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.31...v4.1.0-alpha.32) (2022-02-25)
+
+## [4.1.0-alpha.31](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.30...v4.1.0-alpha.31) (2022-02-24)
+
+## [4.1.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.29...v4.1.0-alpha.30) (2022-02-24)
+
+
+### Bug Fixes
+
+* apply patches by git command ([9f00e68](https://github.com/energywebfoundation/iam-client-lib/commit/9f00e68445a631cca61e1ee4d377f460744f9397))
+
+## [4.1.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.28...v4.1.0-alpha.29) (2022-02-23)
+
+## [4.1.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.27...v4.1.0-alpha.28) (2022-02-23)
+
+
+### Bug Fixes
+
+* revert postinstall script with `patch-package` ([99f889f](https://github.com/energywebfoundation/iam-client-lib/commit/99f889f7be5f57790ca578eb4218eabf4dae8a24))
+* update string role version to int ([2365d96](https://github.com/energywebfoundation/iam-client-lib/commit/2365d96c5431669691d7956f2685c88361d42d19))
+
+## [4.1.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.26...v4.1.0-alpha.27) (2022-02-22)
+
+## [4.1.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.25...v4.1.0-alpha.26) (2022-02-22)
+
+# [4.1.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.24...v4.1.0-alpha.25) (2022-02-22)
+
+# [4.1.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.23...v4.1.0-alpha.24) (2022-02-22)
+
+# [4.1.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.22...v4.1.0-alpha.23) (2022-02-22)
+
+
+### Features
+
+* migrate definitions to resolver_v2 ([fdf373c](https://github.com/energywebfoundation/iam-client-lib/commit/fdf373cda22b6ea06189b7bae0d718b6b66b777b))
+
+# [4.1.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.21...v4.1.0-alpha.22) (2022-02-22)
+
+# [4.1.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.20...v4.1.0-alpha.21) (2022-02-21)
+
+# [4.1.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.19...v4.1.0-alpha.20) (2022-02-18)
+
+# [4.1.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.18...v4.1.0-alpha.19) (2022-02-18)
+
+# [4.1.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.17...v4.1.0-alpha.18) (2022-02-18)
+
+
+### Bug Fixes
+
+* **core:** requestor fields typo fix ([0e7ea17](https://github.com/energywebfoundation/iam-client-lib/commit/0e7ea177bff52bfbf1cf2f2ba943745fad4f71f3))
+
+# [4.1.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.16...v4.1.0-alpha.17) (2022-02-17)
+
+
+### Features
+
+* **config:** add default EWC messaging config ([e225e4e](https://github.com/energywebfoundation/iam-client-lib/commit/e225e4ece6fc29f166d22a52a5126317cb6a47e1))
+* **config:** update default volta chain config ([69b3763](https://github.com/energywebfoundation/iam-client-lib/commit/69b37635daced08f5a92dcba9d9a85ff77a8cd28))
+
+# [4.1.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.15...v4.1.0-alpha.16) (2022-02-16)
+
+
+### Bug Fixes
+
+* **core:** requestor fields typo fix ([85400d6](https://github.com/energywebfoundation/iam-client-lib/commit/85400d6f2403b2cbf2dfbfbc0d814db16c571403))
+
+# [4.1.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.14...v4.1.0-alpha.15) (2022-02-16)
+
+# [4.1.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.13...v4.1.0-alpha.14) (2022-02-14)
+
+
+### Features
+
+* get EWC chain config from `iam-contracts` ([32236d0](https://github.com/energywebfoundation/iam-client-lib/commit/32236d0cdbddd961cb19d43aab4679800acbb756))
+
+# [4.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.12...v4.1.0-alpha.13) (2022-02-11)
+
+
+### Features
+
+* **roles:** requestorFields in setRoleDefinition ([afac516](https://github.com/energywebfoundation/iam-client-lib/commit/afac51654325cd9383ae15951f798ed8bf7d05a6))
+
+# [4.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.11...v4.1.0-alpha.12) (2022-02-10)
+
+# [4.1.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.10...v4.1.0-alpha.11) (2022-02-10)
+
+# [4.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.9...v4.1.0-alpha.10) (2022-02-09)
+
+
+### Bug Fixes
+
+* change return type for `getAllowedRolesByIssuer` ([742f744](https://github.com/energywebfoundation/iam-client-lib/commit/742f744004e2e69bd5141adfa9fabe0a03511381))
+
+# [4.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.8...v4.1.0-alpha.9) (2022-02-08)
+
+
+### Bug Fixes
+
+* adopt correct role, app, org interfaces ([b1141eb](https://github.com/energywebfoundation/iam-client-lib/commit/b1141eb93ef99acd5637a47960d2c7fc6223231b))
+
+# [4.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.7...v4.1.0-alpha.8) (2022-02-02)
+
+
+### Bug Fixes
+
+* **docs:** add breaking changes v4.1 logs ([5761ccb](https://github.com/energywebfoundation/iam-client-lib/commit/5761ccbbf2bbc8e42775876db6155e0a95815086))
+
+# [4.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.6...v4.1.0-alpha.7) (2022-02-01)
+
+
+### Code Refactoring
+
+* **staking:** clean old staking ([697ff51](https://github.com/energywebfoundation/iam-client-lib/commit/697ff5121c619961b51cca9277db00c5cfc16399))
+
+
+### BREAKING CHANGES
+
+* **staking:** StakingService is obsolete
+
+# [4.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.5...v4.1.0-alpha.6) (2022-02-01)
+
+
+### Bug Fixes
+
+* fix role, app, org interfaces ([ab3dea2](https://github.com/energywebfoundation/iam-client-lib/commit/ab3dea253d957757e09fdc7b2d87de98a3c41a7f))
+
+# [4.1.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.4...v4.1.0-alpha.5) (2022-02-01)
+
+# [4.1.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.3...v4.1.0-alpha.4) (2022-01-31)
+
+# [4.1.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.2...v4.1.0-alpha.3) (2022-01-31)
+
+
+### Bug Fixes
+
+* **signer:** convert local strorage isEthSigner to boolean ([187f2e9](https://github.com/energywebfoundation/iam-client-lib/commit/187f2e9e83b39128a0fe761d3d93e1029ad6fdd4))
+
+# [4.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0-alpha.1...v4.1.0-alpha.2) (2022-01-31)
+
+# [4.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.5...v4.1.0-alpha.1) (2022-01-26)
+
+
+### Bug Fixes
+
+* **tests:** changes in e2e tests ([5087651](https://github.com/energywebfoundation/iam-client-lib/commit/5087651c89b5ed914bc139216d456fef8b0e15e3))
+
+
+### Features
+
+* **claims:** enable on chain enrolment without previous request ([b80446d](https://github.com/energywebfoundation/iam-client-lib/commit/b80446da278d7435d98723ef8f1bede5b4aa22d2))
+* **claims:** made acceptedBy and onChainProof requred for registerOnchain ([3db931b](https://github.com/energywebfoundation/iam-client-lib/commit/3db931b974a9074aaff956556ac0811188141808))
+* **claims:** refactor towards unify off-chain and on-chain registration ([57151bf](https://github.com/energywebfoundation/iam-client-lib/commit/57151bf6d0cb193f814df60376ba2db921e53cf6))
+
+
+### BREAKING CHANGES
+
+* `claim` parameter of `registerOnChain` is extended with `subject`, `claimType` and `claimTypeVersion` optional properties, which should be specified when `token` is not 
+* argument of `issueClaim` is extended with `registrationTypes` by default set to `[RegistrationTypes.OffChain]` and required `subject`
+* argument of `publishPublicClaim` is extended with `registrationTypes` by default set to `[RegistrationTypes.OffChain]` and property `claim: {token?: string; claimType?: string}`
+
+## [4.0.2-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.4...v4.0.2-alpha.5) (2022-01-26)
+
+## [4.0.2-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.3...v4.0.2-alpha.4) (2022-01-26)
+
+
+### Bug Fixes
+
+* **claim:** fix issuing a claim with on-chain and off-chain request ([6d30ae1](https://github.com/energywebfoundation/iam-client-lib/commit/6d30ae10b60913f4311c4ceb1569e8ecb8b7a4f9))
+
+## [4.0.2-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.2...v4.0.2-alpha.3) (2022-01-25)
+
+## [4.0.2-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.2-alpha.1...v4.0.2-alpha.2) (2022-01-20)
+
+
+### Bug Fixes
+
+* setup nats connection options ([5d65ab6](https://github.com/energywebfoundation/iam-client-lib/commit/5d65ab6a0ad1b256bbf82e7e5ce258ad3fdd839f))
+
+## [4.0.2-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1...v4.0.2-alpha.1) (2022-01-19)
+
 ## [4.0.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.0...v4.0.1) (2022-01-19)
 
 

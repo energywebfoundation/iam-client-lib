@@ -10,7 +10,7 @@ jobs:
       - name: Install modules
         run: npm ci
       - name: Run ESLint
-        run: npx eslint --output-file eslint_report.json --format json src
+        run: npx eslint --output-file eslint_report.json --format json src/** e2e/** scripts/**
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@1.2.0
         if: always()
@@ -18,4 +18,4 @@ jobs:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           report-json: 'eslint_report.json'
       - name: Run Prettier
-        run: npx prettier --check src/**/*.*s e2e/**/*.*s
+        run: npx prettier --check src/**/*.*s e2e/**/*.*s scripts/**/*.*s

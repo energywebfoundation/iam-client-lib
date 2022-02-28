@@ -5,7 +5,7 @@ import { ERROR_MESSAGES } from '../../errors/ErrorMessages';
 import { SignerService } from '../signer/signer.service';
 import { chainConfigs } from '../../config/chain.config';
 import { DomainsService } from '../domains/domains.service';
-import { Service, Stake, StakeStatus } from './staking.service';
+import { Service, Stake, StakeStatus } from './staking.types';
 
 const { namehash, parseUnits } = utils;
 

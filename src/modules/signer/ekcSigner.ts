@@ -1,11 +1,11 @@
 import EKC from '@energyweb/ekc';
-import { TransactionRequest, Provider } from '@ethersproject/abstract-provider';
+import { TransactionRequest } from '@ethersproject/abstract-provider';
 import { Deferrable, resolveProperties } from '@ethersproject/properties';
-import { Signer } from 'ethers';
+import { Signer, providers } from 'ethers';
 import { ERROR_MESSAGES } from '../../errors';
 
 export class EkcSigner extends Signer {
-  public provider: Provider;
+  public provider: providers.Provider;
   private _signer: Signer;
 
   constructor(public ekc: EKC) {
@@ -37,7 +37,7 @@ export class EkcSigner extends Signer {
     return this._signer.signTransaction(resolvedTx);
   }
 
-  connect(provider: Provider): Signer {
+  connect(provider: providers.Provider): Signer {
     return this._signer.connect(provider);
   }
 }

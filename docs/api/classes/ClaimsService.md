@@ -52,7 +52,7 @@
 
 **`description`** allows subject to request for credential
 
-**`deprecated`** fields - use requestorFields instead
+**`field`** { claim: fields }  - @deprecated - use requestorFields instead
 
 #### Parameters
 
@@ -114,9 +114,7 @@ ___
 
 ▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`string`\>
 
-createSelfSignedClaim
-
-**`description`** creates self signed claim and upload the data to ipfs
+**`description`** Creates claim with `data` and adds it to `subject` document. Signer must own or control subject
 
 #### Parameters
 
@@ -129,6 +127,8 @@ createSelfSignedClaim
 #### Returns
 
 `Promise`<`string`\>
+
+claim url
 
 ___
 
@@ -318,7 +318,7 @@ ___
 
 ### issueClaim
 
-▸ **issueClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **issueClaim**(`__namedParameters`): `Promise`<`undefined` \| `string`\>
 
 #### Parameters
 
@@ -329,11 +329,12 @@ ___
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
 | `__namedParameters.claim.issuerFields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
+| `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] |
 | `__namedParameters.subject` | `string` |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<`undefined` \| `string`\>
 
 ___
 
@@ -365,22 +366,24 @@ ___
 
 ### publishPublicClaim
 
-▸ **publishPublicClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **publishPublicClaim**(`token`): `Promise`<`undefined` \| `string`\>
 
-publishPublicClaim
-
-**`description`** store claim data in ipfs and save url to DID document services
+**`description`** publishes claim off-chain (by storing claim data in ipfs and save url to DID document services) or registering on-chain depending on registrationTypes values.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.token` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `token` | `Object` | @deprecated - use claim with claimType instead |
+| `token.claim` | `Object` | - |
+| `token.claim.claimType?` | `string` | - |
+| `token.claim.token?` | `string` | - |
+| `token.registrationTypes?` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] | - |
+| `token.token?` | `string` | - |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<`undefined` \| `string`\>
 
 ulr to ipfs
 
@@ -394,9 +397,16 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `claim` | `Pick`<[`Claim`](../interfaces/Claim.md), ``"token"`` \| ``"subjectAgreement"`` \| ``"onChainProof"`` \| ``"acceptedBy"``\> |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `claim` | `Object` | id of signed onchain claim. |
+| `claim.acceptedBy` | `string` | - |
+| `claim.claimType?` | `string` | - |
+| `claim.claimTypeVersion?` | `string` | - |
+| `claim.onChainProof` | `string` | - |
+| `claim.subject?` | `string` | - |
+| `claim.subjectAgreement?` | `string` | - |
+| `claim.token?` | `string` | - |
 
 #### Returns
 

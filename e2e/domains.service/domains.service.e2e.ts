@@ -9,14 +9,13 @@ import {
   ENSOwnerNotValidAddressError,
   RegistrationTypes,
   SignerService,
-  StakingService,
-} from '../src';
-import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
+} from '../../src';
+import { replenish, root, rpcUrl, setupENS } from '../utils/setup_contracts';
 
 const { namehash } = utils;
 
 const mockGetRoleDefinition = jest.fn();
-jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
+jest.mock('../../src/modules/cacheClient/cacheClient.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
       return {
@@ -30,8 +29,6 @@ jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
 
 MessagingService.create = (signerService: SignerService) =>
   Promise.resolve(new MessagingService(signerService));
-StakingService.create = (signerService: SignerService, domainsService: DomainsService) =>
-  Promise.resolve(new StakingService(signerService, domainsService));
 
 describe('Domains service', () => {
   let domainsService: DomainsService;
@@ -42,7 +39,10 @@ describe('Domains service', () => {
     await setupENS(rootOwner.address);
     await replenish(rootOwner.address);
 
-    const { connectToCacheServer } = await initWithPrivateKeySigner(rootOwner.privateKey, rpcUrl);
+    const { connectToCacheServer } = await initWithPrivateKeySigner(
+      rootOwner.privateKey,
+      rpcUrl
+    );
     ({ domainsService } = await connectToCacheServer());
   });
 
@@ -56,7 +56,11 @@ describe('Domains service', () => {
         namespace: root,
         data: { orgName },
       });
-      expect(await domainsService.checkExistenceOfDomain({ domain: `${org1}.${root}` })).toBe(true);
+      expect(
+        await domainsService.checkExistenceOfDomain({
+          domain: `${org1}.${root}`,
+        })
+      ).toBe(true);
       expect(
         await domainsService.checkExistenceOfDomain({
           domain: `${NamespaceType.Application}.${org1}.${root}`,
@@ -67,8 +71,15 @@ describe('Domains service', () => {
           domain: `${NamespaceType.Role}.${org1}.${root}`,
         })
       ).toBe(true);
-      expect(await domainsService.getSubdomains({ domain: root })).toContain(`${org1}.${root}`);
-      expect(await domainsService.isOwner({ domain: `${org1}.${root}`, user: rootOwner.address }));
+      expect(await domainsService.getSubdomains({ domain: root })).toContain(
+        `${org1}.${root}`
+      );
+      expect(
+        await domainsService.isOwner({
+          domain: `${org1}.${root}`,
+          user: rootOwner.address,
+        })
+      );
     });
 
     test('suborganization can be created', async () => {
@@ -87,11 +98,13 @@ describe('Domains service', () => {
       });
 
       expect(
-        await domainsService.checkExistenceOfDomain({ domain: `${org1_1}.${org1}.${root}` })
+        await domainsService.checkExistenceOfDomain({
+          domain: `${org1_1}.${org1}.${root}`,
+        })
       ).toBe(true);
-      expect(await domainsService.getSubdomains({ domain: `${org1}.${root}` })).toContain(
-        `${org1_1}.${org1}.${root}`
-      );
+      expect(
+        await domainsService.getSubdomains({ domain: `${org1}.${root}` })
+      ).toContain(`${org1_1}.${org1}.${root}`);
     });
 
     test('org role can be created', async () => {
@@ -142,8 +155,13 @@ describe('Domains service', () => {
       expect(reverseName).toEqual(roleDomain);
 
       mockGetRoleDefinition.mockImplementationOnce(() => data);
-      const actualTypes = (await domainsService.registrationTypesOfRoles([roleDomain]))[roleDomain];
-      const expectedTypes = new Set([RegistrationTypes.OffChain, RegistrationTypes.OnChain]);
+      const actualTypes = (
+        await domainsService.registrationTypesOfRoles([roleDomain])
+      )[roleDomain];
+      const expectedTypes = new Set([
+        RegistrationTypes.OffChain,
+        RegistrationTypes.OnChain,
+      ]);
       expect(actualTypes).toEqual(expectedTypes);
     });
   });

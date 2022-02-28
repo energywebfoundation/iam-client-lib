@@ -37,6 +37,10 @@ export class MessagingService {
             servers: natsServerUrl.replace('http', 'ws'),
             timeout,
             pingInterval: 50 * 1000,
+            reconnect: true,
+            waitOnFirstConnect: true,
+            verbose: true,
+            maxReconnectAttempts: -1,
           }),
           new Promise<undefined>((resolve) => setTimeout(resolve, timeout)),
         ]);

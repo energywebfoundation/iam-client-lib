@@ -13,6 +13,7 @@
 - [ensPublicResolverAddress](ChainConfig.md#enspublicresolveraddress)
 - [ensRegistryAddress](ChainConfig.md#ensregistryaddress)
 - [ensResolverAddress](ChainConfig.md#ensresolveraddress)
+- [ensResolverV2Address](ChainConfig.md#ensresolverv2address)
 - [rpcUrl](ChainConfig.md#rpcurl)
 - [stakingPoolFactoryAddress](ChainConfig.md#stakingpoolfactoryaddress)
 
@@ -69,6 +70,12 @@ ___
 ### ensResolverAddress
 
 • **ensResolverAddress**: `string`
+
+___
+
+### ensResolverV2Address
+
+• **ensResolverV2Address**: `string`
 
 ___
 
