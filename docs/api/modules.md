@@ -93,6 +93,7 @@
 
 - [addSupportedDID](modules.md#addsupporteddid)
 - [cacheConfigs](modules.md#cacheconfigs)
+- [castToV2](modules.md#casttov2)
 - [chainConfigs](modules.md#chainconfigs)
 - [compareDID](modules.md#comparedid)
 - [createWalletConnectProvider](modules.md#createwalletconnectprovider)
@@ -364,6 +365,22 @@ ___
 #### Returns
 
 `Object`
+
+___
+
+### castToV2
+
+▸ **castToV2**(`roleDef`): `IRoleDefinitionV2`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `roleDef` | `IRoleDefinition` \| `IRoleDefinitionV2` |
+
+#### Returns
+
+`IRoleDefinitionV2`
 
 ___
 

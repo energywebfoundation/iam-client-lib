@@ -16,11 +16,16 @@
 - [createDocument](DidRegistry.md#createdocument)
 - [createPublicClaim](DidRegistry.md#createpublicclaim)
 - [decodeJWTToken](DidRegistry.md#decodejwttoken)
+- [getDidDelegates](DidRegistry.md#getdiddelegates)
 - [getDidDocument](DidRegistry.md#getdiddocument)
+- [getDidPublicKeys](DidRegistry.md#getdidpublickeys)
+- [getServices](DidRegistry.md#getservices)
 - [init](DidRegistry.md#init)
 - [issuePublicClaim](DidRegistry.md#issuepublicclaim)
 - [revokeDidDocument](DidRegistry.md#revokediddocument)
 - [updateDocument](DidRegistry.md#updatedocument)
+- [updateSignedDidDelegate](DidRegistry.md#updatesigneddiddelegate)
+- [updateSignedDidPublicKey](DidRegistry.md#updatesigneddidpublickey)
 - [verifyPublicClaim](DidRegistry.md#verifypublicclaim)
 - [connect](DidRegistry.md#connect)
 
@@ -79,8 +84,6 @@ ___
 
 ▸ **createPublicClaim**(`__namedParameters`): `Promise`<`string`\>
 
-createPublicClaim
-
 **`description`** create a public claim based on data provided
 
 #### Parameters
@@ -116,6 +119,26 @@ ___
 
 ___
 
+### getDidDelegates
+
+▸ **getDidDelegates**(`__namedParameters`): `Promise`<`undefined` \| `string`[]\>
+
+**`description`** get public keys from DID's document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+
+#### Returns
+
+`Promise`<`undefined` \| `string`[]\>
+
+list of DID's delegates
+
+___
+
 ### getDidDocument
 
 ▸ **getDidDocument**(`__namedParameters?`): `Promise`<{ `service`: `IServiceEndpoint` & [`ClaimData`](../interfaces/ClaimData.md)[]  }\>
@@ -132,6 +155,46 @@ ___
 
 ___
 
+### getDidPublicKeys
+
+▸ **getDidPublicKeys**(`__namedParameters`): `Promise`<`IPublicKey`[]\>
+
+**`description`** get public keys from User's DID document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+
+#### Returns
+
+`Promise`<`IPublicKey`[]\>
+
+list of public keys
+
+___
+
+### getServices
+
+▸ **getServices**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/ClaimData.md)[]\>
+
+**`description`** gets list of services endpoints from User's DID document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `undefined` \| { `did?`: `string`  } |
+
+#### Returns
+
+`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/ClaimData.md)[]\>
+
+list of claims
+
+___
+
 ### init
 
 ▸ **init**(): `Promise`<`void`\>
@@ -145,8 +208,6 @@ ___
 ### issuePublicClaim
 
 ▸ **issuePublicClaim**(`__namedParameters`): `Promise`<`string`\>
-
-issuePublicClaim
 
 **`description`** issue a public claim
 
@@ -169,8 +230,6 @@ ___
 ### revokeDidDocument
 
 ▸ **revokeDidDocument**(): `Promise`<`boolean`\>
-
-revokeDidDocument
 
 **`description`** revokes did document
 
@@ -206,11 +265,60 @@ true if document is updated successfuly
 
 ___
 
+### updateSignedDidDelegate
+
+▸ **updateSignedDidDelegate**(`__namedParameters`): `Promise`<`boolean`\>
+
+**`description`** updates delegate of the document of controlled `did`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.algo` | `KeyType` |
+| `__namedParameters.delegatePublicKey` | `string` |
+| `__namedParameters.did` | `string` |
+| `__namedParameters.type` | `PubKeyType` |
+| `__namedParameters.validity?` | `number` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if document is updated successfuly
+
+___
+
+### updateSignedDidPublicKey
+
+▸ **updateSignedDidPublicKey**(`__namedParameters`): `Promise`<`boolean`\>
+
+**`description`** Adds public key to the document of controlled `did`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.algo` | `KeyType` |
+| `__namedParameters.did` | `string` |
+| `__namedParameters.publicKey` | `string` |
+| `__namedParameters.tag` | `string` |
+| `__namedParameters.type` | `PubKeyType` |
+| `__namedParameters.validity?` | `number` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if document is updated successfuly
+
+___
+
 ### verifyPublicClaim
 
 ▸ **verifyPublicClaim**(`token`, `iss`): `Promise`<``null`` \| `string`\>
-
-verifyPublicClaim
 
 **`description`** verifies issued token of claim
 
