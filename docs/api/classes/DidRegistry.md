@@ -19,9 +19,9 @@
 - [getDidDelegates](DidRegistry.md#getdiddelegates)
 - [getDidDocument](DidRegistry.md#getdiddocument)
 - [getDidPublicKeys](DidRegistry.md#getdidpublickeys)
+- [getServices](DidRegistry.md#getservices)
 - [init](DidRegistry.md#init)
 - [issuePublicClaim](DidRegistry.md#issuepublicclaim)
-- [readServices](DidRegistry.md#readservices)
 - [revokeDidDocument](DidRegistry.md#revokediddocument)
 - [updateDocument](DidRegistry.md#updatedocument)
 - [updateSignedDidDelegate](DidRegistry.md#updatesigneddiddelegate)
@@ -175,6 +175,26 @@ list of public keys
 
 ___
 
+### getServices
+
+▸ **getServices**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/ClaimData.md)[]\>
+
+**`description`** gets list of services endpoints from User's DID document
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `undefined` \| { `did?`: `string`  } |
+
+#### Returns
+
+`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/ClaimData.md)[]\>
+
+list of claims
+
+___
+
 ### init
 
 ▸ **init**(): `Promise`<`void`\>
@@ -204,26 +224,6 @@ ___
 `Promise`<`string`\>
 
 return issued token
-
-___
-
-### readServices
-
-▸ **readServices**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/ClaimData.md)[]\>
-
-**`description`** gets list of services endpoints from User's DID document
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `undefined` \| { `did?`: `string`  } |
-
-#### Returns
-
-`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/ClaimData.md)[]\>
-
-list of claims
 
 ___
 

@@ -155,7 +155,7 @@ export class DidRegistry {
    * @description gets list of services endpoints from User's DID document
    * @returns list of claims
    */
-  async readServices({
+  async getServices({
     did = this._signerService.did,
   }: { did?: string } | undefined = {}) {
     const { service } = (await this.getDidDocument({ did })) || {};
