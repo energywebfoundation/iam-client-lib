@@ -3,19 +3,33 @@ import { AxiosError } from 'axios';
 import { KeyType } from '@ew-did-registry/keys';
 import { JWT } from '@ew-did-registry/jwt';
 import { ProxyOperator } from '@ew-did-registry/proxyidentity';
-import { addressOf, EwSigner, Operator } from '@ew-did-registry/did-ethr-resolver';
+import {
+  addressOf,
+  EwSigner,
+  Operator,
+} from '@ew-did-registry/did-ethr-resolver';
 import {
   DIDAttribute,
   Encoding,
+  IPublicKey,
   IServiceEndpoint,
   IUpdateData,
   KeyTags,
   ProviderTypes,
+  PubKeyType,
 } from '@ew-did-registry/did-resolver-interface';
-import { DIDDocumentFull, IDIDDocumentFull } from '@ew-did-registry/did-document';
+import {
+  DIDDocumentFull,
+  IDIDDocumentFull,
+} from '@ew-did-registry/did-document';
 import { DidStore } from '@ew-did-registry/did-ipfs-store';
 import { Methods } from '@ew-did-registry/did';
-import { ClaimsIssuer, ClaimsUser, IPublicClaim, ProofVerifier } from '@ew-did-registry/claims';
+import {
+  ClaimsIssuer,
+  ClaimsUser,
+  IPublicClaim,
+  ProofVerifier,
+} from '@ew-did-registry/claims';
 import { SignerService } from '../signer/signer.service';
 import { ERROR_MESSAGES } from '../../errors';
 import { CacheClient } from '../cacheClient/cacheClient.service';
@@ -50,7 +64,12 @@ export class DidRegistry {
     assetsService: AssetsService,
     ipfsUrl?: string
   ) {
-    const registry = new DidRegistry(signerService, cacheClient, assetsService, ipfsUrl);
+    const registry = new DidRegistry(
+      signerService,
+      cacheClient,
+      assetsService,
+      ipfsUrl
+    );
     await registry.init();
     return registry;
   }
@@ -72,13 +91,40 @@ export class DidRegistry {
     this._setClaims();
   }
 
+  private async getDIDDocFull(did) {
+    if (did === this._signerService.did) {
+      return this._document;
+    } else {
+      const assetDID = (await this._assetsService.getOwnedAssets()).find(
+        (a) => a.document.id === did
+      )?.id;
+      if (!assetDID) {
+        throw new Error(
+          ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT
+        );
+      }
+
+      const { didRegistryAddress: didContractAddress } =
+        chainConfigs()[this._signerService.chainId];
+      const operator = new ProxyOperator(
+        this._identityOwner,
+        { address: didContractAddress },
+        addressOf(assetDID)
+      );
+      return new DIDDocumentFull(did, operator);
+    }
+  }
+
   async getDidDocument({
     did = this._did,
     includeClaims = true,
   }: { did?: string; includeClaims?: boolean } | undefined = {}) {
     if (this._cacheClient) {
       try {
-        const didDoc = await this._cacheClient.getDidDocument(did, includeClaims);
+        const didDoc = await this._cacheClient.getDidDocument(
+          did,
+          includeClaims
+        );
         return {
           ...didDoc,
           service: didDoc.service as (IServiceEndpoint & ClaimData)[],
@@ -96,20 +142,57 @@ export class DidRegistry {
       ...document,
       service: includeClaims
         ? await this.downloadClaims({
-            services: document.service && document.service.length > 0 ? document.service : [],
+            services:
+              document.service && document.service.length > 0
+                ? document.service
+                : [],
           })
         : [],
     };
   }
 
   /**
-   * createPublicClaim
-   *
+   * @description gets list of services endpoints from User's DID document
+   * @returns list of claims
+   */
+  async readServices({
+    did = this._signerService.did,
+  }: { did?: string } | undefined = {}) {
+    const { service } = (await this.getDidDocument({ did })) || {};
+    return service;
+  }
+
+  /**
+   * @description get public keys from User's DID document
+   * @returns list of public keys
+   */
+  async getDidPublicKeys({
+    did = this._signerService.did,
+  }): Promise<IPublicKey[]> {
+    return ( await this.getDidDocument({ did: did, includeClaims: false }))
+      .publicKey;
+  }
+
+  /**
+   * @description get public keys from DID's document
+   * @returns list of DID's delegates
+   */
+  async getDidDelegates({ did = this._did }): Promise<string[] | undefined> {
+    return (await this.getDidDocument({ did: did, includeClaims: true }))
+      .delegates;
+  }
+
+  /**
    * @description create a public claim based on data provided
    * @returns JWT token of created claim
-   *
    */
-  async createPublicClaim({ data, subject }: { data: ClaimData; subject?: string }) {
+  async createPublicClaim({
+    data,
+    subject,
+  }: {
+    data: ClaimData;
+    subject?: string;
+  }) {
     if (subject) {
       return this._userClaims.createPublicClaim(data, { subject, issuer: '' });
     }
@@ -117,13 +200,16 @@ export class DidRegistry {
   }
 
   /**
-   * issuePublicClaim
-   *
    * @description issue a public claim
    * @returns return issued token
-   *
    */
-  async issuePublicClaim({ token, publicClaim }: { token?: string; publicClaim?: IPublicClaim }) {
+  async issuePublicClaim({
+    token,
+    publicClaim,
+  }: {
+    token?: string;
+    publicClaim?: IPublicClaim;
+  }) {
     if (publicClaim) {
       return this._issuerClaims.issuePublicClaim(publicClaim);
     }
@@ -134,14 +220,14 @@ export class DidRegistry {
   }
 
   /**
-   * verifyPublicClaim
-   *
    * @description verifies issued token of claim
    * @returns public claim data
-   *
    */
   async verifyPublicClaim(token: string, iss: string) {
-    const issuerDoc = await this.getDidDocument({ did: iss, includeClaims: true });
+    const issuerDoc = await this.getDidDocument({
+      did: iss,
+      includeClaims: true,
+    });
     const verifier = new ProofVerifier(issuerDoc);
     return verifier.verifyAssertionProof(token);
   }
@@ -170,33 +256,74 @@ export class DidRegistry {
     did?: string;
     validity?: number;
   }): Promise<boolean> {
-    if (did === this._signerService.did) {
-      const updated = await this._document.update(didAttribute, data, validity);
-      return Boolean(updated);
-    } else {
-      const assetDID = (await this._assetsService.getOwnedAssets()).find(
-        (a) => a.document.id === did
-      )?.id;
-      if (!assetDID) {
-        throw new Error(ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT);
-      }
-      const updateData: IUpdateData = {
-        algo: KeyType.Secp256k1,
-        encoding: Encoding.HEX,
-        ...data,
-      };
+    const didDocument = await this.getDIDDocFull(did);
+    const updateData: IUpdateData = {
+      algo: KeyType.Secp256k1,
+      encoding: Encoding.HEX,
+      ...data,
+    };
 
-      const { didRegistryAddress: didContractAddress } =
-        chainConfigs()[this._signerService.chainId];
-      const operator = new ProxyOperator(
-        this._identityOwner,
-        { address: didContractAddress },
-        addressOf(assetDID)
-      );
-      const update = await operator.update(assetDID, didAttribute, updateData);
+    const update = await didDocument.update(didAttribute, updateData, validity);
 
-      return Boolean(update);
-    }
+    return Boolean(update);
+  }
+
+  /**
+   * @description Adds public key to the document of controlled `did`
+   * @returns true if document is updated successfuly
+   */
+  async updateSignedDidPublicKey({
+    did = this._signerService.did,
+    publicKey,
+    validity,
+    algo = KeyType.Secp256k1,
+    type = PubKeyType.SignatureAuthentication2018,
+    tag = '',
+  }: {
+    did: string;
+    publicKey: string;
+    algo: KeyType;
+    type: PubKeyType;
+    tag: string;
+    validity?: number;
+  }): Promise<boolean> {
+    const didDocument = await this.getDIDDocFull(did);
+    const isDIdDocUpdated = await didDocument.updatePublicKey({
+      publicKey,
+      did: this._signerService.did,
+      algo,
+      type,
+      tag,
+      validity,
+    });
+    return Boolean(isDIdDocUpdated);
+  }
+
+  /**
+   * @description updates delegate of the document of controlled `did`
+   * @returns true if document is updated successfuly
+   */
+  async updateSignedDidDelegate({
+    did = this._signerService.did,
+    delegatePublicKey,
+    validity,
+    algo = KeyType.Secp256k1,
+    type = PubKeyType.SignatureAuthentication2018,
+  }: {
+    did: string;
+    delegatePublicKey: string;
+    algo: KeyType;
+    type: PubKeyType;
+    validity?: number;
+  }): Promise<boolean> {
+    const didDocument = await this.getDIDDocFull(did);
+    const isDIdDocUpdated = await didDocument.updateDelegate({
+      delegatePublicKey,
+      algo,
+      type,
+      validity,
+    });
+    return Boolean(isDIdDocUpdated);
   }
 
   /**
@@ -206,7 +333,9 @@ export class DidRegistry {
   async createDocument(): Promise<boolean> {
     if (this._cacheClient) {
       const cachedDoc = await this._cacheClient.getDidDocument(this._did);
-      const pubKey = cachedDoc.publicKey.find((pk) => pk.id.endsWith(KeyTags.OWNER));
+      const pubKey = cachedDoc.publicKey.find((pk) =>
+        pk.id.endsWith(KeyTags.OWNER)
+      );
       if (!pubKey) {
         return this._document.create();
       }
@@ -216,11 +345,8 @@ export class DidRegistry {
   }
 
   /**
-   * revokeDidDocument
-   *
    * @description revokes did document
    * @returns information (true/false) if the DID document was revoked
-   *
    */
   async revokeDidDocument(): Promise<boolean> {
     await this._document.deactivate();
@@ -250,7 +376,8 @@ export class DidRegistry {
     this._did = `did:${
       Methods.Erc1056
     }:${this._signerService.chainName()}:${await signer.getAddress()}`;
-    const address = chainConfigs()[this._signerService.chainId].didRegistryAddress;
+    const address =
+      chainConfigs()[this._signerService.chainId].didRegistryAddress;
     this._operator = new Operator(this._identityOwner, { address });
   }
 
@@ -263,8 +390,16 @@ export class DidRegistry {
   }
 
   private _setClaims() {
-    this._userClaims = new ClaimsUser(this._identityOwner, this._document, this._ipfsStore);
-    this._issuerClaims = new ClaimsIssuer(this._identityOwner, this._document, this._ipfsStore);
+    this._userClaims = new ClaimsUser(
+      this._identityOwner,
+      this._document,
+      this._ipfsStore
+    );
+    this._issuerClaims = new ClaimsIssuer(
+      this._identityOwner,
+      this._document,
+      this._ipfsStore
+    );
   }
 
   private async downloadClaims({ services }: { services: IServiceEndpoint[] }) {

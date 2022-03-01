@@ -214,7 +214,7 @@ createRole
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IRoleDefinition` |
+| `__namedParameters.data` | `IRoleDefinition` \| `IRoleDefinitionV2` |
 | `__namedParameters.namespace` | `string` |
 | `__namedParameters.returnSteps?` | `boolean` |
 | `__namedParameters.roleName` | `string` |
@@ -613,7 +613,7 @@ setRoleDefinition
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` |
+| `__namedParameters.data` | `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2` |
 | `__namedParameters.domain` | `string` |
 
 #### Returns
@@ -635,7 +635,7 @@ This function sets the resolver in the ENS to the new contract for definitions t
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `domain` | `string` | domain to potentially update |
-| `data` | `IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` | definition to apply to domain |
+| `data` | `IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2` | definition to apply to domain |
 
 #### Returns
 
