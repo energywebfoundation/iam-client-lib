@@ -12,6 +12,7 @@
 - [address](SignerService.md#address)
 - [chainId](SignerService.md#chainid)
 - [did](SignerService.md#did)
+- [didHex](SignerService.md#didhex)
 - [isEthSigner](SignerService.md#isethsigner)
 - [provider](SignerService.md#provider)
 - [providerType](SignerService.md#providertype)
@@ -33,6 +34,7 @@
 - [publicKeyAndIdentityToken](SignerService.md#publickeyandidentitytoken)
 - [send](SignerService.md#send)
 - [signMessage](SignerService.md#signmessage)
+- [signTypedData](SignerService.md#signtypeddata)
 
 ## Constructors
 
@@ -44,7 +46,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `_signer` | `Required`<`Signer`\> |
+| `_signer` | `Required`<[`SignerT`](../modules.md#signert)\> |
 | `_providerType` | [`ProviderType`](../enums/ProviderType.md) |
 
 ## Accessors
@@ -89,6 +91,16 @@ ___
 
 ___
 
+### didHex
+
+• `get` **didHex**(): `string`
+
+#### Returns
+
+`string`
+
+___
+
 ### isEthSigner
 
 • `get` **isEthSigner**(): `boolean`
@@ -121,11 +133,11 @@ ___
 
 ### signer
 
-• `get` **signer**(): `Required`<`Signer`\>
+• `get` **signer**(): `Required`<[`SignerT`](../modules.md#signert)\>
 
 #### Returns
 
-`Required`<`Signer`\>
+`Required`<[`SignerT`](../modules.md#signert)\>
 
 ## Methods
 
@@ -188,7 +200,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `signer` | `Required`<`Signer`\> |
+| `signer` | `Required`<[`SignerT`](../modules.md#signert)\> |
 | `providerType` | [`ProviderType`](../enums/ProviderType.md) |
 
 #### Returns
@@ -321,6 +333,26 @@ When running in browser `isEthSigner` variable should be stored in local storage
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `message` | `Uint8Array` | The message to be signed. The message should have binary representation to avoid confusion of text with hexadecimal binary data |
+
+#### Returns
+
+`Promise`<`string`\>
+
+___
+
+### signTypedData
+
+▸ **signTypedData**(`domain`, `types`, `message`): `Promise`<`string`\>
+
+**`description`** Tries to create conformant signature (https://eips.ethereum.org/EIPS/eip-712)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `domain` | `TypedDataDomain` |
+| `types` | `Record`<`string`, `TypedDataField`[]\> |
+| `message` | `Record`<`string`, `unknown`\> |
 
 #### Returns
 

@@ -25,6 +25,7 @@
 - [PUBLISH\_NOT\_ISSUED\_CLAIM](ERROR_MESSAGES.md#publish_not_issued_claim)
 - [ROLE\_NOT\_EXISTS](ERROR_MESSAGES.md#role_not_exists)
 - [ROLE\_PREREQUISITES\_NOT\_MET](ERROR_MESSAGES.md#role_prerequisites_not_met)
+- [SIGN\_TYPED\_DATA\_NOT\_SUPPORTED](ERROR_MESSAGES.md#sign_typed_data_not_supported)
 - [STAKE\_WAS\_NOT\_PUT](ERROR_MESSAGES.md#stake_was_not_put)
 - [TOKEN\_REQUIRED\_FOR\_OFF\_CHAIN\_REGISTRATION](ERROR_MESSAGES.md#token_required_for_off_chain_registration)
 - [UNKNOWN\_PROVIDER](ERROR_MESSAGES.md#unknown_provider)
@@ -156,6 +157,12 @@ ___
 ### ROLE\_PREREQUISITES\_NOT\_MET
 
 • **ROLE\_PREREQUISITES\_NOT\_MET** = `"Enrolment subject doesn't have required roles"`
+
+___
+
+### SIGN\_TYPED\_DATA\_NOT\_SUPPORTED
+
+• **SIGN\_TYPED\_DATA\_NOT\_SUPPORTED** = `"Sign typed data not supported"`
 
 ___
 

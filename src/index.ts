@@ -23,6 +23,7 @@ export * from './modules/domains';
 export * from './modules/messaging';
 export * from './modules/signer';
 export * from './modules/staking';
+export * from './modules/verifiableCredentials';
 export * from './errors';
 export * from './config';
 export * from './utils';
