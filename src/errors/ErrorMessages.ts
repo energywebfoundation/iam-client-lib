@@ -25,4 +25,5 @@ export enum ERROR_MESSAGES {
   TOKEN_REQUIRED_FOR_OFF_CHAIN_REGISTRATION = 'token required for off-chain registration',
   ENS_OWNER_NOT_VALID_ADDRESS = 'Provided owner is not a valid address. Owner of ENS domain must be an address',
   IS_ETH_SIGNER_NOT_SET = 'Can not determine if signer is conformant with eth_sign specification',
+  SIGN_TYPED_DATA_NOT_SUPPORTED = 'Sign typed data not supported',
 }

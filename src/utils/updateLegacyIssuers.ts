@@ -5,7 +5,7 @@ import {
   IRoleDefinitionV2,
   ResolverContractType,
 } from '@energyweb/iam-contracts';
-import { providers } from 'ethers';
+import { providers, Wallet } from 'ethers';
 import { Methods } from '@ew-did-registry/did';
 import { Signer } from 'ethers';
 import { isValidDID } from './did';
@@ -13,8 +13,18 @@ import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factor
 import { labelhash, namehash } from './ensHash';
 import { ChainId, chainConfigs } from '../config';
 import { castToV2 } from '..';
+import { SignerT } from '../modules/signer';
 
 const { JsonRpcProvider } = providers;
+
+// TODO: implement this function
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateLegacyIssuers = (a: string, b: Wallet, c: number): any[] => {
+  a;
+  b;
+  c;
+  throw new Error('Method not implemented.');
+};
 
 /**
  * @description - Checks that role issuers of all roles under `rootDomain` contains method-specific-id and adds it if missing
@@ -27,7 +37,7 @@ export const updateLegacyRoles = async ({
   dryRun = true,
 }: {
   rootDomain: string;
-  signer: Signer;
+  signer: SignerT;
   chainId: ChainId;
   dryRun?: boolean;
 }) => {
