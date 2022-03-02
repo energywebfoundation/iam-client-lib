@@ -1,3 +1,20 @@
+## [4.2.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.0-alpha.2...v4.2.0-alpha.3) (2022-03-02)
+
+## [4.2.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.0-alpha.1...v4.2.0-alpha.2) (2022-03-01)
+
+
+### Features
+
+* **did:** getters and setters to DID publicKey, delegate, claims ([262f330](https://github.com/energywebfoundation/iam-client-lib/commit/262f330dfb37f49d3b5e088d75834c549f9cb9d2))
+* **did:** renamed readServices to getServices for consistency ([33faaa4](https://github.com/energywebfoundation/iam-client-lib/commit/33faaa475111404501d897c06c8561b51b70eb51))
+
+## [4.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0...v4.2.0-alpha.1) (2022-02-28)
+
+
+### Features
+
+* upgrade resolver to v2 ([f708e40](https://github.com/energywebfoundation/iam-client-lib/commit/f708e4063ca46a055bc3a9bab49f4d9ae29b9bee))
+
 ## [4.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v4.0.1...v4.1.0) (2022-02-28)
 
 

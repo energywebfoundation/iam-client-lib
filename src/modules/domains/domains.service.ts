@@ -3,11 +3,13 @@ import {
   IAppDefinition,
   IOrganizationDefinition,
   IRoleDefinition,
+  IRoleDefinitionV2,
   EncodedCall,
   DomainReader,
-  DomainTransactionFactory,
   ResolverContractType,
   DomainHierarchy,
+  VOLTA_CHAIN_ID,
+  DomainTransactionFactoryV2,
 } from '@energyweb/iam-contracts';
 import { ENSRegistry } from '../../../ethers/ENSRegistry';
 import { ENSRegistry__factory } from '../../../ethers/factories/ENSRegistry__factory';
@@ -27,6 +29,8 @@ import { SignerService } from '../signer/signer.service';
 import { NamespaceType, IOrganization } from './domains.types';
 import { SearchType } from '../cacheClient/cacheClient.types';
 import { validateAddress } from '../../utils/address';
+import { UnregisteredResolverError } from '../../errors/UnregisteredResolverError';
+import { castToV2 } from './domains.types';
 
 const { namehash } = utils;
 
@@ -34,10 +38,12 @@ export class DomainsService {
   private chainId: number;
   private _ensRegistry: ENSRegistry;
   private _domainDefinitionReader: DomainReader;
-  private _domainDefinitionTransactionFactory: DomainTransactionFactory;
+  private _domainDefinitionTransactionFactory: DomainTransactionFactoryV2;
   private _domainHierarchy: DomainHierarchy;
   private _owner: string;
   private _ensRegistryAddress: string;
+  private _ensResolver: string;
+  private _ensResolverV2Address: string;
   private _ensResolverAddress: string;
   private _ensPublicResolverAddress: string;
   private _ttl = BigNumber.from(0);
@@ -61,11 +67,14 @@ export class DomainsService {
     const provider = this._signerService.provider;
     const {
       ensRegistryAddress,
+      ensResolverV2Address,
       ensResolverAddress,
       ensPublicResolverAddress,
       domainNotifierAddress,
     } = chainConfigs()[this.chainId];
     this._ensRegistryAddress = ensRegistryAddress;
+    this._ensResolver = ensResolverV2Address;
+    this._ensResolverV2Address = ensResolverV2Address;
     this._ensResolverAddress = ensResolverAddress;
     this._ensPublicResolverAddress = ensPublicResolverAddress;
     this._ensRegistry = new ENSRegistry__factory(
@@ -78,28 +87,37 @@ export class DomainsService {
       ensRegistryAddress,
       provider,
     });
-    ensPublicResolverAddress &&
-      this._domainDefinitionReader.addKnownResolver({
-        chainId,
-        address: ensPublicResolverAddress,
-        type: ResolverContractType.PublicResolver,
-      });
-    ensResolverAddress &&
+
+    this._domainDefinitionReader.addKnownResolver({
+      chainId,
+      address: ensResolverV2Address,
+      type: ResolverContractType.RoleDefinitionResolver_v2,
+    });
+
+    // until role definitions are migrated to resolver_v2
+    if (chainId === VOLTA_CHAIN_ID) {
       this._domainDefinitionReader.addKnownResolver({
         chainId,
         address: ensResolverAddress,
         type: ResolverContractType.RoleDefinitionResolver_v1,
       });
-    this._domainDefinitionTransactionFactory = new DomainTransactionFactory({
-      domainResolverAddress: ensResolverAddress,
+      this._domainDefinitionReader.addKnownResolver({
+        chainId,
+        address: ensPublicResolverAddress,
+        type: ResolverContractType.PublicResolver,
+      });
+    }
+    this._domainDefinitionTransactionFactory = new DomainTransactionFactoryV2({
+      domainResolverAddress: ensResolverV2Address,
     });
     this._domainHierarchy = new DomainHierarchy({
       domainReader: this._domainDefinitionReader,
-      ensRegistryAddress: this._ensRegistryAddress,
+      ensRegistryAddress: ensRegistryAddress,
       provider,
       domainNotifierAddress: domainNotifierAddress,
       publicResolverAddress: ensPublicResolverAddress,
     });
+
     this._owner = this._signerService.address;
   }
 
@@ -115,7 +133,7 @@ export class DomainsService {
     data,
   }: {
     domain: string;
-    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition;
+    data: IAppDefinition | IOrganizationDefinition | IRoleDefinitionV2;
   }) {
     // Special case of updating legacy PublicResolver definitions
     if (await this.updateLegacyDefinition(domain, data)) {
@@ -290,9 +308,10 @@ export class DomainsService {
   }: {
     roleName: string;
     namespace: string;
-    data: IRoleDefinition;
+    data: IRoleDefinition | IRoleDefinitionV2;
     returnSteps?: boolean;
   }) {
+    const dataV2 = castToV2(data);
     const newDomain = `${roleName}.${namespace}`;
     const from = await this.getOwner({ namespace });
     const steps = [
@@ -307,7 +326,7 @@ export class DomainsService {
       {
         tx: this._domainDefinitionTransactionFactory.newRole({
           domain: newDomain,
-          roleDefinition: data,
+          roleDefinition: dataV2,
         }),
         info: 'Set name and definition for role',
       },
@@ -368,8 +387,6 @@ export class DomainsService {
     }
 
     const apps = await this.getAppsOfOrg(namespace);
-    // @todo fix /org/namespace/suborgs and transfer suborganizations
-    // https://energyweb.atlassian.net/browse/ICS-135
     if (apps && apps.length > 0) {
       if (!withSubdomains) {
         throw new Error(
@@ -965,18 +982,22 @@ export class DomainsService {
    */
   async updateLegacyDefinition(
     domain: string,
-    data: IAppDefinition | IOrganizationDefinition | IRoleDefinition
+    data:
+      | IAppDefinition
+      | IOrganizationDefinition
+      | IRoleDefinition
+      | IRoleDefinitionV2
   ): Promise<boolean> {
     const node = namehash(domain);
     const currentResolverAddress = await this._ensRegistry.resolver(node);
-    const { ensPublicResolverAddress, ensResolverAddress, ensRegistryAddress } =
+    const { ensResolverV2Address, ensRegistryAddress } =
       chainConfigs()[this.chainId];
-    if (currentResolverAddress === ensPublicResolverAddress) {
+    if (currentResolverAddress !== ensResolverV2Address) {
       const updateResolverTransaction: EncodedCall = {
         to: ensRegistryAddress,
         data: this._ensRegistry.interface.encodeFunctionData('setResolver', [
           node,
-          ensResolverAddress,
+          ensResolverV2Address,
         ]),
       };
       // Need to use newRole/newDomain as need to set reverse domain name
@@ -984,7 +1005,7 @@ export class DomainsService {
         ? this._domainDefinitionTransactionFactory.newRole({
             domain,
             roleDefinition: {
-              ...data,
+              ...castToV2(data),
               version: parseInt(data.version.toString(), 10),
             },
           })
@@ -1015,11 +1036,17 @@ export class DomainsService {
         continue;
       }
       const resolver = await this._ensRegistry.resolver(namehash(role));
-      if (resolver === this._ensResolverAddress) {
+      if (
+        [this._ensResolverAddress, this._ensResolverV2Address].includes(
+          resolver
+        )
+      ) {
         types[role].add(RegistrationTypes.OnChain);
         types[role].add(RegistrationTypes.OffChain);
       } else if (resolver === this._ensPublicResolverAddress) {
         types[role].add(RegistrationTypes.OffChain);
+      } else {
+        throw new UnregisteredResolverError(role, resolver);
       }
     }
     return types;
@@ -1045,7 +1072,7 @@ export class DomainsService {
         namehash(domain),
         labelhash(nodeName),
         owner,
-        this._ensResolverAddress,
+        this._ensResolver,
         this._ttl,
       ]),
     };
