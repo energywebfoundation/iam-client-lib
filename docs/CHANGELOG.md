@@ -1,3 +1,5 @@
+### [4.2.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.0...v4.2.1-alpha.1) (2022-03-03)
+
 ## [4.2.0](https://github.com/energywebfoundation/iam-client-lib/compare/v4.1.0...v4.2.0) (2022-03-02)
 
 
