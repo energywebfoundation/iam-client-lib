@@ -9,8 +9,14 @@ import { SignerService } from './signer.service';
  * Dapp should provide SafeAppSdk injected by Gnosis interface
  */
 export const fromGnosis = async (safeAppSdk: SafeAppSdk) => {
-  const gnosisProvider = new SafeAppProvider(await safeAppSdk.safe.getInfo(), safeAppSdk);
+  const gnosisProvider = new SafeAppProvider(
+    await safeAppSdk.safe.getInfo(),
+    safeAppSdk
+  );
   const provider = new providers.Web3Provider(gnosisProvider);
-  const signerService = new SignerService(provider.getSigner(), ProviderType.Gnosis);
+  const signerService = new SignerService(
+    provider.getSigner(),
+    ProviderType.Gnosis
+  );
   return signerService;
 };

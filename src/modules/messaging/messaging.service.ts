@@ -1,8 +1,17 @@
-import { Codec, connect, JSONCodec, NatsConnection, Subscription } from 'nats.ws';
+import {
+  Codec,
+  connect,
+  JSONCodec,
+  NatsConnection,
+  Subscription,
+} from 'nats.ws';
 import { getMessagingConfig } from '../../config/messaging.config';
 import { IMessage, MessagingMethod } from './messaging.types';
 import { SignerService } from '../signer/signer.service';
-import { executionEnvironment, ExecutionEnvironment } from '../../utils/detectEnvironment';
+import {
+  executionEnvironment,
+  ExecutionEnvironment,
+} from '../../utils/detectEnvironment';
 
 export class MessagingService {
   private _jsonCodec: Codec<unknown>;
@@ -78,7 +87,9 @@ export class MessagingService {
   }
 
   async unsubscribeFrom(subscriptionId: number) {
-    const i = this._subscriptions.findIndex((s) => s.getID() === subscriptionId);
+    const i = this._subscriptions.findIndex(
+      (s) => s.getID() === subscriptionId
+    );
     if (i !== -1) {
       this._subscriptions.splice(i, 1)[0].unsubscribe();
     }

@@ -16,7 +16,10 @@ export class AssetsService {
   private _assetInterface = OfferableIdentity__factory.createInterface();
   private _assetManagerInterface = IdentityManager__factory.createInterface();
 
-  constructor(private _signerService: SignerService, private _cacheClient: CacheClient) {
+  constructor(
+    private _signerService: SignerService,
+    private _cacheClient: CacheClient
+  ) {
     this._signerService.onInit(this.init.bind(this));
   }
 
@@ -29,7 +32,9 @@ export class AssetsService {
   async init() {
     const chainId = this._signerService.chainId;
     this._owner = this._signerService.address;
-    this._did = `did:${Methods.Erc1056}:${this._signerService.chainName()}:${this._owner}`;
+    this._did = `did:${Methods.Erc1056}:${this._signerService.chainName()}:${
+      this._owner
+    }`;
     const chainConfig = chainConfigs()[chainId] as ChainConfig;
     this._assetManager = chainConfig.assetManagerAddress;
   }
@@ -39,18 +44,28 @@ export class AssetsService {
    * @returns Asset DID
    */
   async registerAsset(): Promise<string> {
-    const data = this._assetManagerInterface.encodeFunctionData('createIdentity', [this._owner]);
-    const receipt = await this._signerService.send({ to: this._assetManager, data });
+    const data = this._assetManagerInterface.encodeFunctionData(
+      'createIdentity',
+      [this._owner]
+    );
+    const receipt = await this._signerService.send({
+      to: this._assetManager,
+      data,
+    });
     const event = receipt.logs
       .map((l) => this._assetManagerInterface.parseLog(l))
       .find(
         (log) =>
           log.name ===
-          this._assetManagerInterface.events['IdentityCreated(address,address,uint256)'].name
+          this._assetManagerInterface.events[
+            'IdentityCreated(address,address,uint256)'
+          ].name
       ) as utils.LogDescription;
     const identity = event.args[0] as string;
     let asset = await this.getAssetById({
-      id: `did:${Methods.Erc1056}:${this._signerService.chainName()}:${identity}`,
+      id: `did:${
+        Methods.Erc1056
+      }:${this._signerService.chainName()}:${identity}`,
     });
     let loops = 0;
     /*
@@ -59,7 +74,9 @@ export class AssetsService {
      */
     while (!asset && loops < 20) {
       asset = await this.getAssetById({
-        id: `did:${Methods.Erc1056}:${this._signerService.chainName()}:${identity}`,
+        id: `did:${
+          Methods.Erc1056
+        }:${this._signerService.chainName()}:${identity}`,
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
       loops++;
@@ -72,7 +89,13 @@ export class AssetsService {
    * @param params.assetDID: DID of Offered Asset
    * @param params.offerTo: Address of offer recipient
    */
-  async offerAsset({ assetDID, offerTo }: { assetDID: string; offerTo: string }) {
+  async offerAsset({
+    assetDID,
+    offerTo,
+  }: {
+    assetDID: string;
+    offerTo: string;
+  }) {
     const assetContractAddress = addressOf(assetDID);
     const tx = this.offerAssetTx({ assetContractAddress, offerTo: offerTo });
     await this._signerService.send(tx);

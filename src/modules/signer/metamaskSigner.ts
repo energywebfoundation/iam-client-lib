@@ -7,10 +7,17 @@ import { SignerService } from './signer.service';
 export const fromMetaMask = async (): Promise<SignerService> => {
   const provider = await createMetamaskProvider();
   const signer = new providers.Web3Provider(provider).getSigner();
-  console.log('metamask chain id:', (await signer.provider.getNetwork()).chainId);
+  console.log(
+    'metamask chain id:',
+    (await signer.provider.getNetwork()).chainId
+  );
   const signerService = new SignerService(signer, ProviderType.MetaMask);
-  provider.on(ProviderEvent.AccountChanged, () => signerService.emit(ProviderEvent.AccountChanged));
-  provider.on(ProviderEvent.NetworkChanged, () => signerService.emit(ProviderEvent.NetworkChanged));
+  provider.on(ProviderEvent.AccountChanged, () =>
+    signerService.emit(ProviderEvent.AccountChanged)
+  );
+  provider.on(ProviderEvent.NetworkChanged, () =>
+    signerService.emit(ProviderEvent.NetworkChanged)
+  );
   await signerService.init();
 
   return signerService;

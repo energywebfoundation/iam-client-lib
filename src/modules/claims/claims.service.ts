@@ -34,7 +34,14 @@ import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
 
-const { id, keccak256, defaultAbiCoder, solidityKeccak256, namehash, arrayify } = utils;
+const {
+  id,
+  keccak256,
+  defaultAbiCoder,
+  solidityKeccak256,
+  namehash,
+  arrayify,
+} = utils;
 
 export class ClaimsService {
   private _claimManager: string;
@@ -55,7 +62,12 @@ export class ClaimsService {
     cacheClient: CacheClient,
     didRegistry: DidRegistry
   ) {
-    const service = new ClaimsService(signerService, domainsService, cacheClient, didRegistry);
+    const service = new ClaimsService(
+      signerService,
+      domainsService,
+      cacheClient,
+      didRegistry
+    );
     await service.init();
     return service;
   }
@@ -73,7 +85,11 @@ export class ClaimsService {
    * @param version The version to check
    * @returns true if DID has role at the version. false if not.
    */
-  async hasOnChainRole(did: string, role: string, version: number): Promise<boolean> {
+  async hasOnChainRole(
+    did: string,
+    role: string,
+    version: number
+  ): Promise<boolean> {
     const data = this._claimManagerInterface.encodeFunctionData('hasRole', [
       addressOf(did),
       namehash(role),
@@ -106,7 +122,10 @@ export class ClaimsService {
     isAccepted?: boolean;
     namespace?: string;
   }) {
-    return this._cacheClient.getClaimsByRequester(did, { isAccepted, namespace });
+    return this._cacheClient.getClaimsByRequester(did, {
+      isAccepted,
+      namespace,
+    });
   }
 
   /**
@@ -167,14 +186,21 @@ export class ClaimsService {
   }) {
     const { claimType: role, claimTypeVersion: version } = claim;
     const { fields, ...strippedClaim } = claim;
-    const data = { ...strippedClaim, requestorFields: claim.requestorFields || fields || [] };
+    const data = {
+      ...strippedClaim,
+      requestorFields: claim.requestorFields || fields || [],
+    };
 
     const token = await this._didRegistry.createPublicClaim({ data, subject });
 
     await this.verifyEnrolmentPrerequisites({ subject, role });
 
     // temporarily, until claimIssuer is not removed from Claim entity
-    const issuer = [`did:${Methods.Erc1056}:${this._signerService.chainName()}:${emptyAddress}`];
+    const issuer = [
+      `did:${
+        Methods.Erc1056
+      }:${this._signerService.chainName()}:${emptyAddress}`,
+    ];
 
     const message: IClaimRequest = {
       id: v4(),
@@ -190,7 +216,11 @@ export class ClaimsService {
       if (!version) {
         throw new Error(ERROR_MESSAGES.ONCHAIN_ROLE_VERSION_NOT_SPECIFIED);
       }
-      message.subjectAgreement = await this.approveRolePublishing({ subject, role, version });
+      message.subjectAgreement = await this.approveRolePublishing({
+        subject,
+        role,
+        version,
+      });
     }
 
     await this._cacheClient.requestClaim(message);
@@ -223,7 +253,10 @@ export class ClaimsService {
       sub: string;
     };
 
-    await this.verifyEnrolmentPrerequisites({ subject: sub, role: claimData.claimType });
+    await this.verifyEnrolmentPrerequisites({
+      subject: sub,
+      role: claimData.claimType,
+    });
 
     const message: IClaimIssuance = {
       id,
@@ -236,7 +269,12 @@ export class ClaimsService {
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claimData;
       const expiry = defaultClaimExpiry;
-      const onChainProof = await this.createOnChainProof(role, version, expiry, sub);
+      const onChainProof = await this.createOnChainProof(
+        role,
+        version,
+        expiry,
+        sub
+      );
       message.onChainProof = onChainProof;
       if (publishOnChain) {
         await this.registerOnchain({
@@ -252,7 +290,10 @@ export class ClaimsService {
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
-        claimData: { ...strippedClaimData, ...(issuerFields && { issuerFields }) },
+        claimData: {
+          ...strippedClaimData,
+          ...(issuerFields && { issuerFields }),
+        },
       };
       message.issuedToken = await this._didRegistry.issuePublicClaim({
         publicClaim,
@@ -291,7 +332,8 @@ export class ClaimsService {
     subject?: string;
   }) {
     // backward compatibility with token
-    if (claim.token) claim = { ...claim, ...this.extractClaimRequest(claim.token) };
+    if (claim.token)
+      claim = { ...claim, ...this.extractClaimRequest(claim.token) };
 
     if (
       !claim.subjectAgreement &&
@@ -307,10 +349,17 @@ export class ClaimsService {
     }
 
     if (!readyToBeRegisteredOnchain(claim)) {
-        throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
-      }
-    const { subject, claimTypeVersion, claimType, acceptedBy, subjectAgreement, onChainProof } = claim;
-      const expiry = defaultClaimExpiry;
+      throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
+    }
+    const {
+      subject,
+      claimTypeVersion,
+      claimType,
+      acceptedBy,
+      subjectAgreement,
+      onChainProof,
+    } = claim;
+    const expiry = defaultClaimExpiry;
 
     const data = this._claimManagerInterface.encodeFunctionData('register', [
       addressOf(subject),
@@ -387,7 +436,12 @@ export class ClaimsService {
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
       const expiry = defaultClaimExpiry;
-      const onChainProof = await this.createOnChainProof(role, version, expiry, subject);
+      const onChainProof = await this.createOnChainProof(
+        role,
+        version,
+        expiry,
+        subject
+      );
       message.onChainProof = onChainProof;
       message.claimType = role;
       message.claimTypeVersion = version.toString();
@@ -403,14 +457,19 @@ export class ClaimsService {
       service.find(
         ({ profile, claimType, claimTypeVersion }) =>
           Boolean(profile) ||
-          (claimType === claimData.claimType && claimTypeVersion === claimData.claimTypeVersion)
+          (claimType === claimData.claimType &&
+            claimTypeVersion === claimData.claimTypeVersion)
       ) || {};
 
     if (claimData.profile && id) {
       return id;
     }
 
-    if (claimData.claimType && id && claimData.claimTypeVersion === claimTypeVersion) {
+    if (
+      claimData.claimType &&
+      id &&
+      claimData.claimTypeVersion === claimTypeVersion
+    ) {
       return id;
     }
     return v4();
@@ -425,10 +484,18 @@ export class ClaimsService {
     registrationTypes: RegistrationTypes[],
     claim: { token?: string; claimType?: string }
   ) {
-    if (registrationTypes.includes(RegistrationTypes.OnChain) && !claim.claimType) {
-      throw new Error(ERROR_MESSAGES.CLAIM_TYPE_REQUIRED_FOR_ON_CHAIN_REGISTRATION);
+    if (
+      registrationTypes.includes(RegistrationTypes.OnChain) &&
+      !claim.claimType
+    ) {
+      throw new Error(
+        ERROR_MESSAGES.CLAIM_TYPE_REQUIRED_FOR_ON_CHAIN_REGISTRATION
+      );
     }
-    if (registrationTypes.includes(RegistrationTypes.OffChain) && !claim.token) {
+    if (
+      registrationTypes.includes(RegistrationTypes.OffChain) &&
+      !claim.token
+    ) {
       throw new Error(ERROR_MESSAGES.TOKEN_REQUIRED_FOR_OFF_CHAIN_REGISTRATION);
     }
   }
@@ -517,7 +584,13 @@ export class ClaimsService {
    *
    * @returns claim url
    */
-  async createSelfSignedClaim({ data, subject }: { data: ClaimData; subject?: string }) {
+  async createSelfSignedClaim({
+    data,
+    subject,
+  }: {
+    data: ClaimData;
+    subject?: string;
+  }) {
     const token = await this._didRegistry.createPublicClaim({ data, subject });
     return (await this.publishPublicClaim({ claim: { token } })) as string;
   }
@@ -528,12 +601,20 @@ export class ClaimsService {
    * @description get user claims
    *
    */
-  async getUserClaims({ did = this._signerService.did }: { did?: string } | undefined = {}) {
+  async getUserClaims({
+    did = this._signerService.did,
+  }: { did?: string } | undefined = {}) {
     const { service } = (await this._didRegistry.getDidDocument({ did })) || {};
     return service;
   }
 
-  private async verifyEnrolmentPrerequisites({ subject, role }: { subject: string; role: string }) {
+  private async verifyEnrolmentPrerequisites({
+    subject,
+    role,
+  }: {
+    subject: string;
+    role: string;
+  }) {
     const roleDefinition = await this._domainsService.getDefinition({
       type: NamespaceType.Role,
       namespace: role,
@@ -575,7 +656,13 @@ export class ClaimsService {
     const domainSeparator = utils.keccak256(
       defaultAbiCoder.encode(
         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-        [erc712_type_hash, utils.id('Claim Manager'), utils.id('1.0'), chainId, this._claimManager]
+        [
+          erc712_type_hash,
+          utils.id('Claim Manager'),
+          utils.id('1.0'),
+          chainId,
+          this._claimManager,
+        ]
       )
     );
 
@@ -600,7 +687,9 @@ export class ClaimsService {
       ]
     );
 
-    return canonizeSig(await this._signerService.signMessage(arrayify(proofHash)));
+    return canonizeSig(
+      await this._signerService.signMessage(arrayify(proofHash))
+    );
   }
 
   private async approveRolePublishing({
@@ -615,13 +704,21 @@ export class ClaimsService {
     const erc712_type_hash = id(
       'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
     );
-    const agreement_type_hash = id('Agreement(address subject,bytes32 role,uint256 version)');
+    const agreement_type_hash = id(
+      'Agreement(address subject,bytes32 role,uint256 version)'
+    );
 
     const chainId = this._signerService.chainId;
     const domainSeparator = keccak256(
       defaultAbiCoder.encode(
         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-        [erc712_type_hash, id('Claim Manager'), id('1.0'), chainId, this._claimManager]
+        [
+          erc712_type_hash,
+          id('Claim Manager'),
+          id('1.0'),
+          chainId,
+          this._claimManager,
+        ]
       )
     );
 
@@ -641,7 +738,9 @@ export class ClaimsService {
       ]
     );
 
-    return canonizeSig(await this._signerService.signMessage(arrayify(agreementHash)));
+    return canonizeSig(
+      await this._signerService.signMessage(arrayify(agreementHash))
+    );
   }
 
   /**
@@ -679,12 +778,18 @@ export class ClaimsService {
       },
     };
     if (algorithm === Algorithms.EIP191) {
-      return new JWT(new Wallet(delegateKey)).sign(payload, { issuer: identity });
-    } else if (algorithm === Algorithms.ES256) {
-      /** @todo move to @ew-did-registry/jwt */
-      return jsonwebtoken.sign(payload, privToPem(delegateKey, KeyType.Secp256r1), {
+      return new JWT(new Wallet(delegateKey)).sign(payload, {
         issuer: identity,
       });
+    } else if (algorithm === Algorithms.ES256) {
+      /** @todo move to @ew-did-registry/jwt */
+      return jsonwebtoken.sign(
+        payload,
+        privToPem(delegateKey, KeyType.Secp256r1),
+        {
+          issuer: identity,
+        }
+      );
     } else {
       throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
     }
