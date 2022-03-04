@@ -99,9 +99,7 @@ export class DidRegistry {
         (a) => a.document.id === did
       )?.id;
       if (!assetDID) {
-        throw new Error(
-          ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT
-        );
+        throw new Error(ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT);
       }
 
       const { didRegistryAddress: didContractAddress } =
@@ -169,7 +167,7 @@ export class DidRegistry {
   async getDidPublicKeys({
     did = this._signerService.did,
   }): Promise<IPublicKey[]> {
-    return ( await this.getDidDocument({ did: did, includeClaims: false }))
+    return (await this.getDidDocument({ did: did, includeClaims: false }))
       .publicKey;
   }
 

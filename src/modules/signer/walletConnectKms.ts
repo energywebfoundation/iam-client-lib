@@ -3,7 +3,11 @@ import { SignerService } from './signer.service';
 import { ProviderType } from './signer.types';
 import { createWalletConnectProvider } from './walletConnectMetamask';
 
-export async function fromKms(bridge: string, kmsServerUrl: string, infuraId?: string) {
+export async function fromKms(
+  bridge: string,
+  kmsServerUrl: string,
+  infuraId?: string
+) {
   const walletConnectProvider = createWalletConnectProvider(bridge, infuraId);
   walletConnectProvider.on('display_uri', (_, payload) => {
     const wcUri = payload.params[0];
@@ -14,7 +18,10 @@ export async function fromKms(bridge: string, kmsServerUrl: string, infuraId?: s
   });
   await walletConnectProvider.enable();
   const provider = new providers.Web3Provider(walletConnectProvider);
-  const signerService = new SignerService(provider.getSigner(), ProviderType.WalletConnect);
+  const signerService = new SignerService(
+    provider.getSigner(),
+    ProviderType.WalletConnect
+  );
   await signerService.init();
   return signerService;
 }

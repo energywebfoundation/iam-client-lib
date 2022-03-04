@@ -14,7 +14,10 @@ export const fromWalletConnectMetamask = async (
   const walletProvider = createWalletConnectProvider(bridge, infuraId);
   await walletProvider.enable();
   const provider = new providers.Web3Provider(walletProvider);
-  const signerService = new SignerService(provider.getSigner(), ProviderType.WalletConnect);
+  const signerService = new SignerService(
+    provider.getSigner(),
+    ProviderType.WalletConnect
+  );
   walletProvider.on(ProviderEvent.Disconnected, () =>
     signerService.emit(ProviderEvent.Disconnected)
   );
@@ -25,7 +28,10 @@ export const fromWalletConnectMetamask = async (
   return signerService;
 };
 
-export const createWalletConnectProvider = (bridge: string, infuraId?: string) => {
+export const createWalletConnectProvider = (
+  bridge: string,
+  infuraId?: string
+) => {
   const rpc = Object.entries(chainConfigs()).reduce(
     (urls, [id, config]) => ({ ...urls, [id]: config.rpcUrl }),
     {}
