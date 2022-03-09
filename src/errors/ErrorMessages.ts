@@ -11,6 +11,7 @@ export enum ERROR_MESSAGES {
   ROLE_PREREQUISITES_NOT_MET = "Enrolment subject doesn't have required roles",
   ROLE_NOT_EXISTS = 'Role you want to enroll to does not exists',
   CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT = 'Can not update not controlled document',
+  CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING = 'Cannot update document. Properties invalid or missing: ',
   ONCHAIN_ROLE_VERSION_NOT_SPECIFIED = 'On-chain role version not specified',
   WITHDRAWAL_WAS_NOT_REQUESTED = 'Stake withdrawal was not requested',
   STAKE_WAS_NOT_PUT = 'Stake was not put',
