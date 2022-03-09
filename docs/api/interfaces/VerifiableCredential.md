@@ -2,52 +2,58 @@
 
 ## Type parameters
 
-| Name |
-| :------ |
-| `T` |
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `ICredentialSubject` |
 
 ## Hierarchy
 
-- **`VerifiableCredential`**
+- [`Credential`](Credential.md)<`T`\>
 
-  ↳ [`SignedVerifiableCredential`](SignedVerifiableCredential.md)
+  ↳ **`VerifiableCredential`**
 
 ## Table of contents
 
 ### Properties
 
-- [@context](VerifiableCredential.md#@context)
 - [credentialSubject](VerifiableCredential.md#credentialsubject)
-- [id](VerifiableCredential.md#id)
-- [issuer](VerifiableCredential.md#issuer)
-- [type](VerifiableCredential.md#type)
+- [proof](VerifiableCredential.md#proof)
 
 ## Properties
-
-### @context
-
-• **@context**: `string` \| `string`[]
-
-___
 
 ### credentialSubject
 
 • **credentialSubject**: `T`
 
-___
+#### Inherited from
 
-### id
-
-• `Optional` **id**: `string`
+[Credential](Credential.md).[credentialSubject](Credential.md#credentialsubject)
 
 ___
 
-### issuer
+### proof
 
-• **issuer**: `string`
+• **proof**: `Object`
 
-___
+#### Index signature
 
-### type
+▪ [x: `string`]: `string` \| `string`[] \| `any`
 
-• **type**: `string`[]
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `@context` | `string`[] |
+| `created` | `string` |
+| `eip712Domain` | { `domain`: `Record`<`never`, `never`\> ; `messageSchema`: { `CredentialSubject`: `TypedDataField`[] ; `EIP712Domain`: `TypedDataField`[] ; `Proof`: `TypedDataField`[] ; `VerifiableCredential`: `TypedDataField`[]  } ; `primaryType`: `string`  } |
+| `eip712Domain.domain` | `Record`<`never`, `never`\> |
+| `eip712Domain.messageSchema` | { `CredentialSubject`: `TypedDataField`[] ; `EIP712Domain`: `TypedDataField`[] ; `Proof`: `TypedDataField`[] ; `VerifiableCredential`: `TypedDataField`[]  } |
+| `eip712Domain.messageSchema.CredentialSubject` | `TypedDataField`[] |
+| `eip712Domain.messageSchema.EIP712Domain` | `TypedDataField`[] |
+| `eip712Domain.messageSchema.Proof` | `TypedDataField`[] |
+| `eip712Domain.messageSchema.VerifiableCredential` | `TypedDataField`[] |
+| `eip712Domain.primaryType` | `string` |
+| `proofPurpose` | `string` |
+| `proofValue` | `string` |
+| `type` | `string` |
+| `verificationMethod` | `string` |

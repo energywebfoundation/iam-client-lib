@@ -1,8 +1,8 @@
-export * from './verifiableCredentials.types';
-export * from './verifiableCredentialsBase.service';
+export * from './verifiable-credentials.types';
+export * from './verifiable-credentials-base.service';
 
 import { SignerService } from '../signer';
-import { VerifiableCredentialsServiceBase } from './verifiableCredentialsBase.service';
+import { VerifiableCredentialsServiceBase } from './verifiable-credentials-base.service';
 import { ExecutionEnvironment, executionEnvironment } from '../../utils';
 
 export const getVerifiableCredentialsService = async (
@@ -10,11 +10,11 @@ export const getVerifiableCredentialsService = async (
 ): Promise<VerifiableCredentialsServiceBase> => {
   let service: VerifiableCredentialsServiceBase;
   if (executionEnvironment() === ExecutionEnvironment.NODE) {
-    service = await import('./verifiableCredentialsNode.service').then(
+    service = await import('./verifiable-credentials-node.service').then(
       (module) => module.VerifiableCredentialsServiceNode.create(signerService)
     );
   } else {
-    service = await import('./verifiableCredentialsWeb.service').then(
+    service = await import('./verifiable-credentials-web.service').then(
       (module) => module.VerifiableCredentialsServiceWeb.create(signerService)
     );
   }
