@@ -6,16 +6,12 @@
 
 - [constructor](VerifiableCredentialsServiceBase.md#constructor)
 
-### Properties
-
-- [completeIssueCredential](VerifiableCredentialsServiceBase.md#completeissuecredential)
-- [prepareIssueCredential](VerifiableCredentialsServiceBase.md#prepareissuecredential)
-- [verifyCredential](VerifiableCredentialsServiceBase.md#verifycredential)
-
 ### Methods
 
-- [signVerifiableCredential](VerifiableCredentialsServiceBase.md#signverifiablecredential)
-- [verifyVerifiableCredential](VerifiableCredentialsServiceBase.md#verifyverifiablecredential)
+- [createPresentation](VerifiableCredentialsServiceBase.md#createpresentation)
+- [createRoleVC](VerifiableCredentialsServiceBase.md#createrolevc)
+- [createVerifiablePresentation](VerifiableCredentialsServiceBase.md#createverifiablepresentation)
+- [verify](VerifiableCredentialsServiceBase.md#verify)
 - [create](VerifiableCredentialsServiceBase.md#create)
 
 ## Constructors
@@ -30,116 +26,79 @@
 | :------ | :------ |
 | `_signerService` | [`SignerService`](SignerService.md) |
 
-## Properties
-
-### completeIssueCredential
-
-• `Abstract` **completeIssueCredential**: (`credential`: `string`, `preparation`: `string`, `signature`: `string`) => `Promise`<`string`\>
-
-#### Type declaration
-
-▸ (`credential`, `preparation`, `signature`): `Promise`<`string`\>
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `credential` | `string` |
-| `preparation` | `string` |
-| `signature` | `string` |
-
-##### Returns
-
-`Promise`<`string`\>
-
-___
-
-### prepareIssueCredential
-
-• `Abstract` **prepareIssueCredential**: (`credential`: `string`, `linked_data_proof_options`: `string`, `public_key`: `string`) => `Promise`<`string`\>
-
-#### Type declaration
-
-▸ (`credential`, `linked_data_proof_options`, `public_key`): `Promise`<`string`\>
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `credential` | `string` |
-| `linked_data_proof_options` | `string` |
-| `public_key` | `string` |
-
-##### Returns
-
-`Promise`<`string`\>
-
-___
-
-### verifyCredential
-
-• `Abstract` **verifyCredential**: (`vc`: `string`, `proof_options`: `string`) => `Promise`<`string`\>
-
-#### Type declaration
-
-▸ (`vc`, `proof_options`): `Promise`<`string`\>
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `vc` | `string` |
-| `proof_options` | `string` |
-
-##### Returns
-
-`Promise`<`string`\>
-
 ## Methods
 
-### signVerifiableCredential
+### createPresentation
 
-▸ **signVerifiableCredential**<`T`\>(`credential`, `options?`): `Promise`<[`SignedVerifiableCredential`](../interfaces/SignedVerifiableCredential.md)<`T`\>\>
-
-#### Type parameters
-
-| Name |
-| :------ |
-| `T` |
+▸ **createPresentation**(`verifiableCredential`, `options?`): `Presentation`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `credential` | [`VerifiableCredential`](../interfaces/VerifiableCredential.md)<`T`\> |
-| `options?` | [`SignVerifiableCredentialOptions`](../interfaces/SignVerifiableCredentialOptions.md) |
+| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/RoleCredentialSubject.md)\>[] |
+| `options?` | [`CreatePresentationParams`](../interfaces/CreatePresentationParams.md) |
 
 #### Returns
 
-`Promise`<[`SignedVerifiableCredential`](../interfaces/SignedVerifiableCredential.md)<`T`\>\>
+`Presentation`
 
 ___
 
-### verifyVerifiableCredential
+### createRoleVC
 
-▸ **verifyVerifiableCredential**<`T`\>(`vc`, `options?`): `Promise`<`boolean`\>
-
-#### Type parameters
-
-| Name |
-| :------ |
-| `T` |
+▸ **createRoleVC**(`credentialParams`, `proofOptions?`): `Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/RoleCredentialSubject.md)\>\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `vc` | [`SignedVerifiableCredential`](../interfaces/SignedVerifiableCredential.md)<`T`\> |
-| `options?` | [`VerifyVerifiableCredentialOptions`](../interfaces/VerifyVerifiableCredentialOptions.md) |
+| `credentialParams` | [`RoleCredentialSubjectParams`](../interfaces/RoleCredentialSubjectParams.md) |
+| `proofOptions?` | [`ProofOptions`](../interfaces/ProofOptions.md) |
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/RoleCredentialSubject.md)\>\>
+
+___
+
+### createVerifiablePresentation
+
+▸ **createVerifiablePresentation**(`verifiableCredential`, `options?`): `Promise`<`VerifiablePresentation`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/RoleCredentialSubject.md)\>[] |
+| `options?` | [`ProofOptions`](../interfaces/ProofOptions.md) |
+
+#### Returns
+
+`Promise`<`VerifiablePresentation`\>
+
+___
+
+### verify
+
+▸ **verify**<`T`\>(`vp`, `options?`): `any`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `ICredentialSubject` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `vp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> |
+| `options?` | [`ProofOptions`](../interfaces/ProofOptions.md) |
+
+#### Returns
+
+`any`
 
 ___
 

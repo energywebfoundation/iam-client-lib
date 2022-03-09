@@ -88,7 +88,7 @@ export const validExampleExternalVC = {
   },
 };
 
-export const invalidExampleExternalVC = {
+export const exampleExternalVCWithInvalidSubjectId = {
   '@context': ['https://www.w3.org/2018/credentials/v1'],
   type: ['VerifiableCredential'],
   credentialSubject: {

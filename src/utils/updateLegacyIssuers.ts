@@ -18,15 +18,6 @@ import { SignerT } from '../modules/signer';
 
 const { JsonRpcProvider } = providers;
 
-// TODO: implement this function
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateLegacyIssuers = (a: string, b: Wallet, c: number): any[] => {
-  a;
-  b;
-  c;
-  throw new Error('Method not implemented.');
-};
-
 /**
  * @description - Checks that role issuers of all roles under `rootDomain` contains method-specific-id and adds it if missing
  * `signer` must own `rootDomain` on `targetChain`

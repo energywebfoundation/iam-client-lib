@@ -22,7 +22,7 @@ import {
   defaultKmsServerUrl,
 } from './utils';
 import { chainConfigs } from './config';
-import { getVerifiableCredentialsService } from './modules/verifiableCredentials';
+import { getVerifiableCredentialsService } from './modules/verifiable-credentials';
 
 export async function initWithPrivateKeySigner(
   privateKey: string,

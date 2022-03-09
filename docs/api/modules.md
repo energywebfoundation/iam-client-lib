@@ -47,6 +47,7 @@
 - [ChainConfig](interfaces/ChainConfig.md)
 - [Claim](interfaces/Claim.md)
 - [ClaimData](interfaces/ClaimData.md)
+- [CreatePresentationParams](interfaces/CreatePresentationParams.md)
 - [IApp](interfaces/IApp.md)
 - [ICacheClient](interfaces/ICacheClient.md)
 - [IClaimIssuance](interfaces/IClaimIssuance.md)
@@ -56,12 +57,12 @@
 - [IOrganization](interfaces/IOrganization.md)
 - [IPubKeyAndIdentityToken](interfaces/IPubKeyAndIdentityToken.md)
 - [IRole](interfaces/IRole.md)
+- [IssuerFields](interfaces/IssuerFields.md)
 - [MessagingConfig](interfaces/MessagingConfig.md)
 - [Profile](interfaces/Profile.md)
-- [SignVerifiableCredentialOptions](interfaces/SignVerifiableCredentialOptions.md)
-- [SignedVerifiableCredential](interfaces/SignedVerifiableCredential.md)
-- [VerifiableCredential](interfaces/VerifiableCredential.md)
-- [VerifyVerifiableCredentialOptions](interfaces/VerifyVerifiableCredentialOptions.md)
+- [ProofOptions](interfaces/ProofOptions.md)
+- [RoleCredentialSubject](interfaces/RoleCredentialSubject.md)
+- [RoleCredentialSubjectParams](interfaces/RoleCredentialSubjectParams.md)
 - [VerifyVerifiableCredentialResults](interfaces/VerifyVerifiableCredentialResults.md)
 
 ### Type aliases
@@ -71,6 +72,7 @@
 - [ChainId](modules.md#chainid)
 - [ClaimsFilter](modules.md#claimsfilter)
 - [IssueClaim](modules.md#issueclaim)
+- [MulticallTx](modules.md#multicalltx)
 - [RejectClaim](modules.md#rejectclaim)
 - [RequestClaim](modules.md#requestclaim)
 - [Service](modules.md#service)
@@ -95,6 +97,9 @@
 - [erc712\_type\_hash](modules.md#erc712_type_hash)
 - [proof\_type\_hash](modules.md#proof_type_hash)
 - [typedMsgPrefix](modules.md#typedmsgprefix)
+- [verifiableCredentialEIP712Types](modules.md#verifiablecredentialeip712types)
+- [verifiablePresentationEIP712Types](modules.md#verifiablepresentationeip712types)
+- [verifiablePresentationWithCredentialEIP712Types](modules.md#verifiablepresentationwithcredentialeip712types)
 
 ### Functions
 
@@ -187,6 +192,12 @@ ___
 | :------ | :------ |
 | `issuer` | `string` |
 | `message` | [`IClaimIssuance`](interfaces/IClaimIssuance.md) |
+
+___
+
+### MulticallTx
+
+Ƭ **MulticallTx**: { `info`: `string` ; `tx`: `EncodedCall` ; `next`: (`opts?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>  }[]
 
 ___
 
@@ -352,6 +363,60 @@ ___
 ### typedMsgPrefix
 
 • `Const` **typedMsgPrefix**: ``"1901"``
+
+___
+
+### verifiableCredentialEIP712Types
+
+• `Const` **verifiableCredentialEIP712Types**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `CredentialSubject` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `EIP712Domain` | `never`[] |
+| `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
+| `IssuerFields` | { `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
+| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+
+___
+
+### verifiablePresentationEIP712Types
+
+• `Const` **verifiablePresentationEIP712Types**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `EIP712Domain` | `never`[] |
+| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `VerifiablePresentation` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+
+___
+
+### verifiablePresentationWithCredentialEIP712Types
+
+• `Const` **verifiablePresentationWithCredentialEIP712Types**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `CredentialSubject` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `EIP712Domain` | `never`[] |
+| `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
+| `IssuerFields` | { `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
+| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `VC712Domain` | { `name`: `string` = 'domain'; `type`: `string` = 'VC712DomainData' }[] |
+| `VC712DomainData` | `never`[] |
+| `VC712DomainSchema` | { `name`: `string` = 'CredentialSubject'; `type`: `string` = 'VC712DomainTypedDataField[]' }[] |
+| `VC712DomainTypedDataField` | { `name`: `string` = 'name'; `type`: `string` = 'string' }[] |
+| `VCProof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+| `VerifiablePresentation` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
 
 ## Functions
 
