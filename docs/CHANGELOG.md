@@ -1,3 +1,14 @@
+## [5.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.1-alpha.4...v5.0.0-alpha.1) (2022-03-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **claims:** backward compatible 'fields' props have been removed. Use 'requestorFields' instead
+
+### Features
+
+* **claims:** remove deprecated 'fields' property ([c2e4018](https://github.com/energywebfoundation/iam-client-lib/commit/c2e401818212e6dcf2e9f2807c1e70f310e3ed4a))
+
 ### [4.2.1-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.1-alpha.3...v4.2.1-alpha.4) (2022-03-08)
 
 ### [4.2.1-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.1-alpha.2...v4.2.1-alpha.3) (2022-03-04)
