@@ -14,6 +14,7 @@
 - [issuedToken](Claim.md#issuedtoken)
 - [namespace](Claim.md#namespace)
 - [onChainProof](Claim.md#onchainproof)
+- [redirectUri](Claim.md#redirecturi)
 - [registrationTypes](Claim.md#registrationtypes)
 - [requester](Claim.md#requester)
 - [subject](Claim.md#subject)
@@ -79,6 +80,12 @@ ___
 ### onChainProof
 
 • `Optional` **onChainProof**: `string`
+
+___
+
+### redirectUri
+
+• `Optional` **redirectUri**: `string`
 
 ___
 
