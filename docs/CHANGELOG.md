@@ -1,3 +1,10 @@
+## [5.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.1...v5.0.0-alpha.2) (2022-03-14)
+
+
+### Features
+
+* add claim request origin to `Claim` interface ([0b5be66](https://github.com/energywebfoundation/iam-client-lib/commit/0b5be66172b0a66383cec60828238eb13085c7d8))
+
 ## [5.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.1-alpha.4...v5.0.0-alpha.1) (2022-03-09)
 
 
