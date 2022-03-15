@@ -5,6 +5,7 @@
 ### Enumeration members
 
 - [APP\_WITH\_ROLES](ERROR_MESSAGES.md#app_with_roles)
+- [CAN\_NOT\_UPDATE\_DOCUMENT\_PROPERTIES\_INVALID\_OR\_MISSING](ERROR_MESSAGES.md#can_not_update_document_properties_invalid_or_missing)
 - [CAN\_NOT\_UPDATE\_NOT\_CONTROLLED\_DOCUMENT](ERROR_MESSAGES.md#can_not_update_not_controlled_document)
 - [CLAIM\_TYPE\_REQUIRED\_FOR\_ON\_CHAIN\_REGISTRATION](ERROR_MESSAGES.md#claim_type_required_for_on_chain_registration)
 - [CLAIM\_WAS\_NOT\_ISSUED](ERROR_MESSAGES.md#claim_was_not_issued)
@@ -35,6 +36,12 @@
 ### APP\_WITH\_ROLES
 
 • **APP\_WITH\_ROLES** = `"You are not able to remove application with registered roles"`
+
+___
+
+### CAN\_NOT\_UPDATE\_DOCUMENT\_PROPERTIES\_INVALID\_OR\_MISSING
+
+• **CAN\_NOT\_UPDATE\_DOCUMENT\_PROPERTIES\_INVALID\_OR\_MISSING** = `"Cannot update document. Properties invalid or missing: "`
 
 ___
 
