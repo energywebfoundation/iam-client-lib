@@ -1,3 +1,10 @@
+## [5.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.2...v5.0.0-alpha.3) (2022-03-15)
+
+
+### Features
+
+* **did:** ts interface checker to validate did update request ([a0bfeeb](https://github.com/energywebfoundation/iam-client-lib/commit/a0bfeeb5a1e98537931e35e6cb24ca963c149007))
+
 ## [5.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.1...v5.0.0-alpha.2) (2022-03-14)
 
 
