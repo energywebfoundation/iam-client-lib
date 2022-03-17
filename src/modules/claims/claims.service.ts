@@ -7,7 +7,10 @@ import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { hashes, IPublicClaim } from '@ew-did-registry/claims';
-import { DIDAttribute } from '@ew-did-registry/did-resolver-interface';
+import {
+  DIDAttribute,
+  IServiceEndpoint,
+} from '@ew-did-registry/did-resolver-interface';
 import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__factory';
 import { ERROR_MESSAGES } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
@@ -183,7 +186,10 @@ export class ClaimsService {
     registrationTypes?: RegistrationTypes[];
   }) {
     const { claimType: role, claimTypeVersion: version } = claim;
-    const token = await this._didRegistry.createPublicClaim({ data: claim, subject });
+    const token = await this._didRegistry.createPublicClaim({
+      data: claim,
+      subject,
+    });
 
     await this.verifyEnrolmentPrerequisites({ subject, role });
 
@@ -590,14 +596,28 @@ export class ClaimsService {
   /**
    * getUserClaims
    *
-   * @description get user claims
+   * @description get published offchain claims
    *
    */
   async getUserClaims({
     did = this._signerService.did,
-  }: { did?: string } | undefined = {}) {
-    const { service } = (await this._didRegistry.getDidDocument({ did })) || {};
-    return service;
+  }: { did?: string } | undefined = {}): Promise<
+    (IServiceEndpoint & ClaimData)[]
+  > {
+    const { service } = await this._didRegistry.getDidDocument({ did });
+    const issuedClaims = await this.getClaimsBySubject({
+      did,
+      isAccepted: true,
+    });
+    if (service.length === 0 || issuedClaims.length === 0) return [];
+
+    const issuedClaimsTypes = issuedClaims
+      .filter((c) => c.registrationTypes.includes(RegistrationTypes.OffChain))
+      .map(({ claimType }) => claimType);
+
+    return service.filter(
+      ({ claimType }) => claimType && issuedClaimsTypes.includes(claimType)
+    );
   }
 
   private async verifyEnrolmentPrerequisites({
