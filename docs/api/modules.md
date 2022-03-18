@@ -253,91 +253,91 @@ ___
 
 ### IS\_ETH\_SIGNER
 
-• `Const` **IS\_ETH\_SIGNER**: ``"isEthSigner"``
+• **IS\_ETH\_SIGNER**: ``"isEthSigner"``
 
 ___
 
 ### NODE\_FIELDS\_KEY
 
-• `Const` **NODE\_FIELDS\_KEY**: ``"metadata"``
+• **NODE\_FIELDS\_KEY**: ``"metadata"``
 
 ___
 
 ### PUBLIC\_KEY
 
-• `Const` **PUBLIC\_KEY**: ``"PublicKey"``
+• **PUBLIC\_KEY**: ``"PublicKey"``
 
 ___
 
 ### TEST\_LOGIN\_ENDPOINT
 
-• `Const` **TEST\_LOGIN\_ENDPOINT**: ``"/auth/status"``
+• **TEST\_LOGIN\_ENDPOINT**: ``"/auth/status"``
 
 ___
 
 ### VOLTA\_CHAIN\_ID
 
-• `Const` **VOLTA\_CHAIN\_ID**: ``73799``
+• **VOLTA\_CHAIN\_ID**: ``73799``
 
 ___
 
 ### agreement\_type\_hash
 
-• `Const` **agreement\_type\_hash**: `string`
+• **agreement\_type\_hash**: `string`
 
 ___
 
 ### defaultAzureProxyUrl
 
-• `Const` **defaultAzureProxyUrl**: ``"https://azure-proxy-server.energyweb.org/api/v1"``
+• **defaultAzureProxyUrl**: ``"https://azure-proxy-server.energyweb.org/api/v1"``
 
 ___
 
 ### defaultBridgeUrl
 
-• `Const` **defaultBridgeUrl**: ``"https://bridge.walletconnect.org"``
+• **defaultBridgeUrl**: ``"https://bridge.walletconnect.org"``
 
 ___
 
 ### defaultClaimExpiry
 
-• `Const` **defaultClaimExpiry**: `number`
+• **defaultClaimExpiry**: `number`
 
 ___
 
 ### defaultKmsServerUrl
 
-• `Const` **defaultKmsServerUrl**: ``"https://km.aws.energyweb.org/connect/new"``
+• **defaultKmsServerUrl**: ``"https://km.aws.energyweb.org/connect/new"``
 
 ___
 
 ### didPattern
 
-• `Const` **didPattern**: ``"^(?:did:(?<method>[a-z0-9]+?):)((?<chain>[a-z0-9]+?):)?(?<id>0x[A-Fa-f0-9]{40})$"``
+• **didPattern**: ``"^(?:did:(?<method>[a-z0-9]+?):)((?<chain>[a-z0-9]+?):)?(?<id>0x[A-Fa-f0-9]{40})$"``
 
 ___
 
 ### emptyAddress
 
-• `Const` **emptyAddress**: ``"0x0000000000000000000000000000000000000000"``
+• **emptyAddress**: ``"0x0000000000000000000000000000000000000000"``
 
 ___
 
 ### erc712\_type\_hash
 
-• `Const` **erc712\_type\_hash**: `string`
+• **erc712\_type\_hash**: `string`
 
 ___
 
 ### proof\_type\_hash
 
-• `Const` **proof\_type\_hash**: `string`
+• **proof\_type\_hash**: `string`
 
 ___
 
 ### typedMsgPrefix
 
-• `Const` **typedMsgPrefix**: ``"1901"``
+• **typedMsgPrefix**: ``"1901"``
 
 ## Functions
 
@@ -360,7 +360,7 @@ ___
 
 ### cacheConfigs
 
-▸ **cacheConfigs**(): `Object`
+▸ `Const` **cacheConfigs**(): `Object`
 
 #### Returns
 
@@ -386,7 +386,7 @@ ___
 
 ### chainConfigs
 
-▸ **chainConfigs**(): `Object`
+▸ `Const` **chainConfigs**(): `Object`
 
 #### Returns
 
@@ -415,7 +415,7 @@ ___
 
 ### createWalletConnectProvider
 
-▸ **createWalletConnectProvider**(`bridge`, `infuraId?`): `WalletConnectProvider`
+▸ `Const` **createWalletConnectProvider**(`bridge`, `infuraId?`): `WalletConnectProvider`
 
 #### Parameters
 
@@ -432,7 +432,7 @@ ___
 
 ### executionEnvironment
 
-▸ **executionEnvironment**(): `ExecutionEnvironment`
+▸ `Const` **executionEnvironment**(): `ExecutionEnvironment`
 
 #### Returns
 
@@ -442,7 +442,7 @@ ___
 
 ### fromGnosis
 
-▸ **fromGnosis**(`safeAppSdk`): `Promise`<[`SignerService`](classes/SignerService.md)\>
+▸ `Const` **fromGnosis**(`safeAppSdk`): `Promise`<[`SignerService`](classes/SignerService.md)\>
 
 **`description`** Intended for use in Volta Gnosis web interface(https://volta.gnosis-safe.io/).
 Dapp should provide SafeAppSdk injected by Gnosis interface
@@ -479,7 +479,7 @@ ___
 
 ### fromMetaMask
 
-▸ **fromMetaMask**(): `Promise`<[`SignerService`](classes/SignerService.md)\>
+▸ `Const` **fromMetaMask**(): `Promise`<[`SignerService`](classes/SignerService.md)\>
 
 #### Returns
 
@@ -489,7 +489,7 @@ ___
 
 ### fromPrivateKey
 
-▸ **fromPrivateKey**(`privateKey`, `rpcUrl`): `Promise`<[`SignerService`](classes/SignerService.md)\>
+▸ `Const` **fromPrivateKey**(`privateKey`, `rpcUrl`): `Promise`<[`SignerService`](classes/SignerService.md)\>
 
 #### Parameters
 
@@ -506,7 +506,7 @@ ___
 
 ### fromWalletConnectMetamask
 
-▸ **fromWalletConnectMetamask**(`bridge`, `infuraId?`): `Promise`<[`SignerService`](classes/SignerService.md)\>
+▸ `Const` **fromWalletConnectMetamask**(`bridge`, `infuraId?`): `Promise`<[`SignerService`](classes/SignerService.md)\>
 
 #### Parameters
 
@@ -523,7 +523,7 @@ ___
 
 ### getMessagingConfig
 
-▸ **getMessagingConfig**(): `Object`
+▸ `Const` **getMessagingConfig**(): `Object`
 
 #### Returns
 
@@ -642,7 +642,7 @@ ___
 
 ### isMetamaskExtensionPresent
 
-▸ **isMetamaskExtensionPresent**(): `Promise`<{ `chainId`: `undefined` \| `number` ; `isMetamaskPresent`: `boolean` = !!provider }\>
+▸ `Const` **isMetamaskExtensionPresent**(): `Promise`<{ `chainId`: `undefined` \| `number` ; `isMetamaskPresent`: `boolean` = !!provider }\>
 
 #### Returns
 
@@ -668,7 +668,7 @@ ___
 
 ### readyToBeRegisteredOnchain
 
-▸ **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
+▸ `Const` **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
 
 #### Parameters
 
@@ -684,7 +684,7 @@ ___
 
 ### setCacheConfig
 
-▸ **setCacheConfig**(`chainId`, `options`): `void`
+▸ `Const` **setCacheConfig**(`chainId`, `options`): `void`
 
 Used to override existing cache server configuration or add a missing one
 Configuration must be set before constructing `IAM`
@@ -704,7 +704,7 @@ ___
 
 ### setChainConfig
 
-▸ **setChainConfig**(`chainId`, `config`): `void`
+▸ `Const` **setChainConfig**(`chainId`, `config`): `void`
 
 Used to override existing chain configuration or add a missing one
 Configuration must be set before constructing `IAM`
@@ -724,7 +724,7 @@ ___
 
 ### setMessagingConfig
 
-▸ **setMessagingConfig**(`chainId`, `options`): `void`
+▸ `Const` **setMessagingConfig**(`chainId`, `options`): `void`
 
 Used to override existing messaging configuration or add a missing one
 Configuration must be set before constructing `IAM`
