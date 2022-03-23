@@ -12,6 +12,7 @@ import {
   executionEnvironment,
   ExecutionEnvironment,
 } from '../../utils/detectEnvironment';
+import { getLogger } from '../../config/logger.config';
 
 export class MessagingService {
   private _jsonCodec: Codec<unknown>;
@@ -57,7 +58,7 @@ export class MessagingService {
         if (!connection) return;
         this._natsConnection = connection;
       } catch (err) {
-        console.log(err);
+        getLogger().info(err);
       }
     }
   }
@@ -75,7 +76,7 @@ export class MessagingService {
     const subscription = this._natsConnection.subscribe(subject, {
       callback: (err, msg) => {
         if (err) {
-          console.error(`Nats error:${err.message}`);
+          getLogger().error(`Nats error:${err.message}`);
           return;
         }
         const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;

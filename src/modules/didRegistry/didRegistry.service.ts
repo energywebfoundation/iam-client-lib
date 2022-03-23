@@ -1,5 +1,4 @@
 import { Wallet, providers } from 'ethers';
-import { AxiosError } from 'axios';
 import { KeyType } from '@ew-did-registry/keys';
 import { JWT } from '@ew-did-registry/jwt';
 import { ProxyOperator } from '@ew-did-registry/proxyidentity';
@@ -43,6 +42,7 @@ import {
   UpdateDelegate,
   UpdatePublicKey,
 } from './didRegistry.validation';
+import { getLogger } from '../../config/logger.config';
 
 const { JsonRpcProvider } = providers;
 export class DidRegistry {
@@ -112,10 +112,8 @@ export class DidRegistry {
           service: didDoc.service as (IServiceEndpoint & ClaimData)[],
         };
       } catch (err) {
-        if ((err as AxiosError).response?.status === 401) {
-          throw err;
-        }
-        console.log(err);
+        getLogger().info(err);
+        throw err;
       }
     }
 
@@ -468,7 +466,8 @@ export class DidRegistry {
       }
     } catch (e) {
       throw new Error(
-        ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING + (e as Error).message
+        ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
+          (e as Error).message
       );
     }
   }
