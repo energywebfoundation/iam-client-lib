@@ -1,4 +1,5 @@
-import { BigNumber, providers, utils, Wallet, ethers, Signer } from 'ethers';
+import { BigNumber, providers, utils, Wallet, ethers } from 'ethers';
+import { Signer } from '@ethersproject/abstract-signer';
 import base64url from 'base64url';
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { Methods } from '@ew-did-registry/did';

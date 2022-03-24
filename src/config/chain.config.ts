@@ -14,9 +14,9 @@ import {
   EWC_ENS_REGISTRY_ADDRESS,
   EWC_IDENTITY_MANAGER_ADDRESS,
   EWC_PUBLIC_RESOLVER_ADDRESS,
-  EWC_RESOLVER_V1_ADDRESS,
+  EWC_RESOLVER_V2_ADDRESS,
   VOLTA_RESOLVER_V2_ADDRESS,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 
 const VOLTA_STAKING_POOL_FACTORY_ADDRESS =
@@ -62,8 +62,8 @@ const chainConfig: Record<number, ChainConfig> = {
     chainDisplayName: 'Energy Web Chain',
     rpcUrl: 'https://rpc.energyweb.org/',
     ensRegistryAddress: EWC_ENS_REGISTRY_ADDRESS,
-    ensResolverV2Address: '',
-    ensResolverAddress: EWC_RESOLVER_V1_ADDRESS,
+    ensResolverV2Address: EWC_RESOLVER_V2_ADDRESS,
+    ensResolverAddress: '',
     ensPublicResolverAddress: EWC_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: EWC_DOMAIN_NOTIFER_ADDRESS,
     assetManagerAddress: EWC_IDENTITY_MANAGER_ADDRESS,

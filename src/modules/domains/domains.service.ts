@@ -1,4 +1,5 @@
 import { BigNumber, utils } from 'ethers';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import {
   IAppDefinition,
   IOrganizationDefinition,
@@ -10,7 +11,7 @@ import {
   DomainHierarchy,
   VOLTA_CHAIN_ID,
   DomainTransactionFactoryV2,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
 import { ENSRegistry } from '../../../ethers/ENSRegistry';
 import { ENSRegistry__factory } from '../../../ethers/factories/ENSRegistry__factory';
 import { chainConfigs } from '../../config/chain.config';
@@ -366,7 +367,18 @@ export class DomainsService {
     newOwner: string;
     returnSteps?: boolean;
     withSubdomains?: boolean;
-  }) {
+  }): Promise<
+    | {
+        tx: EncodedCall;
+        next: ({
+          retryCheck,
+        }?: {
+          retryCheck?: boolean | undefined;
+        }) => Promise<TransactionReceipt | undefined>;
+        info: string;
+      }[]
+    | undefined
+  > {
     DomainsService.validateOwnerAddress(newOwner);
     const orgNamespaces = [
       `${NamespaceType.Role}.${namespace}`,

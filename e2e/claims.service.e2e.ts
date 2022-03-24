@@ -1,4 +1,4 @@
-import { IRoleDefinition, PreconditionType } from '@energyweb/iam-contracts';
+import { IRoleDefinition, PreconditionType } from '@energyweb/credential-governance';
 import { Methods, Chain } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';

@@ -4,7 +4,7 @@ import {
   IRevokerDefinition,
   IRoleDefinition,
   IRoleDefinitionV2,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
 
 export enum NamespaceType {
   Role = 'roles',

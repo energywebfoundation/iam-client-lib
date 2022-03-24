@@ -42,4 +42,5 @@ export {
   IRevokerDefinition,
   IRoleDefinitionText,
   IRoleDefinitionV2,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
+export {} from '@energyweb/onchain-claims';

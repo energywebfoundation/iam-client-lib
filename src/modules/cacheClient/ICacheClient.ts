@@ -2,7 +2,7 @@ import {
   IAppDefinition,
   IOrganizationDefinition,
   IRoleDefinition,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
 import { IDIDDocument } from '@ew-did-registry/did-resolver-interface';
 import {
   IClaimIssuance,
