@@ -21,6 +21,8 @@ import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
 import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
+import { setLogger } from '../src/config/logger.config';
+import { ConsoleLogger, LogLevel } from '../src/utils/logger';
 
 const { namehash } = utils;
 
@@ -156,6 +158,7 @@ describe('Enrollment claim tests', () => {
     });
     ({ didRegistry, claimsService } = await connectToDidRegistry());
     Reflect.set(didRegistry, '_cacheClient', undefined);
+    setLogger(new ConsoleLogger(LogLevel.warn));
   });
 
   describe('Enrollment tests', () => {
