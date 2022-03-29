@@ -1,3 +1,10 @@
+## [5.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.7...v5.0.0-alpha.8) (2022-03-29)
+
+
+### Features
+
+* **core:** custom logger ([4ef8f49](https://github.com/energywebfoundation/iam-client-lib/commit/4ef8f49ffdbd2a419e8d9544ce6ba1e68c59b393))
+
 ## [5.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.6...v5.0.0-alpha.7) (2022-03-22)
 
 ## [5.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.5...v5.0.0-alpha.6) (2022-03-18)
