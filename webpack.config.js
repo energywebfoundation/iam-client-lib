@@ -40,6 +40,9 @@ const baseConfig = {
     '@energyweb/iam-contracts': '@energyweb/iam-contracts',
     ethers: 'ethers',
     '@walletconnect/ethereum-provider': '@walletconnect/ethereum-provider',
+    'nats.ws': 'nats.ws',
+    tslib: 'tslib',
+    uuid: 'uuid',
   },
   ignoreWarnings: [{ module: /ws/ }], // webpack can't resolve optional dependencies bufferutil and utf-8-validate
 };
@@ -52,6 +55,7 @@ const nodeConfig = merge(baseConfig, {
   externals: {
     base64url: 'base64url',
     axios: 'axios',
+    jsonwebtoken: 'jsonwebtoken',
   },
 });
 const webConfig = merge(baseConfig, {

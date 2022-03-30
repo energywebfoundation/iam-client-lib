@@ -104,6 +104,8 @@ const {
 ## Development
 
 For testing use `npm run test:watch`
+Since library is supposed to be used in both Node.js and browser environments same applies to dependencies. When adding new dependency check if it provides builds for both environments. If it is then add it in `external` section of base configuration in `webpack.config.js`. When dependency build is provided only for one environment you can add it to `external` section of this environment. When dependency can not be used in one environment disable it resolution by setting `resolve.fallback.dependencyName` of correspondig configuration to false. When dependency is bundled for both environment it can be moved to `devDependencies`
+
 
 ### Installing Dependencies
 
