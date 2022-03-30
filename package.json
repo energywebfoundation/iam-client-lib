@@ -11,11 +11,9 @@
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./e2e/**/*.ts",
     "prebuild": "rimraf dist ethers",
-    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist",
-    "build:node": "bili --format cjs",
-    "build:front_end": "bili --format esm",
+    "build": "npm run build:contracts && npm run build:ts",
     "build:patches": "copyfiles \"patches/**/*.patch\" dist && node scripts/patches-build.js",
-    "build:ts": "npm run build:front_end && npm run build:node",
+    "build:ts": "webpack",
     "build:api_docs": "rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true",
     "build:contracts": "npm run build:typechain:ens && npm run build:typechain:did && npm run build:typechain:roles && npm run build:typechain:staking",
     "build:typechain:ens": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json\"",
@@ -118,7 +116,6 @@
     "@typescript-eslint/parser": "^5.9.1",
     "@walletconnect/types": "1.7.5",
     "babel-jest": "26.6.3",
-    "bili": "^5.0.5",
     "conventional-changelog-conventionalcommits": "^4.6.3",
     "copyfiles": "^2.4.0",
     "coveralls": "^3.1.0",
@@ -132,6 +129,7 @@
     "jest-environment-node": "^27.1.0",
     "jwt-decode": "^3.1.2",
     "lint-staged": "^11.1.1",
+    "node-polyfill-webpack-plugin": "^1.1.4",
     "patch-package": "^6.4.7",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
@@ -139,10 +137,14 @@
     "run-with-testrpc": "0.3.1",
     "semantic-release": "^19.0.2",
     "ts-jest": "26.5.6",
+    "ts-loader": "^9.2.8",
     "typechain": "5.2.0",
     "typedoc": "^0.22.0",
     "typedoc-plugin-markdown": "~3.11.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-merge": "^5.8.0"
   },
   "husky": {
     "hooks": {

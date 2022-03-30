@@ -30,7 +30,8 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es6"
+    "target": "es6",
+    "outDir": "./dist"
   },
   "include": ["src/**/*", "ethers/**/*", "test/**/*", "e2e/**/*.ts"],
   "ts-node": {
