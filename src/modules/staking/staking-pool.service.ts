@@ -13,9 +13,15 @@ const { namehash, parseUnits } = utils;
  * Intended for staking pool
  */
 export class StakingFactoryService {
-  constructor(private _signerService: SignerService, private _domainsService: DomainsService) {}
+  constructor(
+    private _signerService: SignerService,
+    private _domainsService: DomainsService
+  ) {}
 
-  static async create(signerService: SignerService, domainsService: DomainsService) {
+  static async create(
+    signerService: SignerService,
+    domainsService: DomainsService
+  ) {
     const service = new StakingFactoryService(signerService, domainsService);
     return service;
   }
@@ -27,7 +33,8 @@ export class StakingFactoryService {
     return [
       {
         org: await this._domainsService.readName(namehash('energyweb.iam.ewc')),
-        pool: chainConfigs()[this._signerService.chainId].stakingPoolFactoryAddress,
+        pool: chainConfigs()[this._signerService.chainId]
+          .stakingPoolFactoryAddress,
         provider: 'empty',
       },
     ];
@@ -92,7 +99,9 @@ export class StakingPoolService {
   async partialWithdraw(value: BigNumber | number): Promise<ContractReceipt> {
     value = BigNumber.from(value);
 
-    const transaction = await this.pool.connect(this.signerService.signer).unstake(value);
+    const transaction = await this.pool
+      .connect(this.signerService.signer)
+      .unstake(value);
 
     return transaction.wait();
   }
@@ -131,7 +140,9 @@ export class StakingPoolService {
    * Accumulated reward
    */
   async checkReward(): Promise<BigNumber> {
-    const [staked, compounded] = await this.pool.connect(this.signerService.signer).total();
+    const [staked, compounded] = await this.pool
+      .connect(this.signerService.signer)
+      .total();
 
     return compounded.sub(staked);
   }
@@ -146,7 +157,9 @@ export class StakingPoolService {
       this.pool.connect(this.signerService.signer).end(),
     ]);
 
-    const stakeStatus = staked.gt(0) ? StakeStatus.STAKING : StakeStatus.NONSTAKING;
+    const stakeStatus = staked.gt(0)
+      ? StakeStatus.STAKING
+      : StakeStatus.NONSTAKING;
 
     return {
       amount: staked,

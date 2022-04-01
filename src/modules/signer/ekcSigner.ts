@@ -32,7 +32,9 @@ export class EkcSigner extends Signer {
     return this._signer.signMessage(message);
   }
 
-  async signTransaction(transaction: Deferrable<TransactionRequest>): Promise<string> {
+  async signTransaction(
+    transaction: Deferrable<TransactionRequest>
+  ): Promise<string> {
     const resolvedTx = await resolveProperties(transaction);
     return this._signer.signTransaction(resolvedTx);
   }

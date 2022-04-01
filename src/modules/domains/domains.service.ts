@@ -31,6 +31,7 @@ import { SearchType } from '../cacheClient/cacheClient.types';
 import { validateAddress } from '../../utils/address';
 import { UnregisteredResolverError } from '../../errors/UnregisteredResolverError';
 import { castToV2 } from './domains.types';
+import { getLogger } from '../../config/logger.config';
 
 const { namehash } = utils;
 
@@ -400,7 +401,9 @@ export class DomainsService {
     }
 
     if (alreadyFinished.length > 0) {
-      console.log(`Already changed ownership of ${alreadyFinished.join(', ')}`);
+      getLogger().info(
+        `Already changed ownership of ${alreadyFinished.join(', ')}`
+      );
     }
 
     const steps = changeOwnerNamespaces.map((namespace) => {
@@ -469,7 +472,9 @@ export class DomainsService {
     }
 
     if (alreadyFinished.length > 0) {
-      console.log(`Already changed ownership of ${alreadyFinished.join(', ')}`);
+      getLogger().info(
+        `Already changed ownership of ${alreadyFinished.join(', ')}`
+      );
     }
 
     const steps = changeOwnerNamespaces.map((namespace) => {
@@ -577,7 +582,7 @@ export class DomainsService {
     }
 
     if (alreadyFinished.length > 0) {
-      console.log(`Already deleted: ${alreadyFinished.join(', ')}`);
+      getLogger().info(`Already deleted: ${alreadyFinished.join(', ')}`);
     }
 
     const steps = namespacesToDelete.map((namespace) => {
@@ -642,7 +647,7 @@ export class DomainsService {
     }
 
     if (alreadyFinished.length > 0) {
-      console.log(`Already deleted: ${alreadyFinished.join(', ')}`);
+      getLogger().info(`Already deleted: ${alreadyFinished.join(', ')}`);
     }
 
     const steps = namespacesToDelete.map((namespace) => {

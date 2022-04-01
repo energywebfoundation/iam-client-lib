@@ -52,6 +52,7 @@ export interface Claim {
   acceptedBy?: string;
   isRejected?: boolean;
   namespace: string;
+  redirectUri?: string;
 }
 
 export const readyToBeRegisteredOnchain = (

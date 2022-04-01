@@ -1,5 +1,4 @@
 const fs = require('fs');
-
 /**
  * @description Read the patches from the patches directory
  *

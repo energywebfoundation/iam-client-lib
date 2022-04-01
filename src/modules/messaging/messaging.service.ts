@@ -1,8 +1,18 @@
-import { Codec, connect, JSONCodec, NatsConnection, Subscription } from 'nats.ws';
+import {
+  Codec,
+  connect,
+  JSONCodec,
+  NatsConnection,
+  Subscription,
+} from 'nats.ws';
 import { getMessagingConfig } from '../../config/messaging.config';
 import { IMessage, MessagingMethod } from './messaging.types';
 import { SignerService } from '../signer/signer.service';
-import { executionEnvironment, ExecutionEnvironment } from '../../utils/detectEnvironment';
+import {
+  executionEnvironment,
+  ExecutionEnvironment,
+} from '../../utils/detectEnvironment';
+import { getLogger } from '../../config/logger.config';
 
 export class MessagingService {
   private _jsonCodec: Codec<unknown>;
@@ -48,7 +58,7 @@ export class MessagingService {
         if (!connection) return;
         this._natsConnection = connection;
       } catch (err) {
-        console.log(err);
+        getLogger().info(err);
       }
     }
   }
@@ -66,7 +76,7 @@ export class MessagingService {
     const subscription = this._natsConnection.subscribe(subject, {
       callback: (err, msg) => {
         if (err) {
-          console.error(`Nats error:${err.message}`);
+          getLogger().error(`Nats error:${err.message}`);
           return;
         }
         const decodedMessage = this._jsonCodec?.decode(msg.data) as IMessage;
@@ -78,7 +88,9 @@ export class MessagingService {
   }
 
   async unsubscribeFrom(subscriptionId: number) {
-    const i = this._subscriptions.findIndex((s) => s.getID() === subscriptionId);
+    const i = this._subscriptions.findIndex(
+      (s) => s.getID() === subscriptionId
+    );
     if (i !== -1) {
       this._subscriptions.splice(i, 1)[0].unsubscribe();
     }

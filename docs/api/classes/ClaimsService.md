@@ -52,8 +52,6 @@
 
 **`description`** allows subject to request for credential
 
-**`field`** { claim: fields }  - @deprecated - use requestorFields instead
-
 #### Parameters
 
 | Name | Type |
@@ -62,7 +60,6 @@
 | `__namedParameters.claim` | `Object` |
 | `__namedParameters.claim.claimType` | `string` |
 | `__namedParameters.claim.claimTypeVersion` | `number` |
-| `__namedParameters.claim.fields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.claim.issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.claim.requestorFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
 | `__namedParameters.registrationTypes?` | [`RegistrationTypes`](../enums/RegistrationTypes.md)[] |
@@ -269,7 +266,7 @@ ___
 
 getUserClaims
 
-**`description`** get user claims
+**`description`** get published offchain claims
 
 #### Parameters
 

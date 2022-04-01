@@ -25,9 +25,15 @@ describe('Assets tests', () => {
     jest.clearAllMocks();
     await replenish(rootOwnerAddress);
     await setupENS(rootOwnerAddress);
-    const signerService = await fromPrivateKey(rootOwnerWallet.privateKey, rpcUrl);
+    const signerService = await fromPrivateKey(
+      rootOwnerWallet.privateKey,
+      rpcUrl
+    );
     const mockedCacheClient = new CacheClient(signerService);
-    assetsService = await AssetsService.create(signerService, mockedCacheClient);
+    assetsService = await AssetsService.create(
+      signerService,
+      mockedCacheClient
+    );
   });
 
   test('asset should be created', async () => {

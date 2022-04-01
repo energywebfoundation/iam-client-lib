@@ -1,8 +1,8 @@
 import { Wallet, providers } from 'ethers';
-import { AxiosError } from 'axios';
 import { KeyType } from '@ew-did-registry/keys';
 import { JWT } from '@ew-did-registry/jwt';
 import { ProxyOperator } from '@ew-did-registry/proxyidentity';
+
 import {
   addressOf,
   EwSigner,
@@ -37,8 +37,14 @@ import { ClaimData } from '../didRegistry/did.types';
 import { chainConfigs } from '../../config/chain.config';
 import { AssetsService } from '../assets/assets.service';
 
-const { JsonRpcProvider } = providers;
+import {
+  UpdateServicePoint,
+  UpdateDelegate,
+  UpdatePublicKey,
+} from './didRegistry.validation';
+import { getLogger } from '../../config/logger.config';
 
+const { JsonRpcProvider } = providers;
 export class DidRegistry {
   private _identityOwner: EwSigner;
   private _operator: Operator;
@@ -91,30 +97,6 @@ export class DidRegistry {
     this._setClaims();
   }
 
-  private async getDIDDocFull(did) {
-    if (did === this._signerService.did) {
-      return this._document;
-    } else {
-      const assetDID = (await this._assetsService.getOwnedAssets()).find(
-        (a) => a.document.id === did
-      )?.id;
-      if (!assetDID) {
-        throw new Error(
-          ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT
-        );
-      }
-
-      const { didRegistryAddress: didContractAddress } =
-        chainConfigs()[this._signerService.chainId];
-      const operator = new ProxyOperator(
-        this._identityOwner,
-        { address: didContractAddress },
-        addressOf(assetDID)
-      );
-      return new DIDDocumentFull(did, operator);
-    }
-  }
-
   async getDidDocument({
     did = this._did,
     includeClaims = true,
@@ -130,10 +112,8 @@ export class DidRegistry {
           service: didDoc.service as (IServiceEndpoint & ClaimData)[],
         };
       } catch (err) {
-        if ((err as AxiosError).response?.status === 401) {
-          throw err;
-        }
-        console.log(err);
+        getLogger().info(err);
+        throw err;
       }
     }
 
@@ -169,7 +149,7 @@ export class DidRegistry {
   async getDidPublicKeys({
     did = this._signerService.did,
   }): Promise<IPublicKey[]> {
-    return ( await this.getDidDocument({ did: did, includeClaims: false }))
+    return (await this.getDidDocument({ did: did, includeClaims: false }))
       .publicKey;
   }
 
@@ -256,6 +236,12 @@ export class DidRegistry {
     did?: string;
     validity?: number;
   }): Promise<boolean> {
+    this.validDateUpdateDocumentRequest({
+      didAttribute,
+      data,
+      did,
+    });
+
     const didDocument = await this.getDIDDocFull(did);
     const updateData: IUpdateData = {
       algo: KeyType.Secp256k1,
@@ -287,6 +273,11 @@ export class DidRegistry {
     tag: string;
     validity?: number;
   }): Promise<boolean> {
+    if (!publicKey)
+      throw new Error(
+        ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
+          'publicKey'
+      );
     const didDocument = await this.getDIDDocFull(did);
     const isDIdDocUpdated = await didDocument.updatePublicKey({
       publicKey,
@@ -316,6 +307,11 @@ export class DidRegistry {
     type: PubKeyType;
     validity?: number;
   }): Promise<boolean> {
+    if (!delegatePublicKey)
+      throw new Error(
+        ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
+          'delegatePublicKey'
+      );
     const didDocument = await this.getDIDDocFull(did);
     const isDIdDocUpdated = await didDocument.updateDelegate({
       delegatePublicKey,
@@ -355,6 +351,28 @@ export class DidRegistry {
 
   async decodeJWTToken({ token }: { token: string }) {
     return this._jwt.decode(token);
+  }
+
+  private async getDIDDocFull(did) {
+    if (did === this._signerService.did) {
+      return this._document;
+    } else {
+      const assetDID = (await this._assetsService.getOwnedAssets()).find(
+        (a) => a.document.id === did
+      )?.id;
+      if (!assetDID) {
+        throw new Error(ERROR_MESSAGES.CAN_NOT_UPDATE_NOT_CONTROLLED_DOCUMENT);
+      }
+
+      const { didRegistryAddress: didContractAddress } =
+        chainConfigs()[this._signerService.chainId];
+      const operator = new ProxyOperator(
+        this._identityOwner,
+        { address: didContractAddress },
+        addressOf(assetDID)
+      );
+      return new DIDDocumentFull(did, operator);
+    }
   }
 
   private async _setOperator() {
@@ -417,5 +435,40 @@ export class DidRegistry {
         } as IServiceEndpoint & ClaimData;
       })
     );
+  }
+
+  /**
+   * validates update document request
+   */
+  private validDateUpdateDocumentRequest({
+    didAttribute,
+    data,
+    did,
+  }: {
+    didAttribute: DIDAttribute;
+    data: IUpdateData;
+    did: string;
+  }) {
+    const rq = { didAttribute, data, did };
+    try {
+      switch (didAttribute) {
+        case DIDAttribute.ServicePoint:
+          UpdateServicePoint.check(rq);
+          break;
+        case DIDAttribute.Authenticate:
+          UpdateDelegate.check(rq);
+          break;
+        case DIDAttribute.PublicKey:
+          UpdatePublicKey.check(rq);
+          break;
+        default:
+          throw new Error('didAttribute invalida or missing');
+      }
+    } catch (e) {
+      throw new Error(
+        ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
+          (e as Error).message
+      );
+    }
   }
 }

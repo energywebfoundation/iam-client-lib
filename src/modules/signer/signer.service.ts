@@ -4,7 +4,10 @@ import WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { Methods } from '@ew-did-registry/did';
 import { ERROR_MESSAGES } from '../../errors/ErrorMessages';
 import { chainConfigs } from '../../config/chain.config';
-import { ExecutionEnvironment, executionEnvironment } from '../../utils/detectEnvironment';
+import {
+  ExecutionEnvironment,
+  executionEnvironment,
+} from '../../utils/detectEnvironment';
 import {
   IPubKeyAndIdentityToken,
   ProviderType,
@@ -15,8 +18,16 @@ import {
 } from './signer.types';
 import { EkcSigner } from './ekcSigner';
 import { computeAddress } from 'ethers/lib/utils';
+import { getLogger } from '../../config/logger.config';
 
-const { arrayify, keccak256, recoverPublicKey, getAddress, hashMessage, verifyMessage } = utils;
+const {
+  arrayify,
+  keccak256,
+  recoverPublicKey,
+  getAddress,
+  hashMessage,
+  verifyMessage,
+} = utils;
 export type ServiceInitializer = () => Promise<void>;
 export class SignerService {
   private _publicKey: string;
@@ -31,9 +42,13 @@ export class SignerService {
 
   private _servicesInitializers: ServiceInitializer[] = [];
 
-  private _walletEventListeners: { event: ProviderEvent; cb: () => void }[] = [];
+  private _walletEventListeners: { event: ProviderEvent; cb: () => void }[] =
+    [];
 
-  constructor(private _signer: Required<Signer>, private _providerType: ProviderType) {}
+  constructor(
+    private _signer: Required<Signer>,
+    private _providerType: ProviderType
+  ) {}
 
   async init() {
     if (executionEnvironment() === ExecutionEnvironment.BROWSER) {
@@ -119,7 +134,11 @@ export class SignerService {
   }
 
   get accountInfo(): AccountInfo {
-    return { account: this._account, chainId: this._chainId, chainName: this._chainDisplayName };
+    return {
+      account: this._account,
+      chainId: this._chainId,
+      chainName: this._chainDisplayName,
+    };
   }
 
   get provider() {
@@ -147,7 +166,12 @@ export class SignerService {
     data,
     value,
   }: providers.TransactionRequest): Promise<providers.TransactionReceipt> {
-    const tx = { to, from: this.address, data, ...(value && { value: BigNumber.from(value) }) };
+    const tx = {
+      to,
+      from: this.address,
+      data,
+      ...(value && { value: BigNumber.from(value) }),
+    };
     const receipt = await (await this._signer.sendTransaction(tx)).wait();
     return receipt;
   }
@@ -176,7 +200,9 @@ export class SignerService {
     if (this._isEthSigner === undefined) {
       throw new Error(ERROR_MESSAGES.IS_ETH_SIGNER_NOT_SET);
     }
-    const messageHash = this._isEthSigner ? message : arrayify(hashMessage(message));
+    const messageHash = this._isEthSigner
+      ? message
+      : arrayify(hashMessage(message));
     const sig = await this.signer.signMessage(messageHash);
     if (getAddress(this._address) !== getAddress(verifyMessage(message, sig))) {
       throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
@@ -198,7 +224,7 @@ export class SignerService {
         await this._signer.ekc.logout({ mode: 'popup' });
         return false;
       } catch (error) {
-        console.log('error in azure logout ', error);
+        getLogger().info(`error in azure logout ${(error as Error).message}`);
       }
     }
     return true;
@@ -243,7 +269,9 @@ export class SignerService {
     };
 
     const encodedPayload = base64url(JSON.stringify(payload));
-    const token = `0x${Buffer.from(`${encodedHeader}.${encodedPayload}`).toString('hex')}`;
+    const token = `0x${Buffer.from(
+      `${encodedHeader}.${encodedPayload}`
+    ).toString('hex')}`;
     // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
     // keccak256 hash is applied for Metamask to display a coherent hex value when signing
     const message = arrayify(keccak256(token));
@@ -263,6 +291,8 @@ export class SignerService {
       throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
     }
 
-    this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(sig)}`;
+    this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(
+      sig
+    )}`;
   }
 }

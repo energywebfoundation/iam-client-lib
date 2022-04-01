@@ -1,8 +1,8 @@
 import {
   DomainHierarchy,
   DomainReader,
-  DomainTransactionFactory,
-  IRoleDefinition,
+  DomainTransactionFactoryV2,
+  IRoleDefinitionV2,
   ResolverContractType,
 } from '@energyweb/iam-contracts';
 import { providers } from 'ethers';
@@ -12,6 +12,8 @@ import { isValidDID } from './did';
 import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factory';
 import { labelhash, namehash } from './ensHash';
 import { ChainId, chainConfigs } from '../config';
+import { castToV2 } from '..';
+import { getLogger } from '../config/logger.config';
 
 const { JsonRpcProvider } = providers;
 
@@ -19,12 +21,17 @@ const { JsonRpcProvider } = providers;
  * @description - Checks that role issuers of all roles under `rootDomain` contains method-specific-id and adds it if missing
  * `signer` must own `rootDomain` on `targetChain`
  */
-export const updateLegacyIssuers = async (
-  rootDomain: string,
-  signer: Signer,
-  chainId: ChainId,
-  dryRun = true
-) => {
+export const updateLegacyRoles = async ({
+  rootDomain,
+  signer,
+  chainId,
+  dryRun = true,
+}: {
+  rootDomain: string;
+  signer: Signer;
+  chainId: ChainId;
+  dryRun?: boolean;
+}) => {
   const {
     transactionFactory,
     chainName,
@@ -38,45 +45,47 @@ export const updateLegacyIssuers = async (
   const updated: Record<string, unknown>[] = [];
   const update = async (domain: string) => {
     const domainHash = namehash(domain);
-    const def = await domainReader.read({ node: domainHash });
-    let subnodes = await domainHierarchy.getSubdomainsUsingResolver({
+
+    const subnodes = await domainHierarchy.getSubdomainsUsingResolver({
       domain,
       mode: 'FIRSTLEVEL',
     });
-    if (
-      DomainReader.isOrgDefinition(def) ||
-      DomainReader.isAppDefinition(def)
-    ) {
-      subnodes = subnodes.concat(
-        await domainHierarchy.getSubdomainsUsingResolver({
-          domain: `roles.${domain}`,
-          mode: 'FIRSTLEVEL',
-        })
-      );
-    }
-    if (DomainReader.isOrgDefinition(def)) {
-      subnodes = subnodes.concat(
-        await domainHierarchy.getSubdomainsUsingResolver({
-          domain: `apps.${domain}`,
-          mode: 'FIRSTLEVEL',
-        })
-      );
-    }
 
     const resolver = await ensRegistry.resolver(domainHash);
     if (resolver !== ensResolverV2Address) {
+      let def;
+      try {
+        def = await domainReader.read({ node: domainHash });
+      } catch (e) {
+        getLogger().error(`Can not read ${domain}`); // 'apps' and 'roles'
+      }
+
+      // migrate `roles` and `apps`
+      if (def) {
+        if (
+          DomainReader.isOrgDefinition(def) ||
+          DomainReader.isAppDefinition(def)
+        ) {
+          subnodes.push(`roles.${domain}`);
+        }
+        if (DomainReader.isOrgDefinition(def)) {
+          subnodes.push(`apps.${domain}`);
+        }
+      }
+
       if (!dryRun) {
         await (
-          await ensRegistry.setResolver(domain, ensResolverV2Address)
+          await ensRegistry.setResolver(domainHash, ensResolverV2Address)
         ).wait();
       }
+      // migrate domain definition
       let updateDomainTx;
       if (DomainReader.isRoleDefinition(def)) {
         const {
           issuer: { did },
           version,
         } = def;
-        const updatedDef: IRoleDefinition = {
+        const updatedDef: IRoleDefinitionV2 = castToV2({
           ...def,
           issuer: {
             ...def.issuer,
@@ -89,7 +98,7 @@ export const updateLegacyIssuers = async (
             ),
           },
           version: parseInt(version.toString(), 10),
-        };
+        });
         updated.push({ domain, legacyDef: def, updatedDef });
         updateDomainTx = transactionFactory.newRole({
           domain,
@@ -176,8 +185,8 @@ export const initDomains = async (signer: Signer, chainId: ChainId) => {
       type: ResolverContractType.PublicResolver,
     });
 
-  const transactionFactory = new DomainTransactionFactory({
-    domainResolverAddress: ensResolverAddress,
+  const transactionFactory = new DomainTransactionFactoryV2({
+    domainResolverAddress: ensResolverV2Address,
   });
   const domainHierarchy = new DomainHierarchy({
     domainReader: domainReader,

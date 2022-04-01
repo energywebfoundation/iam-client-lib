@@ -1,5 +1,8 @@
 import inquirer from 'inquirer';
-import { changeResolver, ChangeResolverParams } from '../src/utils/changeResolver';
+import {
+  changeResolver,
+  ChangeResolverParams,
+} from '../src/utils/changeResolver';
 
 const askParams = async (): Promise<ChangeResolverParams> => {
   const questions = [
