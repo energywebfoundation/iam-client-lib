@@ -3,13 +3,13 @@ import detectMetamask from '@metamask/detect-provider';
 import { ERROR_MESSAGES } from '../../errors';
 import { ProviderType, ProviderEvent } from './signer.types';
 import { SignerService } from './signer.service';
+import { getLogger } from '../../config/logger.config';
 
 export const fromMetaMask = async (): Promise<SignerService> => {
   const provider = await createMetamaskProvider();
   const signer = new providers.Web3Provider(provider).getSigner();
-  console.log(
-    'metamask chain id:',
-    (await signer.provider.getNetwork()).chainId
+  getLogger().info(
+    `metamask chain id: ${(await signer.provider.getNetwork()).chainId}}`
   );
   const signerService = new SignerService(signer, ProviderType.MetaMask);
   provider.on(ProviderEvent.AccountChanged, () =>

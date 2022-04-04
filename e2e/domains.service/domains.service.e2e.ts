@@ -1,5 +1,8 @@
 import { utils, Wallet } from 'ethers';
-import { IRoleDefinition, PreconditionType } from '@energyweb/iam-contracts';
+import {
+  IRoleDefinition,
+  PreconditionType,
+} from '@energyweb/credential-governance';
 import { Methods, Chain } from '@ew-did-registry/did';
 import {
   DomainsService,
@@ -119,7 +122,7 @@ describe('Domains service', () => {
       const roleNode = namehash(roleDomain);
 
       const data: IRoleDefinition = {
-        fields: [],
+        requestorFields: [],
         issuerFields: [],
         issuer: {
           issuerType: 'DID',

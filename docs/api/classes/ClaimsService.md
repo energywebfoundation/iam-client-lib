@@ -266,7 +266,7 @@ ___
 
 getUserClaims
 
-**`description`** get user claims
+**`description`** get published offchain claims
 
 #### Parameters
 

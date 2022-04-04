@@ -4,7 +4,7 @@ import {
   DomainTransactionFactoryV2,
   IRoleDefinitionV2,
   ResolverContractType,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
 import { providers } from 'ethers';
 import { Methods } from '@ew-did-registry/did';
 import { Signer } from 'ethers';
@@ -13,6 +13,7 @@ import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factor
 import { labelhash, namehash } from './ensHash';
 import { ChainId, chainConfigs } from '../config';
 import { castToV2 } from '..';
+import { getLogger } from '../config/logger.config';
 
 const { JsonRpcProvider } = providers;
 
@@ -56,7 +57,7 @@ export const updateLegacyRoles = async ({
       try {
         def = await domainReader.read({ node: domainHash });
       } catch (e) {
-        console.error(`Can not read ${domain}`); // 'apps' and 'roles'
+        getLogger().error(`Can not read ${domain}`); // 'apps' and 'roles'
       }
 
       // migrate `roles` and `apps`

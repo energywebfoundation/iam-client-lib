@@ -1,3 +1,36 @@
+## [5.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.0...v5.0.0) (2022-04-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **claims:** backward compatible 'fields' props have been removed. Use 'requestorFields' instead
+
+### Features
+
+* add claim request origin to `Claim` interface ([0b5be66](https://github.com/energywebfoundation/iam-client-lib/commit/0b5be66172b0a66383cec60828238eb13085c7d8))
+* **claims:** remove deprecated 'fields' property ([c2e4018](https://github.com/energywebfoundation/iam-client-lib/commit/c2e401818212e6dcf2e9f2807c1e70f310e3ed4a))
+* **claimsService:** get published offchain claims ([f126882](https://github.com/energywebfoundation/iam-client-lib/commit/f126882ddf14951012162f4b283d9f23e5aca3d0))
+* **core:** custom logger ([4ef8f49](https://github.com/energywebfoundation/iam-client-lib/commit/4ef8f49ffdbd2a419e8d9544ce6ba1e68c59b393))
+* **did:** ts interface checker to validate did update request ([a0bfeeb](https://github.com/energywebfoundation/iam-client-lib/commit/a0bfeeb5a1e98537931e35e6cb24ca963c149007))
+
+
+### Bug Fixes
+
+* first level domains update ([c4d0c62](https://github.com/energywebfoundation/iam-client-lib/commit/c4d0c6229a4d1c60c4e134d4a53ffe3c9df4c7dc))
+
+## [5.0.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.9...v5.0.0-alpha.10) (2022-04-01)
+
+## [5.0.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.8...v5.0.0-alpha.9) (2022-03-31)
+
+## [5.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.7...v5.0.0-alpha.8) (2022-03-29)
+
+
+### Features
+
+* **core:** custom logger ([4ef8f49](https://github.com/energywebfoundation/iam-client-lib/commit/4ef8f49ffdbd2a419e8d9544ce6ba1e68c59b393))
+
+## [5.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.6...v5.0.0-alpha.7) (2022-03-22)
+
 ## [5.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.5...v5.0.0-alpha.6) (2022-03-18)
 
 ## [5.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0-alpha.4...v5.0.0-alpha.5) (2022-03-17)

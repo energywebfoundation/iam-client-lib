@@ -1,6 +1,6 @@
 {
   "name": "iam-client-lib",
-  "version": "5.0.0-alpha.6",
+  "version": "5.0.0",
   "description": "Library for Decentralized Identity and Access Management",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -92,7 +92,7 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/core": "7.17.7",
+    "@babel/core": "7.17.8",
     "@babel/plugin-transform-regenerator": "7.16.7",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "7.16.11",
@@ -115,7 +115,7 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^5.9.1",
     "@typescript-eslint/parser": "^5.9.1",
-    "@walletconnect/types": "1.7.5",
+    "@walletconnect/types": "1.7.7",
     "babel-jest": "26.6.3",
     "bili": "^5.0.5",
     "conventional-changelog-conventionalcommits": "^4.6.3",

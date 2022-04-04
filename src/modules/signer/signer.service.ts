@@ -19,6 +19,7 @@ import {
 } from './signer.types';
 import { EkcSigner } from './ekcSigner';
 import { computeAddress } from 'ethers/lib/utils';
+import { getLogger } from '../../config/logger.config';
 
 const {
   arrayify,
@@ -224,7 +225,7 @@ export class SignerService {
         await this._signer.ekc.logout({ mode: 'popup' });
         return false;
       } catch (error) {
-        console.log('error in azure logout ', error);
+        getLogger().info(`error in azure logout ${(error as Error).message}`);
       }
     }
     return true;
