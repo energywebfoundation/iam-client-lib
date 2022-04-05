@@ -45,6 +45,8 @@ Prerelease version
 npm i iam-client-lib@canary
 ```
 
+Some library dependencies require Node.js built-ins. Therefore when library is used in browser make sure they are polyfilled. If application is bundled with Webpack dependencies can be polyfilled with [node-polyfill-webpack-plugin](https://www.npmjs.com/package/node-polyfill-webpack-plugin)
+
 ### Initialization
 
 Because of dependencies between modules they should be initialized in right order.
