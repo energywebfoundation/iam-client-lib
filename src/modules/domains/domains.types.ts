@@ -1,10 +1,12 @@
 import {
+  EncodedCall,
   IAppDefinition,
   IOrganizationDefinition,
   IRevokerDefinition,
   IRoleDefinition,
   IRoleDefinitionV2,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
+import { providers } from 'ethers';
 
 export enum NamespaceType {
   Role = 'roles',
@@ -60,3 +62,11 @@ export function castToV2(
     return <IRoleDefinitionV2>roleDef;
   }
 }
+
+export type MulticallTx = {
+  tx: EncodedCall;
+  next: (opts?: {
+    retryCheck?: boolean;
+  }) => Promise<providers.TransactionReceipt | undefined>;
+  info: string;
+}[];

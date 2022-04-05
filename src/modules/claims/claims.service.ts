@@ -2,7 +2,10 @@
 import { utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
-import { IRoleDefinition, PreconditionType } from '@energyweb/iam-contracts';
+import {
+  IRoleDefinition,
+  PreconditionType,
+} from '@energyweb/credential-governance';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';

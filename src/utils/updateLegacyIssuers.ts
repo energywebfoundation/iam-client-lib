@@ -4,7 +4,7 @@ import {
   DomainTransactionFactoryV2,
   IRoleDefinitionV2,
   ResolverContractType,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
 import { providers } from 'ethers';
 import { Methods } from '@ew-did-registry/did';
 import { Signer } from 'ethers';

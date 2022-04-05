@@ -80,7 +80,7 @@ ___
 
 ### changeOrgOwnership
 
-▸ **changeOrgOwnership**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **changeOrgOwnership**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` ; `tx`: `EncodedCall` ; `next`: (`__namedParameters?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>  }[]\>
 
 changeOrgOwnership
 
@@ -98,7 +98,7 @@ changeOrgOwnership
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| { `info`: `string` ; `tx`: `EncodedCall` ; `next`: (`__namedParameters?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>  }[]\>
 
 return array of steps needed to change ownership
 

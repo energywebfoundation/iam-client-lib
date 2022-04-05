@@ -1,4 +1,4 @@
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import {
   IAppDefinition,
   IOrganizationDefinition,
@@ -10,7 +10,7 @@ import {
   DomainHierarchy,
   VOLTA_CHAIN_ID,
   DomainTransactionFactoryV2,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
 import { ENSRegistry } from '../../../ethers/ENSRegistry';
 import { ENSRegistry__factory } from '../../../ethers/factories/ENSRegistry__factory';
 import { chainConfigs } from '../../config/chain.config';
@@ -22,18 +22,16 @@ import {
   ERROR_MESSAGES,
 } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
-import { labelhash } from '../../utils/ensHash';
+import { labelhash, namehash } from '../../utils/ensHash';
 import { CacheClient } from '../cacheClient/cacheClient.service';
 import { RegistrationTypes } from '../claims/claims.types';
 import { SignerService } from '../signer/signer.service';
-import { NamespaceType, IOrganization } from './domains.types';
+import { NamespaceType, IOrganization, MulticallTx } from './domains.types';
 import { SearchType } from '../cacheClient/cacheClient.types';
 import { validateAddress } from '../../utils/address';
 import { UnregisteredResolverError } from '../../errors/UnregisteredResolverError';
 import { castToV2 } from './domains.types';
 import { getLogger } from '../../config/logger.config';
-
-const { namehash } = utils;
 
 export class DomainsService {
   private chainId: number;
@@ -367,7 +365,7 @@ export class DomainsService {
     newOwner: string;
     returnSteps?: boolean;
     withSubdomains?: boolean;
-  }) {
+  }): Promise<MulticallTx | undefined> {
     DomainsService.validateOwnerAddress(newOwner);
     const orgNamespaces = [
       `${NamespaceType.Role}.${namespace}`,
