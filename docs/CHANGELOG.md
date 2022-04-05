@@ -1,3 +1,10 @@
+## [5.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0...v5.1.0-alpha.1) (2022-04-05)
+
+
+### Features
+
+* **domains:** add MulticallTx type ([3be1e6f](https://github.com/energywebfoundation/iam-client-lib/commit/3be1e6fb7435d3fc6a76c3772c668f7fe4ee5eca))
+
 ## [5.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v4.2.0...v5.0.0) (2022-04-01)
 
 
