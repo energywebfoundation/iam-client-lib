@@ -63,7 +63,7 @@ const chainConfig: Record<number, ChainConfig> = {
     rpcUrl: 'https://rpc.energyweb.org/',
     ensRegistryAddress: EWC_ENS_REGISTRY_ADDRESS,
     ensResolverV2Address: EWC_RESOLVER_V2_ADDRESS,
-    ensResolverAddress: '',
+    ensResolverAddress: EWC_RESOLVER_V2_ADDRESS,
     ensPublicResolverAddress: EWC_PUBLIC_RESOLVER_ADDRESS,
     domainNotifierAddress: EWC_DOMAIN_NOTIFER_ADDRESS,
     assetManagerAddress: EWC_IDENTITY_MANAGER_ADDRESS,

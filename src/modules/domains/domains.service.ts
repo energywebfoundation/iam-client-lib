@@ -1,5 +1,4 @@
-import { BigNumber, utils } from 'ethers';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { BigNumber } from 'ethers';
 import {
   IAppDefinition,
   IOrganizationDefinition,
@@ -23,18 +22,16 @@ import {
   ERROR_MESSAGES,
 } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
-import { labelhash } from '../../utils/ensHash';
+import { labelhash, namehash } from '../../utils/ensHash';
 import { CacheClient } from '../cacheClient/cacheClient.service';
 import { RegistrationTypes } from '../claims/claims.types';
 import { SignerService } from '../signer/signer.service';
-import { NamespaceType, IOrganization } from './domains.types';
+import { NamespaceType, IOrganization, MulticallTx } from './domains.types';
 import { SearchType } from '../cacheClient/cacheClient.types';
 import { validateAddress } from '../../utils/address';
 import { UnregisteredResolverError } from '../../errors/UnregisteredResolverError';
 import { castToV2 } from './domains.types';
 import { getLogger } from '../../config/logger.config';
-
-const { namehash } = utils;
 
 export class DomainsService {
   private chainId: number;
@@ -368,18 +365,7 @@ export class DomainsService {
     newOwner: string;
     returnSteps?: boolean;
     withSubdomains?: boolean;
-  }): Promise<
-    | {
-        tx: EncodedCall;
-        next: ({
-          retryCheck,
-        }?: {
-          retryCheck?: boolean | undefined;
-        }) => Promise<TransactionReceipt | undefined>;
-        info: string;
-      }[]
-    | undefined
-  > {
+  }): Promise<MulticallTx | undefined> {
     DomainsService.validateOwnerAddress(newOwner);
     const orgNamespaces = [
       `${NamespaceType.Role}.${namespace}`,

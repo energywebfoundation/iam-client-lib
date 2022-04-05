@@ -43,4 +43,3 @@ export {
   IRoleDefinitionText,
   IRoleDefinitionV2,
 } from '@energyweb/credential-governance';
-export {} from '@energyweb/onchain-claims';
