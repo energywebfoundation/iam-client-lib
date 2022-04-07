@@ -1,7 +1,7 @@
 # Claims
-+ [Claim Interface](../api/interfaces/modules_claims_claims_types.Claim.md)
-+ [Claim Request Interface](../api/interfaces/modules_claims_claims_types.IClaimRequest.md)
-+ [Claim Issuance Interface](../api/interfaces/modules_claims_claims_types.IClaimIssuance.md)
++ [Claim Interface](../api/interfaces/Claim.md)
++ [Claim Request Interface](../api/interfaces/IClaimRequest.md)
++ [Claim Issuance Interface](../api/interfaces/IClaimIssuance.md)
 + [Claims Service API documentation](../api/classes/ClaimsService.md)
 
 ## Overview
@@ -56,7 +56,7 @@ Claim data is also persisted by the [IAM Cache Server](https://github.com/energy
 ### 1. Requesting Claims
 A claim request is created by the signer and submitted to the Role issuer(s) using the [createClaimRequest](../api/classes/ClaimsService.md#createclaimrequest) method. 
 
-The createClaimRequest method creates a claim request message (of type [IClaimRequest](../api/interfaces/modules_claims_claims_types.IClaimRequest.md)), and sends the message to the [IAM cache server](https://github.com/energywebfoundation/iam-cache-server/tree/master/src/modules/claim): 
+The createClaimRequest method creates a claim request message (of type [IClaimRequest](../api/interfaces/IClaimRequest.md)), and sends the message to the [IAM cache server](https://github.com/energywebfoundation/iam-cache-server/tree/master/src/modules/claim): 
 
 ```
 const message: IClaimRequest = {
@@ -92,7 +92,7 @@ See the Cache Server request handler [here](https://github.com/energywebfoundati
 If the subject's enrolment request is valid, the Issuer can approve and issue the claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
 
 #### Registering Claims on the Blockchain
-A claim request has an array of [RegistrationTypes]((../api/interfaces/modules_claims_claims_types.Claim.md#registrationtypes)). A claim can be registered:  
+A claim request has an array of [RegistrationTypes](../api/interfaces/Claim.md#registrationtypes). A claim can be registered:  
 
 1. On-Chain only
 2. Off-Chain only
@@ -239,7 +239,7 @@ The deleteClaimRequest method is used to delete a claim request:
 The claim is [deleted from the role claim repository in the Cache Server](https://github.com/energywebfoundation/iam-cache-server/blob/07a0053cd10ad16739cc331f043b18cc5dfc0dc4/src/modules/claim/claim.service.ts#L422). 
 
 ### Claim Interface
-Issued role claims are of type [Claim](../api/interfaces/modules_claims_claims_types.Claim.md)
+Issued role claims are of type [Claim](../api/interfaces/Claim.md)
 
 Example role claim:
 ```
@@ -282,7 +282,7 @@ The  UUID identifier for the claim
 
 + **registrationTypes**  
 
-The claim's [Registration Types]((../api/interfaces/modules_claims_claims_types.Claim.md#registrationtypes)), which can be On-Chain or Off-Chain, or both. These are explained in greater detail [above](#off-chain-registration). 
+The claim's [Registration Types]((../api/interfaces/Claim.md#registrationtypes)), which can be On-Chain or Off-Chain, or both. These are explained in greater detail [above](#off-chain-registration). 
 
 + **subjectAgreement**  
 
