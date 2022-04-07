@@ -26,6 +26,6 @@ Example of application
 
 ## Public APIs
 
--   [getAppsByOrgNamespace](../api/classes/iam.IAM.md#getappsbyorgnamespace)
--   [createApplication](../api/classes/iam.IAM.md#createapplication)
--   [deleteApplication](../api/classes/iam.IAM.md#deleteapplication)
+-   [getAppsByOrgNamespace](../api/classes/DomainsService.md#getAppsOfOrg)
+-   [createApplication](../api/classes/DomainsService.md#createApplication)
+-   [deleteApplication](../api/classes/DomainsService.md#deleteApplication)

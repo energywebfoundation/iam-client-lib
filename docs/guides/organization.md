@@ -32,6 +32,6 @@ Example of organization
 
 ## Public APIs:
 
--   [createOrganization](../api/classes/iam.IAM.md#createorganization)
--   [deleteOrganization](../api/classes/iam.IAM.md#deleteorganization)
--   [getOrgHierarchy](../api/classes/iam.IAM.md#getorghierarchy)
+-   [createOrganization](../api/classes/DomainsService.md#createorganization)
+-   [deleteOrganization](../api/classes/DomainsService.md#deleteorganization)
+-   [getOrgHierarchy](../api/classes/DomainsService.md#getorghierarchy)
