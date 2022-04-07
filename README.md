@@ -128,9 +128,10 @@ npm run build
 
 ## Active Maintainers
 
-* [Ahmed Ibrahim](https://github.com/ahmedolaibrahim)
 * [John Henderson](https://github.com/jrhender)
 * [Dmitry Fesenko](https://github.com/JGiter)
+* [Jakub Sydor](https://github.com/Harasz)
+* [Ashish Tripathi](https://github.com/nichonien)
 
 ## Contributing
 
