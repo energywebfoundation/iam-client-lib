@@ -55,11 +55,8 @@ This is achieved by accessing module initializer from initialization function of
 ```js
   const {
       signerService,
-      stakingService,
       messagingService,
       connectToCacheServer,
-      isSessionActive,
-      storeSession
   } = await initWithPrivateKeySigner(privateKey, rpcUrl)
 ```
 
@@ -75,12 +72,12 @@ setChainConfig(1111, {
     rpcUrl: 'http://some-rpc.com',
 })
 
-setMessagingOptions(1111, {
+setMessagingConfig(1111, {
     messagingMethod: MessagingMethod.Nats,
     natsServerUrl: 'https://some-exchange-server.com'
 })
 
-setCacheClientOptions(1111, {
+setCacheConfig(1111, {
     url: 'https://some-cache-server.com/',
     cacheServerSupportsAuth: true,
 })
