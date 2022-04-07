@@ -49,9 +49,9 @@ Example of role
 
 ## Public APIs:
 
--   [createRole](../api/classes/iam.IAM.md#createrole)
--   [setRoleDefinition](../api/classes/iam.IAM.md#setroledefinition)
--   [getRolesByNameSpace](../api/classes/iam.IAM.md#getrolesbynamespace)
--   [getRoleDIDs](../api/classes/iam.IAM.md#getroledids)
--   [changeRoleOwnership](../api/classes/iam.IAM.md#changeroleownership)
--   [deleteRole](../api/classes/iam.IAM.md#deleterole)
+-   [createRole](../api/classes/DomainsService.md#createrole)
+-   [setRoleDefinition](../api/classes/DomainsService.md#setroledefinition)
+-   [getRolesByNameSpace](../api/classes/DomainsService.md#getrolesbynamespace)
+-   [getRoleDIDs](../api/classes/DomainsService.md#getroledids)
+-   [changeRoleOwnership](../api/classes/DomainsService.md#changeroleownership)
+-   [deleteRole](../api/classes/DomainsService.md#deleterole)

@@ -2,7 +2,7 @@
 + [Claim Interface](../api/interfaces/modules_claims_claims_types.Claim.md)
 + [Claim Request Interface](../api/interfaces/modules_claims_claims_types.IClaimRequest.md)
 + [Claim Issuance Interface](../api/interfaces/modules_claims_claims_types.IClaimIssuance.md)
-+ [Claims Service API documentation](../api/classes/modules_claims_claims_service.ClaimsService.md)
++ [Claims Service API documentation](../api/classes/ClaimsService.md)
 
 ## Overview
 At the most fundamental level, a claim is a statement about a subject. A claim is a component of a Verifiable Credential, which is the web3 standard for digital credentials in a decentralized ecosystem.  
@@ -54,7 +54,7 @@ Depending on if the requester wants to register the claim On-Chain and/or Off-Ch
 Claim data is also persisted by the [IAM Cache Server](https://github.com/energywebfoundation/iam-cache-server/tree/master/src/modules/claim) in the Role Claim Repository. The IAM Client library's Claim Service methods post claim data to the Cache Server, where the data is persisted by the Cache Server's Claims Service methods. View the Cache Server's [Claim Service on GitHub](https://github.com/energywebfoundation/iam-cache-server/blob/master/src/modules/claim/claim.service.ts#L422). 
 
 ### 1. Requesting Claims
-A claim request is created by the signer and submitted to the Role issuer(s) using the [createClaimRequest](../api/classes/modules_claims_claims_service.ClaimsService.md#createclaimrequest) method. 
+A claim request is created by the signer and submitted to the Role issuer(s) using the [createClaimRequest](../api/classes/ClaimsService.md#createclaimrequest) method. 
 
 The createClaimRequest method creates a claim request message (of type [IClaimRequest](../api/interfaces/modules_claims_claims_types.IClaimRequest.md)), and sends the message to the [IAM cache server](https://github.com/energywebfoundation/iam-cache-server/tree/master/src/modules/claim): 
 
@@ -89,7 +89,7 @@ The IAM cache server then:
 See the Cache Server request handler [here](https://github.com/energywebfoundation/iam-cache-server/blob/07a0053cd10ad16739cc331f043b18cc5dfc0dc4/src/modules/claim/claim.controller.ts#L112). 
 
 ### 2. Issuing Claims
-If the subject's enrolment request is valid, the Issuer can approve and issue the claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
+If the subject's enrolment request is valid, the Issuer can approve and issue the claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
 
 #### Registering Claims on the Blockchain
 A claim request has an array of [RegistrationTypes]((../api/interfaces/modules_claims_claims_types.Claim.md#registrationtypes)). A claim can be registered:  
@@ -195,7 +195,7 @@ The registerOnChain method registers the role with the ClaimManager smart contra
 
 In the [ClaimManager contract's register method](https://github.com/energywebfoundation/iam-contracts/blob/83932a8fee56010482b50047ea5a20da37b758da/contracts/roles/ClaimManager.sol#L89), the claim data is added to the 'roles' mapping, and can then be accessed and read by other smart contracts on the blockchain. 
 
-**Note:** An issuer can directly issue a claim directly without a request. This is done through the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). **This method does not handle On-Chain registration**. 
+**Note:** An issuer can directly issue a claim directly without a request. This is done through the [issueClaim method](../api/classes/ClaimsService.md#issueclaim). **This method does not handle On-Chain registration**. 
 
 ### 3. Alternatives to Claim Issuance
 
@@ -397,16 +397,16 @@ Example of authentication token:
 
 ## Claims Service Public APIs
 
--   [getClaimsId](../api/classes/modules_claims_claims_service.ClaimsService.md#getclaimid)
--   [getClaimsByIssuer](../api/classes/modules_claims_claims_service.ClaimsService.md#getclaimsbyissuer)
--   [getClaimsByRequester](../api/classes/modules_claims_claims_service.ClaimsService.md#getclaimsbyrequester)
--   [getClaimsBySubject](../api/classes/modules_claims_claims_service.ClaimsService.md#getclaimsbysubject)
--   [getUserClaims](../api/classes/modules_claims_claims_service.ClaimsService.md#getuserclaims)
--   [issueClaimRequest](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaimrequest)
--   [issueClaim](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim)
--   [rejectClaimRequest](../api/classes/modules_claims_claims_service.ClaimsService.md#rejectclaimrequest)
--   [issuePublicClaim](../api/classes/modules_claims_claims_service.ClaimsService.md#issuepublicclaim)
--   [publishPublicClaim](../api/classes/modules_claims_claims_service.ClaimsService.md#publishpublicclaim)
--   [registerOnChain](../api/classes/modules_claims_claims_service.ClaimsService.md#registeronchain)
+-   [getClaimsId](../api/classes/ClaimsService.md#getclaimid)
+-   [getClaimsByIssuer](../api/classes/ClaimsService.md#getclaimsbyissuer)
+-   [getClaimsByRequester](../api/classes/ClaimsService.md#getclaimsbyrequester)
+-   [getClaimsBySubject](../api/classes/ClaimsService.md#getclaimsbysubject)
+-   [getUserClaims](../api/classes/ClaimsService.md#getuserclaims)
+-   [issueClaimRequest](../api/classes/ClaimsService.md#issueclaimrequest)
+-   [issueClaim](../api/classes/ClaimsService.md#issueclaim)
+-   [rejectClaimRequest](../api/classes/ClaimsService.md#rejectclaimrequest)
+-   [issuePublicClaim](../api/classes/ClaimsService.md#issuepublicclaim)
+-   [publishPublicClaim](../api/classes/ClaimsService.md#publishpublicclaim)
+-   [registerOnChain](../api/classes/ClaimsService.md#registeronchain)
 
-For detailed description of the enrolment flow process, see the [Claims Service end-to-end tests](https://github.com/energywebfoundation/iam-client-lib/blob/f9c1a12e888de6ebb4e2589fe49c489bee84af78/e2e/claims.service.e2e.ts). 
+For detailed description of the enrolment flow process, see the [Claims Service end-to-end tests](https://github.com/energywebfoundation/iam-client-lib/blob/master/e2e/claims.service.e2e.ts). 
