@@ -80,7 +80,7 @@ ___
 
 ### changeOrgOwnership
 
-▸ **changeOrgOwnership**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` ; `tx`: `EncodedCall` ; `next`: (`__namedParameters?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>  }[]\>
+▸ **changeOrgOwnership**(`__namedParameters`): `Promise`<`undefined` \| [`MulticallTx`](../modules.md#multicalltx)\>
 
 changeOrgOwnership
 
@@ -98,7 +98,7 @@ changeOrgOwnership
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` ; `tx`: `EncodedCall` ; `next`: (`__namedParameters?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>  }[]\>
+`Promise`<`undefined` \| [`MulticallTx`](../modules.md#multicalltx)\>
 
 return array of steps needed to change ownership
 

@@ -17,8 +17,9 @@ import { BigNumber, Wallet, providers } from 'ethers';
 import { Methods } from '@ew-did-registry/did';
 import { Signer } from 'ethers';
 import { isValidDID } from './did';
-import { namehash, labelhash } from './ensHash';
 import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factory';
+import { labelhash, namehash } from './ensHash';
+import { SignerT } from '../modules/signer';
 
 const { JsonRpcProvider } = providers;
 
@@ -33,7 +34,7 @@ export const updateLegacyDomains = async ({
   dryRun = true,
 }: {
   rootDomain: string;
-  signer: Signer;
+  signer: SignerT;
   chainId: ChainId;
   dryRun?: boolean;
 }) => {

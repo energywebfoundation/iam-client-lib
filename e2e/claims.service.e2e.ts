@@ -2,7 +2,7 @@ import { IRoleDefinition, PreconditionType } from '@energyweb/credential-governa
 import { Methods, Chain } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';
-import { ethers, providers, utils, Wallet } from 'ethers';
+import { providers, utils, Wallet } from 'ethers';
 import {
   AssetsService,
   ClaimsService,
@@ -16,6 +16,7 @@ import {
   DidRegistry,
   MessagingService,
   IClaimIssuance,
+  SignerT,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
@@ -163,8 +164,8 @@ describe('Enrollment claim tests', () => {
 
   describe('Enrollment tests', () => {
     async function enrolAndIssue(
-      requestSigner: Required<ethers.Signer>,
-      issueSigner: Required<ethers.Signer>,
+      requestSigner: Required<SignerT>,
+      issueSigner: Required<SignerT>,
       {
         subjectDID,
         claimType,
@@ -237,7 +238,7 @@ describe('Enrollment claim tests', () => {
     }
 
     async function issueWithoutRequest(
-      issueSigner: Required<ethers.Signer>,
+      issueSigner: Required<SignerT>,
       {
         subjectDID,
         claimType,

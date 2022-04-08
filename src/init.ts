@@ -22,6 +22,7 @@ import {
   defaultKmsServerUrl,
 } from './utils';
 import { chainConfigs } from './config';
+import { getVerifiableCredentialsService } from './modules/verifiable-credentials';
 
 export async function initWithPrivateKeySigner(
   privateKey: string,
@@ -61,6 +62,9 @@ export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
 
 export async function init(signerService: SignerService) {
   const messagingService = await MessagingService.create(signerService);
+  const verifiableCredentialsService = await getVerifiableCredentialsService(
+    signerService
+  );
 
   async function connectToCacheServer() {
     const chainId = signerService.chainId;
@@ -116,6 +120,7 @@ export async function init(signerService: SignerService) {
   return {
     signerService,
     messagingService,
+    verifiableCredentialsService,
     connectToCacheServer,
   };
 }

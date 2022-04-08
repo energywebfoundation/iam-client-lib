@@ -6,6 +6,10 @@
 
   ↳ **`EkcSigner`**
 
+## Implements
+
+- `TypedDataSigner`
+
 ## Table of contents
 
 ### Constructors
@@ -19,6 +23,7 @@
 
 ### Methods
 
+- [\_signTypedData](EkcSigner.md#_signtypeddata)
 - [connect](EkcSigner.md#connect)
 - [getAddress](EkcSigner.md#getaddress)
 - [signMessage](EkcSigner.md#signmessage)
@@ -58,6 +63,20 @@ ___
 Signer.provider
 
 ## Methods
+
+### \_signTypedData
+
+▸ **_signTypedData**(): `Promise`<`string`\>
+
+#### Returns
+
+`Promise`<`string`\>
+
+#### Implementation of
+
+TypedDataSigner.\_signTypedData
+
+___
 
 ### connect
 
