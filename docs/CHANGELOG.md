@@ -1,3 +1,11 @@
+## [5.1.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.3...v5.1.0-alpha.4) (2022-04-08)
+
+
+### Features
+
+* verifiable credential poc ([a7f8df7](https://github.com/energywebfoundation/iam-client-lib/commit/a7f8df759f1bae954b19ac80c526aa3608551079))
+* verifiable presentation poc ([a4732e3](https://github.com/energywebfoundation/iam-client-lib/commit/a4732e36ee9b4034a0986d0d99f550c4166eb98d))
+
 ## [5.1.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.2...v5.1.0-alpha.3) (2022-04-07)
 
 ## [5.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.1...v5.1.0-alpha.2) (2022-04-05)
