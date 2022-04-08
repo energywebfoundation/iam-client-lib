@@ -1,10 +1,11 @@
 import EKC from '@energyweb/ekc';
 import { TransactionRequest } from '@ethersproject/abstract-provider';
+import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Deferrable, resolveProperties } from '@ethersproject/properties';
 import { Signer, providers } from 'ethers';
 import { ERROR_MESSAGES } from '../../errors';
 
-export class EkcSigner extends Signer {
+export class EkcSigner extends Signer implements TypedDataSigner {
   public provider: providers.Provider;
   private _signer: Signer;
 
@@ -41,5 +42,9 @@ export class EkcSigner extends Signer {
 
   connect(provider: providers.Provider): Signer {
     return this._signer.connect(provider);
+  }
+
+  _signTypedData(): Promise<string> {
+    throw new Error(ERROR_MESSAGES.SIGN_TYPED_DATA_NOT_SUPPORTED);
   }
 }

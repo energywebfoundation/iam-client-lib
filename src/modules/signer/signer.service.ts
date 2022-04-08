@@ -1,6 +1,9 @@
-import { BigNumber, providers, utils, Wallet, ethers } from 'ethers';
-import { Signer } from '@ethersproject/abstract-signer';
+import { BigNumber, providers, utils, Wallet } from 'ethers';
 import base64url from 'base64url';
+import {
+  TypedDataDomain,
+  TypedDataField,
+} from '@ethersproject/abstract-signer';
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { Methods } from '@ew-did-registry/did';
 import { ERROR_MESSAGES } from '../../errors/ErrorMessages';
@@ -16,6 +19,7 @@ import {
   AccountInfo,
   PUBLIC_KEY,
   IS_ETH_SIGNER,
+  SignerT,
 } from './signer.types';
 import { EkcSigner } from './ekcSigner';
 import { computeAddress } from 'ethers/lib/utils';
@@ -47,7 +51,7 @@ export class SignerService {
     [];
 
   constructor(
-    private _signer: Required<Signer>,
+    private _signer: Required<SignerT>,
     private _providerType: ProviderType
   ) {}
 
@@ -162,6 +166,13 @@ export class SignerService {
     return `did:${Methods.Erc1056}:${this.chainName()}:${this._address}`;
   }
 
+  get didHex() {
+    const chainBn = BigNumber.from(this.chainId);
+    return `did:${
+      Methods.Erc1056
+    }:${chainBn.toHexString()}:${this._address.toLowerCase()}`;
+  }
+
   async send({
     to,
     data,
@@ -211,7 +222,28 @@ export class SignerService {
     return sig;
   }
 
-  async connect(signer: Required<ethers.Signer>, providerType: ProviderType) {
+  /**
+   * @description Tries to create conformant signature (https://eips.ethereum.org/EIPS/eip-712)
+   *
+   * @param domain
+   * @param types
+   * @param message
+   *
+   */
+  async signTypedData(
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    message: Record<string, unknown>
+  ) {
+    if (!this.signer?._signTypedData) {
+      throw new Error(ERROR_MESSAGES.SIGN_TYPED_DATA_NOT_SUPPORTED);
+    }
+
+    delete types['EIP712Domain'];
+    return await this.signer._signTypedData(domain, types, message);
+  }
+
+  async connect(signer: Required<SignerT>, providerType: ProviderType) {
     this._signer = signer;
     this._providerType = providerType;
     await this.init();

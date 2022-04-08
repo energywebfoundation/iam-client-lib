@@ -14,6 +14,7 @@ import { labelhash, namehash } from './ensHash';
 import { ChainId, chainConfigs } from '../config';
 import { castToV2 } from '..';
 import { getLogger } from '../config/logger.config';
+import { SignerT } from '../modules/signer';
 
 const { JsonRpcProvider } = providers;
 
@@ -28,7 +29,7 @@ export const updateLegacyRoles = async ({
   dryRun = true,
 }: {
   rootDomain: string;
-  signer: Signer;
+  signer: SignerT;
   chainId: ChainId;
   dryRun?: boolean;
 }) => {
