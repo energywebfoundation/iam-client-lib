@@ -104,7 +104,8 @@ export async function init(signerService: SignerService) {
         signerService,
         domainsService,
         cacheClient,
-        didRegistry
+        didRegistry,
+        verifiableCredentialsService
       );
       return { didRegistry, claimsService };
     }

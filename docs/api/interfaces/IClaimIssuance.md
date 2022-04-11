@@ -18,6 +18,7 @@
 - [issuedToken](IClaimIssuance.md#issuedtoken)
 - [onChainProof](IClaimIssuance.md#onchainproof)
 - [requester](IClaimIssuance.md#requester)
+- [vp](IClaimIssuance.md#vp)
 
 ## Properties
 
@@ -78,3 +79,9 @@ ___
 #### Inherited from
 
 [IMessage](IMessage.md).[requester](IMessage.md#requester)
+
+___
+
+### vp
+
+• `Optional` **vp**: `string`

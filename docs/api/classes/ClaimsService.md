@@ -33,7 +33,7 @@
 
 ### constructor
 
-• **new ClaimsService**(`_signerService`, `_domainsService`, `_cacheClient`, `_didRegistry`)
+• **new ClaimsService**(`_signerService`, `_domainsService`, `_cacheClient`, `_didRegistry`, `_verifiableCredentialService`)
 
 #### Parameters
 
@@ -43,6 +43,7 @@
 | `_domainsService` | [`DomainsService`](DomainsService.md) |
 | `_cacheClient` | [`CacheClient`](CacheClient.md) |
 | `_didRegistry` | [`DidRegistry`](DidRegistry.md) |
+| `_verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](VerifiableCredentialsServiceBase.md) |
 
 ## Methods
 
@@ -432,7 +433,7 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `domainsService`, `cacheClient`, `didRegistry`): `Promise`<[`ClaimsService`](ClaimsService.md)\>
+▸ `Static` **create**(`signerService`, `domainsService`, `cacheClient`, `didRegistry`, `verifiableCredentialService`): `Promise`<[`ClaimsService`](ClaimsService.md)\>
 
 #### Parameters
 
@@ -442,6 +443,7 @@ ___
 | `domainsService` | [`DomainsService`](DomainsService.md) |
 | `cacheClient` | [`CacheClient`](CacheClient.md) |
 | `didRegistry` | [`DidRegistry`](DidRegistry.md) |
+| `verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](VerifiableCredentialsServiceBase.md) |
 
 #### Returns
 
