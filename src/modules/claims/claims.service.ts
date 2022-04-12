@@ -39,6 +39,7 @@ import { compareDID, isValidDID } from '../../utils/did';
 import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
+import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
 
 const {
   id,
@@ -57,7 +58,8 @@ export class ClaimsService {
     private _signerService: SignerService,
     private _domainsService: DomainsService,
     private _cacheClient: CacheClient,
-    private _didRegistry: DidRegistry
+    private _didRegistry: DidRegistry,
+    private _verifiableCredentialService: VerifiableCredentialsServiceBase
   ) {
     this._signerService.onInit(this.init.bind(this));
   }
@@ -66,13 +68,15 @@ export class ClaimsService {
     signerService: SignerService,
     domainsService: DomainsService,
     cacheClient: CacheClient,
-    didRegistry: DidRegistry
+    didRegistry: DidRegistry,
+    verifiableCredentialService: VerifiableCredentialsServiceBase
   ) {
     const service = new ClaimsService(
       signerService,
       domainsService,
       cacheClient,
-      didRegistry
+      didRegistry,
+      verifiableCredentialService
     );
     await service.init();
     return service;
@@ -266,9 +270,9 @@ export class ClaimsService {
       acceptedBy: this._signerService.did,
     };
     const strippedClaimData = this.stripClaimData(claimData);
+    const { claimType: role, claimTypeVersion: version } = claimData;
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const { claimType: role, claimTypeVersion: version } = claimData;
       const expiry = defaultClaimExpiry;
       const onChainProof = await this.createOnChainProof(
         role,
@@ -296,12 +300,41 @@ export class ClaimsService {
           ...(issuerFields && { issuerFields }),
         },
       };
-      message.issuedToken = await this._didRegistry.issuePublicClaim({
-        publicClaim,
-      });
+      const [issuedToken, vp] = await Promise.all([
+        this._didRegistry.issuePublicClaim({
+          publicClaim,
+        }),
+        this.issueVerifiablePresentation({
+          subject: sub,
+          namespace: role,
+          version: version.toString(),
+          issuerFields,
+        }),
+      ]);
+      message.issuedToken = issuedToken;
+      message.vp = vp;
     }
 
     await this._cacheClient.issueClaim(this._signerService.did, message);
+  }
+
+  private async issueVerifiablePresentation(options: {
+    subject: string;
+    namespace: string;
+    version: string;
+    issuerFields?: { key: string; value: string | number }[];
+  }) {
+    const vc = await this._verifiableCredentialService.createRoleVC({
+      id: options.subject,
+      namespace: options.namespace,
+      version: options.version,
+      issuerFields: options.issuerFields,
+    });
+    const vp =
+      await this._verifiableCredentialService.createVerifiablePresentation([
+        vc,
+      ]);
+    return JSON.stringify(vp);
   }
 
   /**

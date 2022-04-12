@@ -1,4 +1,7 @@
-import { IRoleDefinition, PreconditionType } from '@energyweb/credential-governance';
+import {
+  IRoleDefinition,
+  PreconditionType,
+} from '@energyweb/credential-governance';
 import { Methods, Chain } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';
@@ -24,6 +27,7 @@ import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
 import { setLogger } from '../src/config/logger.config';
 import { ConsoleLogger, LogLevel } from '../src/utils/logger';
+import { VerifiablePresentation } from '@ew-did-registry/credentials-interface';
 
 const { namehash } = utils;
 
@@ -201,11 +205,34 @@ describe('Enrollment claim tests', () => {
         mockIssueClaim.mock.calls.pop()
       );
 
-      const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } =
-        issuedClaim;
+      const {
+        issuedToken,
+        requester,
+        claimIssuer,
+        onChainProof,
+        acceptedBy,
+        vp,
+      } = issuedClaim;
 
       if (registrationTypes.includes(RegistrationTypes.OffChain)) {
         expect(issuedToken).toBeDefined();
+        expect(vp).toBeDefined();
+
+        const vpObject = JSON.parse(vp) as VerifiablePresentation;
+
+        expect(vpObject.verifiableCredential).toHaveLength(1);
+        expect(vpObject.verifiableCredential[0].credentialSubject).toEqual({
+          id: subjectDID,
+          role: {
+            namespace: claimType,
+            version: version.toString(),
+          },
+          issuerFields,
+        });
+        expect(vpObject.verifiableCredential[0].issuer).toEqual(
+          signerService.didHex
+        );
+        expect(vpObject.holder).toEqual(signerService.didHex);
 
         const { claimData, signer, did } = (await didRegistry.decodeJWTToken({
           token: issuedToken,

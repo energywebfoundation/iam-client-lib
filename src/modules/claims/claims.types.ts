@@ -16,8 +16,8 @@ export interface IClaimIssuance extends IMessage {
   onChainProof?: string;
   claimType?: string;
   claimTypeVersion?: string;
-
   acceptedBy: string;
+  vp?: string;
 }
 
 export interface IClaimRejection extends IMessage {
