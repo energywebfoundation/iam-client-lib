@@ -1,3 +1,10 @@
+## [5.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.5...v5.1.0-alpha.6) (2022-04-12)
+
+
+### Features
+
+* **claim:** issue VC when approving role request ([a3eefbc](https://github.com/energywebfoundation/iam-client-lib/commit/a3eefbc243f39f5392f7918b1cdb4e782faf8001))
+
 ## [5.1.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.4...v5.1.0-alpha.5) (2022-04-12)
 
 
