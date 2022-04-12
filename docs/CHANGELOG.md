@@ -1,3 +1,10 @@
+## [5.1.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.4...v5.1.0-alpha.5) (2022-04-12)
+
+
+### Bug Fixes
+
+* **claim:** fix public claim publishing ([d77df34](https://github.com/energywebfoundation/iam-client-lib/commit/d77df340c4a1b204ee9fe23c2d71ea4b17074391))
+
 ## [5.1.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.3...v5.1.0-alpha.4) (2022-04-08)
 
 
