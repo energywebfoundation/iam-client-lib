@@ -521,16 +521,21 @@ export class ClaimsService {
     this.validatePublishPublicClaimRequest(registrationTypes, claim);
     let url: string | undefined = undefined;
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
+      if (!claim.claimType) {
+        throw new Error(ERROR_MESSAGES.CLAIM_TYPE_MISSING);
+      }
+
       const claims = await this.getClaimsBySubject({
         did: this._signerService.did,
-        namespace: claim.claimType,
+        namespace: this.getNamespaceFromClaimType(claim.claimType),
         isAccepted: true,
       });
-      if (claims.length < 1) {
+      const claimData = claims.find((c) => c.claimType === claim.claimType);
+
+      if (!claimData) {
         throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
       }
 
-      const claimData = claims[0];
       await this.registerOnchain({
         ...claimData,
         onChainProof: claimData.onChainProof as string,
@@ -808,6 +813,17 @@ export class ClaimsService {
     } else {
       throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
     }
+  }
+
+  /**
+   *
+   * @description get `namespace` from claim type.
+   * @returns namespace
+   * @param {string} claimType
+   *
+   */
+  getNamespaceFromClaimType(claimType: string) {
+    return claimType.split('.roles.')[1];
   }
 
   private stripClaimData(data: ClaimData): ClaimData {

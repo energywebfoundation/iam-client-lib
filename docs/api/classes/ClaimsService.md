@@ -19,6 +19,7 @@
 - [getClaimsByRequester](ClaimsService.md#getclaimsbyrequester)
 - [getClaimsBySubject](ClaimsService.md#getclaimsbysubject)
 - [getClaimsBySubjects](ClaimsService.md#getclaimsbysubjects)
+- [getNamespaceFromClaimType](ClaimsService.md#getnamespacefromclaimtype)
 - [getUserClaims](ClaimsService.md#getuserclaims)
 - [hasOnChainRole](ClaimsService.md#hasonchainrole)
 - [init](ClaimsService.md#init)
@@ -257,6 +258,26 @@ ___
 #### Returns
 
 `Promise`<[`Claim`](../interfaces/Claim.md)[]\>
+
+___
+
+### getNamespaceFromClaimType
+
+▸ **getNamespaceFromClaimType**(`claimType`): `string`
+
+**`description`** get `namespace` from claim type.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claimType` | `string` |
+
+#### Returns
+
+`string`
+
+namespace
 
 ___
 
