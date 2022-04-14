@@ -11,6 +11,7 @@ import {
   VpRequest,
   VpRequestQueryType,
   PresentationDefinition,
+  CredentialSubject,
 } from '@ew-did-registry/credentials-interface';
 import { SignerService } from '../signer';
 import {
@@ -137,6 +138,7 @@ export abstract class VerifiableCredentialsServiceBase {
   static async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     signerService: SignerService,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     storage: VCStorageClient
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
@@ -350,5 +352,15 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     return true;
+  }
+
+  public async storeCredential(
+    credentials: VerifiableCredential<CredentialSubject>[]
+  ) {
+    return this._storage.store(credentials);
+  }
+
+  public async getCredentials() {
+    return await this._storage.getAllCredentials();
   }
 }

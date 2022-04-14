@@ -91,7 +91,7 @@ export async function init(signerService: SignerService) {
 
     const verifiableCredentialsService = await getVerifiableCredentialsService(
       signerService,
-      new VCStorageClient(cacheClient)
+      new VCStorageClient(cacheClient, signerService)
     );
 
     async function connectToDidRegistry(

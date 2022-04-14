@@ -104,7 +104,7 @@ describe('Verifiable credentials tests', () => {
     await signerService.publicKeyAndIdentityToken();
     rootOwnerDid = signerService.didHex;
 
-    const storage = new VCStorageClient({} as CacheClient);
+    const storage = new VCStorageClient({} as CacheClient, signerService);
     verifiableCredentialsService = await getVerifiableCredentialsService(
       signerService,
       storage

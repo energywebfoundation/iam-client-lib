@@ -1,3 +1,4 @@
+import { VerifiablePresentation } from '@ew-did-registry/credentials-interface';
 import { utils } from 'ethers';
 import { IMessage } from '../messaging/messaging.types';
 
@@ -53,6 +54,7 @@ export interface Claim {
   isRejected?: boolean;
   namespace: string;
   redirectUri?: string;
+  vp?: VerifiablePresentation;
 }
 
 export const readyToBeRegisteredOnchain = (

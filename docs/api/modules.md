@@ -63,7 +63,14 @@
 - [ProofOptions](interfaces/ProofOptions.md)
 - [RoleCredentialSubject](interfaces/RoleCredentialSubject.md)
 - [RoleCredentialSubjectParams](interfaces/RoleCredentialSubjectParams.md)
+- [StoreVcResult](interfaces/StoreVcResult.md)
 - [VerifyVerifiableCredentialResults](interfaces/VerifyVerifiableCredentialResults.md)
+- [WebNodeQueryMessage](interfaces/WebNodeQueryMessage.md)
+- [WebNodeReply](interfaces/WebNodeReply.md)
+- [WebNodeRequestObject](interfaces/WebNodeRequestObject.md)
+- [WebNodeResponseObject](interfaces/WebNodeResponseObject.md)
+- [WebNodeStatus](interfaces/WebNodeStatus.md)
+- [WebNodeWriteMessage](interfaces/WebNodeWriteMessage.md)
 
 ### Type aliases
 
@@ -125,6 +132,7 @@
 - [initWithPrivateKeySigner](modules.md#initwithprivatekeysigner)
 - [initWithWalletConnect](modules.md#initwithwalletconnect)
 - [isMetamaskExtensionPresent](modules.md#ismetamaskextensionpresent)
+- [isRoleCredential](modules.md#isrolecredential)
 - [isValidDID](modules.md#isvaliddid)
 - [readyToBeRegisteredOnchain](modules.md#readytoberegisteredonchain)
 - [setCacheConfig](modules.md#setcacheconfig)
@@ -612,13 +620,14 @@ ___
 
 ### getVerifiableCredentialsService
 
-▸ **getVerifiableCredentialsService**(`signerService`): `Promise`<[`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)\>
+▸ **getVerifiableCredentialsService**(`signerService`, `storage`): `Promise`<[`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](classes/SignerService.md) |
+| `storage` | `default` |
 
 #### Returns
 
@@ -628,7 +637,7 @@ ___
 
 ### init
 
-▸ **init**(`signerService`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+▸ **init**(`signerService`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 #### Parameters
 
@@ -638,13 +647,13 @@ ___
 
 #### Returns
 
-`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 ___
 
 ### initWithEKC
 
-▸ **initWithEKC**(`proxyUrl?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+▸ **initWithEKC**(`proxyUrl?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 #### Parameters
 
@@ -654,13 +663,13 @@ ___
 
 #### Returns
 
-`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 ___
 
 ### initWithGnosis
 
-▸ **initWithGnosis**(`safeAppSdk`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+▸ **initWithGnosis**(`safeAppSdk`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 #### Parameters
 
@@ -670,13 +679,13 @@ ___
 
 #### Returns
 
-`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 ___
 
 ### initWithKms
 
-▸ **initWithKms**(`__namedParameters?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+▸ **initWithKms**(`__namedParameters?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 #### Parameters
 
@@ -688,23 +697,23 @@ ___
 
 #### Returns
 
-`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 ___
 
 ### initWithMetamask
 
-▸ **initWithMetamask**(): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+▸ **initWithMetamask**(): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 #### Returns
 
-`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 ___
 
 ### initWithPrivateKeySigner
 
-▸ **initWithPrivateKeySigner**(`privateKey`, `rpcUrl`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+▸ **initWithPrivateKeySigner**(`privateKey`, `rpcUrl`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 #### Parameters
 
@@ -715,13 +724,13 @@ ___
 
 #### Returns
 
-`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 ___
 
 ### initWithWalletConnect
 
-▸ **initWithWalletConnect**(`bridge?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+▸ **initWithWalletConnect**(`bridge?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 #### Parameters
 
@@ -731,7 +740,7 @@ ___
 
 #### Returns
 
-`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\>
+`Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](classes/AssetsService.md) ; `cacheClient`: [`CacheClient`](classes/CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](classes/ClaimsService.md) ; `didRegistry`: [`DidRegistry`](classes/DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](classes/DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](classes/StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](classes/VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](classes/MessagingService.md) ; `signerService`: [`SignerService`](classes/SignerService.md)  }\>
 
 ___
 
@@ -742,6 +751,22 @@ ___
 #### Returns
 
 `Promise`<{ `chainId`: `undefined` \| `number` ; `isMetamaskPresent`: `boolean` = !!provider }\>
+
+___
+
+### isRoleCredential
+
+▸ **isRoleCredential**(`credential`): credential is VerifiableCredential<RoleCredentialSubject\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `credential` | `VerifiableCredential`<`ICredentialSubject`\> |
+
+#### Returns
+
+credential is VerifiableCredential<RoleCredentialSubject\>
 
 ___
 
