@@ -1,16 +1,36 @@
 import { Wallet } from 'ethers';
+import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import {
   exampleExternalVCWithInvalidSubjectId,
   validExampleExternalVC,
 } from './fixtures';
 import { replenish, rpcUrl, setupENS } from './utils/setup_contracts';
-import { fromPrivateKey } from '../src';
+import { CacheClient, fromPrivateKey } from '../src';
 import {
   getVerifiableCredentialsService,
   IssuerFields,
   VerifiableCredentialsServiceBase,
 } from '../src/modules/verifiable-credentials';
+import {
+  VC_API_EXCHANGE,
+  VpRequest,
+  VpRequestInteractServiceType,
+  VpRequestQueryType,
+} from '@ew-did-registry/credentials-interface';
+import VCStorageClient from '../src/modules/verifiable-credentials/storage-client';
+
+jest.mock('axios');
+const mockGetCredentialsByDefinition = jest.fn();
+const mockStoreCredentials = jest.fn();
+jest.mock('../src/modules/verifiable-credentials/storage-client', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getCredentialsByPresentationDefinition: mockGetCredentialsByDefinition,
+      store: mockStoreCredentials,
+    };
+  });
+});
 
 describe('Verifiable credentials tests', () => {
   let verifiableCredentialsService: VerifiableCredentialsServiceBase;
@@ -18,15 +38,59 @@ describe('Verifiable credentials tests', () => {
   const rootOwnerWallet = Wallet.createRandom();
   const rootOwnerAddress = rootOwnerWallet.address;
 
+  const namespace = 'test.iam.ewc';
   const createExampleSignedCredential = async (
     issuerFields: IssuerFields[]
   ) => {
     return await verifiableCredentialsService.createRoleVC({
       id: rootOwnerDid,
-      namespace: 'test.iam.ewc',
+      namespace,
       version: '1',
       issuerFields,
     });
+  };
+
+  const vpRequest: VpRequest = {
+    query: [
+      {
+        type: VpRequestQueryType.presentationDefinition,
+        credentialQuery: [
+          {
+            presentationDefinition: {
+              id: '286bc1e0-f1bd-488a-a873-8d71be3c690e',
+              input_descriptors: [
+                {
+                  id: 'energy_supplier_customer_contract',
+                  name: 'Energy Supplier Customer Contract',
+                  purpose:
+                    'An energy supplier contract is needed for Rebeam authorization',
+                  constraints: {
+                    fields: [
+                      {
+                        path: ['$.credentialSubject.role.namespace'],
+                        filter: {
+                          type: 'string',
+                          const: namespace,
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+    interact: {
+      service: [
+        {
+          serviceEndpoint: '',
+          type: VpRequestInteractServiceType.unmediatedPresentation,
+        },
+      ],
+    },
+    challenge: '',
   };
 
   beforeEach(async () => {
@@ -37,12 +101,13 @@ describe('Verifiable credentials tests', () => {
       rootOwnerWallet.privateKey,
       rpcUrl
     );
-
     await signerService.publicKeyAndIdentityToken();
-
     rootOwnerDid = signerService.didHex;
+
+    const storage = new VCStorageClient({} as CacheClient);
     verifiableCredentialsService = await getVerifiableCredentialsService(
-      signerService
+      signerService,
+      storage
     );
   });
 
@@ -218,6 +283,31 @@ describe('Verifiable credentials tests', () => {
           'Verifiable Credential or Presentation is invalid'
         ),
       });
+    });
+  });
+
+  describe('Verifiable credentials exchange', () => {
+    const exchangeUrl = 'exchange url with exchange id';
+
+    test('initiateExchange() should return presentation matching presentation request', async () => {
+      const vc = await createExampleSignedCredential([]);
+      (axios as jest.Mocked<typeof axios>).post.mockImplementationOnce(
+        (url) => {
+          return Promise.resolve({
+            data: url === exchangeUrl ? vpRequest : '',
+          });
+        }
+      );
+      mockGetCredentialsByDefinition.mockImplementationOnce((vpDefinition) =>
+        Promise.resolve(
+          vpDefinition === vpRequest.query[0].credentialQuery[0] ? [vc] : []
+        )
+      );
+      const { vp } = await verifiableCredentialsService.initiateExchange({
+        type: VC_API_EXCHANGE,
+        url: exchangeUrl,
+      });
+      expect(vp.verifiableCredential).toHaveLength(1);
     });
   });
 });

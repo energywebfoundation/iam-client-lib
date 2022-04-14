@@ -1,10 +1,16 @@
 import { ICredentialSubject, PEX } from '@sphereon/pex';
 import { v4 as uuid } from 'uuid';
+import axios from 'axios';
 import {
   VerifiableCredential,
   VerifiablePresentation,
   Credential,
   Presentation,
+  ExchangeInvitation,
+  VC_API_EXCHANGE,
+  VpRequest,
+  VpRequestQueryType,
+  PresentationDefinition,
 } from '@ew-did-registry/credentials-interface';
 import { SignerService } from '../signer';
 import {
@@ -16,7 +22,9 @@ import {
   verifiableCredentialEIP712Types,
   verifiablePresentationEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
+  isRoleCredential,
 } from './types';
+import VCStorageClient from './storage-client';
 
 export abstract class VerifiableCredentialsServiceBase {
   /**
@@ -93,12 +101,43 @@ export abstract class VerifiableCredentialsServiceBase {
     proof_options: string
   ): Promise<string>;
 
-  constructor(protected readonly _signerService: SignerService) {}
+  constructor(
+    protected readonly _signerService: SignerService,
+    private readonly _storage: VCStorageClient
+  ) {}
+
+  /**
+   * @description The type of the exchange. Only vc-api exchanges currently supported.
+   * @returns credentials query with matching verifiable presentations
+   */
+  async initiateExchange({ type, url }: ExchangeInvitation) {
+    if (type !== VC_API_EXCHANGE) {
+      throw new Error('Only VC-API exchange is supported');
+    }
+
+    const { data: vpRequest } = await axios.post<VpRequest>(url);
+    const presentationDefinitions = vpRequest.query.find(
+      (q) => q.type === VpRequestQueryType.presentationDefinition
+    )?.credentialQuery as PresentationDefinition[];
+
+    const vc: VerifiableCredential<RoleCredentialSubject>[] = (
+      await Promise.all(
+        presentationDefinitions.map((def) =>
+          this._storage.getCredentialsByPresentationDefinition(def)
+        )
+      )
+    )
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(isRoleCredential);
+    const vp = await this.createVerifiablePresentation(vc);
+    return { vp, vpRequest };
+  }
 
   // * Should be overridden by the implementation
   static async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    signerService: SignerService
+    signerService: SignerService,
+    storage: VCStorageClient
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
