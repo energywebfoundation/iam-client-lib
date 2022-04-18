@@ -1,16 +1,16 @@
 site_name: IAM Client Library
 nav:
-  - Home: index.md
-  - "Introduction":
-      - "Overview": intro/overview.md
-      - "Architecture": intro/architecture.md
-      - "Domain Hierarchy": intro/domainhierarchy.md
-  - "Guides":
-      - "Initialization": guides/initialization.md
-      - "Application": guides/application.md
-      - "Asset": guides/asset.md
-      - "Organization": guides/organization.md
-      - "Claims": guides/claim.md
+  - index.md
+  - 'Introduction':
+      - 'Overview': intro/overview.md
+      - 'Architecture': intro/architecture.md
+      - 'Domain Hierarchy': intro/domainhierarchy.md
+  - 'Guides':
+      - 'Initialization': guides/initialization.md
+      - 'Application': guides/application.md
+      - 'Asset': guides/asset.md
+      - 'Organization': guides/organization.md
+      - 'Claims': guides/claim.md
   - API: api/modules.md
   - CHANGELOG: CHANGELOG.md
 theme:
