@@ -1,6 +1,6 @@
 site_name: IAM Client Library
 nav:
-  - index.md
+  - 'Quick start': 'Quick_start.md'
   - 'Introduction':
       - 'Overview': intro/overview.md
       - 'Architecture': intro/architecture.md
