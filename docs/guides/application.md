@@ -1,9 +1,9 @@
 # Application
 
-[Application Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IApp.md
+[Application Interface](../api/interfaces/IApp.md)
 
 **Application** represents service provided by parent organization. The only domain type contained by application is Role.
-Application domain is described by [IApplication](../docs/interfaces/IApplication.md).
+Application domain is described by [IApplication](../api/interfaces/IApp.md).
 Example of application
 
 ```

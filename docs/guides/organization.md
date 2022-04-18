@@ -1,6 +1,6 @@
 # Organization
 
-[Organization Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IOrganization.md)
+[Organization Interface](../api/interfaces/IOrganization.md)
 
 **Organization** is basic type in EnergyWeb domains tree. Its main purpose is to be a root that can group other domains, such as apps and roles.
 All other domains such as applications and roles should have parent organization.

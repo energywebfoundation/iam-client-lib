@@ -89,10 +89,10 @@ The IAM cache server then:
 See the Cache Server request handler [here](https://github.com/energywebfoundation/iam-cache-server/blob/07a0053cd10ad16739cc331f043b18cc5dfc0dc4/src/modules/claim/claim.controller.ts#L112). 
 
 ### 2. Issuing Claims
-If the subject's enrolment request is valid, the Issuer can approve and issue the claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/modules_claims_claims_service.ClaimsService.md#issueclaim). 
+If the subject's enrolment request is valid, the Issuer can approve and issue the claim to the subject. If the claim has been requested by the signer, this is done by the [issueClaimRequest method](../api/classes/ClaimsService.md#issueclaimrequest). If a claim is being directly issued without having been requested, this is done by the [issueClaim method](../api/classes/ClaimsService.md#issueclaim). 
 
 #### Registering Claims on the Blockchain
-A claim request has an array of [RegistrationTypes](../api/interfaces/Claim.md#registrationtypes). A claim can be registered:  
+A claim request has an array of [RegistrationTypes](../api/enums/RegistrationTypes.md). A claim can be registered:  
 
 1. On-Chain only
 2. Off-Chain only
@@ -282,7 +282,7 @@ The  UUID identifier for the claim
 
 + **registrationTypes**  
 
-The claim's [Registration Types]((../api/interfaces/Claim.md#registrationtypes)), which can be On-Chain or Off-Chain, or both. These are explained in greater detail [above](#off-chain-registration). 
+The claim's [Registration Types](../api/enums/RegistrationTypes.md), which can be On-Chain or Off-Chain, or both. These are explained in greater detail [above](#off-chain-registration). 
 
 + **subjectAgreement**  
 

@@ -1,6 +1,6 @@
 # Roles
 
-[Role Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IRole.md)
+[Role Interface](../api/interfaces/IRole.md)
 
 **Role** is leaf in EnergyWeb domains tree. Its main purpose is to distribute responsibilities
 and permissions in some domain. As part of its definition, role determines the permissions of its
