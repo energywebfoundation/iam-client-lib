@@ -4,5 +4,6 @@
   "disableSources": true,
   "excludePrivate": true,
   "excludeProtected": true,
-  "excludeExternals": true
+  "excludeExternals": true,
+  "cleanOutputDir": true
 }
