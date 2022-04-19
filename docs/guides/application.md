@@ -1,9 +1,9 @@
 # Application
 
-[Application Interface](../api/interfaces/IApp.md)
+[Application Interface](../api/interfaces/modules_domains.IApp.md)
 
 **Application** represents service provided by parent organization. The only domain type contained by application is Role.
-Application domain is described by [IApplication](../api/interfaces/IApp.md).
+Application domain is described by [IApplication](../api/interfaces/modules_domains.IApp.md).
 Example of application
 
 ```
@@ -26,6 +26,6 @@ Example of application
 
 ## Public APIs
 
--   [getAppsByOrgNamespace](../api/classes/DomainsService.md#getAppsOfOrg)
--   [createApplication](../api/classes/DomainsService.md#createApplication)
--   [deleteApplication](../api/classes/DomainsService.md#deleteApplication)
+-   [getAppsByOrgNamespace](../api/classes/modules_domains.DomainsService.md#getAppsOfOrg)
+-   [createApplication](../api/classes/modules_domains.DomainsService.md#createApplication)
+-   [deleteApplication](../api/classes/modules_domains.DomainsService.md#deleteApplication)
