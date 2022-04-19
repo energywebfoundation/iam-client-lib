@@ -14,7 +14,7 @@ import { OfferableIdentity__factory } from '../../ethers/factories/OfferableIden
 import { ClaimManager__factory } from '../../ethers/factories/ClaimManager__factory';
 import { ClaimManager } from '../../ethers/ClaimManager';
 import { setChainConfig } from '../../src/config/chain.config';
-import { labelhash } from '../../src/utils/ensHash';
+import { labelhash } from '../../src/utils/ens-hash';
 import { RoleDefinitionResolverV2 } from '../../ethers/RoleDefinitionResolverV2';
 
 const { JsonRpcProvider } = providers;

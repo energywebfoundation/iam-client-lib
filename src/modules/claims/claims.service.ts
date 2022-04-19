@@ -18,7 +18,7 @@ import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__f
 import { ERROR_MESSAGES } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
 import { canonizeSig } from '../../utils/enrollment';
-import { CacheClient } from '../cacheClient/cacheClient.service';
+import { CacheClient } from '../cache-client/cache-client.service';
 import { DomainsService } from '../domains/domains.service';
 import { NamespaceType } from '../domains/domains.types';
 import { SignerService } from '../signer/signer.service';
@@ -33,8 +33,8 @@ import {
   proof_type_hash,
   typedMsgPrefix,
 } from './claims.types';
-import { DidRegistry } from '../didRegistry/didRegistry.service';
-import { ClaimData } from '../didRegistry/did.types';
+import { DidRegistry } from '../did-registry/did-registry.service';
+import { ClaimData } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
 import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';

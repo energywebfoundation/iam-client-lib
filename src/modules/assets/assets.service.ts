@@ -4,8 +4,8 @@ import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { IdentityManager__factory } from '../../../ethers/factories/IdentityManager__factory';
 import { OfferableIdentity__factory } from '../../../ethers/factories/OfferableIdentity__factory';
 import { ChainConfig, chainConfigs } from '../../config/chain.config';
-import { CacheClient } from '../cacheClient/cacheClient.service';
-import { Order } from '../cacheClient/cacheClient.types';
+import { CacheClient } from '../cache-client/cache-client.service';
+import { Order } from '../cache-client/cache-client.types';
 import { SignerService } from '../signer/signer.service';
 import { AssetHistoryEventType } from './assets.types';
 

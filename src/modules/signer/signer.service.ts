@@ -6,12 +6,12 @@ import {
 } from '@ethersproject/abstract-signer';
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { Methods } from '@ew-did-registry/did';
-import { ERROR_MESSAGES } from '../../errors/ErrorMessages';
+import { ERROR_MESSAGES } from '../../errors/error-messages';
 import { chainConfigs } from '../../config/chain.config';
 import {
   ExecutionEnvironment,
   executionEnvironment,
-} from '../../utils/detectEnvironment';
+} from '../../utils/detect-environment';
 import {
   IPubKeyAndIdentityToken,
   ProviderType,
@@ -21,7 +21,7 @@ import {
   IS_ETH_SIGNER,
   SignerT,
 } from './signer.types';
-import { EkcSigner } from './ekcSigner';
+import { EkcSigner } from './ekc.signer';
 import { computeAddress } from 'ethers/lib/utils';
 import { getLogger } from '../../config/logger.config';
 

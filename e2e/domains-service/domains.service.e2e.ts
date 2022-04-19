@@ -13,12 +13,12 @@ import {
   RegistrationTypes,
   SignerService,
 } from '../../src';
-import { replenish, root, rpcUrl, setupENS } from '../utils/setup_contracts';
+import { replenish, root, rpcUrl, setupENS } from '../utils/setup-contracts';
 
 const { namehash } = utils;
 
 const mockGetRoleDefinition = jest.fn();
-jest.mock('../../src/modules/cacheClient/cacheClient.service', () => {
+jest.mock('../../src/modules/cache-client/cache-client.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
       return {

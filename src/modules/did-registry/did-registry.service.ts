@@ -32,8 +32,8 @@ import {
 } from '@ew-did-registry/claims';
 import { SignerService } from '../signer/signer.service';
 import { ERROR_MESSAGES } from '../../errors';
-import { CacheClient } from '../cacheClient/cacheClient.service';
-import { ClaimData } from '../didRegistry/did.types';
+import { CacheClient } from '../cache-client/cache-client.service';
+import { ClaimData } from './did.types';
 import { chainConfigs } from '../../config/chain.config';
 import { AssetsService } from '../assets/assets.service';
 
@@ -41,7 +41,7 @@ import {
   UpdateServicePoint,
   UpdateDelegate,
   UpdatePublicKey,
-} from './didRegistry.validation';
+} from './did-registry.validation';
 import { getLogger } from '../../config/logger.config';
 
 const { JsonRpcProvider } = providers;
