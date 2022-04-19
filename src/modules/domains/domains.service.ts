@@ -22,14 +22,14 @@ import {
   ERROR_MESSAGES,
 } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
-import { labelhash, namehash } from '../../utils/ensHash';
-import { CacheClient } from '../cacheClient/cacheClient.service';
+import { labelhash, namehash } from '../../utils/ens-hash';
+import { CacheClient } from '../cache-client/cache-client.service';
 import { RegistrationTypes } from '../claims/claims.types';
 import { SignerService } from '../signer/signer.service';
 import { NamespaceType, IOrganization, MulticallTx } from './domains.types';
-import { SearchType } from '../cacheClient/cacheClient.types';
+import { SearchType } from '../cache-client/cache-client.types';
 import { validateAddress } from '../../utils/address';
-import { UnregisteredResolverError } from '../../errors/UnregisteredResolverError';
+import { UnregisteredResolverError } from '../../errors/unregistered-resolver.error';
 import { castToV2 } from './domains.types';
 import { getLogger } from '../../config/logger.config';
 

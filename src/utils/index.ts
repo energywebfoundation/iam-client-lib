@@ -1,3 +1,3 @@
 export * from './constants';
-export * from './detectEnvironment';
+export * from './detect-environment';
 export * from './did';

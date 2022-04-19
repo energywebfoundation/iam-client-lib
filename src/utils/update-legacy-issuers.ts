@@ -10,7 +10,7 @@ import { Methods } from '@ew-did-registry/did';
 import { Signer } from 'ethers';
 import { isValidDID } from './did';
 import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factory';
-import { labelhash, namehash } from './ensHash';
+import { labelhash, namehash } from './ens-hash';
 import { ChainId, chainConfigs } from '../config';
 import { castToV2 } from '..';
 import { getLogger } from '../config/logger.config';

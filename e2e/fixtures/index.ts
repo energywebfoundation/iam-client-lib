@@ -1,1 +1,1 @@
-export * from './externalVC';
+export * from './external-vc';

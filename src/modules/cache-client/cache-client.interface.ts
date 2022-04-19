@@ -10,7 +10,7 @@ import {
   IClaimRequest,
 } from '../claims/claims.types';
 import { IPubKeyAndIdentityToken } from '../signer/signer.types';
-import { AssetsFilter, ClaimsFilter } from './cacheClient.types';
+import { AssetsFilter, ClaimsFilter } from './cache-client.types';
 import { Asset, AssetHistory } from '../assets/assets.types';
 import { IApp, IOrganization, IRole } from '../domains/domains.types';
 import { Claim } from '../claims/claims.types';

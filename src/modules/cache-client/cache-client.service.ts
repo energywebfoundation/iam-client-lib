@@ -14,16 +14,16 @@ import { Asset } from '../assets/assets.types';
 import {
   executionEnvironment,
   ExecutionEnvironment,
-} from '../../utils/detectEnvironment';
+} from '../../utils/detect-environment';
 import { SignerService } from '../signer/signer.service';
 import { IPubKeyAndIdentityToken } from '../signer/signer.types';
 import { cacheConfigs } from '../../config/cache.config';
-import { ICacheClient } from './ICacheClient';
+import { ICacheClient } from './cache-client.interface';
 import {
   AssetsFilter,
   ClaimsFilter,
   TEST_LOGIN_ENDPOINT,
-} from './cacheClient.types';
+} from './cache-client.types';
 import { SearchType } from '.';
 
 export class CacheClient implements ICacheClient {

@@ -1,11 +1,11 @@
 import { Wallet } from 'ethers';
 import { ethAddrPattern } from '@ew-did-registry/did';
-import { replenish, rpcUrl, setupENS } from './utils/setup_contracts';
+import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
 import { AssetsService, CacheClient, fromPrivateKey } from '../src';
 
 const mockGetAssetById = jest.fn();
 const mockGetOwnedAssets = jest.fn();
-jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
+jest.mock('../src/modules/cache-client/cache-client.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
       return {
