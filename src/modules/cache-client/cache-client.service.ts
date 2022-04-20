@@ -63,15 +63,18 @@ export class CacheClient implements ICacheClient {
    */
   async authenticate() {
     try {
-      const { refreshToken, token } = await this.refreshToken();
-      if (!this.isBrowser) {
-        this.httpClient.defaults.headers.common[
-          'Authorization'
-        ] = `Bearer ${token}`;
-      }
-      if (await this.isAuthenticated()) {
-        this.refresh_token = refreshToken;
-        return;
+      const refreshedTokens = await this.refreshToken();
+
+      if (refreshedTokens) {
+        if (!this.isBrowser) {
+          this.httpClient.defaults.headers.common[
+            'Authorization'
+          ] = `Bearer ${refreshedTokens.token}`;
+        }
+        if (await this.isAuthenticated()) {
+          this.refresh_token = refreshedTokens.refreshToken;
+          return;
+        }
       }
     } catch {
       // Ignore errors
@@ -384,10 +387,15 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
-  private async refreshToken(): Promise<{
-    token: string;
-    refreshToken: string;
-  }> {
+  private async refreshToken(): Promise<
+    | {
+        token: string;
+        refreshToken: string;
+      }
+    | undefined
+  > {
+    if (!this.refresh_token) return undefined;
+
     const { data } = await this.httpClient.get<{
       token: string;
       refreshToken: string;
