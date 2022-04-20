@@ -1,3 +1,10 @@
+## [5.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.9...v5.1.0-alpha.10) (2022-04-20)
+
+
+### Features
+
+* **assets:** get asset owner ([1eb4832](https://github.com/energywebfoundation/iam-client-lib/commit/1eb48322b2736f0819366eef07a6fabb6cf8ff11))
+
 ## [5.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.8...v5.1.0-alpha.9) (2022-04-20)
 
 
