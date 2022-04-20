@@ -5,3 +5,4 @@ export { DeletingNamespaceNotPossibleError } from './deleting-namespace-not-poss
 export { ENSOwnerNotValidAddressError } from './ens-owner-not-valid-address.error';
 export { ERROR_MESSAGES } from './error-messages';
 export { MalformedDIDError } from './malformed-did.error';
+export { NotAuthorizedIssuer } from './not-authorized-issuer';

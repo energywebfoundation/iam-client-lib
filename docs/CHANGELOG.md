@@ -1,3 +1,10 @@
+## [5.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.7...v5.1.0-alpha.8) (2022-04-20)
+
+
+### Features
+
+* authorize issuer ([7e8b864](https://github.com/energywebfoundation/iam-client-lib/commit/7e8b86480b81cc0d0f76588146c28271552ad589))
+
 ## [5.1.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.6...v5.1.0-alpha.7) (2022-04-19)
 
 ## [5.1.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.5...v5.1.0-alpha.6) (2022-04-12)
