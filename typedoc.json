@@ -1,8 +1,21 @@
 {
-  "entryPoints": ["src/"],
+  "entryPoints": [
+    "src/init.ts",
+    "src/modules/assets",
+    "src/modules/cache-client",
+    "src/modules/claims",
+    "src/modules/did-registry",
+    "src/modules/domains",
+    "src/modules/messaging",
+    "src/modules/signer",
+    "src/modules/staking",
+    "src/modules/verifiable-credentials"
+  ],
   "out": ["docs/api"],
   "disableSources": true,
   "excludePrivate": true,
   "excludeProtected": true,
-  "excludeExternals": true
+  "excludeExternals": true,
+  "cleanOutputDir": true,
+  "categorizeByGroup": false
 }

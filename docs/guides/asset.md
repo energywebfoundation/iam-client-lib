@@ -6,7 +6,7 @@ To read more about about Assets in EW-DOS, see the [documentation](https://energ
 
 The IAM Client Library contains the high-level functions for managing (registering, fetching, transferring ownership, etc.) Assets and their corresponding data.
 
-When a user registers an Asset using the [registerAsset](../api/classes/AssetsService.md#registerasset) method, the user automatically becomes the owner of the Asset. Using the methods in the IAM client library:
+When a user registers an Asset using the [registerAsset](../api/classes/modules_assets.AssetsService.md#registerasset) method, the user automatically becomes the owner of the Asset. Using the methods in the IAM client library:
 
 - The Asset owner can make an offer to transfer ownership of the Asset to another address.
 - The offeree can accept or reject the offer of Asset ownership.
@@ -14,11 +14,11 @@ When a user registers an Asset using the [registerAsset](../api/classes/AssetsSe
 
 ### Public APIs:
 
-- [registerAsset](../api/classes/AssetsService.md#registerasset): Register Asset to the user who initiates the method. This creates a record of the Asset on the Energy Web Chain.
-- [getAssetById](../api/classes/AssetsService.md#getassetbyid): Fetch an Asset by its DID.
-- [getAssetHistory](../api/classes/AssetsService.md#getassethistory): Fetch an Asset's history by its DID.
-- [getOfferedAssets](../api/classes/AssetsService.md#getofferedassets): Fetch all Assets offered to a given DID. These are Assets that have been offered to the user, but not yet confirmed.
-- [getOwnedAssets](../api/classes/AssetsService.md#getownedassets): Fetch all Assets owned by a given DID.
-- [getPreviouslyOwnedAssets](../api/classes/AssetsService.md#getpreviouslyownedassets): Fetch all Assets previously owned by a given DID.
-- [offerAsset](../api/classes/AssetsService.md#offerasset): Offer an Asset to a given address.
-- [rejectAssetOffer](../api/classes/AssetsService.md#rejectassetoffer): Reject Asset ownership that has been offered to you as a user.
+- [registerAsset](../api/classes/modules_assets.AssetsService.md#registerasset): Register Asset to the user who initiates the method. This creates a record of the Asset on the Energy Web Chain.
+- [getAssetById](../api/classes/modules_assets.AssetsService.md#getassetbyid): Fetch an Asset by its DID.
+- [getAssetHistory](../api/classes/modules_assets.AssetsService.md#getassethistory): Fetch an Asset's history by its DID.
+- [getOfferedAssets](../api/classes/modules_assets.AssetsService.md#getofferedassets): Fetch all Assets offered to a given DID. These are Assets that have been offered to the user, but not yet confirmed.
+- [getOwnedAssets](../api/classes/modules_assets.AssetsService.md#getownedassets): Fetch all Assets owned by a given DID.
+- [getPreviouslyOwnedAssets](../api/classes/modules_assets.AssetsService.md#getpreviouslyownedassets): Fetch all Assets previously owned by a given DID.
+- [offerAsset](../api/classes/modules_assets.AssetsService.md#offerasset): Offer an Asset to a given address.
+- [rejectAssetOffer](../api/classes/modules_assets.AssetsService.md#rejectassetoffer): Reject Asset ownership that has been offered to you as a user.

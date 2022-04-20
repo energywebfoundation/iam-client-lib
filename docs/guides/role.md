@@ -1,6 +1,6 @@
 # Roles
 
-[Role Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IRole.md)
+[Role Interface](../api/interfaces/modules_domains.IRole.md)
 
 **Role** is leaf in EnergyWeb domains tree. Its main purpose is to distribute responsibilities
 and permissions in some domain. As part of its definition, role determines the permissions of its
@@ -9,7 +9,7 @@ of some other role.
 Similarly, a role can also be used a prerequisite for issuance.
 A role can be placed under organization or
 application thus defining its scope.
-Role is represented by [`IRole`](../api/interfaces/IRole.md) interface.
+Role is represented by [`IRole`](../api/interfaces/modules_domains.IRole.md) interface.
 Example of role
 
 ```
@@ -49,9 +49,9 @@ Example of role
 
 ## Public APIs:
 
--   [createRole](../api/classes/DomainsService.md#createrole)
--   [setRoleDefinition](../api/classes/DomainsService.md#setroledefinition)
--   [getRolesByNameSpace](../api/classes/DomainsService.md#getrolesbynamespace)
--   [getRoleDIDs](../api/classes/DomainsService.md#getroledids)
--   [changeRoleOwnership](../api/classes/DomainsService.md#changeroleownership)
--   [deleteRole](../api/classes/DomainsService.md#deleterole)
+-   [createRole](../api/classes/modules_domains.DomainsService.md#createrole)
+-   [setRoleDefinition](../api/classes/modules_domains.DomainsService.md#setroledefinition)
+-   [getRolesByNameSpace](../api/classes/modules_domains.DomainsService.md#getrolesbynamespace)
+-   [getRoleDIDs](../api/classes/modules_domains.DomainsService.md#getroledids)
+-   [changeRoleOwnership](../api/classes/modules_domains.DomainsService.md#changeroleownership)
+-   [deleteRole](../api/classes/modules_domains.DomainsService.md#deleterole)
