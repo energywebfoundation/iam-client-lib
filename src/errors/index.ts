@@ -6,3 +6,4 @@ export { ENSOwnerNotValidAddressError } from './ens-owner-not-valid-address.erro
 export { ERROR_MESSAGES } from './error-messages';
 export { MalformedDIDError } from './malformed-did.error';
 export { NotAuthorizedIssuer } from './not-authorized-issuer';
+export { AssetNotExist } from './asset-not-exist';
