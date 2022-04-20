@@ -1,7 +1,7 @@
 import { BigNumber, ContractReceipt, providers, utils } from 'ethers';
 import { StakingPool as StakingPoolContract } from '../../../ethers-staking';
 import { StakingPool__factory } from '../../../ethers-staking/factories/StakingPool__factory';
-import { ERROR_MESSAGES } from '../../errors/ErrorMessages';
+import { ERROR_MESSAGES } from '../../errors/error-messages';
 import { SignerService } from '../signer/signer.service';
 import { chainConfigs } from '../../config/chain.config';
 import { DomainsService } from '../domains/domains.service';

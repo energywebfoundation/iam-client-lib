@@ -1,6 +1,6 @@
 # Interface: ClaimData
 
-[modules/didRegistry](../modules/modules_didRegistry.md).ClaimData
+[modules/did-registry](../modules/modules_did_registry.md).ClaimData
 
 ## Hierarchy
 
@@ -12,10 +12,10 @@
 
 ### Properties
 
-- [claimType](modules_didRegistry.ClaimData.md#claimtype)
-- [claimTypeVersion](modules_didRegistry.ClaimData.md#claimtypeversion)
-- [issuerFields](modules_didRegistry.ClaimData.md#issuerfields)
-- [profile](modules_didRegistry.ClaimData.md#profile)
+- [claimType](modules_did_registry.ClaimData.md#claimtype)
+- [claimTypeVersion](modules_did_registry.ClaimData.md#claimtypeversion)
+- [issuerFields](modules_did_registry.ClaimData.md#issuerfields)
+- [profile](modules_did_registry.ClaimData.md#profile)
 
 ## Properties
 
@@ -39,4 +39,4 @@ ___
 
 ### profile
 
-• `Optional` **profile**: [`Profile`](modules_didRegistry.Profile.md)
+• `Optional` **profile**: [`Profile`](modules_did_registry.Profile.md)

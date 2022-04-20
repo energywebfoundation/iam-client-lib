@@ -1,13 +1,13 @@
 # Interface: AssetProfile
 
-[modules/didRegistry](../modules/modules_didRegistry.md).AssetProfile
+[modules/did-registry](../modules/modules_did_registry.md).AssetProfile
 
 ## Table of contents
 
 ### Properties
 
-- [icon](modules_didRegistry.AssetProfile.md#icon)
-- [name](modules_didRegistry.AssetProfile.md#name)
+- [icon](modules_did_registry.AssetProfile.md#icon)
+- [name](modules_did_registry.AssetProfile.md#name)
 
 ## Properties
 

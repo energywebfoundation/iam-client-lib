@@ -51,7 +51,7 @@
 | Name | Type |
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `_cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) |
+| `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
 ## Methods
 
@@ -414,7 +414,7 @@ getENSTypesBySearchPhrase
 | Name | Type |
 | :------ | :------ |
 | `search` | `string` |
-| `types?` | [`SearchType`](../enums/modules_cacheClient.SearchType.md)[] |
+| `types?` | [`SearchType`](../enums/modules_cache_client.SearchType.md)[] |
 
 #### Returns
 
@@ -678,7 +678,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) |
+| `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
 #### Returns
 

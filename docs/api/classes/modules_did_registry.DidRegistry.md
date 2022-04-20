@@ -1,35 +1,35 @@
 # Class: DidRegistry
 
-[modules/didRegistry](../modules/modules_didRegistry.md).DidRegistry
+[modules/did-registry](../modules/modules_did_registry.md).DidRegistry
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](modules_didRegistry.DidRegistry.md#constructor)
+- [constructor](modules_did_registry.DidRegistry.md#constructor)
 
 ### Accessors
 
-- [ipfsStore](modules_didRegistry.DidRegistry.md#ipfsstore)
-- [jwt](modules_didRegistry.DidRegistry.md#jwt)
+- [ipfsStore](modules_did_registry.DidRegistry.md#ipfsstore)
+- [jwt](modules_did_registry.DidRegistry.md#jwt)
 
 ### Methods
 
-- [createDocument](modules_didRegistry.DidRegistry.md#createdocument)
-- [createPublicClaim](modules_didRegistry.DidRegistry.md#createpublicclaim)
-- [decodeJWTToken](modules_didRegistry.DidRegistry.md#decodejwttoken)
-- [getDidDelegates](modules_didRegistry.DidRegistry.md#getdiddelegates)
-- [getDidDocument](modules_didRegistry.DidRegistry.md#getdiddocument)
-- [getDidPublicKeys](modules_didRegistry.DidRegistry.md#getdidpublickeys)
-- [getServices](modules_didRegistry.DidRegistry.md#getservices)
-- [init](modules_didRegistry.DidRegistry.md#init)
-- [issuePublicClaim](modules_didRegistry.DidRegistry.md#issuepublicclaim)
-- [revokeDidDocument](modules_didRegistry.DidRegistry.md#revokediddocument)
-- [updateDocument](modules_didRegistry.DidRegistry.md#updatedocument)
-- [updateSignedDidDelegate](modules_didRegistry.DidRegistry.md#updatesigneddiddelegate)
-- [updateSignedDidPublicKey](modules_didRegistry.DidRegistry.md#updatesigneddidpublickey)
-- [verifyPublicClaim](modules_didRegistry.DidRegistry.md#verifypublicclaim)
-- [connect](modules_didRegistry.DidRegistry.md#connect)
+- [createDocument](modules_did_registry.DidRegistry.md#createdocument)
+- [createPublicClaim](modules_did_registry.DidRegistry.md#createpublicclaim)
+- [decodeJWTToken](modules_did_registry.DidRegistry.md#decodejwttoken)
+- [getDidDelegates](modules_did_registry.DidRegistry.md#getdiddelegates)
+- [getDidDocument](modules_did_registry.DidRegistry.md#getdiddocument)
+- [getDidPublicKeys](modules_did_registry.DidRegistry.md#getdidpublickeys)
+- [getServices](modules_did_registry.DidRegistry.md#getservices)
+- [init](modules_did_registry.DidRegistry.md#init)
+- [issuePublicClaim](modules_did_registry.DidRegistry.md#issuepublicclaim)
+- [revokeDidDocument](modules_did_registry.DidRegistry.md#revokediddocument)
+- [updateDocument](modules_did_registry.DidRegistry.md#updatedocument)
+- [updateSignedDidDelegate](modules_did_registry.DidRegistry.md#updatesigneddiddelegate)
+- [updateSignedDidPublicKey](modules_did_registry.DidRegistry.md#updatesigneddidpublickey)
+- [verifyPublicClaim](modules_did_registry.DidRegistry.md#verifypublicclaim)
+- [connect](modules_did_registry.DidRegistry.md#connect)
 
 ## Constructors
 
@@ -42,7 +42,7 @@
 | Name | Type | Default value |
 | :------ | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) | `undefined` |
-| `_cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) | `undefined` |
+| `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) | `undefined` |
 | `_assetsService` | [`AssetsService`](modules_assets.AssetsService.md) | `undefined` |
 | `_ipfsUrl` | `string` | `'https://ipfs.infura.io:5001/api/v0/'` |
 
@@ -93,7 +93,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.data` | [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md) |
+| `__namedParameters.data` | [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md) |
 | `__namedParameters.subject?` | `string` |
 
 #### Returns
@@ -143,7 +143,7 @@ ___
 
 ### getDidDocument
 
-▸ **getDidDocument**(`__namedParameters?`): `Promise`<{ `service`: `IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md)[]  }\>
+▸ **getDidDocument**(`__namedParameters?`): `Promise`<{ `service`: `IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]  }\>
 
 #### Parameters
 
@@ -153,7 +153,7 @@ ___
 
 #### Returns
 
-`Promise`<{ `service`: `IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md)[]  }\>
+`Promise`<{ `service`: `IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]  }\>
 
 ___
 
@@ -179,7 +179,7 @@ ___
 
 ### getServices
 
-▸ **getServices**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md)[]\>
+▸ **getServices**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
 
 **`description`** gets list of services endpoints from User's DID document
 
@@ -191,7 +191,7 @@ ___
 
 #### Returns
 
-`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md)[]\>
+`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
 
 list of claims
 
@@ -341,17 +341,17 @@ ___
 
 ### connect
 
-▸ `Static` **connect**(`signerService`, `cacheClient`, `assetsService`, `ipfsUrl?`): `Promise`<[`DidRegistry`](modules_didRegistry.DidRegistry.md)\>
+▸ `Static` **connect**(`signerService`, `cacheClient`, `assetsService`, `ipfsUrl?`): `Promise`<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) |
+| `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 | `assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
 | `ipfsUrl?` | `string` |
 
 #### Returns
 
-`Promise`<[`DidRegistry`](modules_didRegistry.DidRegistry.md)\>
+`Promise`<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>

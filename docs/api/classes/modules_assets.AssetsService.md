@@ -34,7 +34,7 @@
 | Name | Type |
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `_cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) |
+| `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
 ## Methods
 
@@ -109,7 +109,7 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.id` | `string` |
-| `__namedParameters.order?` | [`Order`](../enums/modules_cacheClient.Order.md) |
+| `__namedParameters.order?` | [`Order`](../enums/modules_cache_client.Order.md) |
 | `__namedParameters.skip?` | `number` |
 | `__namedParameters.take?` | `number` |
 | `__namedParameters.type?` | [`AssetHistoryEventType`](../enums/modules_assets.AssetHistoryEventType.md) |
@@ -255,7 +255,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) |
+| `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
 #### Returns
 

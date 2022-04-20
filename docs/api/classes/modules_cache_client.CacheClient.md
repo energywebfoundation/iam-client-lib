@@ -1,59 +1,59 @@
 # Class: CacheClient
 
-[modules/cacheClient](../modules/modules_cacheClient.md).CacheClient
+[modules/cache-client](../modules/modules_cache_client.md).CacheClient
 
 ## Implements
 
-- [`ICacheClient`](../interfaces/modules_cacheClient.ICacheClient.md)
+- [`ICacheClient`](../interfaces/modules_cache_client.ICacheClient.md)
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](modules_cacheClient.CacheClient.md#constructor)
+- [constructor](modules_cache_client.CacheClient.md#constructor)
 
 ### Properties
 
-- [pubKeyAndIdentityToken](modules_cacheClient.CacheClient.md#pubkeyandidentitytoken)
+- [pubKeyAndIdentityToken](modules_cache_client.CacheClient.md#pubkeyandidentitytoken)
 
 ### Methods
 
-- [addDIDToWatchList](modules_cacheClient.CacheClient.md#adddidtowatchlist)
-- [authenticate](modules_cacheClient.CacheClient.md#authenticate)
-- [deleteClaim](modules_cacheClient.CacheClient.md#deleteclaim)
-- [getAllowedRolesByIssuer](modules_cacheClient.CacheClient.md#getallowedrolesbyissuer)
-- [getAppDefinition](modules_cacheClient.CacheClient.md#getappdefinition)
-- [getApplicationRoles](modules_cacheClient.CacheClient.md#getapplicationroles)
-- [getApplicationsByOrganization](modules_cacheClient.CacheClient.md#getapplicationsbyorganization)
-- [getApplicationsByOwner](modules_cacheClient.CacheClient.md#getapplicationsbyowner)
-- [getAssetById](modules_cacheClient.CacheClient.md#getassetbyid)
-- [getAssetHistory](modules_cacheClient.CacheClient.md#getassethistory)
-- [getClaimById](modules_cacheClient.CacheClient.md#getclaimbyid)
-- [getClaimsByIssuer](modules_cacheClient.CacheClient.md#getclaimsbyissuer)
-- [getClaimsByRequester](modules_cacheClient.CacheClient.md#getclaimsbyrequester)
-- [getClaimsBySubject](modules_cacheClient.CacheClient.md#getclaimsbysubject)
-- [getClaimsBySubjects](modules_cacheClient.CacheClient.md#getclaimsbysubjects)
-- [getDIDsForRole](modules_cacheClient.CacheClient.md#getdidsforrole)
-- [getDidDocument](modules_cacheClient.CacheClient.md#getdiddocument)
-- [getNamespaceBySearchPhrase](modules_cacheClient.CacheClient.md#getnamespacebysearchphrase)
-- [getOfferedAssets](modules_cacheClient.CacheClient.md#getofferedassets)
-- [getOrgDefinition](modules_cacheClient.CacheClient.md#getorgdefinition)
-- [getOrgHierarchy](modules_cacheClient.CacheClient.md#getorghierarchy)
-- [getOrganizationRoles](modules_cacheClient.CacheClient.md#getorganizationroles)
-- [getOrganizationsByOwner](modules_cacheClient.CacheClient.md#getorganizationsbyowner)
-- [getOwnedAssets](modules_cacheClient.CacheClient.md#getownedassets)
-- [getPreviouslyOwnedAssets](modules_cacheClient.CacheClient.md#getpreviouslyownedassets)
-- [getRoleDefinition](modules_cacheClient.CacheClient.md#getroledefinition)
-- [getRolesByOwner](modules_cacheClient.CacheClient.md#getrolesbyowner)
-- [getRolesDefinition](modules_cacheClient.CacheClient.md#getrolesdefinition)
-- [getSubOrganizationsByOrganization](modules_cacheClient.CacheClient.md#getsuborganizationsbyorganization)
-- [handleError](modules_cacheClient.CacheClient.md#handleerror)
-- [init](modules_cacheClient.CacheClient.md#init)
-- [isAuthEnabled](modules_cacheClient.CacheClient.md#isauthenabled)
-- [issueClaim](modules_cacheClient.CacheClient.md#issueclaim)
-- [login](modules_cacheClient.CacheClient.md#login)
-- [rejectClaim](modules_cacheClient.CacheClient.md#rejectclaim)
-- [requestClaim](modules_cacheClient.CacheClient.md#requestclaim)
+- [addDIDToWatchList](modules_cache_client.CacheClient.md#adddidtowatchlist)
+- [authenticate](modules_cache_client.CacheClient.md#authenticate)
+- [deleteClaim](modules_cache_client.CacheClient.md#deleteclaim)
+- [getAllowedRolesByIssuer](modules_cache_client.CacheClient.md#getallowedrolesbyissuer)
+- [getAppDefinition](modules_cache_client.CacheClient.md#getappdefinition)
+- [getApplicationRoles](modules_cache_client.CacheClient.md#getapplicationroles)
+- [getApplicationsByOrganization](modules_cache_client.CacheClient.md#getapplicationsbyorganization)
+- [getApplicationsByOwner](modules_cache_client.CacheClient.md#getapplicationsbyowner)
+- [getAssetById](modules_cache_client.CacheClient.md#getassetbyid)
+- [getAssetHistory](modules_cache_client.CacheClient.md#getassethistory)
+- [getClaimById](modules_cache_client.CacheClient.md#getclaimbyid)
+- [getClaimsByIssuer](modules_cache_client.CacheClient.md#getclaimsbyissuer)
+- [getClaimsByRequester](modules_cache_client.CacheClient.md#getclaimsbyrequester)
+- [getClaimsBySubject](modules_cache_client.CacheClient.md#getclaimsbysubject)
+- [getClaimsBySubjects](modules_cache_client.CacheClient.md#getclaimsbysubjects)
+- [getDIDsForRole](modules_cache_client.CacheClient.md#getdidsforrole)
+- [getDidDocument](modules_cache_client.CacheClient.md#getdiddocument)
+- [getNamespaceBySearchPhrase](modules_cache_client.CacheClient.md#getnamespacebysearchphrase)
+- [getOfferedAssets](modules_cache_client.CacheClient.md#getofferedassets)
+- [getOrgDefinition](modules_cache_client.CacheClient.md#getorgdefinition)
+- [getOrgHierarchy](modules_cache_client.CacheClient.md#getorghierarchy)
+- [getOrganizationRoles](modules_cache_client.CacheClient.md#getorganizationroles)
+- [getOrganizationsByOwner](modules_cache_client.CacheClient.md#getorganizationsbyowner)
+- [getOwnedAssets](modules_cache_client.CacheClient.md#getownedassets)
+- [getPreviouslyOwnedAssets](modules_cache_client.CacheClient.md#getpreviouslyownedassets)
+- [getRoleDefinition](modules_cache_client.CacheClient.md#getroledefinition)
+- [getRolesByOwner](modules_cache_client.CacheClient.md#getrolesbyowner)
+- [getRolesDefinition](modules_cache_client.CacheClient.md#getrolesdefinition)
+- [getSubOrganizationsByOrganization](modules_cache_client.CacheClient.md#getsuborganizationsbyorganization)
+- [handleError](modules_cache_client.CacheClient.md#handleerror)
+- [init](modules_cache_client.CacheClient.md#init)
+- [isAuthEnabled](modules_cache_client.CacheClient.md#isauthenabled)
+- [issueClaim](modules_cache_client.CacheClient.md#issueclaim)
+- [login](modules_cache_client.CacheClient.md#login)
+- [rejectClaim](modules_cache_client.CacheClient.md#rejectclaim)
+- [requestClaim](modules_cache_client.CacheClient.md#requestclaim)
 
 ## Constructors
 
@@ -75,7 +75,7 @@
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[pubKeyAndIdentityToken](../interfaces/modules_cacheClient.ICacheClient.md#pubkeyandidentitytoken)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[pubKeyAndIdentityToken](../interfaces/modules_cache_client.ICacheClient.md#pubkeyandidentitytoken)
 
 ## Methods
 
@@ -95,7 +95,7 @@
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cacheClient.ICacheClient.md#adddidtowatchlist)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cache_client.ICacheClient.md#adddidtowatchlist)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[deleteClaim](../interfaces/modules_cacheClient.ICacheClient.md#deleteclaim)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[deleteClaim](../interfaces/modules_cache_client.ICacheClient.md#deleteclaim)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getAppDefinition](../interfaces/modules_cacheClient.ICacheClient.md#getappdefinition)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAppDefinition](../interfaces/modules_cache_client.ICacheClient.md#getappdefinition)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getApplicationRoles](../interfaces/modules_cacheClient.ICacheClient.md#getapplicationroles)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationRoles](../interfaces/modules_cache_client.ICacheClient.md#getapplicationroles)
 
 ___
 
@@ -204,7 +204,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getApplicationsByOrganization](../interfaces/modules_cacheClient.ICacheClient.md#getapplicationsbyorganization)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationsByOrganization](../interfaces/modules_cache_client.ICacheClient.md#getapplicationsbyorganization)
 
 ___
 
@@ -225,7 +225,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getApplicationsByOwner](../interfaces/modules_cacheClient.ICacheClient.md#getapplicationsbyowner)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationsByOwner](../interfaces/modules_cache_client.ICacheClient.md#getapplicationsbyowner)
 
 ___
 
@@ -245,7 +245,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getAssetById](../interfaces/modules_cacheClient.ICacheClient.md#getassetbyid)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAssetById](../interfaces/modules_cache_client.ICacheClient.md#getassetbyid)
 
 ___
 
@@ -258,7 +258,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `id` | `string` |
-| `__namedParameters` | [`AssetsFilter`](../modules/modules_cacheClient.md#assetsfilter) |
+| `__namedParameters` | [`AssetsFilter`](../modules/modules_cache_client.md#assetsfilter) |
 
 #### Returns
 
@@ -266,7 +266,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getAssetHistory](../interfaces/modules_cacheClient.ICacheClient.md#getassethistory)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAssetHistory](../interfaces/modules_cache_client.ICacheClient.md#getassethistory)
 
 ___
 
@@ -286,7 +286,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getClaimById](../interfaces/modules_cacheClient.ICacheClient.md#getclaimbyid)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimById](../interfaces/modules_cache_client.ICacheClient.md#getclaimbyid)
 
 ___
 
@@ -299,7 +299,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `issuer` | `string` |
-| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cacheClient.md#claimsfilter) |
+| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns
 
@@ -307,7 +307,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getClaimsByIssuer](../interfaces/modules_cacheClient.ICacheClient.md#getclaimsbyissuer)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByIssuer](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyissuer)
 
 ___
 
@@ -320,7 +320,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `requester` | `string` |
-| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cacheClient.md#claimsfilter) |
+| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns
 
@@ -328,7 +328,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getClaimsByRequester](../interfaces/modules_cacheClient.ICacheClient.md#getclaimsbyrequester)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByRequester](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyrequester)
 
 ___
 
@@ -341,7 +341,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `subject` | `string` |
-| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cacheClient.md#claimsfilter) |
+| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns
 
@@ -349,7 +349,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getClaimsBySubject](../interfaces/modules_cacheClient.ICacheClient.md#getclaimsbysubject)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsBySubject](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbysubject)
 
 ___
 
@@ -369,7 +369,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getClaimsBySubjects](../interfaces/modules_cacheClient.ICacheClient.md#getclaimsbysubjects)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsBySubjects](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbysubjects)
 
 ___
 
@@ -389,7 +389,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getDIDsForRole](../interfaces/modules_cacheClient.ICacheClient.md#getdidsforrole)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getDIDsForRole](../interfaces/modules_cache_client.ICacheClient.md#getdidsforrole)
 
 ___
 
@@ -410,7 +410,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getDidDocument](../interfaces/modules_cacheClient.ICacheClient.md#getdiddocument)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getDidDocument](../interfaces/modules_cache_client.ICacheClient.md#getdiddocument)
 
 ___
 
@@ -423,7 +423,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `search` | `string` |
-| `types?` | [`SearchType`](../enums/modules_cacheClient.SearchType.md)[] |
+| `types?` | [`SearchType`](../enums/modules_cache_client.SearchType.md)[] |
 
 #### Returns
 
@@ -431,7 +431,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getNamespaceBySearchPhrase](../interfaces/modules_cacheClient.ICacheClient.md#getnamespacebysearchphrase)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getNamespaceBySearchPhrase](../interfaces/modules_cache_client.ICacheClient.md#getnamespacebysearchphrase)
 
 ___
 
@@ -451,7 +451,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getOfferedAssets](../interfaces/modules_cacheClient.ICacheClient.md#getofferedassets)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOfferedAssets](../interfaces/modules_cache_client.ICacheClient.md#getofferedassets)
 
 ___
 
@@ -471,7 +471,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getOrgDefinition](../interfaces/modules_cacheClient.ICacheClient.md#getorgdefinition)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrgDefinition](../interfaces/modules_cache_client.ICacheClient.md#getorgdefinition)
 
 ___
 
@@ -491,7 +491,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getOrgHierarchy](../interfaces/modules_cacheClient.ICacheClient.md#getorghierarchy)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrgHierarchy](../interfaces/modules_cache_client.ICacheClient.md#getorghierarchy)
 
 ___
 
@@ -511,7 +511,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getOrganizationRoles](../interfaces/modules_cacheClient.ICacheClient.md#getorganizationroles)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrganizationRoles](../interfaces/modules_cache_client.ICacheClient.md#getorganizationroles)
 
 ___
 
@@ -532,7 +532,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getOrganizationsByOwner](../interfaces/modules_cacheClient.ICacheClient.md#getorganizationsbyowner)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrganizationsByOwner](../interfaces/modules_cache_client.ICacheClient.md#getorganizationsbyowner)
 
 ___
 
@@ -552,7 +552,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getOwnedAssets](../interfaces/modules_cacheClient.ICacheClient.md#getownedassets)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOwnedAssets](../interfaces/modules_cache_client.ICacheClient.md#getownedassets)
 
 ___
 
@@ -572,7 +572,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getPreviouslyOwnedAssets](../interfaces/modules_cacheClient.ICacheClient.md#getpreviouslyownedassets)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getPreviouslyOwnedAssets](../interfaces/modules_cache_client.ICacheClient.md#getpreviouslyownedassets)
 
 ___
 
@@ -592,7 +592,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getRoleDefinition](../interfaces/modules_cacheClient.ICacheClient.md#getroledefinition)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRoleDefinition](../interfaces/modules_cache_client.ICacheClient.md#getroledefinition)
 
 ___
 
@@ -612,7 +612,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getRolesByOwner](../interfaces/modules_cacheClient.ICacheClient.md#getrolesbyowner)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByOwner](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyowner)
 
 ___
 
@@ -632,7 +632,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getRolesDefinition](../interfaces/modules_cacheClient.ICacheClient.md#getrolesdefinition)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesDefinition](../interfaces/modules_cache_client.ICacheClient.md#getrolesdefinition)
 
 ___
 
@@ -652,7 +652,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[getSubOrganizationsByOrganization](../interfaces/modules_cacheClient.ICacheClient.md#getsuborganizationsbyorganization)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getSubOrganizationsByOrganization](../interfaces/modules_cache_client.ICacheClient.md#getsuborganizationsbyorganization)
 
 ___
 
@@ -696,7 +696,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[isAuthEnabled](../interfaces/modules_cacheClient.ICacheClient.md#isauthenabled)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[isAuthEnabled](../interfaces/modules_cache_client.ICacheClient.md#isauthenabled)
 
 ___
 
@@ -717,7 +717,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[issueClaim](../interfaces/modules_cacheClient.ICacheClient.md#issueclaim)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[issueClaim](../interfaces/modules_cache_client.ICacheClient.md#issueclaim)
 
 ___
 
@@ -734,7 +734,7 @@ https://energyweb.atlassian.net/wiki/spaces/MYEN/pages/2303295607/ICL-+ICS+Auth+
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[login](../interfaces/modules_cacheClient.ICacheClient.md#login)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[login](../interfaces/modules_cache_client.ICacheClient.md#login)
 
 ___
 
@@ -755,7 +755,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[rejectClaim](../interfaces/modules_cacheClient.ICacheClient.md#rejectclaim)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[rejectClaim](../interfaces/modules_cache_client.ICacheClient.md#rejectclaim)
 
 ___
 
@@ -775,4 +775,4 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md).[requestClaim](../interfaces/modules_cacheClient.ICacheClient.md#requestclaim)
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[requestClaim](../interfaces/modules_cache_client.ICacheClient.md#requestclaim)

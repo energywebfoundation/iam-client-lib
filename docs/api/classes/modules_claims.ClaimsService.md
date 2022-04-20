@@ -44,8 +44,8 @@
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_domainsService` | [`DomainsService`](modules_domains.DomainsService.md) |
-| `_cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) |
-| `_didRegistry` | [`DidRegistry`](modules_didRegistry.DidRegistry.md) |
+| `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
+| `_didRegistry` | [`DidRegistry`](modules_did_registry.DidRegistry.md) |
 | `_verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md) |
 
 ## Methods
@@ -122,7 +122,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.data` | [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md) |
+| `__namedParameters.data` | [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md) |
 | `__namedParameters.subject?` | `string` |
 
 #### Returns
@@ -177,7 +177,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.claimData` | [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md) |
+| `__namedParameters.claimData` | [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md) |
 
 #### Returns
 
@@ -286,7 +286,7 @@ ___
 
 ### getUserClaims
 
-▸ **getUserClaims**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md)[]\>
+▸ **getUserClaims**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
 
 getUserClaims
 
@@ -300,7 +300,7 @@ getUserClaims
 
 #### Returns
 
-`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_didRegistry.ClaimData.md)[]\>
+`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
 
 ___
 
@@ -464,8 +464,8 @@ ___
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `domainsService` | [`DomainsService`](modules_domains.DomainsService.md) |
-| `cacheClient` | [`CacheClient`](modules_cacheClient.CacheClient.md) |
-| `didRegistry` | [`DidRegistry`](modules_didRegistry.DidRegistry.md) |
+| `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
+| `didRegistry` | [`DidRegistry`](modules_did_registry.DidRegistry.md) |
 | `verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md) |
 
 #### Returns

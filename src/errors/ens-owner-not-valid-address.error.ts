@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from './ErrorMessages';
+import { ERROR_MESSAGES } from './error-messages';
 
 export class ENSOwnerNotValidAddressError extends Error {
   constructor(providedOwner: string) {

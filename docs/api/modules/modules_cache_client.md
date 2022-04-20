@@ -1,29 +1,29 @@
-# Module: modules/cacheClient
+# Module: modules/cache-client
 
 ## Table of contents
 
 ### Enumerations
 
-- [Order](../enums/modules_cacheClient.Order.md)
-- [SearchType](../enums/modules_cacheClient.SearchType.md)
+- [Order](../enums/modules_cache_client.Order.md)
+- [SearchType](../enums/modules_cache_client.SearchType.md)
 
 ### Classes
 
-- [CacheClient](../classes/modules_cacheClient.CacheClient.md)
+- [CacheClient](../classes/modules_cache_client.CacheClient.md)
 
 ### Interfaces
 
-- [CacheServerClientOptions](../interfaces/modules_cacheClient.CacheServerClientOptions.md)
-- [ICacheClient](../interfaces/modules_cacheClient.ICacheClient.md)
+- [CacheServerClientOptions](../interfaces/modules_cache_client.CacheServerClientOptions.md)
+- [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md)
 
 ### Type aliases
 
-- [AssetsFilter](modules_cacheClient.md#assetsfilter)
-- [ClaimsFilter](modules_cacheClient.md#claimsfilter)
+- [AssetsFilter](modules_cache_client.md#assetsfilter)
+- [ClaimsFilter](modules_cache_client.md#claimsfilter)
 
 ### Variables
 
-- [TEST\_LOGIN\_ENDPOINT](modules_cacheClient.md#test_login_endpoint)
+- [TEST\_LOGIN\_ENDPOINT](modules_cache_client.md#test_login_endpoint)
 
 ## Type aliases
 
@@ -35,7 +35,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `order?` | [`Order`](../enums/modules_cacheClient.Order.md) |
+| `order?` | [`Order`](../enums/modules_cache_client.Order.md) |
 | `skip?` | `number` |
 | `take?` | `number` |
 | `type?` | [`AssetHistoryEventType`](../enums/modules_assets.AssetHistoryEventType.md) |

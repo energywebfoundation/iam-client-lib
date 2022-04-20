@@ -1,13 +1,13 @@
 # Enumeration: Order
 
-[modules/cacheClient](../modules/modules_cacheClient.md).Order
+[modules/cache-client](../modules/modules_cache_client.md).Order
 
 ## Table of contents
 
 ### Enumeration members
 
-- [ASC](modules_cacheClient.Order.md#asc)
-- [DESC](modules_cacheClient.Order.md#desc)
+- [ASC](modules_cache_client.Order.md#asc)
+- [DESC](modules_cache_client.Order.md#desc)
 
 ## Enumeration members
 

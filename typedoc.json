@@ -2,9 +2,9 @@
   "entryPoints": [
     "src/init.ts",
     "src/modules/assets",
-    "src/modules/cacheClient",
+    "src/modules/cache-client",
     "src/modules/claims",
-    "src/modules/didRegistry",
+    "src/modules/did-registry",
     "src/modules/domains",
     "src/modules/messaging",
     "src/modules/signer",

@@ -10,9 +10,9 @@ import {
   SignerService,
 } from './modules/signer';
 import { StakingFactoryService } from './modules/staking';
-import { DidRegistry } from './modules/didRegistry';
+import { DidRegistry } from './modules/did-registry';
 import { MessagingService } from './modules/messaging';
-import { CacheClient } from './modules/cacheClient';
+import { CacheClient } from './modules/cache-client';
 import { DomainsService } from './modules/domains';
 import { AssetsService } from './modules/assets';
 import { ClaimsService } from './modules/claims';

@@ -1,7 +1,7 @@
 import { providers } from 'ethers';
 import { SignerService } from './signer.service';
 import { ProviderType } from './signer.types';
-import { createWalletConnectProvider } from './walletConnectMetamask';
+import { createWalletConnectProvider } from './wallet-connect-metamask';
 
 export async function fromKms(
   bridge: string,

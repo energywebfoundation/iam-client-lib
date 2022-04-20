@@ -4,7 +4,7 @@ import {
   exampleExternalVCWithInvalidSubjectId,
   validExampleExternalVC,
 } from './fixtures';
-import { replenish, rpcUrl, setupENS } from './utils/setup_contracts';
+import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
 import { fromPrivateKey } from '../src';
 import {
   getVerifiableCredentialsService,

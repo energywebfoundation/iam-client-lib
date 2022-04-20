@@ -13,9 +13,9 @@ nav:
   - 'API':
       - Initialization: api/modules/init.md
       - Assets: api/modules/modules_assets.md
-      - Cache Client: api/modules/modules_cacheClient.md
+      - Cache Client: api/modules/modules_cache_client.md
       - Claims: api/modules/modules_claims.md
-      - 'Did registry': api/modules/modules_didRegistry.md
+      - 'Did registry': api/modules/modules_did_registry.md
       - Domains: api/modules/modules_domains.md
       - Messaging: api/modules/modules_messaging.md
       - Signer: api/modules/modules_signer.md
