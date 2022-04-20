@@ -91,6 +91,7 @@ const mockGetClaimsBySubject = jest.fn();
 const mockRequestClaim = jest.fn();
 const mockIssueClaim = jest.fn();
 const mockRejectClaim = jest.fn();
+const mockGetAllowedRoles = jest.fn();
 jest.mock('../src/modules/cache-client/cache-client.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
@@ -105,6 +106,7 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
         requestClaim: mockRequestClaim,
         issueClaim: mockIssueClaim,
         rejectClaim: mockRejectClaim,
+        getAllowedRolesByIssuer: mockGetAllowedRoles,
       };
     }),
   };
@@ -162,6 +164,26 @@ describe('Enrollment claim tests', () => {
       returnSteps: false,
     });
     ({ didRegistry, claimsService } = await connectToDidRegistry());
+    mockGetAllowedRoles.mockImplementation(async (issuer) => {
+      const roleDefs = Object.values(roles);
+      const isRoleIssuerOfRole = await Promise.all(
+        roleDefs.map(
+          (r) =>
+            r.issuer.roleName &&
+            claimsService.hasOnChainRole(issuer, r.issuer.roleName, version)
+        )
+      );
+      const allowedRoles = roleDefs
+        .filter((r, i) => {
+          return (
+            (r.issuer.issuerType === 'DID' && r.issuer.did?.includes(issuer)) ||
+            (r.issuer.issuerType === 'ROLE' && isRoleIssuerOfRole[i])
+          );
+        })
+        .map((r) => ({ ...r, namespace: `${r.roleName}.${root}` }));
+
+      return allowedRoles;
+    });
     Reflect.set(didRegistry, '_cacheClient', undefined);
     setLogger(new ConsoleLogger(LogLevel.warn));
   });

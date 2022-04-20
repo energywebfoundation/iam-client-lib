@@ -40,6 +40,7 @@ import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
+import { NotAuthorizedIssuer } from '../../errors/not-authorized-issuer';
 
 const {
   id,
@@ -257,6 +258,7 @@ export class ClaimsService {
       claimData: { claimType: string; claimTypeVersion: number };
       sub: string;
     };
+    await this.verifyIssuer(claimData.claimType);
 
     await this.verifyEnrolmentPrerequisites({
       subject: sub,
@@ -447,6 +449,7 @@ export class ClaimsService {
       issuerFields: { key: string; value: string | number }[];
     };
   }) {
+    await this.verifyIssuer(claim.claimType);
     await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
 
     const message: IClaimIssuance = {
@@ -694,6 +697,16 @@ export class ClaimsService {
     );
     if (Array.from(requiredRoles).some((role) => !enroledRoles.has(role))) {
       throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
+    }
+  }
+
+  private async verifyIssuer(role: string) {
+    if (
+      !(
+        await this._cacheClient.getAllowedRolesByIssuer(this._signerService.did)
+      ).some((r) => r.namespace === role)
+    ) {
+      throw new NotAuthorizedIssuer(this._signerService.did, role);
     }
   }
 

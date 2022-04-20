@@ -32,6 +32,7 @@
 - [MalformedDIDError](classes/MalformedDIDError.md)
 - [MessagingService](classes/MessagingService.md)
 - [MethodNotAvailableInNodeEnvError](classes/MethodNotAvailableInNodeEnvError.md)
+- [NotAuthorizedIssuer](classes/NotAuthorizedIssuer.md)
 - [SignerService](classes/SignerService.md)
 - [StakingFactoryService](classes/StakingFactoryService.md)
 - [StakingPoolService](classes/StakingPoolService.md)
