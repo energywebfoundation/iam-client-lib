@@ -1,3 +1,17 @@
+## [5.1.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.8...v5.1.0-alpha.9) (2022-04-20)
+
+
+### Features
+
+* **docs:** quick start ([cd85c17](https://github.com/energywebfoundation/iam-client-lib/commit/cd85c1718a372509594db944fe6eb9d3beba667b))
+
+
+### Bug Fixes
+
+* **docs:** architecture ([f7daa96](https://github.com/energywebfoundation/iam-client-lib/commit/f7daa9688360350b2c797170328dbb1ed0b130e7))
+* **docs:** guides ([627bc88](https://github.com/energywebfoundation/iam-client-lib/commit/627bc887dc7186ff531932a6619ed4020bb0d725))
+* set index page for readthedocs ([f6b4a49](https://github.com/energywebfoundation/iam-client-lib/commit/f6b4a498e1af22d731f6a5636a808d7b196d2c27))
+
 ## [5.1.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.7...v5.1.0-alpha.8) (2022-04-20)
 
 
