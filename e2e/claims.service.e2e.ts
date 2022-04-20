@@ -21,7 +21,7 @@ import {
   IClaimIssuance,
   SignerT,
 } from '../src';
-import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
+import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
 import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
@@ -92,7 +92,7 @@ const mockRequestClaim = jest.fn();
 const mockIssueClaim = jest.fn();
 const mockRejectClaim = jest.fn();
 const mockGetAllowedRoles = jest.fn();
-jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
+jest.mock('../src/modules/cache-client/cache-client.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
       return {

@@ -11,7 +11,7 @@ import { SignerService } from '../signer/signer.service';
 import {
   executionEnvironment,
   ExecutionEnvironment,
-} from '../../utils/detectEnvironment';
+} from '../../utils/detect-environment';
 import { getLogger } from '../../config/logger.config';
 
 export class MessagingService {
