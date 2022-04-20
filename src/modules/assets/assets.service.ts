@@ -8,6 +8,7 @@ import { CacheClient } from '../cache-client/cache-client.service';
 import { Order } from '../cache-client/cache-client.types';
 import { SignerService } from '../signer/signer.service';
 import { AssetHistoryEventType } from './assets.types';
+import { AssetNotExist } from '../../errors/asset-not-exist';
 
 export class AssetsService {
   private _owner: string;
@@ -41,7 +42,7 @@ export class AssetsService {
 
   /**
    * @description Registers a new Asset to the User
-   * @returns Asset DID
+   * @returns Asset address
    */
   async registerAsset(): Promise<string> {
     const data = this._assetManagerInterface.encodeFunctionData(
@@ -148,11 +149,23 @@ export class AssetsService {
 
   /**
    * @description Get Asset by Id
-   * @param id Asset Id
+   * @param id Asset decentralized identifier
    * @returns Asset
    */
   async getAssetById({ id }: { id: string }) {
     return this._cacheClient.getAssetById(id);
+  }
+
+  /**
+   * Returns owner of the given asset
+   * @param id asset decentralized identifier
+   */
+  async getAssetOwner(id: string) {
+    const asset = await this.getAssetById({ id });
+    if (!asset) {
+      throw new AssetNotExist(id);
+    } 
+    return asset.owner;
   }
 
   /**

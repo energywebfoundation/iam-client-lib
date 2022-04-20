@@ -1,7 +1,12 @@
 import { Wallet } from 'ethers';
 import { ethAddrPattern } from '@ew-did-registry/did';
 import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
-import { AssetsService, CacheClient, fromPrivateKey } from '../src';
+import {
+  AssetsService,
+  CacheClient,
+  fromPrivateKey,
+  AssetNotExist,
+} from '../src';
 
 const mockGetAssetById = jest.fn();
 const mockGetOwnedAssets = jest.fn();
@@ -42,14 +47,28 @@ describe('Assets tests', () => {
     expect(assetAddress).toEqual(expect.stringMatching(ethAddrPattern));
   });
 
-  // As for now assets service just forwards calls to cache service, tests will make sense when asssets service will be able to communicate with IdentityManager
+  test('should throw AssetNotExist when getting owner of not existing asset', async () => {
+    mockGetAssetById.mockResolvedValueOnce(undefined);
+    const id = '<ASSET DID>';
+    expect(assetsService.getAssetOwner(id)).rejects.toEqual(
+      new AssetNotExist(id)
+    );
+  });
+
+  /**
+   * @todo when ssi hub is included in test environment
+   */
+  test.todo('should be able to get asset owner');
+
   test.todo('owner should be able to offer asset');
+  test.todo('owner should not be able to offer asset to himself');
+  test.todo('owner should not be able to offer asset to asset');
 
-  test.todo('asset should be able to cancel offer');
+  test.todo('owner should be able to cancel offer');
 
-  test.todo('asset should be able to accept offer');
+  test.todo('receiver should be able to accept offer');
 
-  test.todo('asset should be able to reject offer');
+  test.todo('receiver should be able to reject offer');
 
-  test.todo('update did document for asset');
+  test.todo('owner should be able to update asset document');
 });
