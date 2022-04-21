@@ -18,7 +18,7 @@ Demo source code: [iam-client-examples](https://github.com/energywebfoundation/i
 
 ## Documentation
 
-[Read the Docs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/_/sharing/ojw5kxd0al7k1llbcp78i6oiv)
+[Read the Docs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/)
 
 ## [Getting Started](docs/Quick_start.md)
 
