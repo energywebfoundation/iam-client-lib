@@ -1,3 +1,10 @@
+## [5.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.11...v5.1.0-alpha.12) (2022-04-21)
+
+
+### Bug Fixes
+
+* avoid refreshing undefined token ([86bed3c](https://github.com/energywebfoundation/iam-client-lib/commit/86bed3c3bbe3a4ddc10dcc5cbb6f17ae0c21ba2a))
+
 ## [5.1.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.10...v5.1.0-alpha.11) (2022-04-21)
 
 ## [5.1.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.9...v5.1.0-alpha.10) (2022-04-20)
