@@ -13,10 +13,25 @@
 
 ### Interfaces
 
+- [ApproveRolePublishingOptions](../interfaces/modules_claims.ApproveRolePublishingOptions.md)
 - [Claim](../interfaces/modules_claims.Claim.md)
+- [CreateClaimRequestOptions](../interfaces/modules_claims.CreateClaimRequestOptions.md)
+- [CreateSelfSignedClaimOptions](../interfaces/modules_claims.CreateSelfSignedClaimOptions.md)
+- [DeleteClaimOptions](../interfaces/modules_claims.DeleteClaimOptions.md)
+- [GetClaimsByIssuerOptions](../interfaces/modules_claims.GetClaimsByIssuerOptions.md)
+- [GetClaimsByRequesterOptions](../interfaces/modules_claims.GetClaimsByRequesterOptions.md)
+- [GetClaimsBySubjectOptions](../interfaces/modules_claims.GetClaimsBySubjectOptions.md)
+- [GetUserClaimsOptions](../interfaces/modules_claims.GetUserClaimsOptions.md)
 - [IClaimIssuance](../interfaces/modules_claims.IClaimIssuance.md)
 - [IClaimRejection](../interfaces/modules_claims.IClaimRejection.md)
 - [IClaimRequest](../interfaces/modules_claims.IClaimRequest.md)
+- [IssueClaimOptions](../interfaces/modules_claims.IssueClaimOptions.md)
+- [IssueClaimRequestOptions](../interfaces/modules_claims.IssueClaimRequestOptions.md)
+- [IssueVerifiablePresentationOptions](../interfaces/modules_claims.IssueVerifiablePresentationOptions.md)
+- [PublishPublicClaimOptions](../interfaces/modules_claims.PublishPublicClaimOptions.md)
+- [RegisterOnchainOptions](../interfaces/modules_claims.RegisterOnchainOptions.md)
+- [RejectClaimRequestOptions](../interfaces/modules_claims.RejectClaimRequestOptions.md)
+- [VerifyEnrolmentPrerequisitesOptions](../interfaces/modules_claims.VerifyEnrolmentPrerequisitesOptions.md)
 
 ### Type aliases
 
@@ -115,7 +130,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `claim` | `Record`<`string`, `unknown`\> |
+| `claim` | `unknown` |
 
 #### Returns
 
