@@ -14,6 +14,7 @@
 - [cancelAssetOffer](modules_assets.AssetsService.md#cancelassetoffer)
 - [getAssetById](modules_assets.AssetsService.md#getassetbyid)
 - [getAssetHistory](modules_assets.AssetsService.md#getassethistory)
+- [getAssetOwner](modules_assets.AssetsService.md#getassetowner)
 - [getOfferedAssets](modules_assets.AssetsService.md#getofferedassets)
 - [getOwnedAssets](modules_assets.AssetsService.md#getownedassets)
 - [getPreviouslyOwnedAssets](modules_assets.AssetsService.md#getpreviouslyownedassets)
@@ -86,7 +87,7 @@ ___
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `Object` | Asset Id |
+| `id` | `Object` | Asset decentralized identifier |
 | `id.id` | `string` | - |
 
 #### Returns
@@ -119,6 +120,24 @@ ___
 `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
 Asset[] || []
+
+___
+
+### getAssetOwner
+
+▸ **getAssetOwner**(`id`): `Promise`<`string`\>
+
+Returns owner of the given asset
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | asset decentralized identifier |
+
+#### Returns
+
+`Promise`<`string`\>
 
 ___
 
@@ -223,7 +242,7 @@ ___
 
 `Promise`<`string`\>
 
-Asset DID
+Asset address
 
 ___
 
