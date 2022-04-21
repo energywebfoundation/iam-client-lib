@@ -28,7 +28,7 @@ import { SearchType } from '.';
 
 export class CacheClient implements ICacheClient {
   public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
-  private httpClient: AxiosInstance;
+  private _httpClient: AxiosInstance;
   private isAuthenticating = false;
   private failedRequests: Array<() => void> = [];
   private authEnabled: boolean;
@@ -42,11 +42,11 @@ export class CacheClient implements ICacheClient {
   async init() {
     const { url, cacheServerSupportsAuth = false } =
       cacheConfigs()[this._signerService.chainId];
-    this.httpClient = axios.create({
+    this._httpClient = axios.create({
       baseURL: url,
       withCredentials: true,
     });
-    this.httpClient.interceptors.response.use((response: AxiosResponse) => {
+    this._httpClient.interceptors.response.use((response: AxiosResponse) => {
       return response;
     }, this.handleError.bind(this));
     this.authEnabled = cacheServerSupportsAuth;
@@ -67,7 +67,7 @@ export class CacheClient implements ICacheClient {
 
       if (refreshedTokens) {
         if (!this.isBrowser) {
-          this.httpClient.defaults.headers.common[
+          this._httpClient.defaults.headers.common[
             'Authorization'
           ] = `Bearer ${refreshedTokens.token}`;
         }
@@ -84,14 +84,14 @@ export class CacheClient implements ICacheClient {
       await this._signerService.publicKeyAndIdentityToken();
     const {
       data: { refreshToken, token },
-    } = await this.httpClient.post<{ token: string; refreshToken: string }>(
+    } = await this._httpClient.post<{ token: string; refreshToken: string }>(
       '/login',
       {
         identityToken: pubKeyAndIdentityToken.identityToken,
       }
     );
     if (!this.isBrowser) {
-      this.httpClient.defaults.headers.common[
+      this._httpClient.defaults.headers.common[
         'Authorization'
       ] = `Bearer ${token}`;
     }
@@ -145,13 +145,17 @@ export class CacheClient implements ICacheClient {
     }
   }
 
+  get http() {
+    return this._httpClient;
+  }
+
   async getRoleDefinition(namespace: string) {
-    const { data } = await this.httpClient.get<IRole>(`/role/${namespace}`);
+    const { data } = await this._httpClient.get<IRole>(`/role/${namespace}`);
     return data?.definition;
   }
 
   async getRolesDefinition(namespaces: string[]) {
-    const { data } = await this.httpClient.get<IRole[]>(
+    const { data } = await this._httpClient.get<IRole[]>(
       `/role?namespaces=${namespaces.join(',')}`
     );
     const rolesWithDefinitions = data?.map((entry) => ({
@@ -164,47 +168,47 @@ export class CacheClient implements ICacheClient {
   }
 
   async getOrgDefinition(namespace: string) {
-    const { data } = await this.httpClient.get<IOrganization>(
+    const { data } = await this._httpClient.get<IOrganization>(
       `/org/${namespace}`
     );
     return data?.definition;
   }
 
   async getAppDefinition(namespace: string) {
-    const { data } = await this.httpClient.get<IApp>(`/app/${namespace}`);
+    const { data } = await this._httpClient.get<IApp>(`/app/${namespace}`);
     return data?.definition;
   }
 
   async getApplicationRoles(namespace: string) {
-    const { data } = await this.httpClient.get<IRole[]>(
+    const { data } = await this._httpClient.get<IRole[]>(
       `/app/${namespace}/roles`
     );
     return data;
   }
 
   async getOrganizationRoles(namespace: string) {
-    const { data } = await this.httpClient.get<IRole[]>(
+    const { data } = await this._httpClient.get<IRole[]>(
       `/org/${namespace}/roles`
     );
     return data;
   }
 
   async getOrganizationsByOwner(owner: string, withRelations = true) {
-    const { data } = await this.httpClient.get<IOrganization[]>(
+    const { data } = await this._httpClient.get<IOrganization[]>(
       `/org/owner/${owner}?withRelations=${withRelations}`
     );
     return data;
   }
 
   async getSubOrganizationsByOrganization(namespace: string) {
-    const { data } = await this.httpClient.get<IOrganization[]>(
+    const { data } = await this._httpClient.get<IOrganization[]>(
       `/org/${namespace}/suborgs`
     );
     return data;
   }
 
   async getOrgHierarchy(namespace: string) {
-    const { data } = await this.httpClient.get<IOrganization>(
+    const { data } = await this._httpClient.get<IOrganization>(
       `/org/${namespace}`
     );
     return data;
@@ -212,7 +216,7 @@ export class CacheClient implements ICacheClient {
 
   async getNamespaceBySearchPhrase(search: string, types?: SearchType[]) {
     if (types && types.length > 0) {
-      const { data } = await this.httpClient.get<
+      const { data } = await this._httpClient.get<
         (IOrganization | IApp | IRole)[]
       >(`/search/${search}`, {
         params: {
@@ -224,33 +228,35 @@ export class CacheClient implements ICacheClient {
       });
       return data;
     }
-    const { data } = await this.httpClient.get<
+    const { data } = await this._httpClient.get<
       (IOrganization | IApp | IRole)[]
     >(`/search/${search}`);
     return data;
   }
 
   async getApplicationsByOwner(owner: string, withRelations = true) {
-    const { data } = await this.httpClient.get<IApp[]>(
+    const { data } = await this._httpClient.get<IApp[]>(
       `/app/owner/${owner}?withRelations=${withRelations}`
     );
     return data;
   }
 
   async getApplicationsByOrganization(namespace: string) {
-    const { data } = await this.httpClient.get<IApp[]>(
+    const { data } = await this._httpClient.get<IApp[]>(
       `/org/${namespace}/apps`
     );
     return data;
   }
 
   async getRolesByOwner(owner: string) {
-    const { data } = await this.httpClient.get<IRole[]>(`/role/owner/${owner}`);
+    const { data } = await this._httpClient.get<IRole[]>(
+      `/role/owner/${owner}`
+    );
     return data;
   }
 
   async getClaimsBySubjects(subjects: string[]): Promise<Claim[]> {
-    const { data } = await this.httpClient.get<Claim[]>('/claim/by/subjects', {
+    const { data } = await this._httpClient.get<Claim[]>('/claim/by/subjects', {
       params: { subjects: subjects.join(',') },
     });
     return data;
@@ -260,7 +266,7 @@ export class CacheClient implements ICacheClient {
     issuer: string,
     { isAccepted, namespace }: ClaimsFilter = {}
   ) {
-    const { data } = await this.httpClient.get<Claim[]>(
+    const { data } = await this._httpClient.get<Claim[]>(
       `/claim/issuer/${issuer}`,
       {
         params: {
@@ -276,7 +282,7 @@ export class CacheClient implements ICacheClient {
     requester: string,
     { isAccepted, namespace }: ClaimsFilter = {}
   ) {
-    const { data } = await this.httpClient.get<Claim[]>(
+    const { data } = await this._httpClient.get<Claim[]>(
       `/claim/requester/${requester}`,
       {
         params: {
@@ -292,7 +298,7 @@ export class CacheClient implements ICacheClient {
     subject: string,
     { isAccepted, namespace }: ClaimsFilter = {}
   ) {
-    const { data } = await this.httpClient.get<Claim[]>(
+    const { data } = await this._httpClient.get<Claim[]>(
       `/claim/subject/${subject}`,
       {
         params: {
@@ -305,72 +311,74 @@ export class CacheClient implements ICacheClient {
   }
 
   async getClaimById(claimId: string): Promise<Claim | undefined> {
-    const { data } = await this.httpClient.get<Claim | undefined>(
+    const { data } = await this._httpClient.get<Claim | undefined>(
       `/claim/${claimId}`
     );
     return data;
   }
 
   async requestClaim(message: IClaimRequest) {
-    await this.httpClient.post<void>('/claim/request', message);
+    await this._httpClient.post<void>('/claim/request', message);
   }
 
   async issueClaim(issuer: string, message: IClaimIssuance) {
-    await this.httpClient.post<void>(`/claim/issue/${issuer}`, message);
+    await this._httpClient.post<void>(`/claim/issue/${issuer}`, message);
   }
 
   async rejectClaim(issuer: string, message: IClaimRejection) {
-    await this.httpClient.post<void>(`/claim/reject/${issuer}`, message);
+    await this._httpClient.post<void>(`/claim/reject/${issuer}`, message);
   }
 
   async deleteClaim(id: string) {
-    await this.httpClient.delete<void>(`/claim/${id}`);
+    await this._httpClient.delete<void>(`/claim/${id}`);
   }
 
   async getDIDsForRole(namespace: string) {
-    const { data } = await this.httpClient.get<string[]>(
+    const { data } = await this._httpClient.get<string[]>(
       `/claim/did/${namespace}?accepted=true`
     );
     return data;
   }
 
   async getDidDocument(did: string, includeClaims?: boolean) {
-    const { data } = await this.httpClient.get<IDIDDocument>(
+    const { data } = await this._httpClient.get<IDIDDocument>(
       `/DID/${did}?includeClaims=${includeClaims || false}`
     );
     return data;
   }
 
   async getAllowedRolesByIssuer(did: string) {
-    const { data } = await this.httpClient.get<IRole[]>(
+    const { data } = await this._httpClient.get<IRole[]>(
       `/claim/issuer/roles/allowed/${did}`
     );
     return data;
   }
 
   async addDIDToWatchList(did: string) {
-    await this.httpClient.post(`/DID/${did}`);
+    await this._httpClient.post(`/DID/${did}`);
   }
 
   async getOwnedAssets(did: string) {
-    const { data } = await this.httpClient.get<Asset[]>(`/assets/owner/${did}`);
+    const { data } = await this._httpClient.get<Asset[]>(
+      `/assets/owner/${did}`
+    );
     return data;
   }
 
   async getOfferedAssets(did: string) {
-    const { data } = await this.httpClient.get<Asset[]>(
+    const { data } = await this._httpClient.get<Asset[]>(
       `/assets/offered_to/${did}`
     );
     return data;
   }
 
   async getAssetById(id: string) {
-    const { data } = await this.httpClient.get<Asset>(`/assets/${id}`);
+    const { data } = await this._httpClient.get<Asset>(`/assets/${id}`);
     return data;
   }
 
   async getPreviouslyOwnedAssets(owner: string) {
-    const { data } = await this.httpClient.get<Asset[]>(
+    const { data } = await this._httpClient.get<Asset[]>(
       `/assets/owner/history/${owner}`
     );
     return data;
@@ -381,7 +389,7 @@ export class CacheClient implements ICacheClient {
     { order, take, skip, type }: AssetsFilter = {}
   ) {
     const query = stringify({ order, take, skip, type }, { skipNulls: true });
-    const { data } = await this.httpClient.get<AssetHistory[]>(
+    const { data } = await this._httpClient.get<AssetHistory[]>(
       `/assets/history/${id}?${query}`
     );
     return data;
@@ -396,7 +404,7 @@ export class CacheClient implements ICacheClient {
   > {
     if (!this.refresh_token) return undefined;
 
-    const { data } = await this.httpClient.get<{
+    const { data } = await this._httpClient.get<{
       token: string;
       refreshToken: string;
     }>(
@@ -416,7 +424,7 @@ export class CacheClient implements ICacheClient {
    */
   private async isAuthenticated(): Promise<boolean> {
     try {
-      const { data } = await this.httpClient.get<{
+      const { data } = await this._httpClient.get<{
         user: string | null;
       }>(`${TEST_LOGIN_ENDPOINT}`);
       return data.user ? data.user === this._signerService.did : false;
