@@ -4,17 +4,15 @@ The iam-client-library provides high-level functions related to the identity and
 
 - Creating and managing digital identities, which are the primary form of identification in EW-DOS
 - Facilitating claim(credential) requests and issuance for digital identities
-- Creating and managing Organizations, Assets and Applicationss 
-
+- Creating and managing Organizations, Assets and Applications
 
 ## Identity
 
 Identity in EW_DOS is established through a [Decentralized Identity (DID)](https://www.w3.org/TR/did-core/). A DID is a digital, verifiable identity that is user-generated and not coupled to any centralized institution. It can be used to identify any subject, such as a non-tangible asset, a customer, or an organization.
 
-Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-use-cases/#dfn-did-documents). The DID Document contains information on the DID subject such as its public keys and authentication mechanisms, attributes and claims. Only the owner of the DID can update this information. 
+Every DID resolves to a corresponding [DID document](https://www.w3.org/TR/did-use-cases/#dfn-did-documents). The DID Document contains information on the DID subject such as its public keys and authentication mechanisms, attributes and claims. Only the owner of the DID can update this information.
 
 The IAM Client Library's DID Registry Service provides high-level functions to create, fetch and update DIDs and DID Documents.
-
 
 ## Claims
 
@@ -26,10 +24,4 @@ Once an authority verifies a claim, a VC can then be used as an official record 
 
 Verified claims are referenced in a user's DID document by a hash, and the full credential data is stored off-chain in a decentralized file system called [IPFS](https://ipfs.io/)
 
-IAM Client Library's Claims Service handles the request and issuance of claims. See documentation on Claims Service [here](../guides/claim.md). 
-
-
-
- 
-
-
+IAM Client Library's Claims Service handles the request and issuance of claims. See documentation on Claims Service [here](../guides/claim.md).

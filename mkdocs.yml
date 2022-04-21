@@ -3,7 +3,6 @@ nav:
   - 'Quick start': 'Quick_start.md'
   - Introduction:
       - Overview: intro/overview.md
-      - Architecture: intro/architecture.md
       - 'Domain Hierarchy': intro/domainhierarchy.md
   - Guides:
       - Application: guides/application.md
