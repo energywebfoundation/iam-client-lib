@@ -835,7 +835,7 @@ export class ClaimsService {
     algorithm: Algorithms = Algorithms.EIP191
   ): Promise<string> {
     const provider = this._signerService.provider;
-    const blockNumber = (await provider.getBlockNumber()).toString();
+    const blockNumber = await provider.getBlockNumber();
 
     const payload = {
       iss: identity,
