@@ -18,6 +18,7 @@ export interface RoleCredentialSubjectParams {
 export interface ProofOptions {
   verificationMethod?: string;
   proofPurpose?: string;
+  challenge?: string;
 }
 
 export interface CreatePresentationParams {
