@@ -1,3 +1,10 @@
+## [5.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.12...v5.1.0-alpha.13) (2022-04-22)
+
+
+### Features
+
+* initiate credential exchange ([099eb64](https://github.com/energywebfoundation/iam-client-lib/commit/099eb64b4087d5f3a9b486b5794452410673ee99))
+
 ## [5.1.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.11...v5.1.0-alpha.12) (2022-04-21)
 
 
