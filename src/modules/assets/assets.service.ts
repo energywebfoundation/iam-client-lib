@@ -5,11 +5,36 @@ import { IdentityManager__factory } from '../../../ethers/factories/IdentityMana
 import { OfferableIdentity__factory } from '../../../ethers/factories/OfferableIdentity__factory';
 import { ChainConfig, chainConfigs } from '../../config/chain.config';
 import { CacheClient } from '../cache-client/cache-client.service';
-import { Order } from '../cache-client/cache-client.types';
 import { SignerService } from '../signer/signer.service';
-import { AssetHistoryEventType } from './assets.types';
+import {
+  AcceptAssetOfferOptions,
+  AcceptOfferTxOptions,
+  Asset,
+  AssetHistory,
+  CancelAssetOfferOptions,
+  CancelOfferTxOptions,
+  GetAssetByIdOptions,
+  GetAssetHistoryOptions,
+  GetOfferedAssetsOptions,
+  GetOwnedAssetsOptions,
+  GetPreviouslyOwnedAssetsOptions,
+  OfferAssetOptions,
+  OfferAssetTxOptions,
+  RejectAssetOfferOptions,
+  RejectOfferTxOptions,
+} from './assets.types';
 import { AssetNotExist } from '../../errors/asset-not-exist';
 
+/**
+ * Service responsible for handling the asset creation and management.
+ * See more information about assets in IAM stack [here](../../../docs/guides/asset.md).
+ *
+ * ```typescript
+ * const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * const { assetsService } = await connectToCacheServer();
+ * assetsService.registerAsset();
+ * ```
+ */
 export class AssetsService {
   private _owner: string;
   private _did: string;
@@ -33,16 +58,19 @@ export class AssetsService {
   async init() {
     const chainId = this._signerService.chainId;
     this._owner = this._signerService.address;
-    this._did = `did:${Methods.Erc1056}:${this._signerService.chainName()}:${
-      this._owner
-    }`;
+    this._did = this._signerService.did;
     const chainConfig = chainConfigs()[chainId] as ChainConfig;
     this._assetManager = chainConfig.assetManagerAddress;
   }
 
   /**
-   * @description Registers a new Asset to the User
-   * @returns Asset address
+   * Register a new asset to the user.
+   *
+   * ```typescript
+   * assetsService.registerAsset();
+   * ```
+   *
+   * @return asset address
    */
   async registerAsset(): Promise<string> {
     const data = this._assetManagerInterface.encodeFunctionData(
@@ -86,159 +114,240 @@ export class AssetsService {
   }
 
   /**
-   * @description Offer asset to a given address
-   * @param params.assetDID: DID of Offered Asset
-   * @param params.offerTo: Address of offer recipient
+   * Send an asset offer transfer to a given address
+   *
+   * ```typescript
+   * assetsService.offerAsset({
+   *     assetDID: 'did:ethr:volta:0x000...1',
+   *     offerTo: '0x000...2',
+   * });
+   * ```
+   *
+   * @param {OfferAssetOptions} options object containing options
    */
-  async offerAsset({
-    assetDID,
-    offerTo,
-  }: {
-    assetDID: string;
-    offerTo: string;
-  }) {
+  async offerAsset({ assetDID, offerTo }: OfferAssetOptions): Promise<void> {
     const assetContractAddress = addressOf(assetDID);
     const tx = this.offerAssetTx({ assetContractAddress, offerTo: offerTo });
     await this._signerService.send(tx);
   }
 
   /**
-   * @description Accept an offered Asset
-   * @param params.assetDID: DID of Offered Asset
+   * Accept an offered asset.
+   *
+   * ```typescript
+   * assetsService.acceptAssetOffer({
+   *     assetDID: 'did:ethr:volta:0x000...1',
+   * });
+   * ```
+   *
+   * @param {AcceptAssetOfferOptions} options object containing options
    */
-  async acceptAssetOffer({ assetDID }: { assetDID: string }) {
+  async acceptAssetOffer({ assetDID }: AcceptAssetOfferOptions): Promise<void> {
     const assetContractAddress = addressOf(assetDID);
     const tx = this.acceptOfferTx({ assetContractAddress });
     await this._signerService.send(tx);
   }
 
   /**
-   * @description Reject an offered Asset
-   * @param params.assetDID: DID of offered Asset
+   * Reject an offered asset.
+   *
+   * ```typescript
+   * assetsService.rejectAssetOffer({
+   *     assetDID: 'did:ethr:volta:0x000...1',
+   * });
+   * ```
+   *
+   * @param {RejectAssetOfferOptions} options object containing options
    */
-  async rejectAssetOffer({ assetDID }: { assetDID: string }) {
+  async rejectAssetOffer({ assetDID }: RejectAssetOfferOptions): Promise<void> {
     const assetContractAddress = addressOf(assetDID);
     const tx = this.rejectOfferTx({ assetContractAddress });
     await this._signerService.send(tx);
   }
 
   /**
-   * @description Cancel an Asset offer
-   * @param params.assetDID: DID of offered Asset
+   * Cancel an asset offer.
+   *
+   * ```typescript
+   * assetsService.cancelAssetOffer({
+   *     assetDID: 'did:ethr:volta:0x000...1',
+   * });
+   * ```
+   *
+   * @param {CancelAssetOfferOptions} options object containing options
    */
-  async cancelAssetOffer({ assetDID }: { assetDID: string }) {
+  async cancelAssetOffer({ assetDID }: CancelAssetOfferOptions): Promise<void> {
     const assetContractAddress = addressOf(assetDID);
     const tx = this.cancelOfferTx({ assetContractAddress });
     await this._signerService.send(tx);
   }
 
   /**
-   * @description Retrieve all owned assets for the User's DID
+   * Retrieve owned assets of the given user.
+   *
+   * ```typescript
+   * assetsService.getOwnedAssets({
+   *     did: 'did:ethr:volta:0x000...1',
+   * });
+   * ```
+   *
+   * @param {GetOwnedAssetsOptions} options object containing options
+   * @returns owned assets
    */
-  async getOwnedAssets({ did = this._did }: { did?: string } = {}) {
+  async getOwnedAssets(
+    { did }: GetOwnedAssetsOptions = { did: this._did }
+  ): Promise<Asset[]> {
     return this._cacheClient.getOwnedAssets(did);
   }
 
   /**
-   * @description Get all Assets offered to current User
-   * @returns Asset[] || []
+   * Retrieve assets offered to the given user.
+   *
+   * ```typescript
+   * assetsService.getOfferedAssets({
+   *     did: 'did:ethr:volta:0x000...1',
+   * });
+   * ```
+   *
+   * @param {GetOwnedAssetsOptions} options object containing options
+   * @returns offered assets
    */
-  async getOfferedAssets({ did = this._did }: { did?: string } = {}) {
+  async getOfferedAssets({
+    did = this._did,
+  }: GetOfferedAssetsOptions): Promise<Asset[]> {
     return this._cacheClient.getOfferedAssets(did);
   }
 
   /**
-   * @description Get Asset by Id
-   * @param id Asset decentralized identifier
-   * @returns Asset
+   * Retrieve asset by id.
+   *
+   * ```typescript
+   * assetsService.getAssetById({
+   *     id: 'did:ethr:volta:0x000...1',
+   * });
+   * ```
+   *
+   * @param {GetAssetByIdOptions} options object containing options
+   * @return asset
    */
-  async getAssetById({ id }: { id: string }) {
+  async getAssetById({ id }: GetAssetByIdOptions): Promise<Asset> {
     return this._cacheClient.getAssetById(id);
   }
 
   /**
-   * Returns owner of the given asset
-   * @param id asset decentralized identifier
+   * Retrieve DID of the asset owner of the given asset DID.
+   *
+   * ```typescript
+   * assetsService.getAssetOwner('did:ethr:volta:0x000...1');
+   * ```
+   *
+   * @param {String} id DID of the asset
+   * @return asset owner DID
    */
   async getAssetOwner(id: string) {
     const asset = await this.getAssetById({ id });
     if (!asset) {
       throw new AssetNotExist(id);
-    } 
+    }
     return asset.owner;
   }
 
   /**
-   * @description Get previously owned asset for a given DID
-   * @param params.owner User DID
-   * @returns Asset[] || []
+   * Retrieve previously owned assets of the given user.
+   *
+   * ```typescript
+   * assetsService.getPreviouslyOwnedAssets({
+   *     owner: 'did:ethr:volta:0x000...1',
+   * });
+   * ```
+   *
+   * @param {GetPreviouslyOwnedAssetsOptions} options object containing options
+   * @returns previously owned assets
    */
-  async getPreviouslyOwnedAssets({ owner }: { owner: string }) {
+  async getPreviouslyOwnedAssets({
+    owner,
+  }: GetPreviouslyOwnedAssetsOptions): Promise<Asset[]> {
     return this._cacheClient.getPreviouslyOwnedAssets(owner);
   }
 
   /**
-   * @description Get history of a given Asset Id
-   * @param params.id Asset Id
-   * @param params.order "ASC" (Ascending) || "DESC" (Descending)
-   * @param params.take number
-   * @param params.skip number
-   * @param params.type AssetHistoryEventType
-   * @returns Asset[] || []
+   * Retrieve history of a given asset DID
+   *
+   * ```typescript
+   * assetsService.getAssetHistory({
+   *     id: 'did:ethr:volta:0x000...1',
+   *     order: Order.ASC,
+   *     take: 5,
+   *     skip: 0,
+   *     type: AssetHistoryEventType.ASSET_OFFERED,
+   * });
+   * ```
+   *
+   * @param {GetAssetHistoryOptions} options object containing options
+   * @returns asset history
    */
   async getAssetHistory({
     id,
     ...query
-  }: {
-    id: string;
-    order?: Order;
-    take?: number;
-    skip?: number;
-    type?: AssetHistoryEventType;
-  }) {
+  }: GetAssetHistoryOptions): Promise<AssetHistory[]> {
     return this._cacheClient.getAssetHistory(id, { ...query });
   }
 
+  /**
+   * Create a transaction request to offer an asset to a given DID.
+   *
+   * @param {OfferAssetTxOptions} options object containing options
+   * @returns transaction request
+   */
   private offerAssetTx({
     offerTo,
     assetContractAddress,
-  }: {
-    offerTo: string;
-    assetContractAddress: string;
-  }): providers.TransactionRequest {
+  }: OfferAssetTxOptions): providers.TransactionRequest {
     return {
       data: this._assetInterface.encodeFunctionData('offer', [offerTo]),
       to: assetContractAddress,
     };
   }
 
+  /**
+   * Create a transaction request to accept an asset offer.
+   *
+   * @param {AcceptOfferTxOptions} options object containing options
+   * @returns transaction request
+   */
   private acceptOfferTx({
     assetContractAddress,
-  }: {
-    assetContractAddress: string;
-  }): providers.TransactionRequest {
+  }: AcceptOfferTxOptions): providers.TransactionRequest {
     return {
       data: this._assetInterface.encodeFunctionData('acceptOffer'),
       to: assetContractAddress,
     };
   }
 
+  /**
+   * Create a transaction request to reject an asset offer.
+   *
+   * @param {RejectOfferTxOptions} options object containing options
+   * @returns transaction request
+   */
   private rejectOfferTx({
     assetContractAddress,
-  }: {
-    assetContractAddress: string;
-  }): providers.TransactionRequest {
+  }: RejectOfferTxOptions): providers.TransactionRequest {
     return {
       data: this._assetInterface.encodeFunctionData('rejectOffer'),
       to: assetContractAddress,
     };
   }
 
+  /**
+   * Create a transaction request to cancel an asset offer.
+   *
+   * @param {CancelOfferTxOptions} options object containing options
+   * @returns transaction request
+   */
   private cancelOfferTx({
     assetContractAddress,
-  }: {
-    assetContractAddress: string;
-  }): providers.TransactionRequest {
+  }: CancelOfferTxOptions): providers.TransactionRequest {
     return {
       data: this._assetInterface.encodeFunctionData('cancelOffer'),
       to: assetContractAddress,
