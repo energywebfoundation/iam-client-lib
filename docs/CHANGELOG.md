@@ -1,3 +1,10 @@
+## [5.1.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.13...v5.1.0-alpha.14) (2022-04-22)
+
+
+### Bug Fixes
+
+* fix delegate token payload ([56bfb1d](https://github.com/energywebfoundation/iam-client-lib/commit/56bfb1dac6d23b3146fee723a1245041701a9928))
+
 ## [5.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.12...v5.1.0-alpha.13) (2022-04-22)
 
 
