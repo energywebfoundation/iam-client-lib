@@ -13,6 +13,7 @@
 - [createPresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createpresentation)
 - [createRoleVC](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createrolevc)
 - [createVerifiablePresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createverifiablepresentation)
+- [initiateExchange](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#initiateexchange)
 - [verify](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#verify)
 - [create](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#create)
 
@@ -20,13 +21,14 @@
 
 ### constructor
 
-• **new VerifiableCredentialsServiceBase**(`_signerService`)
+• **new VerifiableCredentialsServiceBase**(`_signerService`, `_storage`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
+| `_storage` | `default` |
 
 ## Methods
 
@@ -81,6 +83,26 @@ ___
 
 ___
 
+### initiateExchange
+
+▸ **initiateExchange**(`__namedParameters`): `Promise`<`any`[]\>
+
+**`description`** The type of the exchange. Only vc-api exchanges currently supported.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `ExchangeInvitation` |
+
+#### Returns
+
+`Promise`<`any`[]\>
+
+credentials query with matching verifiable presentations
+
+___
+
 ### verify
 
 ▸ **verify**<`T`\>(`vp`, `options?`): `any`
@@ -106,13 +128,14 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ `Static` **create**(`signerService`, `storage`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
+| `storage` | `default` |
 
 #### Returns
 

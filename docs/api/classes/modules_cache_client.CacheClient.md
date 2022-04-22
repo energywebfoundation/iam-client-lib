@@ -16,6 +16,10 @@
 
 - [pubKeyAndIdentityToken](modules_cache_client.CacheClient.md#pubkeyandidentitytoken)
 
+### Accessors
+
+- [http](modules_cache_client.CacheClient.md#http)
+
 ### Methods
 
 - [addDIDToWatchList](modules_cache_client.CacheClient.md#adddidtowatchlist)
@@ -76,6 +80,16 @@
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[pubKeyAndIdentityToken](../interfaces/modules_cache_client.ICacheClient.md#pubkeyandidentitytoken)
+
+## Accessors
+
+### http
+
+• `get` **http**(): `AxiosInstance`
+
+#### Returns
+
+`AxiosInstance`
 
 ## Methods
 
