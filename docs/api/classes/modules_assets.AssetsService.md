@@ -2,6 +2,15 @@
 
 [modules/assets](../modules/modules_assets.md).AssetsService
 
+Service responsible for handling the asset creation and management.
+See more information about assets in IAM stack [here](../../../docs/guides/asset.md).
+
+```typescript
+const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+const { assetsService } = await connectToCacheServer();
+assetsService.registerAsset();
+```
+
 ## Table of contents
 
 ### Constructors
@@ -41,16 +50,21 @@
 
 ### acceptAssetOffer
 
-▸ **acceptAssetOffer**(`__namedParameters`): `Promise`<`void`\>
+▸ **acceptAssetOffer**(`options`): `Promise`<`void`\>
 
-**`description`** Accept an offered Asset
+Accept an offered asset.
+
+```typescript
+assetsService.acceptAssetOffer({
+    assetDID: 'did:ethr:volta:0x000...1',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.assetDID` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`AcceptAssetOfferOptions`](../interfaces/modules_assets.AcceptAssetOfferOptions.md) | object containing options |
 
 #### Returns
 
@@ -60,16 +74,21 @@ ___
 
 ### cancelAssetOffer
 
-▸ **cancelAssetOffer**(`__namedParameters`): `Promise`<`void`\>
+▸ **cancelAssetOffer**(`options`): `Promise`<`void`\>
 
-**`description`** Cancel an Asset offer
+Cancel an asset offer.
+
+```typescript
+assetsService.cancelAssetOffer({
+    assetDID: 'did:ethr:volta:0x000...1',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.assetDID` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CancelAssetOfferOptions`](../interfaces/modules_assets.CancelAssetOfferOptions.md) | object containing options |
 
 #### Returns
 
@@ -79,47 +98,57 @@ ___
 
 ### getAssetById
 
-▸ **getAssetById**(`id`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)\>
+▸ **getAssetById**(`options`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)\>
 
-**`description`** Get Asset by Id
+Retrieve asset by id.
+
+```typescript
+assetsService.getAssetById({
+    id: 'did:ethr:volta:0x000...1',
+});
+```
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `Object` | Asset decentralized identifier |
-| `id.id` | `string` | - |
+| `options` | [`GetAssetByIdOptions`](../interfaces/modules_assets.GetAssetByIdOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)\>
 
-Asset
+asset
 
 ___
 
 ### getAssetHistory
 
-▸ **getAssetHistory**(`__namedParameters`): `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
+▸ **getAssetHistory**(`options`): `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
-**`description`** Get history of a given Asset Id
+Retrieve history of a given asset DID
+
+```typescript
+assetsService.getAssetHistory({
+    id: 'did:ethr:volta:0x000...1',
+    order: Order.ASC,
+    take: 5,
+    skip: 0,
+    type: AssetHistoryEventType.ASSET_OFFERED,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
-| `__namedParameters.order?` | [`Order`](../enums/modules_cache_client.Order.md) |
-| `__namedParameters.skip?` | `number` |
-| `__namedParameters.take?` | `number` |
-| `__namedParameters.type?` | [`AssetHistoryEventType`](../enums/modules_assets.AssetHistoryEventType.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetAssetHistoryOptions`](../interfaces/modules_assets.GetAssetHistoryOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
-Asset[] || []
+asset history
 
 ___
 
@@ -127,78 +156,101 @@ ___
 
 ▸ **getAssetOwner**(`id`): `Promise`<`string`\>
 
-Returns owner of the given asset
+Retrieve DID of the asset owner of the given asset DID.
+
+```typescript
+assetsService.getAssetOwner('did:ethr:volta:0x000...1');
+```
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `string` | asset decentralized identifier |
+| `id` | `string` | DID of the asset |
 
 #### Returns
 
 `Promise`<`string`\>
 
+asset owner DID
+
 ___
 
 ### getOfferedAssets
 
-▸ **getOfferedAssets**(`__namedParameters?`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getOfferedAssets**(`options`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
-**`description`** Get all Assets offered to current User
+Retrieve assets offered to the given user.
+
+```typescript
+assetsService.getOfferedAssets({
+    did: 'did:ethr:volta:0x000...1',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetOfferedAssetsOptions`](../interfaces/modules_assets.GetOfferedAssetsOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
-Asset[] || []
+offered assets
 
 ___
 
 ### getOwnedAssets
 
-▸ **getOwnedAssets**(`__namedParameters?`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getOwnedAssets**(`options?`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
-**`description`** Retrieve all owned assets for the User's DID
+Retrieve owned assets of the given user.
+
+```typescript
+assetsService.getOwnedAssets({
+    did: 'did:ethr:volta:0x000...1',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetOwnedAssetsOptions`](../interfaces/modules_assets.GetOwnedAssetsOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+
+owned assets
 
 ___
 
 ### getPreviouslyOwnedAssets
 
-▸ **getPreviouslyOwnedAssets**(`__namedParameters`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getPreviouslyOwnedAssets**(`options`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
-**`description`** Get previously owned asset for a given DID
+Retrieve previously owned assets of the given user.
+
+```typescript
+assetsService.getPreviouslyOwnedAssets({
+    owner: 'did:ethr:volta:0x000...1',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetPreviouslyOwnedAssetsOptions`](../interfaces/modules_assets.GetPreviouslyOwnedAssetsOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
-Asset[] || []
+previously owned assets
 
 ___
 
@@ -214,17 +266,22 @@ ___
 
 ### offerAsset
 
-▸ **offerAsset**(`__namedParameters`): `Promise`<`void`\>
+▸ **offerAsset**(`options`): `Promise`<`void`\>
 
-**`description`** Offer asset to a given address
+Send an asset offer transfer to a given address
+
+```typescript
+assetsService.offerAsset({
+    assetDID: 'did:ethr:volta:0x000...1',
+    offerTo: '0x000...2',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.assetDID` | `string` |
-| `__namedParameters.offerTo` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`OfferAssetOptions`](../interfaces/modules_assets.OfferAssetOptions.md) | object containing options |
 
 #### Returns
 
@@ -236,28 +293,37 @@ ___
 
 ▸ **registerAsset**(): `Promise`<`string`\>
 
-**`description`** Registers a new Asset to the User
+Register a new asset to the user.
+
+```typescript
+assetsService.registerAsset();
+```
 
 #### Returns
 
 `Promise`<`string`\>
 
-Asset address
+asset address
 
 ___
 
 ### rejectAssetOffer
 
-▸ **rejectAssetOffer**(`__namedParameters`): `Promise`<`void`\>
+▸ **rejectAssetOffer**(`options`): `Promise`<`void`\>
 
-**`description`** Reject an offered Asset
+Reject an offered asset.
+
+```typescript
+assetsService.rejectAssetOffer({
+    assetDID: 'did:ethr:volta:0x000...1',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.assetDID` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`RejectAssetOfferOptions`](../interfaces/modules_assets.RejectAssetOfferOptions.md) | object containing options |
 
 #### Returns
 
