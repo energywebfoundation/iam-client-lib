@@ -2,6 +2,16 @@
 
 [modules/claims](../modules/modules_claims.md).ClaimsService
 
+Service responsible for handling the request and issuance of claims.
+See more information about claims in IAM stack [here](../../../docs/guides/claim.md).
+
+```typescript
+const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+const { connectToDidRegistry } = await connectToCacheServer();
+const { claimsService } = await connectToDidRegistry();
+claimsService.getClaimById(claim.id);
+```
+
 ## Table of contents
 
 ### Constructors
@@ -52,22 +62,27 @@
 
 ### createClaimRequest
 
-▸ **createClaimRequest**(`__namedParameters`): `Promise`<`void`\>
+▸ **createClaimRequest**(`options`): `Promise`<`void`\>
 
-**`description`** allows subject to request for credential
+Allows subject to request for credential by creating and sending a claim request to claim issuer.
+
+```typescript
+claimsService.createClaimRequest({
+    claim: {
+         claimType: 'email.roles.energyweb.iam.ewc',
+         claimTypeVersion: 1,
+         requestorFields: [{key: 'foo', value: 'bar'}],
+    };
+    subject: 'did:ethr:0x00...0',
+    registrationTypes: [RegistrationTypes.OnChain, RegistrationTypes.OffChain]
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claim` | `Object` |
-| `__namedParameters.claim.claimType` | `string` |
-| `__namedParameters.claim.claimTypeVersion` | `number` |
-| `__namedParameters.claim.issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
-| `__namedParameters.claim.requestorFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
-| `__namedParameters.registrationTypes?` | [`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)[] |
-| `__namedParameters.subject?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CreateClaimRequestOptions`](../interfaces/modules_claims.CreateClaimRequestOptions.md) | object containing options |
 
 #### Returns
 
@@ -79,21 +94,29 @@ ___
 
 ▸ **createDelegateProof**(`delegateKey`, `identity`, `algorithm?`): `Promise`<`string`\>
 
-**`description`** create a proof of identity delegate
+Create a public claim to prove identity.
+
+```typescript
+claimsService.createDelegateProof(
+    '245a40a9...776071ca57cec',
+    'did:ethr:0x00...0',
+    Algorithms.EIP191,
+);
+```
 
 #### Parameters
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `delegateKey` | `string` | `undefined` | private key of the delegate in hexadecimal format |
-| `identity` | `string` | `undefined` | Did of the delegate |
-| `algorithm` | `Algorithms` | `Algorithms.EIP191` | - |
+| `delegateKey` | `string` | `undefined` | Private key of the delegate in hexadecimal format |
+| `identity` | `string` | `undefined` | DID of the delegate |
+| `algorithm` | `Algorithms` | `Algorithms.EIP191` | Algorithm used to sign the delegate (EIP191 and ES256 available) |
 
 #### Returns
 
 `Promise`<`string`\>
 
-token of delegate
+JWT token of delegate
 
 ___
 
@@ -101,7 +124,11 @@ ___
 
 ▸ **createIdentityProof**(): `Promise`<`string`\>
 
-**`description`** create a public claim to prove identity
+Create a public claim to prove identity.
+
+```typescript
+claimsService.createIdentityProof();
+```
 
 #### Returns
 
@@ -113,36 +140,57 @@ ___
 
 ### createSelfSignedClaim
 
-▸ **createSelfSignedClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **createSelfSignedClaim**(`options`): `Promise`<`string`\>
 
-**`description`** Creates claim with `data` and adds it to `subject` document. Signer must own or control subject
+Creates self signed off-chain claim with `data` and adds it to `subject` document. Signer must own or control subject.
+
+```typescript
+claimsService.createSelfSignedClaim({
+    data: {
+         claimType: 'email.roles.energyweb.iam.ewc',
+         claimTypeVersion: 1,
+         issuerFields: [{key: 'foo', value: 'bar'}],
+         profile: {
+             name: 'John Doe',
+             birthdate: '1990-01-01',
+             address: '123 Main St',
+         },
+    },
+    subject: 'did:ethr:volta:0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.data` | [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md) |
-| `__namedParameters.subject?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CreateSelfSignedClaimOptions`](../interfaces/modules_claims.CreateSelfSignedClaimOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`string`\>
 
-claim url
+URl to IPFS
 
 ___
 
 ### deleteClaim
 
-▸ **deleteClaim**(`__namedParameters`): `Promise`<`void`\>
+▸ **deleteClaim**(`options`): `Promise`<`void`\>
+
+Delete claim request. Works only for pending claims (not issued or rejected).
+
+```typescript
+claimsService.deleteClaim({
+    id: '7281a130-e2b1-430d-8c14-201010eae901',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`DeleteClaimOptions`](../interfaces/modules_claims.DeleteClaimOptions.md) | object containing options |
 
 #### Returns
 
@@ -154,17 +202,24 @@ ___
 
 ▸ **getClaimById**(`claimId`): `Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
 
-**`description`** - Returns claim with the given Id or null if claim does not exist
+Retrieve claim with given id.
+
+```typescript
+const claimId = '7281a130-e2b1-430d-8c14-201010eae901';
+claimsService.getClaimById(claimId);
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `claimId` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `claimId` | `string` | claim id |
 
 #### Returns
 
 `Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
+
+claim with given id
 
 ___
 
@@ -187,64 +242,85 @@ ___
 
 ### getClaimsByIssuer
 
-▸ **getClaimsByIssuer**(`__namedParameters`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByIssuer**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
-**`description`** - Returns claims for given issuer. Allows filtering by status and parent namespace
+Retrieve claims issued by a given issuer with allowing filter by status and parent namespace.
+
+```typescript
+claimsService.getClaimsByIssuer({
+    did: 'did:ethr:0x00...0',
+    isAccepted: false,
+    namespace: 'energyweb.iam.ewc',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.namespace?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetClaimsByIssuerOptions`](../interfaces/modules_claims.GetClaimsByIssuerOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+
+list of claims
 
 ___
 
 ### getClaimsByRequester
 
-▸ **getClaimsByRequester**(`__namedParameters`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRequester**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
-**`description`** - Returns claims for given requester. Allows filtering by status and parent namespace
+Retrieve claims requested by a given requester with allowing filter by status and parent namespace.
+
+```typescript
+claimsService.getClaimsByRequester({
+    did: 'did:ethr:0x00...0',
+    isAccepted: false,
+    namespace: 'energyweb.iam.ewc',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.namespace?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetClaimsByRequesterOptions`](../interfaces/modules_claims.GetClaimsByRequesterOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+
+list of claims
 
 ___
 
 ### getClaimsBySubject
 
-▸ **getClaimsBySubject**(`__namedParameters`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsBySubject**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
-**`description`** - Returns claims for given subject. Allows filtering by status and parent namespace
+Retrieve claims for given subject with allowing filter by status and parent namespace.
+
+```typescript
+claimsService.getClaimsBySubject({
+    did: 'did:ethr:0x00...0',
+    isAccepted: false,
+    namespace: 'energyweb.iam.ewc',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.isAccepted?` | `boolean` |
-| `__namedParameters.namespace?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetClaimsBySubjectOptions`](../interfaces/modules_claims.GetClaimsBySubjectOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+
+list of claims
 
 ___
 
@@ -252,15 +328,23 @@ ___
 
 ▸ **getClaimsBySubjects**(`subjects`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
+Retrieve claims related to a given subjects.
+
+```typescript
+claimsService.getClaimsBySubjects(['did:ethr:0x00...0', 'did:ethr:0x00...1', ...]);
+```
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subjects` | `string`[] |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjects` | `string`[] | list of subjects |
 
 #### Returns
 
 `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+
+list of claims
 
 ___
 
@@ -268,39 +352,51 @@ ___
 
 ▸ **getNamespaceFromClaimType**(`claimType`): `string`
 
-**`description`** get `namespace` from claim type.
+Get `namespace` from claim type.
+
+```typescript
+claimsService.getNamespaceFromClaimType(
+    'email.roles.energyweb.iam.ewc'
+);
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `claimType` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `claimType` | `string` | Private key of the delegate in hexadecimal format |
 
 #### Returns
 
 `string`
 
-namespace
+Namespace of given claim type
 
 ___
 
 ### getUserClaims
 
-▸ **getUserClaims**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
+▸ **getUserClaims**(`options`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
 
-getUserClaims
+Get published off-chain claims of the given subject.
 
-**`description`** get published offchain claims
+```typescript
+claimsService.getUserClaims({
+    did: 'did:ethr:0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `undefined` \| { `did?`: `string`  } |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetUserClaimsOptions`](../interfaces/modules_claims.GetUserClaimsOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
+
+Claims containing DID document service endpoints
 
 ___
 
@@ -308,8 +404,11 @@ ___
 
 ▸ **hasOnChainRole**(`did`, `role`, `version`): `Promise`<`boolean`\>
 
-A utility function to check the blockchain directly if a DID has a role
-TODO: fail if the DID chain ID doesn't match the configured signer network connect
+A utility function to check the blockchain directly if a DID has a role.
+
+```typescript
+claimsService.hasOnChainRole('did:ethr:ewc:0x00...0', 'email.roles.iam.ewc', 1);
+```
 
 #### Parameters
 
@@ -323,7 +422,7 @@ TODO: fail if the DID chain ID doesn't match the configured signer network conne
 
 `Promise`<`boolean`\>
 
-true if DID has role at the version. false if not.
+`true` if DID has role at the version. `false` if not.
 
 ___
 
@@ -339,45 +438,61 @@ ___
 
 ### issueClaim
 
-▸ **issueClaim**(`__namedParameters`): `Promise`<`undefined` \| `string`\>
+▸ **issueClaim**(`options`): `Promise`<`undefined` \| `string`\>
+
+Issue claim without previous request. Option available for issuers only.
+
+```typescript
+claimsService.issueClaim({
+    claim: {
+         claimType: 'email.roles.energyweb.iam.ewc',
+         claimTypeVersion: 1,
+         issuerFields: [{key: 'foo', value: 'bar'}],
+    };
+    subject: 'did:ethr:0x00...0',
+    registrationTypes: [RegistrationTypes.OnChain, RegistrationTypes.OffChain]
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claim` | `Object` |
-| `__namedParameters.claim.claimType` | `string` |
-| `__namedParameters.claim.claimTypeVersion` | `number` |
-| `__namedParameters.claim.issuerFields` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
-| `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)[] |
-| `__namedParameters.subject` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`IssueClaimOptions`](../interfaces/modules_claims.IssueClaimOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`undefined` \| `string`\>
 
+Issued token if registrationTypes includes RegistrationTypes.OffChain
+
 ___
 
 ### issueClaimRequest
 
-▸ **issueClaimRequest**(`__namedParameters`): `Promise`<`void`\>
+▸ **issueClaimRequest**(`options`): `Promise`<`void`\>
 
 Issue a claim request by signing both off-chain and on-chain request and persisting result to the cache-server.
 Optionally, issue on-chain role can be submitted to the ClaimManager contract as well.
 
+```typescript
+const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+claimsService.issueClaimRequest({
+    requester: claim.requester,
+    token: claim.token,
+    id: claim.id,
+    subjectAgreement: claim.subjectAgreement,
+    registrationTypes: claim.registrationTypes;
+    issuerFields: [{key: 'foo', value: 'bar'}],
+    publishOnChain: false,
+});
+```
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
-| `__namedParameters.issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] |
-| `__namedParameters.publishOnChain?` | `boolean` |
-| `__namedParameters.registrationTypes` | [`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)[] |
-| `__namedParameters.requester` | `string` |
-| `__namedParameters.subjectAgreement` | `string` |
-| `__namedParameters.token` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`IssueClaimRequestOptions`](../interfaces/modules_claims.IssueClaimRequestOptions.md) | object containing options |
 
 #### Returns
 
@@ -387,26 +502,33 @@ ___
 
 ### publishPublicClaim
 
-▸ **publishPublicClaim**(`token`): `Promise`<`undefined` \| `string`\>
+▸ **publishPublicClaim**(`options`): `Promise`<`undefined` \| `string`\>
 
-**`description`** publishes claim off-chain (by storing claim data in ipfs and save url to DID document services) or registering on-chain depending on registrationTypes values.
+Register role to claim manager contract if registrationTypes includes RegistrationTypes.OnChain
+Publish role to IPFS and add DID document service if registrationTypes includes RegistrationTypes.OffChain
+
+```typescript
+const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+claimsService.publishPublicClaim({
+    claim: {
+         token: claim.token,
+         claimType: claim.claimType,
+    };
+    registrationTypes: claim.registrationTypes,
+});
+```
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `token` | `Object` | @deprecated - use claim with claimType instead |
-| `token.claim` | `Object` | - |
-| `token.claim.claimType?` | `string` | - |
-| `token.claim.token?` | `string` | - |
-| `token.registrationTypes?` | [`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)[] | - |
-| `token.token?` | `string` | - |
+| `options` | [`PublishPublicClaimOptions`](../interfaces/modules_claims.PublishPublicClaimOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`undefined` \| `string`\>
 
-ulr to ipfs
+URl to IPFS if registrationTypes includes RegistrationTypes.OffChain
 
 ___
 
@@ -414,20 +536,25 @@ ___
 
 ▸ **registerOnchain**(`claim`): `Promise`<`void`\>
 
-**`description`** Registers issued onchain claim with Claim manager
+Register issued on-chain claim on Claim Manager contract.
+
+```typescript
+const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+claimsService.registerOnchain({
+    claimType: claim.claimType,
+    claimTypeVersion: claim.claimTypeVersion,
+    subjectAgreement: claim.subjectAgreement,
+    onChainProof: claim.onChainProof,
+    acceptedBy: claim.acceptedBy;
+    subject: claim.subject,
+});
+```
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `claim` | `Object` | id of signed onchain claim. |
-| `claim.acceptedBy` | `string` | - |
-| `claim.claimType?` | `string` | - |
-| `claim.claimTypeVersion?` | `string` | - |
-| `claim.onChainProof` | `string` | - |
-| `claim.subject?` | `string` | - |
-| `claim.subjectAgreement?` | `string` | - |
-| `claim.token?` | `string` | - |
+| `claim` | [`RegisterOnchainOptions`](../interfaces/modules_claims.RegisterOnchainOptions.md) | object containing options |
 
 #### Returns
 
@@ -437,16 +564,24 @@ ___
 
 ### rejectClaimRequest
 
-▸ **rejectClaimRequest**(`__namedParameters`): `Promise`<`void`\>
+▸ **rejectClaimRequest**(`options`): `Promise`<`void`\>
+
+Reject claim request.
+
+```typescript
+const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+claimsService.rejectClaimRequest({
+    id: claim.id,
+    requesterDID: claim.requester,
+    rejectionReason: 'some reason',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.id` | `string` |
-| `__namedParameters.rejectionReason?` | `string` |
-| `__namedParameters.requesterDID` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`RejectClaimRequestOptions`](../interfaces/modules_claims.RejectClaimRequestOptions.md) | object containing options |
 
 #### Returns
 
