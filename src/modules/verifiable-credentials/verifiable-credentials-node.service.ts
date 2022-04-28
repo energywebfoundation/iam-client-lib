@@ -11,6 +11,7 @@ import {
 import { SignerService } from '../signer';
 import { VerifiableCredentialsServiceBase } from './verifiable-credentials-base.service';
 import VCStorageClient from './storage-client';
+import { DidRegistry } from '../did-registry';
 
 export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServiceBase {
   protected prepareIssueCredential: (
@@ -43,8 +44,12 @@ export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServi
     proof_options: string
   ) => Promise<string>;
 
-  constructor(_signerService: SignerService, storage: VCStorageClient) {
-    super(_signerService, storage);
+  constructor(
+    _signerService: SignerService,
+    storage: VCStorageClient,
+    didRegistry: DidRegistry
+  ) {
+    super(_signerService, storage, didRegistry);
 
     this.completeIssueCredential = completeIssueCredential;
     this.prepareIssueCredential = prepareIssueCredential;
@@ -55,10 +60,15 @@ export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServi
     this.verifyPresentation = verifyPresentation;
   }
 
-  static async create(signerService: SignerService, storage: VCStorageClient) {
+  static async create(
+    signerService: SignerService,
+    storage: VCStorageClient,
+    didRegistry: DidRegistry
+  ) {
     const service = new VerifiableCredentialsServiceNode(
       signerService,
-      storage
+      storage,
+      didRegistry
     );
     return service;
   }

@@ -10,6 +10,7 @@ import {
   VC_API_EXCHANGE,
   VpRequest,
   VpRequestQueryType,
+  CredentialSubject,
 } from '@ew-did-registry/credentials-interface';
 import { SignerService } from '../signer';
 import {
@@ -23,6 +24,8 @@ import {
   verifiablePresentationWithCredentialEIP712Types,
 } from './types';
 import VCStorageClient from './storage-client';
+import { DidRegistry } from '../did-registry';
+import { DIDAttribute } from '@ew-did-registry/did-resolver-interface';
 
 export abstract class VerifiableCredentialsServiceBase {
   /**
@@ -101,7 +104,8 @@ export abstract class VerifiableCredentialsServiceBase {
 
   constructor(
     protected readonly _signerService: SignerService,
-    private readonly _storage: VCStorageClient
+    private readonly _storage: VCStorageClient,
+    private readonly _didRegistry: DidRegistry
   ) {}
 
   /**
@@ -119,7 +123,7 @@ export abstract class VerifiableCredentialsServiceBase {
     )?.credentialQuery;
 
     return await Promise.all(
-      presentationDefinitions.map(async ({ presentationDefinition }) => {
+      presentationDefinitions?.map(async ({ presentationDefinition }) => {
         const selectResults =
           await this._storage.getCredentialsByPresentationDefinition(
             presentationDefinition
@@ -128,7 +132,7 @@ export abstract class VerifiableCredentialsServiceBase {
           presentationDefinition,
           selectResults,
         };
-      })
+      }) || []
     );
   }
 
@@ -137,7 +141,9 @@ export abstract class VerifiableCredentialsServiceBase {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     signerService: SignerService,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    storage: VCStorageClient
+    storage: VCStorageClient,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    didRegistry: DidRegistry
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
@@ -350,5 +356,43 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     return true;
+  }
+
+  public async storeCredential(
+    credentials: VerifiableCredential<CredentialSubject>[]
+  ) {
+    return this._storage.store(credentials);
+  }
+
+  public async getCredentials() {
+    return await this._storage.getAllCredentials();
+  }
+
+  public async addCredentialEndpoint(nodeEndpoint: string) {
+    const services = await this._didRegistry.getServices();
+    const service = services.find((service) => service.id === '#dwn');
+
+    const nodes =
+      typeof service?.serviceEndpoint === 'object' &&
+      service?.serviceEndpoint?.nodes
+        ? [...service.serviceEndpoint.nodes, nodeEndpoint]
+        : [nodeEndpoint];
+
+    const data = {
+      type: DIDAttribute.ServicePoint,
+      value: {
+        id: '#dwn',
+        type: 'DecentralizedWebNode',
+        serviceEndpoint: {
+          nodes: Array.from(new Set(nodes)),
+        },
+      },
+    };
+
+    return await this._didRegistry.updateDocument({
+      didAttribute: DIDAttribute.ServicePoint,
+      data,
+      did: this._signerService.did,
+    });
   }
 }

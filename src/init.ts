@@ -22,7 +22,10 @@ import {
   defaultKmsServerUrl,
 } from './utils';
 import { chainConfigs } from './config';
-import { getVerifiableCredentialsService } from './modules/verifiable-credentials';
+import {
+  getVerifiableCredentialsService,
+  VerifiableCredentialsServiceBase,
+} from './modules/verifiable-credentials';
 import VCStorageClient from './modules/verifiable-credentials/storage-client';
 
 export async function initWithPrivateKeySigner(
@@ -89,20 +92,23 @@ export async function init(signerService: SignerService) {
       cacheClient
     );
 
-    const verifiableCredentialsService = await getVerifiableCredentialsService(
-      signerService,
-      new VCStorageClient(cacheClient)
-    );
-
-    async function connectToDidRegistry(
-      ipfsStore?: string
-    ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
+    async function connectToDidRegistry(ipfsStore?: string): Promise<{
+      didRegistry: DidRegistry;
+      claimsService: ClaimsService;
+      verifiableCredentialsService: VerifiableCredentialsServiceBase;
+    }> {
       const didRegistry = await DidRegistry.connect(
         signerService,
         cacheClient,
         assetsService,
         ipfsStore
       );
+      const verifiableCredentialsService =
+        await getVerifiableCredentialsService(
+          signerService,
+          new VCStorageClient(cacheClient, signerService),
+          didRegistry
+        );
       const claimsService = await ClaimsService.create(
         signerService,
         domainsService,
@@ -110,7 +116,8 @@ export async function init(signerService: SignerService) {
         didRegistry,
         verifiableCredentialsService
       );
-      return { didRegistry, claimsService };
+
+      return { didRegistry, claimsService, verifiableCredentialsService };
     }
     return {
       cacheClient,
@@ -118,7 +125,6 @@ export async function init(signerService: SignerService) {
       assetsService,
       connectToDidRegistry,
       stakingPoolService,
-      verifiableCredentialsService,
     };
   }
 

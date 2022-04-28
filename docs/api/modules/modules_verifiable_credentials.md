@@ -91,7 +91,7 @@ ___
 
 ### getVerifiableCredentialsService
 
-▸ **getVerifiableCredentialsService**(`signerService`, `storage`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ **getVerifiableCredentialsService**(`signerService`, `storage`, `didRegistry`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
@@ -99,6 +99,7 @@ ___
 | :------ | :------ |
 | `signerService` | [`SignerService`](../classes/modules_signer.SignerService.md) |
 | `storage` | `default` |
+| `didRegistry` | [`DidRegistry`](../classes/modules_did_registry.DidRegistry.md) |
 
 #### Returns
 

@@ -15,13 +15,21 @@ import {
   WebNodeResponseObject,
   StoreVcResult,
   WebNodeWriteMessage,
+  WebNodeQueryMessage,
+  WebNodeReply,
 } from './types';
+import { credentialStorageConfigs } from '../../config';
+import { SignerService } from '../signer';
 
 export default class VCStorageClient {
   private _http: AxiosInstance;
+  private readonly _signerService: SignerService;
+  private baseUrl: string;
 
-  constructor(cacheClient: CacheClient) {
+  constructor(cacheClient: CacheClient, signerService: SignerService) {
     this._http = cacheClient.http;
+    this._signerService = signerService;
+    this.baseUrl = credentialStorageConfigs()[signerService.chainId]?.url || '';
   }
 
   async getCredentialsByPresentationDefinition(
@@ -29,13 +37,58 @@ export default class VCStorageClient {
   ): Promise<SelectResults> {
     const { data } = await this._http.post<SelectResults>(
       `/vp/match`,
-      definition
+      definition,
+      {
+        baseURL: this.baseUrl,
+      }
     );
 
     return data;
   }
 
-  async storeCredentials(
+  async getAllCredentials(): Promise<
+    VerifiableCredential<CredentialSubject>[]
+  > {
+    const queryMessage: WebNodeQueryMessage = {
+      descriptor: {
+        method: 'CollectionsQuery',
+        schema: 'https://www.w3.org/2018/credentials#VerifiableCredential',
+        dataFormat: 'application/ld+json',
+      },
+    };
+    const request: WebNodeRequestObject = {
+      requestId: v4(),
+      target: this._signerService.did,
+      messages: [queryMessage],
+    };
+
+    const response = await this.makeWebNodeRequest<WebNodeWriteMessage[]>(
+      request
+    );
+
+    const filterOutEmptyValues = (
+      value?: VerifiableCredential<CredentialSubject>
+    ): value is VerifiableCredential<CredentialSubject> => {
+      return Boolean(value);
+    };
+
+    return (
+      response.replies[0].entries
+        ?.map((entry) => {
+          const data = entry.data;
+          if (!data) {
+            return undefined;
+          }
+
+          return JSON.parse(
+            Buffer.from(data, 'base64').toString('utf8')
+          ) as VerifiableCredential<CredentialSubject>;
+        })
+        .filter(filterOutEmptyValues) || []
+    );
+  }
+
+  async store(
     credentials: VerifiableCredential<CredentialSubject>[]
   ): Promise<StoreVcResult[]> {
     const extractId = (credential: VerifiableCredential<CredentialSubject>) => {
@@ -71,15 +124,35 @@ export default class VCStorageClient {
 
     const request: WebNodeRequestObject = {
       requestId: v4(),
-      target: 'vp',
+      target: this._signerService.did,
       messages,
     };
 
-    const { data: response } = await this._http.post<
-      WebNodeResponseObject<[WebNodeWriteMessage]>
-    >(`/`, request, {
-      baseURL: 'webnode',
+    const response = await this.makeWebNodeRequest<WebNodeWriteMessage[]>(
+      request
+    );
+
+    return response?.replies.map((reply) => {
+      return {
+        vcId:
+          reply.entries?.[0].descriptor.objectId ||
+          'Unknown verifiable credential id',
+        status:
+          reply.status?.code && reply.status.code <= 300 ? 'OK' : 'FAILED',
+      };
     });
+  }
+
+  private async makeWebNodeRequest<T = WebNodeWriteMessage[]>(
+    request: WebNodeRequestObject
+  ) {
+    const { data: response } = await this._http.post<WebNodeResponseObject<T>>(
+      `/webnode`,
+      request,
+      {
+        baseURL: this.baseUrl,
+      }
+    );
 
     if (response?.status?.code && response.status.code >= 400) {
       throw new Error(response.status.message || 'Unknown error');
@@ -89,19 +162,9 @@ export default class VCStorageClient {
       throw new Error('No replies in response');
     }
 
-    return response?.replies.map((reply) => {
-      if (reply?.status?.code && reply.status.code >= 400) {
-        throw new Error(reply.status.message || 'Unknown error');
-      }
-
-      return {
-        vcId:
-          reply.entries?.[0].descriptor.objectId ||
-          'Unknown verifiable credential id',
-        status:
-          reply.status?.code && reply.status.code <= 300 ? 'OK' : 'FAILED',
-      };
-    });
+    return response as WebNodeResponseObject<T> & {
+      replies: WebNodeReply<T>[];
+    };
   }
 
   private async generateCid(data: Record<string, unknown>) {

@@ -6,7 +6,7 @@ import {
   validExampleExternalVC,
 } from './fixtures';
 import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
-import { CacheClient, fromPrivateKey } from '../src';
+import { CacheClient, DidRegistry, fromPrivateKey } from '../src';
 import {
   getVerifiableCredentialsService,
   IssuerFields,
@@ -62,8 +62,7 @@ describe('Verifiable credentials tests', () => {
                 {
                   id: '<DESCRIPTOR ID>',
                   name: 'Descriptor name',
-                  purpose:
-                    'Descritor purpose',
+                  purpose: 'Descriptor purpose',
                   constraints: {
                     fields: [
                       {
@@ -104,10 +103,11 @@ describe('Verifiable credentials tests', () => {
     await signerService.publicKeyAndIdentityToken();
     rootOwnerDid = signerService.didHex;
 
-    const storage = new VCStorageClient({} as CacheClient);
+    const storage = new VCStorageClient({} as CacheClient, signerService);
     verifiableCredentialsService = await getVerifiableCredentialsService(
       signerService,
-      storage
+      storage,
+      {} as DidRegistry
     );
   });
 

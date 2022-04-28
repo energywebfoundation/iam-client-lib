@@ -2,7 +2,6 @@ import { Wallet, providers } from 'ethers';
 import { KeyType } from '@ew-did-registry/keys';
 import { JWT } from '@ew-did-registry/jwt';
 import { ProxyOperator } from '@ew-did-registry/proxyidentity';
-
 import {
   addressOf,
   EwSigner,
@@ -41,6 +40,7 @@ import {
   UpdateServicePoint,
   UpdateDelegate,
   UpdatePublicKey,
+  UpdateDWNServicePoint,
 } from './did-registry.validation';
 import { getLogger } from '../../config/logger.config';
 
@@ -423,6 +423,9 @@ export class DidRegistry {
   private async downloadClaims({ services }: { services: IServiceEndpoint[] }) {
     return Promise.all(
       services.map(async ({ serviceEndpoint, ...rest }) => {
+        if (typeof serviceEndpoint !== 'string') {
+          return { serviceEndpoint, ...rest };
+        }
         const data = await this._ipfsStore.get(serviceEndpoint);
         const { claimData, ...claimRest } = this._jwt?.decode(data) as {
           claimData: ClaimData;
@@ -452,9 +455,14 @@ export class DidRegistry {
     const rq = { didAttribute, data, did };
     try {
       switch (didAttribute) {
-        case DIDAttribute.ServicePoint:
-          UpdateServicePoint.check(rq);
+        case DIDAttribute.ServicePoint: {
+          if (data.value?.type === 'DecentralizedWebNode') {
+            UpdateDWNServicePoint.check(rq);
+          } else {
+            UpdateServicePoint.check(rq);
+          }
           break;
+        }
         case DIDAttribute.Authenticate:
           UpdateDelegate.check(rq);
           break;
