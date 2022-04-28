@@ -124,7 +124,7 @@ ___
 
 ### readyToBeRegisteredOnchain
 
-▸ **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
+▸ **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimType" \| "claimTypeVersion" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
 
 #### Parameters
 
@@ -134,4 +134,4 @@ ___
 
 #### Returns
 
-claim is Required<Pick<Claim, "claimTypeVersion" \| "claimType" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
+claim is Required<Pick<Claim, "claimType" \| "claimTypeVersion" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
