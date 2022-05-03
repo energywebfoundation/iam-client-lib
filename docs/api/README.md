@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="https://github.com/energywebfoundation/iam-client-lib/actions/workflows/deploy.yml/badge.svg" />
+</p>  
+
+<p align="center">
   <a href="https://www.energyweb.org" target="blank"><img src="./docs/images/EnergyWeb_logo.png" width="120" alt="Energy Web Foundation Logo" /></a>
 </p>
 
