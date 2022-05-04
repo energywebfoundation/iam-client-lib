@@ -1,3 +1,10 @@
+## [5.1.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.19...v5.1.0-alpha.20) (2022-05-04)
+
+
+### Bug Fixes
+
+* **claim:** fix claim service issuance interfaces ([4c32a26](https://github.com/energywebfoundation/iam-client-lib/commit/4c32a265f602a10704d70bf7bf51263e8cb14d7b))
+
 ## [5.1.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.18...v5.1.0-alpha.19) (2022-05-02)
 
 ## [5.1.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.17...v5.1.0-alpha.18) (2022-04-27)
