@@ -164,7 +164,7 @@ export interface IssueClaimRequestOptions {
   id: string;
 
   /** Subject agreement signature */
-  subjectAgreement: string;
+  subjectAgreement?: string;
 
   /** Registration types */
   registrationTypes: RegistrationTypes[];

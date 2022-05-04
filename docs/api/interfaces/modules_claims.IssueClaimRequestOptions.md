@@ -58,7 +58,7 @@ ___
 
 ### subjectAgreement
 
-• **subjectAgreement**: `string`
+• `Optional` **subjectAgreement**: `string`
 
 Subject agreement signature
 

@@ -27,4 +27,5 @@ export enum ERROR_MESSAGES {
   IS_ETH_SIGNER_NOT_SET = 'Can not determine if signer is conformant with eth_sign specification',
   SIGN_TYPED_DATA_NOT_SUPPORTED = 'Sign typed data not supported',
   CLAIM_TYPE_MISSING = 'Claim type is required for On-chain registration',
+  ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED = 'On-chain role subject agreement not specified',
 }
