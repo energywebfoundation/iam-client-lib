@@ -364,6 +364,11 @@ export class ClaimsService {
         expiry,
         sub
       );
+      if (!subjectAgreement) {
+        throw new Error(
+          ERROR_MESSAGES.ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED
+        );
+      }
       message.onChainProof = onChainProof;
       if (publishOnChain) {
         await this.registerOnchain({
