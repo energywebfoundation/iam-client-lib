@@ -1,6 +1,5 @@
 site_name: IAM Client Library
 nav:
-  - 'Quick start': 'Quick_start.md'
   - Introduction:
       - Overview: intro/overview.md
       - 'Domain Hierarchy': intro/domainhierarchy.md
