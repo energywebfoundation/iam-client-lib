@@ -1,3 +1,10 @@
+## [5.1.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.20...v5.1.0-alpha.21) (2022-05-09)
+
+
+### Bug Fixes
+
+* don't remove deploy badge ([c216ed8](https://github.com/energywebfoundation/iam-client-lib/commit/c216ed81305bebff6d911850c01d1c537cda9f33))
+
 ## [5.1.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.19...v5.1.0-alpha.20) (2022-05-04)
 
 
