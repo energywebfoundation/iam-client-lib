@@ -1,3 +1,27 @@
+## [5.1.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.19...v5.1.0-alpha.20) (2022-05-04)
+
+
+### Bug Fixes
+
+* **claim:** fix claim service issuance interfaces ([4c32a26](https://github.com/energywebfoundation/iam-client-lib/commit/4c32a265f602a10704d70bf7bf51263e8cb14d7b))
+
+## [5.1.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.18...v5.1.0-alpha.19) (2022-05-02)
+
+## [5.1.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.17...v5.1.0-alpha.18) (2022-04-27)
+
+## [5.1.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.16...v5.1.0-alpha.17) (2022-04-25)
+
+## [5.1.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.15...v5.1.0-alpha.16) (2022-04-25)
+
+## [5.1.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.14...v5.1.0-alpha.15) (2022-04-25)
+
+## [5.1.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.13...v5.1.0-alpha.14) (2022-04-22)
+
+
+### Bug Fixes
+
+* fix delegate token payload ([56bfb1d](https://github.com/energywebfoundation/iam-client-lib/commit/56bfb1dac6d23b3146fee723a1245041701a9928))
+
 ## [5.1.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.12...v5.1.0-alpha.13) (2022-04-22)
 
 

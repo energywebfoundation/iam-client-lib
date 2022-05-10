@@ -353,7 +353,7 @@ export class DidRegistry {
     return this._jwt.decode(token);
   }
 
-  private async getDIDDocFull(did) {
+  private async getDIDDocFull(did: string) {
     if (did === this._signerService.did) {
       return this._document;
     } else {

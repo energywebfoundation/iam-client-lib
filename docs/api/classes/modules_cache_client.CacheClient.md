@@ -680,7 +680,7 @@ ___
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | `AxiosError`<`any`, `any`\> | Intercepted response from failed request |
+| `error` | `AxiosError`<`unknown`, `any`\> | Intercepted response from failed request |
 
 #### Returns
 

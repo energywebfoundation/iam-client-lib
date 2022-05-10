@@ -28,4 +28,5 @@ export enum ERROR_MESSAGES {
   SIGN_TYPED_DATA_NOT_SUPPORTED = 'Sign typed data not supported',
   CLAIM_TYPE_MISSING = 'Claim type is required for On-chain registration',
   ERROR_CONTINUING_EXCHANGE = 'Error continuing exchange',
+  ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED = 'On-chain role subject agreement not specified',
 }

@@ -6,10 +6,17 @@
 
 ### Properties
 
+- [challenge](modules_verifiable_credentials.ProofOptions.md#challenge)
 - [proofPurpose](modules_verifiable_credentials.ProofOptions.md#proofpurpose)
 - [verificationMethod](modules_verifiable_credentials.ProofOptions.md#verificationmethod)
 
 ## Properties
+
+### challenge
+
+• `Optional` **challenge**: `string`
+
+___
 
 ### proofPurpose
 

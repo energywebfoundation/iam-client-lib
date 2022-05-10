@@ -10,6 +10,7 @@
 
 ### Methods
 
+- [continueExchange](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#continueexchange)
 - [createPresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createpresentation)
 - [createRoleVC](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createrolevc)
 - [createVerifiablePresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createverifiablepresentation)
@@ -31,6 +32,26 @@
 | `_storage` | `default` |
 
 ## Methods
+
+### continueExchange
+
+▸ **continueExchange**(`__namedParameters`): `Promise`<`undefined` \| `VpRequest` \| `VerifiablePresentation`\>
+
+**`description`** Sends credentials requested by issuer and returns either issued credentials or next credentials request
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `ContinueExchangeCredentials`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> |
+
+#### Returns
+
+`Promise`<`undefined` \| `VpRequest` \| `VerifiablePresentation`\>
+
+issued credentials or request of additional credentials
+
+___
 
 ### createPresentation
 
@@ -85,7 +106,7 @@ ___
 
 ### initiateExchange
 
-▸ **initiateExchange**(`__namedParameters`): `Promise`<`any`[]\>
+▸ **initiateExchange**(`__namedParameters`): `Promise`<`ContinueExchangeSelections`\>
 
 **`description`** The type of the exchange. Only vc-api exchanges currently supported.
 
@@ -97,7 +118,7 @@ ___
 
 #### Returns
 
-`Promise`<`any`[]\>
+`Promise`<`ContinueExchangeSelections`\>
 
 credentials query with matching verifiable presentations
 
