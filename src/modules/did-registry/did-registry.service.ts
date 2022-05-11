@@ -2,7 +2,6 @@ import { Wallet, providers } from 'ethers';
 import { KeyType } from '@ew-did-registry/keys';
 import { JWT } from '@ew-did-registry/jwt';
 import { ProxyOperator } from '@ew-did-registry/proxyidentity';
-
 import {
   addressOf,
   EwSigner,
@@ -11,6 +10,7 @@ import {
 import {
   DIDAttribute,
   Encoding,
+  IDIDDocument,
   IPublicKey,
   IServiceEndpoint,
   IUpdateData,
@@ -27,16 +27,28 @@ import { Methods } from '@ew-did-registry/did';
 import {
   ClaimsIssuer,
   ClaimsUser,
-  IPublicClaim,
   ProofVerifier,
 } from '@ew-did-registry/claims';
 import { SignerService } from '../signer/signer.service';
 import { ERROR_MESSAGES } from '../../errors';
 import { CacheClient } from '../cache-client/cache-client.service';
-import { ClaimData } from './did.types';
+import {
+  ClaimData,
+  CreatePublicClaimOptions,
+  DecodeJWTTokenOptions,
+  DownloadClaimsOptions,
+  GetDidDelegatesOptions,
+  GetDIDDocumentOptions,
+  GetDidPublicKeysOptions,
+  GetServicesOptions,
+  IssuePublicClaimOptions,
+  UpdateDocumentOptions,
+  UpdateSignedDidDelegateOptions,
+  UpdateSignedDidPublicKeyOptions,
+  ValidDateUpdateDocumentRequestOptions,
+} from './did.types';
 import { chainConfigs } from '../../config/chain.config';
 import { AssetsService } from '../assets/assets.service';
-
 import {
   UpdateServicePoint,
   UpdateDelegate,
@@ -45,6 +57,18 @@ import {
 import { getLogger } from '../../config/logger.config';
 
 const { JsonRpcProvider } = providers;
+
+/**
+ * Service responsible for handling the DID Document management.
+ * See more information about DID in IAM stack [here](https://energy-web-foundation.gitbook.io/energy-web/foundational-concepts/self-sovereign-identity#decentralized-identifiers-dids).
+ *
+ * ```typescript
+ * const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * const { connectToDidRegistry } = await connectToCacheServer();
+ * const { didRegistry } = await connectToDidRegistry();
+ * didRegistry.getDidDocument();
+ * ```
+ */
 export class DidRegistry {
   private _identityOwner: EwSigner;
   private _operator: Operator;
@@ -97,20 +121,33 @@ export class DidRegistry {
     this._setClaims();
   }
 
-  async getDidDocument({
-    did = this._did,
-    includeClaims = true,
-  }: { did?: string; includeClaims?: boolean } | undefined = {}) {
+  /**
+   * Retrieve DID Document of the given DID from SSI-Hub if possible, otherwise from blockchain.
+   * Optionally include claims object within services in the document.
+   *
+   * ```typescript
+   * didRegistry.getDidDocument({
+   *     did: 'did:ethr:volta:0x00...0',
+   *     includeClaims: true,
+   * });
+   * ```
+   * @param {GetDIDDocumentOptions} options object with options
+   * @return DID document
+   */
+  async getDidDocument(
+    { did, includeClaims }: GetDIDDocumentOptions = {
+      did: this._did,
+      includeClaims: true,
+    }
+  ): Promise<IDIDDocument> {
     if (this._cacheClient) {
       try {
         const didDoc = await this._cacheClient.getDidDocument(
           did,
           includeClaims
         );
-        return {
-          ...didDoc,
-          service: didDoc.service as (IServiceEndpoint & ClaimData)[],
-        };
+        // TODO: implement includeClaims
+        return didDoc;
       } catch (err) {
         getLogger().info(err);
         throw err;
@@ -132,47 +169,84 @@ export class DidRegistry {
   }
 
   /**
-   * @description gets list of services endpoints from User's DID document
+   * Gets services from DID document of the given DID.
+   *
+   * ```typescript
+   * didRegistry.getServices({
+   *     did: 'did:ethr:volta:0x00...0',
+   * });
+   * ```
+   * @param {GetServicesOptions} options object with options
    * @returns list of claims
    */
-  async getServices({
-    did = this._signerService.did,
-  }: { did?: string } | undefined = {}) {
-    const { service } = (await this.getDidDocument({ did })) || {};
-    return service;
+  async getServices(
+    { did }: GetServicesOptions = {
+      did: this._signerService.did,
+    }
+  ): Promise<IServiceEndpoint[]> {
+    const didDocument = await this.getDidDocument({ did });
+    return didDocument?.service;
   }
 
   /**
-   * @description get public keys from User's DID document
+   * Gets public keys from DID document of the given DID.
+   *
+   * ```typescript
+   * didRegistry.getDidPublicKeys({
+   *     did: 'did:ethr:volta:0x00...0',
+   * });
+   * ```
+   * @param {GetDidPublicKeysOptions} options object with options
    * @returns list of public keys
    */
-  async getDidPublicKeys({
-    did = this._signerService.did,
-  }): Promise<IPublicKey[]> {
-    return (await this.getDidDocument({ did: did, includeClaims: false }))
-      .publicKey;
+  async getDidPublicKeys(
+    { did }: GetDidPublicKeysOptions = {
+      did: this._signerService.did,
+    }
+  ): Promise<IPublicKey[]> {
+    const didDocument = await this.getDidDocument({ did });
+    return didDocument?.publicKey;
   }
 
   /**
-   * @description get public keys from DID's document
-   * @returns list of DID's delegates
+   * Gets delegates from DID document of the given DID.
+   *
+   * ```typescript
+   * didRegistry.getDidDelegates({
+   *     did: 'did:ethr:volta:0x00...0',
+   * });
+   * ```
+   * @param {GetDidDelegatesOptions} options object with options
+   * @returns list of delegates
    */
-  async getDidDelegates({ did = this._did }): Promise<string[] | undefined> {
-    return (await this.getDidDocument({ did: did, includeClaims: true }))
-      .delegates;
+  async getDidDelegates(
+    { did }: GetDidDelegatesOptions = {
+      did: this._did,
+    }
+  ): Promise<string[] | undefined> {
+    const didDocument = await this.getDidDocument({ did });
+    return didDocument?.delegates;
   }
 
   /**
-   * @description create a public claim based on data provided
-   * @returns JWT token of created claim
+   * Create a public claim with provided data.
+   *
+   * ```typescript
+   * didRegistry.createPublicClaim({
+   *     data: {
+   *         claimType: 'root.roles.energyweb.iam.ewc',
+   *         claimTypeVersion: 1,
+   *     },
+   *     subject: 'did:ethr:volta:0x00...0',
+   * });
+   * ```
+   * @param {CreatePublicClaimOptions} options object with options
+   * @return JWT token of created claim
    */
   async createPublicClaim({
     data,
     subject,
-  }: {
-    data: ClaimData;
-    subject?: string;
-  }) {
+  }: CreatePublicClaimOptions): Promise<string> {
     if (subject) {
       return this._userClaims.createPublicClaim(data, { subject, issuer: '' });
     }
@@ -180,30 +254,52 @@ export class DidRegistry {
   }
 
   /**
-   * @description issue a public claim
-   * @returns return issued token
+   * If token provided issue new token signed by issuer,
+   * otherwise create a new claim token based on provided public claim data.
+   *
+   * ```typescript
+   * didRegistry.issuePublicClaim({
+   *     token: 'eyJh...VCJ9.ey...IyfQ.SflK...sw5c',
+   *     publicClaim: {
+   *         did: 'did:ethr:volta:0x00...0',
+   *         signer: 'did:ethr:volta:0x00...1',
+   *         claimData: {
+   *             claimType: 'root.roles.energyweb.iam.ewc',
+   *         },
+   *     },
+   * });
+   * ```
+   * @param {IssuePublicClaimOptions} options object with options
+   * @return JWT token of created claim
    */
   async issuePublicClaim({
     token,
     publicClaim,
-  }: {
-    token?: string;
-    publicClaim?: IPublicClaim;
-  }) {
-    if (publicClaim) {
-      return this._issuerClaims.issuePublicClaim(publicClaim);
+  }: IssuePublicClaimOptions): Promise<string> {
+    const params = publicClaim || token;
+    if (params) {
+      return this._issuerClaims.issuePublicClaim(params);
     }
-    if (token) {
-      return this._issuerClaims.issuePublicClaim(token);
-    }
-    throw new Error('unable to issue Public Claim');
+
+    throw new Error(
+      'Unable to issue public claim: `token` or `publicClaim` must be provided'
+    );
   }
 
   /**
-   * @description verifies issued token of claim
-   * @returns public claim data
+   * Verifies issued token of the public claim.
+   *
+   * ```typescript
+   * didRegistry.verifyPublicClaim({
+   *     token: 'eyJh...VCJ9.ey...IyfQ.SflK...sw5c',
+   *     iss: 'did:ethr:volta:0x00...0',
+   * });
+   * ```
+   * @param {String} token JWT token of the public claim
+   * @param {String} iss DID of the issuer
+   * @return DID of the authenticated identity on successful verification or null otherwise
    */
-  async verifyPublicClaim(token: string, iss: string) {
+  async verifyPublicClaim(token: string, iss: string): Promise<string | null> {
     const issuerDoc = await this.getDidDocument({
       did: iss,
       includeClaims: true,
@@ -213,29 +309,25 @@ export class DidRegistry {
   }
 
   /**
-   * @param options Options to connect with blockchain
+   * Update DID document of the given DID with provided data.
    *
-   * @param options.didAttribute Type of document to be updated
+   * ```typescript
+   * didRegistry.updateDocument({
+   *     didAttribute: DIDAttribute.PublicKey,
+   *     data: publicKey,
+   *     validity: 60 * 60 * 1000,
+   *     did: 'did:ethr:volta:0x00...0',
+   * });
    *
-   * @param options.data New attribute value
-   * @param options.did Asset did to be updated
-   * @param options.validity Time (s) for the attribute to expire
-   *
-   * @description updates did document based on data provided
-   * @returns true if document is updated successfuly
-   *
+   * @param {UpdateDocumentOptions} options object with options
+   * @return true if document was updated successfully
    */
   async updateDocument({
     didAttribute,
     data,
     validity,
     did = this._signerService.did,
-  }: {
-    didAttribute: DIDAttribute;
-    data: IUpdateData;
-    did?: string;
-    validity?: number;
-  }): Promise<boolean> {
+  }: UpdateDocumentOptions): Promise<boolean> {
     this.validDateUpdateDocumentRequest({
       didAttribute,
       data,
@@ -255,8 +347,20 @@ export class DidRegistry {
   }
 
   /**
-   * @description Adds public key to the document of controlled `did`
-   * @returns true if document is updated successfuly
+   * Adds public key to the DID document of given DID.
+   *
+   * ```typescript
+   * didRegistry.updateSignedDidPublicKey({
+   *     did: 'did:ethr:volta:0x00...0',
+   *     publicKey: publicKey,
+   *     validity: 60 * 60 * 1000,
+   *     algo: KeyType.Secp256k1,
+   *     type: PubKeyType.SignatureAuthentication2018,
+   *     tag: '#main-key',
+   * });
+   *
+   * @param {UpdateSignedDidPublicKeyOptions} options object with options
+   * @return true if document was updated successfully
    */
   async updateSignedDidPublicKey({
     did = this._signerService.did,
@@ -265,14 +369,7 @@ export class DidRegistry {
     algo = KeyType.Secp256k1,
     type = PubKeyType.SignatureAuthentication2018,
     tag = '',
-  }: {
-    did: string;
-    publicKey: string;
-    algo: KeyType;
-    type: PubKeyType;
-    tag: string;
-    validity?: number;
-  }): Promise<boolean> {
+  }: UpdateSignedDidPublicKeyOptions): Promise<boolean> {
     if (!publicKey)
       throw new Error(
         ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
@@ -291,8 +388,19 @@ export class DidRegistry {
   }
 
   /**
-   * @description updates delegate of the document of controlled `did`
-   * @returns true if document is updated successfuly
+   * Updates delegate of the DID document of given DID.
+   *
+   * ```typescript
+   * didRegistry.updateSignedDidDelegate({
+   *     did: 'did:ethr:volta:0x00...0',
+   *     delegatePublicKey: delegatePublicKey,
+   *     validity: 60 * 60 * 1000,
+   *     algo: KeyType.Secp256k1,
+   *     type: PubKeyType.SignatureAuthentication2018,
+   * });
+   *
+   * @param {UpdateSignedDidDelegateOptions} options object with options
+   * @return true if document was updated successfully
    */
   async updateSignedDidDelegate({
     did = this._signerService.did,
@@ -300,13 +408,7 @@ export class DidRegistry {
     validity,
     algo = KeyType.Secp256k1,
     type = PubKeyType.SignatureAuthentication2018,
-  }: {
-    did: string;
-    delegatePublicKey: string;
-    algo: KeyType;
-    type: PubKeyType;
-    validity?: number;
-  }): Promise<boolean> {
+  }: UpdateSignedDidDelegateOptions): Promise<boolean> {
     if (!delegatePublicKey)
       throw new Error(
         ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
@@ -323,8 +425,13 @@ export class DidRegistry {
   }
 
   /**
-   * @description create did document if not exists
-   * @returns true if document is created successfully
+   * Create DID document of the current user if not exists.
+   *
+   * ```typescript
+   * didRegistry.createDocument();
+   * ```
+   *
+   * @return true if document was created successfully
    */
   async createDocument(): Promise<boolean> {
     if (this._cacheClient) {
@@ -341,19 +448,44 @@ export class DidRegistry {
   }
 
   /**
-   * @description revokes did document
-   * @returns information (true/false) if the DID document was revoked
+   * Revoke DID document of the current user.
+   *
+   * ```typescript
+   * didRegistry.revokeDidDocument();
+   * ```
+   *
+   * @return true if document was revoked successfully
    */
   async revokeDidDocument(): Promise<boolean> {
     await this._document.deactivate();
     return true;
   }
 
-  async decodeJWTToken({ token }: { token: string }) {
+  /**
+   * Decode JWT token of the public claim.
+   *
+   * ```typescript
+   * didRegistry.decodeJWTToken({
+   *     token: 'eyJh...VCJ9.ey...IyfQ.SflK...sw5c',
+   * });
+   * ```
+   * @param {DecodeJWTTokenOptions} options object with options
+   * @return payload of the JWT token
+   */
+  async decodeJWTToken({ token }: DecodeJWTTokenOptions) {
     return this._jwt.decode(token);
   }
 
-  private async getDIDDocFull(did: string) {
+  /**
+   * Get `DIDDocumentFull` class of the given DID
+   *
+   * ```typescript
+   * didRegistry.getDIDDocFull('did:ethr:volta:0x00...0');
+   * ```
+   * @param {String} did DID of the document
+   * @return `DIDDocumentFull` object
+   */
+  private async getDIDDocFull(did: string): Promise<IDIDDocumentFull> {
     if (did === this._signerService.did) {
       return this._document;
     } else {
@@ -375,7 +507,14 @@ export class DidRegistry {
     }
   }
 
-  private async _setOperator() {
+  /**
+   * Set operator based on current configs
+   *
+   * ```typescript
+   * didRegistry._setOperator();
+   * ```
+   */
+  private async _setOperator(): Promise<void> {
     const signer = this._signerService.signer;
     const provider = signer.provider;
     const publicKey = await this._signerService.publicKey();
@@ -399,15 +538,36 @@ export class DidRegistry {
     this._operator = new Operator(this._identityOwner, { address });
   }
 
-  private setJWT() {
+  /**
+   * Set JWT
+   *
+   * ```typescript
+   * didRegistry.setJWT();
+   * ```
+   */
+  private setJWT(): void {
     this._jwt = new JWT(this._identityOwner);
   }
 
-  private async _setDocument() {
+  /**
+   * Set document of the current user
+   *
+   * ```typescript
+   * didRegistry._setDocument();
+   * ```
+   */
+  private _setDocument(): void {
     this._document = new DIDDocumentFull(this._did, this._operator);
   }
 
-  private _setClaims() {
+  /**
+   * Set claims user and claims issuer class
+   *
+   * ```typescript
+   * didRegistry._setClaims();
+   * ```
+   */
+  private _setClaims(): void {
     this._userClaims = new ClaimsUser(
       this._identityOwner,
       this._document,
@@ -420,7 +580,20 @@ export class DidRegistry {
     );
   }
 
-  private async downloadClaims({ services }: { services: IServiceEndpoint[] }) {
+  /**
+   * Download document claims from IPFS
+   *
+   * ```typescript
+   * const document = await didRegistry.getDidDocument();
+   * didRegistry.downloadClaims(document.services);
+   * ```
+   *
+   * @param {DownloadClaimsOptions} options object with options
+   * @returns resolved claims
+   */
+  private async downloadClaims({
+    services,
+  }: DownloadClaimsOptions): Promise<(IServiceEndpoint & ClaimData)[]> {
     return Promise.all(
       services.map(async ({ serviceEndpoint, ...rest }) => {
         const data = await this._ipfsStore.get(serviceEndpoint);
@@ -438,17 +611,24 @@ export class DidRegistry {
   }
 
   /**
-   * validates update document request
+   * Validates update document request. Throws error if validation fails.
+   *
+   * ```typescript
+   * didRegistry.validDateUpdateDocumentRequest({
+   *     didAttribute: DIDAttribute.PublicKey,
+   *     data: publicKey,
+   *     did: 'did:ethr:volta:0x00...0',
+   * });
+   * ```
+   *
+   * @param {ValidDateUpdateDocumentRequestOptions} options object with options
+   *
    */
   private validDateUpdateDocumentRequest({
     didAttribute,
     data,
     did,
-  }: {
-    didAttribute: DIDAttribute;
-    data: IUpdateData;
-    did: string;
-  }) {
+  }: ValidDateUpdateDocumentRequestOptions): void {
     const rq = { didAttribute, data, did };
     try {
       switch (didAttribute) {
