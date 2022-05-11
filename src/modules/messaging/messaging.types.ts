@@ -10,3 +10,10 @@ export interface IMessage {
   requester: string;
   claimIssuer?: string[];
 }
+
+export type MessageHandler = (message: IMessage) => void;
+
+export interface SubscribeToOptions {
+  subject?: string;
+  messageHandler: MessageHandler;
+}
