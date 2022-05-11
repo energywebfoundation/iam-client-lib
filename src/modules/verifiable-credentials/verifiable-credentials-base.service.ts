@@ -21,16 +21,29 @@ import {
   verifiableCredentialEIP712Types,
   verifiablePresentationEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
+  InitiateExchangeResults,
 } from './types';
 import VCStorageClient from './storage-client';
 
+/**
+ * Service responsible for managing verifiable credentials and presentations.
+ * You can read more about verifiable credentials data model [here](https://www.w3.org/TR/vc-data-model/).
+ *
+ * ```typescript
+ * const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * const { connectToDidRegistry } = await connectToCacheServer();
+ * const { verifiableCredentialsService } = await connectToDidRegistry();
+ * verifiableCredentialsService.createRoleVC(...);
+ * ```
+ * */
 export abstract class VerifiableCredentialsServiceBase {
   /**
-   * @param {string} credential - The credential object in JSON format
-   * @param {string} linked_data_proof_options - The proof options in JSON format
-   * @param {string} public_key - Information about public key that credential will be signed in JSON format
-   * @description get prepared data for signing a credential
-   * @returns {Promise<string>} JSON stringified prepared data (including EIP712 types and credential with proof ready for signing)
+   * Get prepared data for signing a credential.
+   *
+   * @param {String} credential - The credential object in JSON format
+   * @param {String} linked_data_proof_options - The proof options in JSON format
+   * @param {String} public_key - Information about public key that credential will be signed in JSON format
+   * @returns {Promise<String>} JSON stringified prepared data (including EIP712 types and credential with proof ready for signing)
    */
   protected abstract prepareIssueCredential(
     credential: string,
@@ -39,11 +52,12 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<string>;
 
   /**
-   * @param {string} credential - The credential object in JSON format
-   * @param {string} preparation - Output of `prepareIssueCredential` method
-   * @param {string} signature - Signature of the credential
-   * @description get verifiable credential object
-   * @returns {Promise<string>} verifiable credential object in JSON format
+   * Get verifiable credential object.
+   *
+   * @param {String} credential - The credential object in JSON format
+   * @param {String} preparation - Output of `prepareIssueCredential` method
+   * @param {String} signature - Signature of the credential
+   * @returns {Promise<String>} verifiable credential object in JSON format
    */
   protected abstract completeIssueCredential(
     credential: string,
@@ -52,10 +66,11 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<string>;
 
   /**
-   * @param {string} vc - The verifiable credential object in JSON format
-   * @param {string} proof_options - The proof options in JSON format
-   * @description verify given verifiable credential
-   * @returns {Promise<string>} object with results of verification  in JSON format
+   * Verify given verifiable credential.
+   *
+   * @param {String} vc - The verifiable credential object in JSON format
+   * @param {String} proof_options - The proof options in JSON format
+   * @returns {Promise<String>} object with results of verification  in JSON format
    */
   protected abstract verifyCredential(
     vc: string,
@@ -63,11 +78,12 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<string>;
 
   /**
-   * @param {string} presentation - The presentation object in JSON format
-   * @param {string} linked_data_proof_options - The proof options in JSON format
-   * @param {string} public_key - Information about public key that presentation will be signed in JSON format
-   * @description get prepared data for signing a presentation
-   * @returns {Promise<string>} JSON stringified prepared data (including EIP712 types and presentation with proof ready for signing)
+   * Get prepared data for signing a presentation.
+   *
+   * @param {String} presentation - The presentation object in JSON format
+   * @param {String} linked_data_proof_options - The proof options in JSON format
+   * @param {String} public_key - Information about public key that presentation will be signed in JSON format
+   * @returns {Promise<String>} JSON stringified prepared data (including EIP712 types and presentation with proof ready for signing)
    */
   protected abstract prepareIssuePresentation(
     presentation: string,
@@ -76,11 +92,12 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<string>;
 
   /**
-   * @param {string} presentation - The presentation object in JSON format
-   * @param {string} preparation - Output of `prepareIssuePresentation` method
-   * @param {string} signature - Signature of the presentation
-   * @description get verifiable presentation object
-   * @returns {Promise<string>} verifiable presentation object in JSON format
+   * Get verifiable presentation object.
+   *
+   * @param {String} presentation - The presentation object in JSON format
+   * @param {String} preparation - Output of `prepareIssuePresentation` method
+   * @param {String} signature - Signature of the presentation
+   * @returns {Promise<String>} verifiable presentation object in JSON format
    */
   protected abstract completeIssuePresentation(
     presentation: string,
@@ -89,10 +106,11 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<string>;
 
   /**
-   * @param {string} vp - The verifiable presentation object in JSON format
-   * @param {string} proof_options - The proof options in JSON format
-   * @description verify given verifiable presentation (included verifiable credentials are not verified)
-   * @returns {Promise<string>} object with results of verification in JSON format
+   * Verify given verifiable presentation (included verifiable credentials are not verified).
+   *
+   * @param {String} vp - The verifiable presentation object in JSON format
+   * @param {String} proof_options - The proof options in JSON format
+   * @returns {Promise<String>} object with results of verification in JSON format
    */
   protected abstract verifyPresentation(
     vp: string,
@@ -104,11 +122,32 @@ export abstract class VerifiableCredentialsServiceBase {
     private readonly _storage: VCStorageClient
   ) {}
 
+  // * Should be overridden by the implementation
+  static async create(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    signerService: SignerService,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    storage: VCStorageClient
+  ): Promise<VerifiableCredentialsServiceBase> {
+    throw new Error('Not implemented');
+  }
+
   /**
-   * @description The type of the exchange. Only vc-api exchanges currently supported.
+   * Initialize credential exchange. Only vc-api exchanges currently supported.
+   *
+   * ```typescript
+   * verifiableCredentialsService.initiateExchange({
+   *     type: VC_API_EXCHANGE,
+   *     url: 'http://localhost:3000',
+   * });
+   * ```
+   * @param {ExchangeInvitation} options object with options
    * @returns credentials query with matching verifiable presentations
    */
-  async initiateExchange({ type, url }: ExchangeInvitation) {
+  async initiateExchange({
+    type,
+    url,
+  }: ExchangeInvitation): Promise<InitiateExchangeResults[]> {
     if (type !== VC_API_EXCHANGE) {
       throw new Error('Only VC-API exchange is supported');
     }
@@ -132,45 +171,20 @@ export abstract class VerifiableCredentialsServiceBase {
     );
   }
 
-  // * Should be overridden by the implementation
-  static async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    signerService: SignerService,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    storage: VCStorageClient
-  ): Promise<VerifiableCredentialsServiceBase> {
-    throw new Error('Not implemented');
-  }
-
-  // TODO: Host EWF VC Context and Vocab
-  private createCredential(
-    params: RoleCredentialSubjectParams
-  ): Credential<RoleCredentialSubject> {
-    const credential = {
-      '@context': ['https://www.w3.org/2018/credentials/v1'],
-      id: 'urn:uuid:' + uuid(),
-      type: ['VerifiableCredential', 'EWFRole'],
-      issuer: this._signerService.didHex,
-      issuanceDate: new Date().toISOString(),
-      credentialSubject: {
-        role: {
-          namespace: params.namespace,
-          version: params.version,
-        },
-        issuerFields: params.issuerFields
-          ? [
-              ...params.issuerFields.map((field) => ({
-                ...field,
-                value: field.value.toString(),
-              })),
-            ]
-          : [],
-        id: params.id,
-      },
-    };
-    return credential;
-  }
-
+  /**
+   * Create a Energy Web role verifiable credential with EIP712 signature.
+   *
+   * ```typescript
+   * verifiableCredentialsService.createRoleVC({
+   *      id: 'did:ethr:volta:0x00...0',
+   *      namespace: 'root.roles.energyweb.iam.ewc',
+   *      version: '1',
+   * });
+   * ```
+   * @param {RoleCredentialSubjectParams} credentialParams role credential parameters
+   * @param {ProofOptions} proofOptions proof options
+   * @returns verifiable credential object
+   */
   public async createRoleVC(
     credentialParams: RoleCredentialSubjectParams,
     proofOptions?: ProofOptions
@@ -232,6 +246,16 @@ export abstract class VerifiableCredentialsServiceBase {
     ) as VerifiableCredential<RoleCredentialSubject>;
   }
 
+  /**
+   * Create a presentation with given verifiable credentials. Allow create presentation for a given presentation definition.
+   *
+   * ```typescript
+   * verifiableCredentialsService.createPresentation([...credentials]);
+   * ```
+   * @param {VerifiableCredential<RoleCredentialSubject>[]} verifiableCredential role credential parameters
+   * @param {CreatePresentationParams} options presentation options
+   * @returns presentation
+   */
   public createPresentation(
     verifiableCredential: VerifiableCredential<RoleCredentialSubject>[],
     options?: CreatePresentationParams
@@ -259,6 +283,16 @@ export abstract class VerifiableCredentialsServiceBase {
     };
   }
 
+  /**
+   * Create a verifiable presentation with given verifiable credentials and EIP712 signature.
+   *
+   * ```typescript
+   * verifiableCredentialsService.createVerifiablePresentation([...credentials]);
+   * ```
+   * @param {VerifiableCredential<RoleCredentialSubject>[]} verifiableCredential role credential parameters
+   * @param {ProofOptions} options proof options
+   * @returns verifiable presentation
+   */
   public async createVerifiablePresentation(
     verifiableCredential: VerifiableCredential<RoleCredentialSubject>[],
     options?: ProofOptions
@@ -301,10 +335,21 @@ export abstract class VerifiableCredentialsServiceBase {
     };
   }
 
+  /**
+   * Verify a given credential or presentation. Throws an error if the credential or presentation proof is not valid.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.verify(credential);
+   * await verifiableCredentialsService.verify(presentation);
+   * ```
+   * @param {VerifiablePresentation | VerifiableCredential} vp verifiable presentation or credential
+   * @param {ProofOptions} options proof options
+   * @returns true if the proof is valid
+   */
   public async verify<T extends ICredentialSubject>(
     vp: VerifiablePresentation | VerifiableCredential<T>,
     options?: ProofOptions
-  ) {
+  ): Promise<boolean> {
     let verifyFunc: (vp: string, proof_options: string) => Promise<string>;
     switch (vp.type.includes('VerifiablePresentation')) {
       case true:
@@ -350,5 +395,40 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     return true;
+  }
+
+  /**
+   * Create a credential with given parameters.
+   *
+   * @param {RoleCredentialSubjectParams} params verifiable presentation or credential
+   * @returns Energy Web credential
+   */
+  private createCredential(
+    params: RoleCredentialSubjectParams
+  ): Credential<RoleCredentialSubject> {
+    const credential = {
+      // TODO: Host EWF VC Context and Vocabulary
+      '@context': ['https://www.w3.org/2018/credentials/v1'],
+      id: 'urn:uuid:' + uuid(),
+      type: ['VerifiableCredential', 'EWFRole'],
+      issuer: this._signerService.didHex,
+      issuanceDate: new Date().toISOString(),
+      credentialSubject: {
+        role: {
+          namespace: params.namespace,
+          version: params.version,
+        },
+        issuerFields: params.issuerFields
+          ? [
+              ...params.issuerFields.map((field) => ({
+                ...field,
+                value: field.value.toString(),
+              })),
+            ]
+          : [],
+        id: params.id,
+      },
+    };
+    return credential;
   }
 }
