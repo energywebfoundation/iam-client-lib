@@ -3,7 +3,6 @@ import {
   IAppDefinition,
   IOrganizationDefinition,
   IRoleDefinition,
-  IRoleDefinitionV2,
   EncodedCall,
   DomainReader,
   ResolverContractType,
@@ -26,13 +25,49 @@ import { labelhash, namehash } from '../../utils/ens-hash';
 import { CacheClient } from '../cache-client/cache-client.service';
 import { RegistrationTypes } from '../claims/claims.types';
 import { SignerService } from '../signer/signer.service';
-import { NamespaceType, IOrganization, MulticallTx } from './domains.types';
+import {
+  NamespaceType,
+  IOrganization,
+  MulticallTx,
+  SetRoleDefinitionOptions,
+  CreateOrganizationOptions,
+  ReturnStep,
+  CreateApplicationOptions,
+  CreateRoleOptions,
+  ChangeOrgOwnershipOptions,
+  ChangeAppOwnershipOptions,
+  ReturnStepWithRetryCheck,
+  ChangeRoleOwnershipOptions,
+  DeleteOrganizationOptions,
+  DeleteApplicationOptions,
+  DeleteRoleOptions,
+  GetDefinitionOptions,
+  GetRolesByNamespaceOptions,
+  IRole,
+  GetENSTypesByOwnerOptions,
+  IApp,
+  GetSubdomainsOptions,
+  CheckExistenceOfDomainOptions,
+  IsOwnerOptions,
+  ValidateOwnershipOptions,
+  DomainDefinition,
+} from './domains.types';
 import { SearchType } from '../cache-client/cache-client.types';
 import { validateAddress } from '../../utils/address';
 import { UnregisteredResolverError } from '../../errors/unregistered-resolver.error';
 import { castToV2 } from './domains.types';
 import { getLogger } from '../../config/logger.config';
 
+/**
+ * Service responsible for handling the request to ENS, creating roles/organizations/applications namespaces.
+ * See more information about ENS and domains in IAM stack [here](https://energy-web-foundation.gitbook.io/energy-web/how-tos-and-tutorials/using-the-ethereum-name-service-ens).
+ *
+ * ```typescript
+ * const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * const { domainsService } = await connectToCacheServer();
+ * domainsService.createOrganization(...);
+ * ```
+ */
 export class DomainsService {
   private chainId: number;
   private _ensRegistry: ENSRegistry;
@@ -121,19 +156,23 @@ export class DomainsService {
   }
 
   /**
-   * setRoleDefinition
+   * Update ENS domain definition for already created domain.
    *
-   * @description sets role definition in ENS domain
-   * @description please use it only when you want to update role definitions for already created role (domain)
+   * ```typescript
+   * domainsService.setRoleDefinition({
+   *     name: 'auth.apps.energyweb.iam.ewc',
+   *     data: {
+   *         appName: 'Auth service',
+   *     }
+   * });
+   * ```
    *
+   * @param {SetRoleDefinitionOptions} options object containing options
    */
   async setRoleDefinition({
     domain,
     data,
-  }: {
-    domain: string;
-    data: IAppDefinition | IOrganizationDefinition | IRoleDefinitionV2;
-  }) {
+  }: SetRoleDefinitionOptions): Promise<void> {
     // Special case of updating legacy PublicResolver definitions
     if (await this.updateLegacyDefinition(domain, data)) {
       return;
@@ -148,30 +187,36 @@ export class DomainsService {
   }
 
   /**
-   * createOrganization
+   * Create organization domain with given definition for given namespace.
+   * Also includes creating subdomains for roles and applications. (roles.yourOrg.ewc, apps.yourOrg.ewc).
    *
-   * @description creates organization (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
-   * @description and sets subdomain for roles and app for org namespace
+   * ```typescript
+   * domainsService.createOrganization({
+   *     orgName: 'auth',
+   *     namespace: 'energyweb.iam.ewc',
+   *     data: {
+   *         orgName: 'Auth service',
+   *     },
+   *     returnSteps: true,
+   * });
+   * ```
    *
+   * @param {CreateOrganizationOptions} options object containing options
+   * @returns array of steps if `returnSteps` is true
    */
   async createOrganization({
     orgName,
     namespace,
     data,
     returnSteps,
-  }: {
-    orgName: string;
-    data: IOrganizationDefinition;
-    namespace: string;
-    returnSteps?: boolean;
-  }) {
+  }: CreateOrganizationOptions): Promise<ReturnStep[] | undefined> {
     const orgDomain = `${orgName}.${namespace}`;
     const rolesDomain = `${NamespaceType.Role}.${orgDomain}`;
     const appsDomain = `${NamespaceType.Application}.${orgDomain}`;
     if (!(await this.isOwner({ domain: namespace, user: this._owner }))) {
       throw new Error(ERROR_MESSAGES.NOT_AUTHORIZED_TO_CHANGE_DOMAIN);
     }
-    const steps = [
+    const steps: ReturnStep[] = [
       {
         tx: this.createSubdomainTx({
           domain: namespace,
@@ -232,26 +277,32 @@ export class DomainsService {
   }
 
   /**
-   * createApp
+   * Create application domain with given definition for given namespace.
+   * Also includes creating subdomain for roles. (roles.yourApp.apps.yourOrg.ewc).
    *
-   * @description creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
-   * @description creates roles subdomain for the app namespace
+   * ```typescript
+   * domainsService.createApplication({
+   *     appName: 'auth',
+   *     namespace: 'apps.energyweb.iam.ewc',
+   *     data: {
+   *         appName: 'Auth service',
+   *     },
+   *     returnSteps: true,
+   * });
+   * ```
    *
+   * @param {CreateApplicationOptions} options object containing options
+   * @returns array of steps if `returnSteps` is true
    */
   async createApplication({
     appName,
     namespace: domain,
     data,
     returnSteps,
-  }: {
-    namespace: string;
-    appName: string;
-    data: IAppDefinition;
-    returnSteps?: boolean;
-  }) {
+  }: CreateApplicationOptions): Promise<ReturnStep[] | undefined> {
     const appDomain = `${appName}.${domain}`;
     const from = await this.getOwner({ namespace: domain });
-    const steps = [
+    const steps: ReturnStep[] = [
       {
         tx: this.createSubdomainTx({ domain, nodeName: appName, owner: from }),
         info: 'Set subdomain for application',
@@ -293,27 +344,41 @@ export class DomainsService {
   }
 
   /**
-   * createRole
+   * Create role domain with given definition for given namespace.
    *
-   * @description creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
-   * @returns information (true/false) if the role was created
+   * ```typescript
+   * domainsService.createRole({
+   *     appName: 'root',
+   *     namespace: 'roles.energyweb.iam.ewc',
+   *     data: {
+   *         version: 1,
+   *         issuer: {
+   *             issuerType: 'DID',
+   *             did: ['did:ethr:volta:0x00...0'],
+   *         },
+   *         revoker: {
+   *             issuerType: 'DID',
+   *             did: ['did:ethr:volta:0x00...0'],
+   *         },
+   *         enrolmentPreconditions: [],
+   *     },
+   *     returnSteps: true,
+   * });
+   * ```
    *
+   * @param {CreateRoleOptions} options object containing options
+   * @returns array of steps if `returnSteps` is true
    */
   async createRole({
     roleName,
     namespace,
     data,
     returnSteps,
-  }: {
-    roleName: string;
-    namespace: string;
-    data: IRoleDefinition | IRoleDefinitionV2;
-    returnSteps?: boolean;
-  }) {
+  }: CreateRoleOptions): Promise<ReturnStep[] | undefined> {
     const dataV2 = castToV2(data);
     const newDomain = `${roleName}.${namespace}`;
     const from = await this.getOwner({ namespace });
-    const steps = [
+    const steps: ReturnStep[] = [
       {
         tx: this.createSubdomainTx({
           domain: namespace,
@@ -349,23 +414,26 @@ export class DomainsService {
   }
 
   /**
-   * changeOrgOwnership
+   * Change owner of organization domain including all subdomains.
    *
-   * @description change owner ship of org subdomain and all org owned roles subdomains
-   * @param params.newOwner address of new owner
-   * @returns return array of steps needed to change ownership
+   * ```typescript
+   * domainsService.changeOrgOwnership({
+   *     namespace: 'energyweb.iam.ewc',
+   *     newOwner: '0x00...0',
+   *     returnSteps: true,
+   *     withSubdomains: true,
+   * });
+   * ```
+   *
+   * @param {ChangeOrgOwnershipOptions} options object containing options
+   * @returns array of steps if `returnSteps` is true
    */
   async changeOrgOwnership({
     namespace,
     newOwner,
     returnSteps = false,
     withSubdomains = false,
-  }: {
-    namespace: string;
-    newOwner: string;
-    returnSteps?: boolean;
-    withSubdomains?: boolean;
-  }): Promise<MulticallTx | undefined> {
+  }: ChangeOrgOwnershipOptions): Promise<MulticallTx | undefined> {
     DomainsService.validateOwnerAddress(newOwner);
     const orgNamespaces = [
       `${NamespaceType.Role}.${namespace}`,
@@ -429,22 +497,26 @@ export class DomainsService {
   }
 
   /**
-   * changeAppOwnership
+   * Change owner of application domain.
    *
-   * @description change owner ship of app subdomain and all app owned subdomains
-   * @param params.newOwner address of new owner
-   * @returns return array of steps needed to change ownership
+   * ```typescript
+   * domainsService.changeAppOwnership({
+   *     namespace: 'auth.apps.energyweb.iam.ewc',
+   *     newOwner: '0x00...0',
+   *     returnSteps: true,
+   * });
+   * ```
    *
+   * @param {ChangeAppOwnershipOptions} options object containing options
+   * @returns array of steps if `returnSteps` is true
    */
   async changeAppOwnership({
     namespace,
     newOwner,
     returnSteps,
-  }: {
-    namespace: string;
-    newOwner: string;
-    returnSteps?: boolean;
-  }) {
+  }: ChangeAppOwnershipOptions): Promise<
+    ReturnStepWithRetryCheck[] | undefined
+  > {
     DomainsService.validateOwnerAddress(newOwner);
     const roles = await this.getRolesByNamespace({
       namespace,
@@ -475,20 +547,22 @@ export class DomainsService {
       );
     }
 
-    const steps = changeOwnerNamespaces.map((namespace) => {
-      const tx = this.changeDomainOwnerTx({ newOwner, namespace });
-      return {
-        tx,
-        next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
-          if (retryCheck) {
-            const owner = await this.getOwner({ namespace });
-            if (owner === newOwner) return;
-          }
-          return this._signerService.send(tx);
-        },
-        info: `Changing ownership of ${namespace}`,
-      };
-    });
+    const steps: ReturnStepWithRetryCheck[] = changeOwnerNamespaces.map(
+      (namespace) => {
+        const tx = this.changeDomainOwnerTx({ newOwner, namespace });
+        return {
+          tx,
+          next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
+            if (retryCheck) {
+              const owner = await this.getOwner({ namespace });
+              if (owner === newOwner) return;
+            }
+            return this._signerService.send(tx);
+          },
+          info: `Changing ownership of ${namespace}`,
+        };
+      }
+    );
 
     if (returnSteps) {
       return steps;
@@ -500,19 +574,21 @@ export class DomainsService {
   }
 
   /**
-   * changeRoleOwnership
+   * Change owner of role domain.
    *
-   * @description change ownership of role subdomain
-   * @param params.newOwner address of new owner
+   * ```typescript
+   * domainsService.changeRoleOwnership({
+   *     namespace: 'root.roles.energyweb.iam.ewc',
+   *     newOwner: '0x00...0',
+   * });
+   * ```
    *
+   * @param {ChangeRoleOwnershipOptions} options object containing options
    */
   async changeRoleOwnership({
     namespace,
     newOwner,
-  }: {
-    namespace: string;
-    newOwner: string;
-  }) {
+  }: ChangeRoleOwnershipOptions): Promise<void> {
     DomainsService.validateOwnerAddress(newOwner);
     const notOwnedNamespaces = await this.validateOwnership({
       namespace,
@@ -530,18 +606,24 @@ export class DomainsService {
   }
 
   /**
-   * deleteOrganization
+   * Delete organization domain and all subdomains.
    *
-   * @description delete organization and roles
+   * ```typescript
+   * domainsService.deleteOrganization({
+   *     namespace: 'energyweb.iam.ewc',
+   *     returnSteps: true,
+   * });
+   * ```
    *
+   * @param {DeleteOrganizationOptions} options object containing options
+   * @returns array of steps if `returnSteps` is true
    */
   async deleteOrganization({
     namespace,
     returnSteps,
-  }: {
-    namespace: string;
-    returnSteps?: boolean;
-  }) {
+  }: DeleteOrganizationOptions): Promise<
+    ReturnStepWithRetryCheck[] | undefined
+  > {
     const apps = this._cacheClient
       ? await this.getAppsOfOrg(namespace)
       : await this.getSubdomains({
@@ -608,18 +690,24 @@ export class DomainsService {
   }
 
   /**
-   * deleteApplication
+   * Delete application domain and all subdomains.
    *
-   * @description delete application and roles
+   * ```typescript
+   * domainsService.deleteApplication({
+   *     namespace: 'auth.apps.energyweb.iam.ewc',
+   *     returnSteps: true,
+   * });
+   * ```
    *
+   * @param {DeleteApplicationOptions} options object containing options
+   * @returns array of steps if `returnSteps` is true
    */
   async deleteApplication({
     namespace,
     returnSteps,
-  }: {
-    namespace: string;
-    returnSteps?: boolean;
-  }) {
+  }: DeleteApplicationOptions): Promise<
+    ReturnStepWithRetryCheck[] | undefined
+  > {
     const roles = this._cacheClient
       ? await this._cacheClient.getApplicationRoles(namespace)
       : await this.getSubdomains({
@@ -673,12 +761,17 @@ export class DomainsService {
   }
 
   /**
-   * deleteRole
+   * Delete role domain.
    *
-   * @description delete role
+   * ```typescript
+   * domainsService.deleteRole({
+   *     namespace: 'auth.roles.energyweb.iam.ewc',
+   * });
+   * ```
    *
+   * @param {DeleteRoleOptions} options object containing options
    */
-  async deleteRole({ namespace }: { namespace: string }) {
+  async deleteRole({ namespace }: DeleteRoleOptions): Promise<void> {
     const notOwnedNamespaces = await this.validateOwnership({
       namespace,
       type: NamespaceType.Role,
@@ -693,17 +786,24 @@ export class DomainsService {
   }
 
   /**
-   * @description get cached domain definition
-   * @returns metadata string or empty string when there is no metadata
+   * Fetch cached domain definition for organization, application or role.
    *
+   * ```typescript
+   * domainsService.getDefinition({
+   *     type: NamespaceType.Role,
+   *     namespace: 'auth.roles.energyweb.iam.ewc',
+   * });
+   * ```
+   *
+   * @param {DeleteRoleOptions} options object containing options
+   * @return domain definition
    */
   async getDefinition({
     type,
     namespace,
-  }: {
-    type: NamespaceType;
-    namespace: string;
-  }): Promise<IRoleDefinition | IAppDefinition | IOrganizationDefinition> {
+  }: GetDefinitionOptions): Promise<
+    IRoleDefinition | IAppDefinition | IOrganizationDefinition
+  > {
     if (type === NamespaceType.Role) {
       return this._cacheClient.getRoleDefinition(namespace);
     }
@@ -717,19 +817,22 @@ export class DomainsService {
   }
 
   /**
-   * getRolesByNamespace
+   * Fetch all roles subdomains for certain domain.
    *
-   * @description get all subdomains for certain domain
-   * @returns array of subdomains or empty array when there is no subdomains
+   * ```typescript
+   * domainsService.getRolesByNamespace({
+   *     parentType: NamespaceType.Application,
+   *     namespace: 'auth.apps.energyweb.iam.ewc',
+   * });
+   * ```
    *
+   * @param {GetRolesByNamespaceOptions} options object containing options
+   * @returns array of role subdomains
    */
   getRolesByNamespace({
     parentType,
     namespace,
-  }: {
-    parentType: NamespaceType.Application | NamespaceType.Organization;
-    namespace: string;
-  }) {
+  }: GetRolesByNamespaceOptions): Promise<IRole[]> {
     if (parentType === NamespaceType.Organization) {
       return this._cacheClient.getOrganizationRoles(namespace);
     }
@@ -740,29 +843,38 @@ export class DomainsService {
   }
 
   /**
-   * getAllowedRolesByIssuer
+   * Get all roles that a DID can issue.
    *
-   * @description get all roles that a DID can issue, given its role credentials and all role definitions
-   * @param did DID of issuer
+   * ```typescript
+   * domainsService.getAllowedRolesByIssuer('did:ethr:0x00...0');
+   * ```
+   *
+   * @param {String} did issuer DID
    * @returns array of roles that the DID can issue
    */
-  getAllowedRolesByIssuer(did: string) {
+  getAllowedRolesByIssuer(did: string): Promise<IRole[]> {
     return this._cacheClient.getAllowedRolesByIssuer(did);
   }
 
   /**
-   * getENSTypesByOwner
-   * @param params.owner address of owner
+   * Get all organization/application/role for certain owner.
+   *
+   * ```typescript
+   * domainsService.getENSTypesByOwner({
+   *     type: NamespaceType.Organization,
+   *     owner: '0x00...0',
+   *     withRelations: true,
+   * });
+   * ```
+   *
+   * @param {GetENSTypesByOwnerOptions} options object containing options
+   * @returns array of organizations/applications/roles for certain owner
    */
   getENSTypesByOwner({
     type,
     owner,
     withRelations = true,
-  }: {
-    type: NamespaceType;
-    owner: string;
-    withRelations?: boolean;
-  }) {
+  }: GetENSTypesByOwnerOptions): Promise<IOrganization[] | IApp[] | IRole[]> {
     DomainsService.validateOwnerAddress(owner);
     if (type === NamespaceType.Organization) {
       return this._cacheClient.getOrganizationsByOwner(owner, withRelations);
@@ -777,40 +889,63 @@ export class DomainsService {
   }
 
   /**
-   * getENSTypesBySearchPhrase
+   * Search for organization/application/role with a given search phrase.
+   *
+   * ```typescript
+   * domainsService.getENSTypesBySearchPhrase({
+   *     types: [SearchType.App, SearchType.Org, SearchType.Role],
+   *     search: 'energyweb',
+   * });
+   * ```
+   *
+   * @param {String} search search phrase
+   * @param {Array<SearchType>} types ENS types to search
+   * @returns array of founded organizations/applications/roles
    */
-  getENSTypesBySearchPhrase(search: string, types?: SearchType[]) {
+  getENSTypesBySearchPhrase(
+    search: string,
+    types?: SearchType[]
+  ): Promise<(IOrganization | IApp | IRole)[]> {
     return this._cacheClient.getNamespaceBySearchPhrase(search, types);
   }
 
   /**
-   * getENSTypesByOwner
+   * Fetch all applications for organization namespace.
    *
-   * @description get all applications for organization namespace
-   * @returns array of subdomains or empty array when there is no subdomains
+   * ```typescript
+   * domainsService.getAppsOfOrg('energyweb.iam.ewc');
+   * ```
    *
+   * @param {String} org organization namespace
+   * @returns array of applications
    */
-  getAppsOfOrg(org: string) {
+  getAppsOfOrg(org: string): Promise<IApp[]> {
     return this._cacheClient.getApplicationsByOrganization(org);
   }
 
   /**
-   * getSubOrgsByOrgNamespace
+   * Fetch all sub-organizations for organization namespace.
    *
-   * @description get all sub organizations for organization namespace
-   * @returns array of subdomains or empty array when there is no subdomains
+   * ```typescript
+   * domainsService.getSubOrgsByOrgNamespace('energyweb.iam.ewc');
+   * ```
    *
+   * @param {String} namespace organization namespace
+   * @returns array of sub-organizations
    */
-  getSubOrgsByOrgNamespace(namespace: string) {
+  getSubOrgsByOrgNamespace(namespace: string): Promise<IOrganization[]> {
     return this._cacheClient.getSubOrganizationsByOrganization(namespace);
   }
 
   /**
-   * getOrgHierarchy
+   * Get organization hierarchy. Max 20 levels deep.
    *
-   * @description get all hierarchy of an organization (20 levels deep)
-   * @returns organization with all nested subOrgs
+   * ```typescript
+   * domainsService.getOrgHierarchy('energyweb.iam.ewc');
+   * ```
    *
+   * @param {String} namespace organization namespace
+   * @returns organization with all nested sub-organizations
    */
   async getOrgHierarchy(namespace: string): Promise<IOrganization> {
     const org = await this._cacheClient.getOrgHierarchy(namespace);
@@ -826,30 +961,36 @@ export class DomainsService {
   }
 
   /**
-   * getDIDsByRole
+   * Get users did which have certain role.
    *
-   * @description get all users did which have certain role
-   * @returns array of did's
+   * ```typescript
+   * domainsService.getDIDsByRole('auth.roles.energyweb.iam.ewc');
+   * ```
    *
+   * @param {String} role role namespace
+   * @returns array of users DID
    */
-  getDIDsByRole(role: string) {
+  getDIDsByRole(role: string): Promise<string[]> {
     return this._cacheClient.getDIDsForRole(role);
   }
 
   /**
-   * getSubdomains
+   * Fetch subdomains for certain domain.
    *
-   * @description get all subdomains for certain domain
-   * @returns array of subdomains or empty array when there is no subdomains
+   * ```typescript
+   * domainsService.getSubdomains({
+   *     domain: 'energyweb.iam.ewc',
+   *     mode: 'ALL',
+   * });
+   * ```
    *
+   * @param {GetSubdomainsOptions} options object containing options
+   * @returns array of subdomains
    */
   async getSubdomains({
     domain,
     mode = 'FIRSTLEVEL',
-  }: {
-    domain: string;
-    mode?: 'ALL' | 'FIRSTLEVEL';
-  }): Promise<string[]> {
+  }: GetSubdomainsOptions): Promise<string[]> {
     return this._domainHierarchy.getSubdomainsUsingResolver({
       domain,
       mode,
@@ -857,13 +998,20 @@ export class DomainsService {
   }
 
   /**
-   * checkExistenceOfDomain
+   * Check if domain exists in ENS registry.
    *
-   * @description check existence of domain in ENS registry
-   * @returns true or false whatever the domain is present
+   * ```typescript
+   * domainsService.checkExistenceOfDomain({
+   *     domain: 'some.energyweb.iam.ewc',
+   * });
+   * ```
    *
+   * @param {CheckExistenceOfDomainOptions} options object containing options
+   * @return true if domain exists, false otherwise
    */
-  async checkExistenceOfDomain({ domain }: { domain: string }) {
+  async checkExistenceOfDomain({
+    domain,
+  }: CheckExistenceOfDomainOptions): Promise<boolean> {
     const domainHash = namehash(domain);
     const [exists, isOwned] = await Promise.all([
       this._ensRegistry.recordExists(domainHash),
@@ -876,40 +1024,167 @@ export class DomainsService {
   }
 
   /**
-   * isOwner
+   * Check if user is owner of the domain.
    *
-   * @description check ownership of the domain
-   * @default if user is not specified it will check the current logged user
-   * @returns true or false whatever the passed is user is a owner of domain
+   * ```typescript
+   * domainsService.isOwner({
+   *     domain: 'energyweb.iam.ewc',
+   *     user: '0x00...0',
+   * });
+   * ```
    *
+   * @param {IsOwnerOptions} options object containing options
+   * @return true if user is owner, false otherwise
    */
   async isOwner({
     domain,
     user = this._owner,
-  }: {
-    domain: string;
-    user?: string;
-  }) {
+  }: IsOwnerOptions): Promise<boolean> {
     const domainHash = namehash(domain);
     const owner = await this._ensRegistry.owner(domainHash);
     return owner === user;
   }
 
   /**
-   * validateOwnership
+   * Get not owned domains in given namespace for current user.
    *
-   * @description check ownership of the domain and subdomains of org, app or role
-   * @returns true or false whatever the passed is user is a owner of org, app or role
+   * ```typescript
+   * domainsService.validateOwnership({
+   *     namespace: 'energyweb.iam.ewc',
+   *     type: NamespaceType.Organization,
+   * });
+   * ```
    *
+   * @param {ValidateOwnershipOptions} options object containing options
+   * @returns array of not owned domains
    */
   async validateOwnership({
     namespace,
     type,
-  }: {
-    namespace: string;
-    type: NamespaceType;
-  }) {
+  }: ValidateOwnershipOptions): Promise<string[]> {
     return this.nonOwnedNodesOf({ namespace, type, owner: this._owner });
+  }
+
+  /**
+   * Move domain to latest version of resolver.
+   *
+   * In initial version, role definitions where contained in ENS PublicResolver.
+   * However, in order for key properties of role definitions to be readable on-chain, a new RoleDefinitionResolver is used.
+   * This function sets the resolver in the ENS to the new contract for definitions that are pointing to the old contract.
+   *
+   * ```typescript
+   * domainsService.updateLegacyDefinition({
+   *     namespace: 'energyweb.iam.ewc',
+   *     data: {
+   *          orgName: 'Energy Web Foundation',
+   *     },
+   * });
+   *
+   * @param {String} domain domain namespace to update
+   * @param {DomainDefinition} data definition to apply to domain
+   * @return true if domain was updated, false otherwise
+   */
+  async updateLegacyDefinition(
+    domain: string,
+    data: DomainDefinition
+  ): Promise<boolean> {
+    const node = namehash(domain);
+    const currentResolverAddress = await this._ensRegistry.resolver(node);
+    const { ensResolverV2Address, ensRegistryAddress } =
+      chainConfigs()[this.chainId];
+    if (currentResolverAddress !== ensResolverV2Address) {
+      const updateResolverTransaction: EncodedCall = {
+        to: ensRegistryAddress,
+        data: this._ensRegistry.interface.encodeFunctionData('setResolver', [
+          node,
+          ensResolverV2Address,
+        ]),
+      };
+      // Need to use newRole/newDomain as need to set reverse domain name
+      const updateDomain = DomainReader.isRoleDefinition(data)
+        ? this._domainDefinitionTransactionFactory.newRole({
+            domain,
+            roleDefinition: {
+              ...castToV2(data),
+              version: parseInt(data.version.toString(), 10),
+            },
+          })
+        : this._domainDefinitionTransactionFactory.newDomain({
+            domain,
+            domainDefinition: data,
+          });
+      await this._signerService.send(updateResolverTransaction);
+      await this._signerService.send(updateDomain);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Get possible registration types for given roles.
+   *
+   * ```typescript
+   * domainsService.registrationTypesOfRoles(['root.roles.energyweb.iam.ewc', 'admin.roles.energyweb.iam.ewc']);
+   *
+   * @param {Array<String>} roles array of roles
+   * @return object containing registration types for given roles as keys
+   */
+  async registrationTypesOfRoles(
+    roles: string[]
+  ): Promise<Record<string, Set<RegistrationTypes>>> {
+    const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
+      (acc, role) => ({ ...acc, [role]: new Set() }),
+      {}
+    );
+    for await (const role of roles) {
+      const def = await this.getDefinition({
+        type: NamespaceType.Role,
+        namespace: role,
+      });
+      if (!DomainReader.isRoleDefinition(def)) {
+        continue;
+      }
+      const resolver = await this._ensRegistry.resolver(namehash(role));
+      if (
+        [this._ensResolverAddress, this._ensResolverV2Address].includes(
+          resolver
+        )
+      ) {
+        types[role].add(RegistrationTypes.OnChain);
+        types[role].add(RegistrationTypes.OffChain);
+      } else if (resolver === this._ensPublicResolverAddress) {
+        types[role].add(RegistrationTypes.OffChain);
+      } else {
+        throw new UnregisteredResolverError(role, resolver);
+      }
+    }
+    return types;
+  }
+
+  /**
+   * Collect related data for given domain. Currently only related data is owner.
+   *
+   * ```typescript
+   * domainsService.namespacesWithRelations(['root.roles.energyweb.iam.ewc', 'admin.roles.energyweb.iam.ewc']);
+   *
+   * @param {Array<String>} namespaces array of namespaces
+   * @return object containing registration types for given roles as keys
+   */
+  async namespacesWithRelations(namespaces: string[]): Promise<
+    {
+      namespace: string;
+      owner: string;
+    }[]
+  > {
+    return Promise.all(
+      namespaces.map(async (namespace) => {
+        const owner = await this.getOwner({ namespace });
+        return {
+          namespace,
+          owner,
+        };
+      })
+    );
   }
 
   protected async validateChangeOwnership({
@@ -974,85 +1249,6 @@ export class DomainsService {
         namespacesToDelete: string[];
       }
     );
-  }
-
-  /**
-   * In initial version of Switchboard, role definitions where contained in ENS PublicResolver.
-   * However, in order for key properties of role definitions to be readable on-chain, a new RoleDefinitionResolver is used.
-   * This function sets the resolver in the ENS to the new contract for definitions that are pointing to the old contract
-   * @param domain domain to potentially update
-   * @param data definition to apply to domain
-   */
-  async updateLegacyDefinition(
-    domain: string,
-    data:
-      | IAppDefinition
-      | IOrganizationDefinition
-      | IRoleDefinition
-      | IRoleDefinitionV2
-  ): Promise<boolean> {
-    const node = namehash(domain);
-    const currentResolverAddress = await this._ensRegistry.resolver(node);
-    const { ensResolverV2Address, ensRegistryAddress } =
-      chainConfigs()[this.chainId];
-    if (currentResolverAddress !== ensResolverV2Address) {
-      const updateResolverTransaction: EncodedCall = {
-        to: ensRegistryAddress,
-        data: this._ensRegistry.interface.encodeFunctionData('setResolver', [
-          node,
-          ensResolverV2Address,
-        ]),
-      };
-      // Need to use newRole/newDomain as need to set reverse domain name
-      const updateDomain = DomainReader.isRoleDefinition(data)
-        ? this._domainDefinitionTransactionFactory.newRole({
-            domain,
-            roleDefinition: {
-              ...castToV2(data),
-              version: parseInt(data.version.toString(), 10),
-            },
-          })
-        : this._domainDefinitionTransactionFactory.newDomain({
-            domain,
-            domainDefinition: data,
-          });
-      await this._signerService.send(updateResolverTransaction);
-      await this._signerService.send(updateDomain);
-      return true;
-    }
-    return false;
-  }
-
-  async registrationTypesOfRoles(
-    roles: string[]
-  ): Promise<Record<string, Set<RegistrationTypes>>> {
-    const types: Record<string, Set<RegistrationTypes>> = roles.reduce(
-      (acc, role) => ({ ...acc, [role]: new Set() }),
-      {}
-    );
-    for await (const role of roles) {
-      const def = await this.getDefinition({
-        type: NamespaceType.Role,
-        namespace: role,
-      });
-      if (!DomainReader.isRoleDefinition(def)) {
-        continue;
-      }
-      const resolver = await this._ensRegistry.resolver(namehash(role));
-      if (
-        [this._ensResolverAddress, this._ensResolverV2Address].includes(
-          resolver
-        )
-      ) {
-        types[role].add(RegistrationTypes.OnChain);
-        types[role].add(RegistrationTypes.OffChain);
-      } else if (resolver === this._ensPublicResolverAddress) {
-        types[role].add(RegistrationTypes.OffChain);
-      } else {
-        throw new UnregisteredResolverError(role, resolver);
-      }
-    }
-    return types;
   }
 
   protected async getOwner({ namespace }: { namespace: string }) {
@@ -1184,22 +1380,6 @@ export class DomainsService {
       namespacesToCheck.map((ns) => this.getOwner({ namespace: ns }))
     ).then((owners) =>
       owners.filter((o) => ![owner, emptyAddress].includes(o))
-    );
-  }
-
-  /**
-   * @description Collects all namespaces related data. Currently its includes only owner
-   * @param namespaces
-   */
-  async namespacesWithRelations(namespaces: string[]) {
-    return Promise.all(
-      namespaces.map(async (namespace) => {
-        const owner = await this.getOwner({ namespace });
-        return {
-          namespace,
-          owner,
-        };
-      })
     );
   }
 
