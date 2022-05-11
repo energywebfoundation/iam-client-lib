@@ -2,6 +2,13 @@
 
 [modules/signer](../modules/modules_signer.md).SignerService
 
+Service responsible for sending transactions to the blockchain
+
+```typescript
+const { signerService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+signerService.signMessage(...);
+```
+
 ## Table of contents
 
 ### Constructors
@@ -47,7 +54,7 @@
 #### Parameters
 
 | Name | Type |
-| :------ | :------ |
+| :-- | :-- |
 | `_signer` | `Required`<[`SignerT`](../modules/modules_signer.md#signert)\> |
 | `_providerType` | [`ProviderType`](../enums/modules_signer.ProviderType.md) |
 
@@ -57,89 +64,161 @@
 
 • `get` **accountInfo**(): [`AccountInfo`](../modules/modules_signer.md#accountinfo)
 
+Get account info, including chain id, chain name and user address.
+
+```typescript
+signerService.accountInfo;
+```
+
 #### Returns
 
 [`AccountInfo`](../modules/modules_signer.md#accountinfo)
 
-___
+account info
+
+---
 
 ### address
 
 • `get` **address**(): `string`
 
+Get user address.
+
+```typescript
+signerService.address;
+```
+
 #### Returns
 
 `string`
 
-___
+user address
+
+---
 
 ### chainId
 
 • `get` **chainId**(): `number`
 
+Get current connection chain id.
+
+```typescript
+signerService.chainId;
+```
+
 #### Returns
 
 `number`
 
-___
+chain id
+
+---
 
 ### did
 
 • `get` **did**(): `string`
 
+Get current user DID address.
+
+```typescript
+signerService.did;
+```
+
 #### Returns
 
 `string`
 
-___
+DID address
+
+---
 
 ### didHex
 
 • `get` **didHex**(): `string`
 
+Get current user DID address with hex representation of the chain id.
+
+```typescript
+signerService.didHex;
+```
+
 #### Returns
 
 `string`
 
-___
+DID address
+
+---
 
 ### isEthSigner
 
 • `get` **isEthSigner**(): `boolean`
 
+Get if the signer is an Ethereum signer.
+
+```typescript
+signerService.isEthSigner;
+```
+
 #### Returns
 
 `boolean`
 
-___
+true if the signer is an Ethereum signer
+
+---
 
 ### provider
 
 • `get` **provider**(): `Provider`
 
+Get connection provider.
+
+```typescript
+signerService.provider;
+```
+
 #### Returns
 
 `Provider`
 
-___
+connection provider
+
+---
 
 ### providerType
 
 • `get` **providerType**(): [`ProviderType`](../enums/modules_signer.ProviderType.md)
 
+Get provider type of current signer connection.
+
+```typescript
+signerService.providerType;
+```
+
 #### Returns
 
 [`ProviderType`](../enums/modules_signer.ProviderType.md)
 
-___
+provider type
+
+---
 
 ### signer
 
 • `get` **signer**(): `Required`<[`SignerT`](../modules/modules_signer.md#signert)\>
 
+Custom signer instance.
+
+```typescript
+signerService.signer;
+```
+
 #### Returns
 
 `Required`<[`SignerT`](../modules/modules_signer.md#signert)\>
+
+signer
 
 ## Methods
 
@@ -147,52 +226,82 @@ ___
 
 ▸ **balance**(): `Promise`<`BigNumber`\>
 
+Get current user balance.
+
+```typescript
+signerService.getBalance();
+```
+
 #### Returns
 
 `Promise`<`BigNumber`\>
 
-___
+user balance
+
+---
 
 ### call
 
-▸ **call**(`__namedParameters`): `Promise`<`string`\>
+▸ **call**(`options`): `Promise`<`string`\>
 
-Makes a (readonly) call to a smart contract
-https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
+Makes a (readonly) call to a smart contract. https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
+
+```typescript
+signerService.call({
+    to: ':0x00...0',
+    data: contract.interface.encodeFunctionData(...)
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `TransactionRequest` |
+| Name      | Type                 | Description         |
+| :-------- | :------------------- | :------------------ |
+| `options` | `TransactionRequest` | object with options |
 
 #### Returns
 
 `Promise`<`string`\>
 
-The result of the call
+the result of the call
 
-___
+---
 
 ### chainName
 
 ▸ **chainName**(): `string`
 
+Get current chain name.
+
+```typescript
+signerService.chainName();
+```
+
 #### Returns
 
 `string`
 
-___
+chain name
+
+---
 
 ### closeConnection
 
 ▸ **closeConnection**(): `Promise`<`boolean`\>
 
+Close connection with the signer wallet.
+
+```typescript
+signerService.closeConnection();
+```
+
 #### Returns
 
 `Promise`<`boolean`\>
 
-___
+true if connection was closed
+
+---
 
 ### connect
 
@@ -201,7 +310,7 @@ ___
 #### Parameters
 
 | Name | Type |
-| :------ | :------ |
+| :-- | :-- |
 | `signer` | `Required`<[`SignerT`](../modules/modules_signer.md#signert)\> |
 | `providerType` | [`ProviderType`](../enums/modules_signer.ProviderType.md) |
 
@@ -209,7 +318,7 @@ ___
 
 `Promise`<`void`\>
 
-___
+---
 
 ### emit
 
@@ -217,15 +326,15 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `e` | [`ProviderEvent`](../enums/modules_signer.ProviderEvent.md) |
+| Name | Type                                                        |
+| :--- | :---------------------------------------------------------- |
+| `e`  | [`ProviderEvent`](../enums/modules_signer.ProviderEvent.md) |
 
 #### Returns
 
 `Promise`<`void`\>
 
-___
+---
 
 ### init
 
@@ -235,7 +344,7 @@ ___
 
 `Promise`<`void`\>
 
-___
+---
 
 ### initEventHandlers
 
@@ -249,7 +358,7 @@ Add event handler for certain events
 
 `void`
 
-___
+---
 
 ### on
 
@@ -257,16 +366,16 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type                                                        |
+| :------ | :---------------------------------------------------------- |
 | `event` | [`ProviderEvent`](../enums/modules_signer.ProviderEvent.md) |
-| `cb` | `any` |
+| `cb`    | `any`                                                       |
 
 #### Returns
 
 `void`
 
-___
+---
 
 ### onInit
 
@@ -277,85 +386,131 @@ Registers reinitialization of dependent service on signer reconnection
 #### Parameters
 
 | Name | Type |
-| :------ | :------ |
+| :-- | :-- |
 | `initializer` | [`ServiceInitializer`](../modules/modules_signer.md#serviceinitializer) |
 
 #### Returns
 
 `void`
 
-___
+---
 
 ### publicKey
 
 ▸ **publicKey**(): `Promise`<`string`\>
 
+Get current user public key.
+
+```typescript
+signerService.publicKey();
+```
+
 #### Returns
 
 `Promise`<`string`\>
 
-___
+public key
+
+---
 
 ### publicKeyAndIdentityToken
 
 ▸ **publicKeyAndIdentityToken**(): `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
 
+Generate public key and identity token for authentication purposes.
+
+```typescript
+signerService.publicKeyAndIdentityToken();
+```
+
 #### Returns
 
 `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
 
-___
+object with public key and identity token
+
+---
 
 ### send
 
-▸ **send**(`__namedParameters`): `Promise`<`TransactionReceipt`\>
+▸ **send**(`options`): `Promise`<`TransactionReceipt`\>
+
+Send transaction to the blockchain.
+
+```typescript
+signerService.send({
+    to: ':0x00...0',
+    data: contract.interface.encodeFunctionData(...)
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `TransactionRequest` |
+| Name      | Type                 | Description         |
+| :-------- | :------------------- | :------------------ |
+| `options` | `TransactionRequest` | object with options |
 
 #### Returns
 
 `Promise`<`TransactionReceipt`\>
 
-___
+transaction receipt
+
+---
 
 ### signMessage
 
 ▸ **signMessage**(`message`): `Promise`<`string`\>
 
-**`description`** Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign)
-Whether or not to hash the message prior to signature is determined by signature performed during login.
-When running in browser `isEthSigner` variable should be stored in local storage
+Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign). Whether or not to hash the message prior to signature is determined by signature performed during login. When running in browser `isEthSigner` variable should be stored in local storage.
+
+```typescript
+signerService.signMessage(arrayify('Hello World'));
+```
 
 #### Parameters
 
 | Name | Type | Description |
-| :------ | :------ | :------ |
+| :-- | :-- | :-- |
 | `message` | `Uint8Array` | The message to be signed. The message should have binary representation to avoid confusion of text with hexadecimal binary data |
 
 #### Returns
 
 `Promise`<`string`\>
 
-___
+the signature
+
+---
 
 ### signTypedData
 
 ▸ **signTypedData**(`domain`, `types`, `message`): `Promise`<`string`\>
 
-**`description`** Tries to create conformant signature (https://eips.ethereum.org/EIPS/eip-712)
+Tries to create conformant EIP-712 signature (https://eips.ethereum.org/EIPS/eip-712).
+
+```typescript
+signerService.signTypedData(
+  { name: 'MyToken', version: '1.0' },
+  {
+    Model: [
+      { name: 'name', type: 'string' },
+      { name: 'type', type: 'string' },
+    ],
+  },
+  { name: 'MyToken', type: 'erc721' }
+);
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `domain` | `TypedDataDomain` |
-| `types` | `Record`<`string`, `TypedDataField`[]\> |
-| `message` | `Record`<`string`, `unknown`\> |
+| Name      | Type                                    | Description            |
+| :-------- | :-------------------------------------- | :--------------------- |
+| `domain`  | `TypedDataDomain`                       | EIP-712 domain object  |
+| `types`   | `Record`<`string`, `TypedDataField`[]\> | EIP-712 types object   |
+| `message` | `Record`<`string`, `unknown`\>          | EIP-712 message object |
 
 #### Returns
 
 `Promise`<`string`\>
+
+the signature
