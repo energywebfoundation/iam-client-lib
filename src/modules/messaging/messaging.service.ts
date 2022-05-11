@@ -6,7 +6,11 @@ import {
   Subscription,
 } from 'nats.ws';
 import { getMessagingConfig } from '../../config/messaging.config';
-import { IMessage, MessagingMethod } from './messaging.types';
+import {
+  IMessage,
+  MessagingMethod,
+  SubscribeToOptions,
+} from './messaging.types';
 import { SignerService } from '../signer/signer.service';
 import {
   executionEnvironment,
@@ -14,6 +18,14 @@ import {
 } from '../../utils/detect-environment';
 import { getLogger } from '../../config/logger.config';
 
+/**
+ * Service responsible for handling the messaging via NATS.
+ *
+ * ```typescript
+ * const { messagingService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * messagingService.subscribeTo(...);
+ * ```
+ */
 export class MessagingService {
   private _jsonCodec: Codec<unknown>;
   private _natsConnection: NatsConnection;
@@ -63,13 +75,22 @@ export class MessagingService {
     }
   }
 
+  /**
+   * Subscribe to messages on the given subject.
+   *
+   * ```typescript
+   * messagingService.subscribeTo({
+   *     subject: '*.*.did:ethr:volta:0x00..0.ewf-volta',
+   *     messageHandler: (data) => console.log(data),
+   * });
+   * ```
+   * @param {SubscribeToOptions} options object with options
+   * @return subscription id
+   */
   async subscribeTo({
     subject = `*.*.${this._signerService.did}.${this._natsEnvironmentName}`,
     messageHandler,
-  }: {
-    subject?: string;
-    messageHandler: (data: IMessage) => void;
-  }) {
+  }: SubscribeToOptions): Promise<number | undefined> {
     if (!this._natsConnection) {
       return;
     }
@@ -87,7 +108,15 @@ export class MessagingService {
     return subscription.getID();
   }
 
-  async unsubscribeFrom(subscriptionId: number) {
+  /**
+   * Unsubscribe from the given subscription id.
+   *
+   * ```typescript
+   * messagingService.unsubscribeFrom(55);
+   * ```
+   * @param {Number} subscriptionId subscription id
+   */
+  async unsubscribeFrom(subscriptionId: number): Promise<void> {
     const i = this._subscriptions.findIndex(
       (s) => s.getID() === subscriptionId
     );
@@ -96,7 +125,16 @@ export class MessagingService {
     }
   }
 
-  async publish(subject: string, data: Uint8Array) {
+  /**
+   * Publish a message with data to the given subject.
+   *
+   * ```typescript
+   * messagingService.publish('*.*.did:ethr:volta:0x00..0.ewf-volta', Uint8Array.from('Hello World'));
+   * ```
+   * @param {String} subject message subject
+   * @param {Uint8Array} data message data
+   */
+  publish(subject: string, data: Uint8Array): void {
     this._natsConnection?.publish(subject, data);
   }
 }

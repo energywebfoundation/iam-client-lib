@@ -13,3 +13,28 @@
 ### Interfaces
 
 - [IMessage](../interfaces/modules_messaging.IMessage.md)
+- [SubscribeToOptions](../interfaces/modules_messaging.SubscribeToOptions.md)
+
+### Type aliases
+
+- [MessageHandler](modules_messaging.md#messagehandler)
+
+## Type aliases
+
+### MessageHandler
+
+Ƭ **MessageHandler**: (`message`: [`IMessage`](../interfaces/modules_messaging.IMessage.md)) => `void`
+
+#### Type declaration
+
+▸ (`message`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message` | [`IMessage`](../interfaces/modules_messaging.IMessage.md) |
+
+##### Returns
+
+`void`
