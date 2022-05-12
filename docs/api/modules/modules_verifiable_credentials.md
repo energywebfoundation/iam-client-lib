@@ -9,6 +9,7 @@
 ### Interfaces
 
 - [CreatePresentationParams](../interfaces/modules_verifiable_credentials.CreatePresentationParams.md)
+- [InitiateExchangeResults](../interfaces/modules_verifiable_credentials.InitiateExchangeResults.md)
 - [IssuerFields](../interfaces/modules_verifiable_credentials.IssuerFields.md)
 - [ProofOptions](../interfaces/modules_verifiable_credentials.ProofOptions.md)
 - [RoleCredentialSubject](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)

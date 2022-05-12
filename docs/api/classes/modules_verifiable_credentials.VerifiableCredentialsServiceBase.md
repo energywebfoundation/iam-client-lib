@@ -2,6 +2,16 @@
 
 [modules/verifiable-credentials](../modules/modules_verifiable_credentials.md).VerifiableCredentialsServiceBase
 
+Service responsible for managing verifiable credentials and presentations.
+You can read more about verifiable credentials data model [here](https://www.w3.org/TR/vc-data-model/).
+
+```typescript
+const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+const { connectToDidRegistry } = await connectToCacheServer();
+const { verifiableCredentialsService } = await connectToDidRegistry();
+verifiableCredentialsService.createRoleVC(...);
+```
+
 ## Table of contents
 
 ### Constructors
@@ -36,16 +46,24 @@
 
 ▸ **createPresentation**(`verifiableCredential`, `options?`): `Presentation`
 
+Create a presentation with given verifiable credentials. Allow create presentation for a given presentation definition.
+
+```typescript
+verifiableCredentialsService.createPresentation([...credentials]);
+```
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] |
-| `options?` | [`CreatePresentationParams`](../interfaces/modules_verifiable_credentials.CreatePresentationParams.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] | role credential parameters |
+| `options?` | [`CreatePresentationParams`](../interfaces/modules_verifiable_credentials.CreatePresentationParams.md) | presentation options |
 
 #### Returns
 
 `Presentation`
+
+presentation
 
 ___
 
@@ -53,16 +71,28 @@ ___
 
 ▸ **createRoleVC**(`credentialParams`, `proofOptions?`): `Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
 
+Create a Energy Web role verifiable credential with EIP712 signature.
+
+```typescript
+verifiableCredentialsService.createRoleVC({
+     id: 'did:ethr:volta:0x00...0',
+     namespace: 'root.roles.energyweb.iam.ewc',
+     version: '1',
+});
+```
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `credentialParams` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) |
-| `proofOptions?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `credentialParams` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) | role credential parameters |
+| `proofOptions?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
 
 #### Returns
 
 `Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
+
+verifiable credential object
 
 ___
 
@@ -70,34 +100,49 @@ ___
 
 ▸ **createVerifiablePresentation**(`verifiableCredential`, `options?`): `Promise`<`VerifiablePresentation`\>
 
+Create a verifiable presentation with given verifiable credentials and EIP712 signature.
+
+```typescript
+verifiableCredentialsService.createVerifiablePresentation([...credentials]);
+```
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] |
-| `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] | role credential parameters |
+| `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
 
 #### Returns
 
 `Promise`<`VerifiablePresentation`\>
 
+verifiable presentation
+
 ___
 
 ### initiateExchange
 
-▸ **initiateExchange**(`__namedParameters`): `Promise`<`any`[]\>
+▸ **initiateExchange**(`options`): `Promise`<[`InitiateExchangeResults`](../interfaces/modules_verifiable_credentials.InitiateExchangeResults.md)[]\>
 
-**`description`** The type of the exchange. Only vc-api exchanges currently supported.
+Initialize credential exchange. Only vc-api exchanges currently supported.
+
+```typescript
+verifiableCredentialsService.initiateExchange({
+    type: VC_API_EXCHANGE,
+    url: 'http://localhost:3000',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `ExchangeInvitation` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | `ExchangeInvitation` | object with options |
 
 #### Returns
 
-`Promise`<`any`[]\>
+`Promise`<[`InitiateExchangeResults`](../interfaces/modules_verifiable_credentials.InitiateExchangeResults.md)[]\>
 
 credentials query with matching verifiable presentations
 
@@ -105,7 +150,14 @@ ___
 
 ### verify
 
-▸ **verify**<`T`\>(`vp`, `options?`): `any`
+▸ **verify**<`T`\>(`vp`, `options?`): `Promise`<`boolean`\>
+
+Verify a given credential or presentation. Throws an error if the credential or presentation proof is not valid.
+
+```typescript
+await verifiableCredentialsService.verify(credential);
+await verifiableCredentialsService.verify(presentation);
+```
 
 #### Type parameters
 
@@ -115,14 +167,16 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `vp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> |
-| `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `vp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> | verifiable presentation or credential |
+| `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
 
 #### Returns
 
-`any`
+`Promise`<`boolean`\>
+
+true if the proof is valid
 
 ___
 
