@@ -6,12 +6,19 @@
 
 ### Properties
 
+- [expirationDate](modules_verifiable_credentials.RoleCredentialSubjectParams.md#expirationdate)
 - [id](modules_verifiable_credentials.RoleCredentialSubjectParams.md#id)
 - [issuerFields](modules_verifiable_credentials.RoleCredentialSubjectParams.md#issuerfields)
 - [namespace](modules_verifiable_credentials.RoleCredentialSubjectParams.md#namespace)
 - [version](modules_verifiable_credentials.RoleCredentialSubjectParams.md#version)
 
 ## Properties
+
+### expirationDate
+
+• `Optional` **expirationDate**: `Date`
+
+___
 
 ### id
 

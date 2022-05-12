@@ -19,7 +19,6 @@ import {
   RoleCredentialSubject,
   CreatePresentationParams,
   verifiableCredentialEIP712Types,
-  verifiablePresentationEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
   InitiateExchangeResults,
 } from './types';
@@ -192,6 +191,19 @@ export abstract class VerifiableCredentialsServiceBase {
     const did = this._signerService.didHex;
 
     const credentialObject = this.createCredential(credentialParams);
+    const eip712MessageSchema = {
+      // TODO: generate types from the credential
+      ...JSON.parse(JSON.stringify(verifiableCredentialEIP712Types)),
+      EIP712Domain: [],
+    };
+
+    if (credentialParams?.expirationDate) {
+      eip712MessageSchema.VerifiableCredential.push({
+        name: 'expirationDate',
+        type: 'string',
+      });
+    }
+
     const proofOptionsObject = {
       verificationMethod:
         proofOptions?.verificationMethod || did + '#controller',
@@ -199,11 +211,7 @@ export abstract class VerifiableCredentialsServiceBase {
       eip712Domain: {
         primaryType: 'VerifiableCredential',
         domain: {},
-        messageSchema: {
-          // TODO: generate types from the credential
-          ...verifiableCredentialEIP712Types,
-          EIP712Domain: [],
-        },
+        messageSchema: eip712MessageSchema,
       },
     };
 
@@ -300,9 +308,33 @@ export abstract class VerifiableCredentialsServiceBase {
     const did = this._signerService.didHex;
 
     // TODO: generate types from the presentation
-    const types = verifiableCredential
-      ? verifiablePresentationWithCredentialEIP712Types
-      : verifiablePresentationEIP712Types;
+    const types: typeof verifiablePresentationWithCredentialEIP712Types =
+      JSON.parse(
+        JSON.stringify(verifiablePresentationWithCredentialEIP712Types)
+      );
+
+    const { oneVCHasExpirationDate, allVCHaveExpirationDate } =
+      verifiableCredential.reduce(
+        (acc, vc) => {
+          const hasExpirationDate = !!vc.expirationDate;
+          return {
+            oneVCHasExpirationDate:
+              acc.oneVCHasExpirationDate || hasExpirationDate,
+            allVCHaveExpirationDate:
+              acc.allVCHaveExpirationDate && hasExpirationDate,
+          };
+        },
+        {
+          oneVCHasExpirationDate: false,
+          allVCHaveExpirationDate: true,
+        }
+      );
+
+    if (oneVCHasExpirationDate && !allVCHaveExpirationDate) {
+      throw new Error(
+        'Expected all Verifiable Credential to have expiration date'
+      );
+    }
 
     const presentationTemplate = {
       ...this.createPresentation(verifiableCredential),
@@ -314,6 +346,13 @@ export abstract class VerifiableCredentialsServiceBase {
         proofPurpose: options?.proofPurpose || 'authentication',
       },
     };
+
+    if (allVCHaveExpirationDate) {
+      types.VerifiableCredential.push({
+        name: 'expirationDate',
+        type: 'string',
+      });
+    }
 
     const signature = await this._signerService.signTypedData(
       {},
@@ -382,6 +421,19 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     if (
+      vp.type.includes('VerifiableCredential') &&
+      'expirationDate' in vp &&
+      vp.expirationDate
+    ) {
+      const expirationDate = new Date(vp.expirationDate).getTime();
+      const currentDate = Date.now();
+
+      if (expirationDate < currentDate) {
+        throw new Error(`Verifiable Credential is expired.`);
+      }
+    }
+
+    if (
       vp.type.includes('VerifiablePresentation') &&
       'verifiableCredential' in vp &&
       vp.verifiableCredential &&
@@ -406,7 +458,7 @@ export abstract class VerifiableCredentialsServiceBase {
   private createCredential(
     params: RoleCredentialSubjectParams
   ): Credential<RoleCredentialSubject> {
-    const credential = {
+    const credential: Credential<RoleCredentialSubject> = {
       // TODO: Host EWF VC Context and Vocabulary
       '@context': ['https://www.w3.org/2018/credentials/v1'],
       id: 'urn:uuid:' + uuid(),
@@ -429,6 +481,11 @@ export abstract class VerifiableCredentialsServiceBase {
         id: params.id,
       },
     };
+
+    if (params.expirationDate) {
+      credential.expirationDate = params.expirationDate.toISOString();
+    }
+
     return credential;
   }
 }

@@ -21,6 +21,9 @@ export interface RoleCredentialSubjectParams {
 
   /* Role issuer fields */
   issuerFields?: IssuerFields[];
+
+  /* Expiration date of credential */
+  expirationDate?: Date;
 }
 
 export interface ProofOptions {
