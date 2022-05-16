@@ -99,10 +99,10 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/core": "7.17.10",
+    "@babel/core": "7.17.12",
     "@babel/plugin-transform-regenerator": "7.17.9",
     "@babel/plugin-transform-runtime": "^7.17.0",
-    "@babel/preset-env": "7.17.10",
+    "@babel/preset-env": "7.17.12",
     "@babel/runtime": "^7.17.2",
     "@energyweb/eslint-config": "^0.0.2",
     "@energyweb/prettier-config": "^0.0.1",
