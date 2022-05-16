@@ -416,13 +416,19 @@ ___
 
 ### publicKeyAndIdentityToken
 
-▸ **publicKeyAndIdentityToken**(): `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
+▸ **publicKeyAndIdentityToken**(`force?`): `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
 
 Generate public key and identity token for authentication purposes.
 
 ```typescript
 signerService.publicKeyAndIdentityToken();
 ```
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `force` | `boolean` | `false` | when true recalculates token even if it is already present |
 
 #### Returns
 

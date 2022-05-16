@@ -13,7 +13,7 @@
 
 ### did
 
-• **did**: `string`
+• `Optional` **did**: `string`
 
 ___
 

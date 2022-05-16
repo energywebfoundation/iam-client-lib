@@ -21,6 +21,7 @@ import { cacheConfigs } from '../../config/cache.config';
 import { ICacheClient } from './cache-client.interface';
 import {
   AssetsFilter,
+  AuthTokens,
   ClaimsFilter,
   TEST_LOGIN_ENDPOINT,
 } from './cache-client.types';
@@ -63,44 +64,43 @@ export class CacheClient implements ICacheClient {
    * After authentication runs previously failed requests
    */
   async authenticate() {
+    let tokens: AuthTokens | undefined = undefined;
+
+    // First try to refresh access token
     try {
       const refreshedTokens = await this.refreshToken();
 
-      if (refreshedTokens) {
-        getLogger().debug('[CACHE CLIENT] Setting authorization tokens');
-        if (!this.isBrowser) {
-          this._httpClient.defaults.headers.common[
-            'Authorization'
-          ] = `Bearer ${refreshedTokens.token}`;
-        }
-        if (await this.isAuthenticated()) {
-          this.refresh_token = refreshedTokens.refreshToken;
-          return;
-        }
+      if (refreshedTokens && (await this.isAuthenticated())) {
+        tokens = refreshedTokens;
       }
-    } catch (error) {
-      getLogger().error('[CACHE CLIENT] Authentication failed');
-      getLogger().error(error);
+    } catch {
+      getLogger().error('[CACHE CLIENT] Failed to refresh tokens');
     }
 
-    const pubKeyAndIdentityToken =
-      await this._signerService.publicKeyAndIdentityToken();
-    const {
-      data: { refreshToken, token },
-    } = await this._httpClient.post<{ token: string; refreshToken: string }>(
-      '/login',
-      {
+    // If refresh token failed or access token is not valid, then sign new identity token
+    if (!tokens) {
+      delete this._httpClient.defaults.headers.common['Authorization'];
+      const pubKeyAndIdentityToken =
+        await this._signerService.publicKeyAndIdentityToken(true);
+      const { data } = await this._httpClient.post<AuthTokens>('/login', {
         identityToken: pubKeyAndIdentityToken.identityToken,
-      }
-    );
+      });
+      this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
+      tokens = data;
+    }
+
+    // Set new tokens
     if (!this.isBrowser) {
       this._httpClient.defaults.headers.common[
         'Authorization'
-      ] = `Bearer ${token}`;
+      ] = `Bearer ${tokens.token}`;
     }
-    this.refresh_token = refreshToken;
-    this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
+    this.refresh_token = tokens.refreshToken;
 
+    // Run previously failed requests
+    console.log(
+      `[CACHE CLIENT] Running failed requests: ${this.failedRequests.length}`
+    );
     this.failedRequests = this.failedRequests.filter((callback) => callback());
   }
 
@@ -113,12 +113,8 @@ export class CacheClient implements ICacheClient {
    */
   async handleError(error: AxiosError) {
     getLogger().debug(`[CACHE CLIENT] Axios error: ${error.message}`);
-    getLogger().error(error);
     const { config, response } = error;
     const originalRequest = config;
-
-    getLogger().debug(config);
-    getLogger().debug(response);
 
     if (
       this.authEnabled &&
@@ -130,9 +126,18 @@ export class CacheClient implements ICacheClient {
       config.url?.indexOf(TEST_LOGIN_ENDPOINT) === -1
     ) {
       getLogger().debug(`[CACHE CLIENT] axios error unauthorized`);
-      const retryOriginalRequest = new Promise((resolve) => {
+      const retryOriginalRequest = new Promise((resolve, reject) => {
         this.failedRequests.push(() => {
-          resolve(axios(originalRequest));
+          axios({
+            ...originalRequest,
+            headers: {
+              ...originalRequest.headers,
+              Authorization:
+                this._httpClient.defaults.headers.common['Authorization'],
+            },
+          })
+            .then(resolve)
+            .catch(reject);
         });
       });
       if (!this.isAuthenticating) {
@@ -405,13 +410,7 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
-  private async refreshToken(): Promise<
-    | {
-        token: string;
-        refreshToken: string;
-      }
-    | undefined
-  > {
+  private async refreshToken(): Promise<AuthTokens | undefined> {
     getLogger().debug('[CACHE CLIENT] Refreshing token');
     if (!this.refresh_token) return undefined;
 
