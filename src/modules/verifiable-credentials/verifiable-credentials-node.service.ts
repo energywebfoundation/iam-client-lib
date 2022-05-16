@@ -10,7 +10,7 @@ import {
 } from '@spruceid/didkit-wasm-node';
 import { SignerService } from '../signer';
 import { VerifiableCredentialsServiceBase } from './verifiable-credentials-base.service';
-
+import { DomainsService } from '../domains';
 export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServiceBase {
   protected prepareIssueCredential: (
     credential: string,
@@ -42,8 +42,8 @@ export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServi
     proof_options: string
   ) => Promise<string>;
 
-  constructor(_signerService: SignerService) {
-    super(_signerService);
+  constructor(_signerService: SignerService, domainsService: DomainsService) {
+    super(_signerService, domainsService);
 
     this.completeIssueCredential = completeIssueCredential;
     this.prepareIssueCredential = prepareIssueCredential;
@@ -54,8 +54,14 @@ export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServi
     this.verifyPresentation = verifyPresentation;
   }
 
-  static async create(signerService: SignerService) {
-    const service = new VerifiableCredentialsServiceNode(signerService);
+  static async create(
+    signerService: SignerService,
+    domainsService: DomainsService
+  ) {
+    const service = new VerifiableCredentialsServiceNode(
+      signerService,
+      domainsService
+    );
     return service;
   }
 }

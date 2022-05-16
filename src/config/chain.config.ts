@@ -34,6 +34,8 @@ export interface ChainConfig {
   didRegistryAddress: string;
   claimManagerAddress: string;
   stakingPoolFactoryAddress: string;
+  credentialRevocationRegistryAddress: string;
+  claimsRevocationRegistryAddress: string;
 }
 
 export type ChainId = number;
@@ -56,6 +58,11 @@ const chainConfig: Record<number, ChainConfig> = {
     didRegistryAddress: VoltaAddress1056,
     claimManagerAddress: VOLTA_CLAIM_MANAGER_ADDRESS,
     stakingPoolFactoryAddress: VOLTA_STAKING_POOL_FACTORY_ADDRESS,
+    // TODO: add addresses to @energyweb/credential-governance
+    credentialRevocationRegistryAddress:
+      '0x018Ae0454a3e2f77048a455dD731bB669a218959',
+    claimsRevocationRegistryAddress:
+      '0x58E0F80FB9DE06eb77F27bC7f93468946E89Cc11',
   },
   [EWC_CHAIN_ID]: {
     chainName: Chain.EWC,
@@ -70,6 +77,8 @@ const chainConfig: Record<number, ChainConfig> = {
     didRegistryAddress: EWC_ADDRESS_1056,
     claimManagerAddress: EWC_CLAIM_MANAGER_ADDRESS,
     stakingPoolFactoryAddress: '', // This is not deployed on EWC
+    credentialRevocationRegistryAddress: '', // This is not deployed on EWC
+    claimsRevocationRegistryAddress: '', // This is not deployed on EWC
   },
 };
 

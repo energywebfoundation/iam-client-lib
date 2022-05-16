@@ -15,6 +15,9 @@ import {
   ContinueExchangeSelections,
   VpRequestPresentationDefinitionQuery,
 } from '@ew-did-registry/credentials-interface';
+import { EwSigner } from '@ew-did-registry/did-ethr-resolver';
+import { CredentialRevocation } from '@ew-did-registry/revocation';
+import { keccak256 } from 'ethers/lib/utils';
 import { SignerService } from '../signer';
 import {
   ProofOptions,
@@ -24,19 +27,38 @@ import {
   CreatePresentationParams,
   verifiableCredentialEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
+  RevocationCredentialDetailsResults,
 } from './types';
+import { chainConfigs } from '../../config';
 import { ERROR_MESSAGES } from '../../errors';
+import { DomainsService, NamespaceType } from '../domains';
+import {
+  IRoleDefinition,
+  IRoleDefinitionV2,
+} from '@energyweb/credential-governance';
+import { ClaimsService } from '../claims';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
  * You can read more about verifiable credentials data model [here](https://www.w3.org/TR/vc-data-model/).
  *
  * ```typescript
- * const { verifiableCredentialsService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * const { verifiableCredentialsService } = await connectToCacheServer();
  * verifiableCredentialsService.createRoleVC(...);
  * ```
  * */
 export abstract class VerifiableCredentialsServiceBase {
+  /**
+   * `CredentialRevocation` instance.
+   */
+  protected _credentialRevocation: CredentialRevocation;
+
+  /**
+   * `ClaimsService` instance.
+   */
+  protected _claimsService: ClaimsService;
+
   /**
    * Get prepared data for signing a credential.
    *
@@ -117,12 +139,27 @@ export abstract class VerifiableCredentialsServiceBase {
     proof_options: string
   ): Promise<string>;
 
-  constructor(protected readonly _signerService: SignerService) {}
+  constructor(
+    protected readonly _signerService: SignerService,
+    protected readonly _domainsService: DomainsService
+  ) {}
+
+  async init(ewSigner: EwSigner, claimService: ClaimsService) {
+    this._claimsService = claimService;
+
+    const chainId = this._signerService.chainId;
+    this._credentialRevocation = new CredentialRevocation(
+      ewSigner,
+      chainConfigs()[chainId].credentialRevocationRegistryAddress
+    );
+  }
 
   // * Should be overridden by the implementation
   static async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    signerService: SignerService
+    signerService: SignerService,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    domainsService: DomainsService
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
@@ -475,6 +512,118 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     return true;
+  }
+
+  /**
+   * Revoke a given verifiable credential.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.revokeCredential(credential);
+   * ```
+   * @param {VerifiableCredential} credential verifiable credential
+   * @return true if the credential was revoked
+   */
+  public async revokeCredential<T extends RoleCredentialSubject>(
+    credential: VerifiableCredential<T>
+  ): Promise<boolean> {
+    const stringifyCredential = JSON.stringify(credential);
+    const credentialHash = keccak256(stringifyCredential);
+    return await this._credentialRevocation.revokeCredential(credentialHash);
+  }
+
+  /**
+   * Fetch a given verifiable credential revocation details.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.revocationCredentialDetails(credential);
+   * ```
+   * @param {VerifiableCredential} credential verifiable credential
+   * @param {Boolean} onlyValid if true, only valid revocation are returned
+   * @return revocation credential details
+   */
+  public async revocationCredentialDetails<T extends RoleCredentialSubject>(
+    credential: VerifiableCredential<T>,
+    onlyValid = true
+  ): Promise<RevocationCredentialDetailsResults[]> {
+    const stringifyCredential = JSON.stringify(credential);
+    const credentialHash = keccak256(stringifyCredential);
+    const { 0: revokers, 1: timestamps } =
+      await this._credentialRevocation.getRevocations(credentialHash);
+
+    const result = revokers.map((revoker, index) => ({
+      revoker,
+      timestamp: timestamps?.[index],
+    }));
+
+    if (!onlyValid) {
+      return result;
+    }
+
+    const domainDefinition = (await this._domainsService.getDefinition({
+      type: NamespaceType.Role,
+      namespace: credential.credentialSubject.role.namespace,
+    })) as IRoleDefinitionV2 | IRoleDefinition;
+
+    if (!('revoker' in domainDefinition)) return result;
+
+    if (
+      domainDefinition.revoker.revokerType === 'DID' &&
+      domainDefinition.revoker.did
+    ) {
+      const revokersDIDs = domainDefinition.revoker.did;
+      return result.filter(({ revoker }) => revokersDIDs.includes(revoker));
+    }
+
+    if (
+      domainDefinition.revoker.revokerType === 'ROLE' &&
+      domainDefinition.revoker.roleName
+    ) {
+      const revokerRoleName = domainDefinition.revoker.roleName;
+      const revokersDetails = await Promise.all([
+        ...revokers.map(async (revoker) => {
+          const claims = await this._claimsService.getClaimsBySubject({
+            did: revoker,
+            isAccepted: true,
+            namespace:
+              this._claimsService.getNamespaceFromClaimType(revokerRoleName),
+          });
+          const validClaims = claims.filter(
+            ({ claimType }) => claimType === revokerRoleName
+          );
+          return {
+            revoker,
+            isValid: validClaims.length > 0,
+          };
+        }),
+      ]);
+      const validRevokers = revokersDetails
+        .filter(({ isValid }) => isValid)
+        .map(({ revoker }) => revoker);
+      return result.filter(({ revoker }) => validRevokers.includes(revoker));
+    }
+
+    return result;
+  }
+
+  /**
+   * Fetch a given verifiable credential revocation details.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.revocationCredentialDetails(credential);
+   * ```
+   * @param {VerifiableCredential} credential verifiable credential
+   * @param {Boolean} onlyValid if true, only valid revocation are checked
+   * @return revocation credential details
+   */
+  public async isRevoked<T extends RoleCredentialSubject>(
+    credential: VerifiableCredential<T>,
+    onlyValid = true
+  ): Promise<boolean> {
+    const revocationDetails = await this.revocationCredentialDetails(
+      credential,
+      onlyValid
+    );
+    return revocationDetails.length > 0;
   }
 
   /**

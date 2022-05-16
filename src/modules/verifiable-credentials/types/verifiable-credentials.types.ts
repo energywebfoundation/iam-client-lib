@@ -50,3 +50,11 @@ export interface InitiateExchangeResults {
   presentationDefinition: PresentationDefinition;
   selectResults: SelectResults;
 }
+
+export interface RevocationCredentialDetailsResults {
+  /* DID of revoker */
+  revoker: string;
+
+  /* Timestamp of revocation */
+  timestamp?: string;
+}

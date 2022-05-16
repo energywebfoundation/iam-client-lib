@@ -12,6 +12,7 @@
 - [InitiateExchangeResults](../interfaces/modules_verifiable_credentials.InitiateExchangeResults.md)
 - [IssuerFields](../interfaces/modules_verifiable_credentials.IssuerFields.md)
 - [ProofOptions](../interfaces/modules_verifiable_credentials.ProofOptions.md)
+- [RevocationCredentialDetailsResults](../interfaces/modules_verifiable_credentials.RevocationCredentialDetailsResults.md)
 - [RoleCredentialSubject](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)
 - [RoleCredentialSubjectParams](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md)
 - [VerifyVerifiableCredentialResults](../interfaces/modules_verifiable_credentials.VerifyVerifiableCredentialResults.md)
@@ -85,13 +86,14 @@ ___
 
 ### getVerifiableCredentialsService
 
-▸ **getVerifiableCredentialsService**(`signerService`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ **getVerifiableCredentialsService**(`signerService`, `domainsService`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](../classes/modules_signer.SignerService.md) |
+| `domainsService` | [`DomainsService`](../classes/modules_domains.DomainsService.md) |
 
 #### Returns
 

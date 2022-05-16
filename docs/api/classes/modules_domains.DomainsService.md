@@ -428,7 +428,7 @@ ___
 
 ### getDefinition
 
-▸ **getDefinition**(`options`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
+▸ **getDefinition**(`options`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`\>
 
 Fetch cached domain definition for organization, application or role.
 
@@ -447,7 +447,7 @@ domainsService.getDefinition({
 
 #### Returns
 
-`Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
+`Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`\>
 
 domain definition
 

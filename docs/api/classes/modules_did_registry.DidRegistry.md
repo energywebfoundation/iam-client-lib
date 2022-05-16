@@ -20,6 +20,7 @@ didRegistry.getDidDocument();
 
 ### Accessors
 
+- [identityOwner](modules_did_registry.DidRegistry.md#identityowner)
 - [ipfsStore](modules_did_registry.DidRegistry.md#ipfsstore)
 - [jwt](modules_did_registry.DidRegistry.md#jwt)
 
@@ -57,6 +58,16 @@ didRegistry.getDidDocument();
 | `_ipfsUrl` | `string` | `'https://ipfs.infura.io:5001/api/v0/'` |
 
 ## Accessors
+
+### identityOwner
+
+• `get` **identityOwner**(): `EwSigner`
+
+#### Returns
+
+`EwSigner`
+
+___
 
 ### ipfsStore
 

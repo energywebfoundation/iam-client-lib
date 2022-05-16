@@ -22,7 +22,10 @@ import {
   defaultKmsServerUrl,
 } from './utils';
 import { chainConfigs } from './config';
-import { getVerifiableCredentialsService } from './modules/verifiable-credentials';
+import {
+  getVerifiableCredentialsService,
+  VerifiableCredentialsServiceBase,
+} from './modules/verifiable-credentials';
 
 export async function initWithPrivateKeySigner(
   privateKey: string,
@@ -62,9 +65,6 @@ export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
 
 export async function init(signerService: SignerService) {
   const messagingService = await MessagingService.create(signerService);
-  const verifiableCredentialsService = await getVerifiableCredentialsService(
-    signerService
-  );
 
   async function connectToCacheServer() {
     const chainId = signerService.chainId;
@@ -91,15 +91,21 @@ export async function init(signerService: SignerService) {
       cacheClient
     );
 
-    async function connectToDidRegistry(
-      ipfsStore?: string
-    ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
+    async function connectToDidRegistry(ipfsStore?: string): Promise<{
+      didRegistry: DidRegistry;
+      claimsService: ClaimsService;
+      verifiableCredentialsService: VerifiableCredentialsServiceBase;
+    }> {
       const didRegistry = await DidRegistry.connect(
         signerService,
         cacheClient,
         assetsService,
         ipfsStore
       );
+
+      const verifiableCredentialsService =
+        await getVerifiableCredentialsService(signerService, domainsService);
+
       const claimsService = await ClaimsService.create(
         signerService,
         domainsService,
@@ -107,7 +113,12 @@ export async function init(signerService: SignerService) {
         didRegistry,
         verifiableCredentialsService
       );
-      return { didRegistry, claimsService };
+
+      verifiableCredentialsService.init(
+        didRegistry.identityOwner,
+        claimsService
+      );
+      return { didRegistry, claimsService, verifiableCredentialsService };
     }
     return {
       cacheClient,
@@ -122,6 +133,5 @@ export async function init(signerService: SignerService) {
     signerService,
     messagingService,
     connectToCacheServer,
-    verifiableCredentialsService,
   };
 }

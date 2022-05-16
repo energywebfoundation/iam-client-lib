@@ -6,7 +6,7 @@ import {
   validExampleExternalVC,
 } from './fixtures';
 import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
-import { fromPrivateKey } from '../src';
+import { DomainsService, fromPrivateKey } from '../src';
 import {
   getVerifiableCredentialsService,
   IssuerFields,
@@ -55,7 +55,8 @@ describe('Verifiable credentials tests', () => {
     rootOwnerDid = signerService.didHex;
 
     verifiableCredentialsService = await getVerifiableCredentialsService(
-      signerService
+      signerService,
+      {} as DomainsService
     );
   });
 
