@@ -1,3 +1,10 @@
+## [5.1.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.25...v5.1.0-alpha.26) (2022-05-16)
+
+
+### Features
+
+* add logs for axios errors ([2fa44c6](https://github.com/energywebfoundation/iam-client-lib/commit/2fa44c627ed2d11b79b566d90986a8c8e7d4d20c))
+
 ## [5.1.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.24...v5.1.0-alpha.25) (2022-05-16)
 
 
