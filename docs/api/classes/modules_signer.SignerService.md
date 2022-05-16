@@ -2,7 +2,7 @@
 
 [modules/signer](../modules/modules_signer.md).SignerService
 
-Service responsible for sending transactions to the blockchain
+Service responsible for signing messages and sending transactions to the blockchain
 
 ```typescript
 const { signerService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
@@ -54,7 +54,7 @@ signerService.signMessage(...);
 #### Parameters
 
 | Name | Type |
-| :-- | :-- |
+| :------ | :------ |
 | `_signer` | `Required`<[`SignerT`](../modules/modules_signer.md#signert)\> |
 | `_providerType` | [`ProviderType`](../enums/modules_signer.ProviderType.md) |
 
@@ -76,7 +76,7 @@ signerService.accountInfo;
 
 account info
 
----
+___
 
 ### address
 
@@ -94,7 +94,7 @@ signerService.address;
 
 user address
 
----
+___
 
 ### chainId
 
@@ -112,13 +112,13 @@ signerService.chainId;
 
 chain id
 
----
+___
 
 ### did
 
 • `get` **did**(): `string`
 
-Get current user DID address.
+Get current user DID
 
 ```typescript
 signerService.did;
@@ -128,9 +128,9 @@ signerService.did;
 
 `string`
 
-DID address
+DID
 
----
+___
 
 ### didHex
 
@@ -148,13 +148,13 @@ signerService.didHex;
 
 DID address
 
----
+___
 
 ### isEthSigner
 
 • `get` **isEthSigner**(): `boolean`
 
-Get if the signer is an Ethereum signer.
+If signer is EIP-191 compliant https://eips.ethereum.org/EIPS/eip-191.
 
 ```typescript
 signerService.isEthSigner;
@@ -164,9 +164,9 @@ signerService.isEthSigner;
 
 `boolean`
 
-true if the signer is an Ethereum signer
+true if the signer is EIP-191 compliant.
 
----
+___
 
 ### provider
 
@@ -184,7 +184,7 @@ signerService.provider;
 
 connection provider
 
----
+___
 
 ### providerType
 
@@ -202,13 +202,13 @@ signerService.providerType;
 
 provider type
 
----
+___
 
 ### signer
 
 • `get` **signer**(): `Required`<[`SignerT`](../modules/modules_signer.md#signert)\>
 
-Custom signer instance.
+The instance of the `ether` library signer in use by the service
 
 ```typescript
 signerService.signer;
@@ -238,13 +238,14 @@ signerService.getBalance();
 
 user balance
 
----
+___
 
 ### call
 
 ▸ **call**(`options`): `Promise`<`string`\>
 
-Makes a (readonly) call to a smart contract. https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
+Makes a (readonly) call to a smart contract.
+https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
 
 ```typescript
 signerService.call({
@@ -255,8 +256,8 @@ signerService.call({
 
 #### Parameters
 
-| Name      | Type                 | Description         |
-| :-------- | :------------------- | :------------------ |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `options` | `TransactionRequest` | object with options |
 
 #### Returns
@@ -265,7 +266,7 @@ signerService.call({
 
 the result of the call
 
----
+___
 
 ### chainName
 
@@ -283,7 +284,7 @@ signerService.chainName();
 
 chain name
 
----
+___
 
 ### closeConnection
 
@@ -301,7 +302,7 @@ signerService.closeConnection();
 
 true if connection was closed
 
----
+___
 
 ### connect
 
@@ -310,7 +311,7 @@ true if connection was closed
 #### Parameters
 
 | Name | Type |
-| :-- | :-- |
+| :------ | :------ |
 | `signer` | `Required`<[`SignerT`](../modules/modules_signer.md#signert)\> |
 | `providerType` | [`ProviderType`](../enums/modules_signer.ProviderType.md) |
 
@@ -318,7 +319,7 @@ true if connection was closed
 
 `Promise`<`void`\>
 
----
+___
 
 ### emit
 
@@ -326,15 +327,15 @@ true if connection was closed
 
 #### Parameters
 
-| Name | Type                                                        |
-| :--- | :---------------------------------------------------------- |
-| `e`  | [`ProviderEvent`](../enums/modules_signer.ProviderEvent.md) |
+| Name | Type |
+| :------ | :------ |
+| `e` | [`ProviderEvent`](../enums/modules_signer.ProviderEvent.md) |
 
 #### Returns
 
 `Promise`<`void`\>
 
----
+___
 
 ### init
 
@@ -344,7 +345,7 @@ true if connection was closed
 
 `Promise`<`void`\>
 
----
+___
 
 ### initEventHandlers
 
@@ -358,7 +359,7 @@ Add event handler for certain events
 
 `void`
 
----
+___
 
 ### on
 
@@ -366,16 +367,16 @@ Add event handler for certain events
 
 #### Parameters
 
-| Name    | Type                                                        |
-| :------ | :---------------------------------------------------------- |
+| Name | Type |
+| :------ | :------ |
 | `event` | [`ProviderEvent`](../enums/modules_signer.ProviderEvent.md) |
-| `cb`    | `any`                                                       |
+| `cb` | `any` |
 
 #### Returns
 
 `void`
 
----
+___
 
 ### onInit
 
@@ -386,14 +387,14 @@ Registers reinitialization of dependent service on signer reconnection
 #### Parameters
 
 | Name | Type |
-| :-- | :-- |
+| :------ | :------ |
 | `initializer` | [`ServiceInitializer`](../modules/modules_signer.md#serviceinitializer) |
 
 #### Returns
 
 `void`
 
----
+___
 
 ### publicKey
 
@@ -411,7 +412,7 @@ signerService.publicKey();
 
 public key
 
----
+___
 
 ### publicKeyAndIdentityToken
 
@@ -429,7 +430,7 @@ signerService.publicKeyAndIdentityToken();
 
 object with public key and identity token
 
----
+___
 
 ### send
 
@@ -446,8 +447,8 @@ signerService.send({
 
 #### Parameters
 
-| Name      | Type                 | Description         |
-| :-------- | :------------------- | :------------------ |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `options` | `TransactionRequest` | object with options |
 
 #### Returns
@@ -456,13 +457,15 @@ signerService.send({
 
 transaction receipt
 
----
+___
 
 ### signMessage
 
 ▸ **signMessage**(`message`): `Promise`<`string`\>
 
-Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign). Whether or not to hash the message prior to signature is determined by signature performed during login. When running in browser `isEthSigner` variable should be stored in local storage.
+Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign).
+Whether or not to hash the message prior to signature is depends on whether is signer EIP-191 compliant.
+When running in browser `isEthSigner` variable should be stored in local storage.
 
 ```typescript
 signerService.signMessage(arrayify('Hello World'));
@@ -471,7 +474,7 @@ signerService.signMessage(arrayify('Hello World'));
 #### Parameters
 
 | Name | Type | Description |
-| :-- | :-- | :-- |
+| :------ | :------ | :------ |
 | `message` | `Uint8Array` | The message to be signed. The message should have binary representation to avoid confusion of text with hexadecimal binary data |
 
 #### Returns
@@ -480,7 +483,7 @@ signerService.signMessage(arrayify('Hello World'));
 
 the signature
 
----
+___
 
 ### signTypedData
 
@@ -490,24 +493,19 @@ Tries to create conformant EIP-712 signature (https://eips.ethereum.org/EIPS/eip
 
 ```typescript
 signerService.signTypedData(
-  { name: 'MyToken', version: '1.0' },
-  {
-    Model: [
-      { name: 'name', type: 'string' },
-      { name: 'type', type: 'string' },
-    ],
-  },
-  { name: 'MyToken', type: 'erc721' }
+    { name: 'MyToken', version: '1.0' },
+    { Model: [{ name: 'name', type: 'string' }, { name: 'type', type: 'string' }] },
+    { name: 'MyToken', type: 'erc721' },
 );
 ```
 
 #### Parameters
 
-| Name      | Type                                    | Description            |
-| :-------- | :-------------------------------------- | :--------------------- |
-| `domain`  | `TypedDataDomain`                       | EIP-712 domain object  |
-| `types`   | `Record`<`string`, `TypedDataField`[]\> | EIP-712 types object   |
-| `message` | `Record`<`string`, `unknown`\>          | EIP-712 message object |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `domain` | `TypedDataDomain` | EIP-712 domain object |
+| `types` | `Record`<`string`, `TypedDataField`[]\> | EIP-712 types object |
+| `message` | `Record`<`string`, `unknown`\> | EIP-712 message object |
 
 #### Returns
 
