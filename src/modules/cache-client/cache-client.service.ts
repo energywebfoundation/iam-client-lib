@@ -25,6 +25,7 @@ import {
   TEST_LOGIN_ENDPOINT,
 } from './cache-client.types';
 import { SearchType } from '.';
+import { getLogger } from '../../config/logger.config';
 
 export class CacheClient implements ICacheClient {
   public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -66,6 +67,7 @@ export class CacheClient implements ICacheClient {
       const refreshedTokens = await this.refreshToken();
 
       if (refreshedTokens) {
+        getLogger().debug('[CACHE CLIENT] Setting authorization tokens');
         if (!this.isBrowser) {
           this._httpClient.defaults.headers.common[
             'Authorization'
@@ -76,8 +78,9 @@ export class CacheClient implements ICacheClient {
           return;
         }
       }
-    } catch {
-      // Ignore errors
+    } catch (error) {
+      getLogger().error('[CACHE CLIENT] Authentication failed');
+      getLogger().error(error);
     }
 
     const pubKeyAndIdentityToken =
@@ -109,8 +112,14 @@ export class CacheClient implements ICacheClient {
    * @returns Promise, which resolves with result of resending of failed request
    */
   async handleError(error: AxiosError) {
+    getLogger().debug(`[CACHE CLIENT] Axios error: ${error.message}`);
+    getLogger().error(error);
     const { config, response } = error;
     const originalRequest = config;
+
+    getLogger().debug(config);
+    getLogger().debug(response);
+
     if (
       this.authEnabled &&
       response &&
@@ -120,6 +129,7 @@ export class CacheClient implements ICacheClient {
       config.url?.indexOf('/refresh_token') === -1 &&
       config.url?.indexOf(TEST_LOGIN_ENDPOINT) === -1
     ) {
+      getLogger().debug(`[CACHE CLIENT] axios error unauthorized`);
       const retryOriginalRequest = new Promise((resolve) => {
         this.failedRequests.push(() => {
           resolve(axios(originalRequest));
@@ -402,8 +412,10 @@ export class CacheClient implements ICacheClient {
       }
     | undefined
   > {
+    getLogger().debug('[CACHE CLIENT] Refreshing token');
     if (!this.refresh_token) return undefined;
 
+    getLogger().debug('[CACHE CLIENT] Fetching new token');
     const { data } = await this._httpClient.get<{
       token: string;
       refreshToken: string;
@@ -412,6 +424,7 @@ export class CacheClient implements ICacheClient {
         this.isBrowser ? '' : `?refresh_token=${this.refresh_token}`
       }`
     );
+    getLogger().debug('[CACHE CLIENT] Token fetched');
     return data;
   }
 
@@ -423,12 +436,23 @@ export class CacheClient implements ICacheClient {
    * @todo specific endpoint on cache server to return login info instead of error
    */
   private async isAuthenticated(): Promise<boolean> {
+    getLogger().error('[CACHE CLIENT] Fetching authorization status');
     try {
       const { data } = await this._httpClient.get<{
         user: string | null;
       }>(`${TEST_LOGIN_ENDPOINT}`);
-      return data.user ? data.user === this._signerService.did : false;
-    } catch (_) {
+      const isAuthenticated = data.user
+        ? data.user === this._signerService.did
+        : false;
+      getLogger().error(
+        `[CACHE CLIENT] Authorization status: ${
+          isAuthenticated ? 'OK' : 'FAIL'
+        }`
+      );
+      return isAuthenticated;
+    } catch (error) {
+      getLogger().error('[CACHE CLIENT] Authorization status failed');
+      getLogger().error(error);
       return false;
     }
   }
