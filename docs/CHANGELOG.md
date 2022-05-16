@@ -1,3 +1,10 @@
+## [5.1.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.27...v5.1.0-alpha.28) (2022-05-16)
+
+
+### Features
+
+* export logger ([819e67c](https://github.com/energywebfoundation/iam-client-lib/commit/819e67c8f5ab64a137ffdeb2405684c972b0b1c2))
+
 ## [5.1.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.26...v5.1.0-alpha.27) (2022-05-16)
 
 ## [5.1.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.25...v5.1.0-alpha.26) (2022-05-16)
