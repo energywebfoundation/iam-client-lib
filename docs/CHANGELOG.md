@@ -1,3 +1,10 @@
+## [5.1.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.24...v5.1.0-alpha.25) (2022-05-16)
+
+
+### Features
+
+* **vc:** add verifiable credential expiration date ([e76c66b](https://github.com/energywebfoundation/iam-client-lib/commit/e76c66b1c26b50a7854c3971042fe29ee1224e2e))
+
 ## [5.1.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.23...v5.1.0-alpha.24) (2022-05-12)
 
 ## [5.1.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.22...v5.1.0-alpha.23) (2022-05-11)
