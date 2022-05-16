@@ -299,3 +299,78 @@ export interface ApproveRolePublishingOptions {
   /** Role version */
   version: number;
 }
+
+export interface RevokeClaimOptions {
+  /** Claim id */
+  claimId?: string;
+
+  claim?: {
+    /** Claim type namespace */
+    namespace: string;
+
+    /** Subject of the claim */
+    subject: string;
+  };
+}
+
+export interface RevokeMultipleClaimOptions {
+  /** Claim id */
+  claimIds?: string[];
+
+  claims?: {
+    /** Claim type namespace */
+    namespace: string;
+
+    /** Subject of the claim */
+    subject: string;
+  }[];
+}
+
+export interface IsClaimRevokedOptions {
+  /** Claim id */
+  claimId?: string;
+
+  claim?: {
+    /** Claim type namespace */
+    namespace: string;
+
+    /** Subject of the claim */
+    subject: string;
+  };
+}
+
+export interface ClaimRevocationDetailsOptions {
+  /** Claim id */
+  claimId?: string;
+
+  claim?: {
+    /** Claim type namespace */
+    namespace: string;
+
+    /** Subject of the claim */
+    subject: string;
+  };
+}
+
+export interface GetRevocationClaimDetailsOptions {
+  /** Claim id */
+  claimId?: string;
+
+  claim?: {
+    /** Claim type namespace */
+    namespace: string;
+
+    /** Subject of the claim */
+    subject: string;
+  };
+}
+
+export interface GetRevocationClaimDetailsResult {
+  namespace: string;
+  subject: string;
+}
+
+export interface ClaimRevocationDetailsResult {
+  revoker: string;
+  timestamp: number;
+}

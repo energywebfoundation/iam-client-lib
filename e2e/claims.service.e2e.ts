@@ -1,5 +1,5 @@
 import {
-  IRoleDefinition,
+  IRoleDefinitionV2,
   PreconditionType,
 } from '@energyweb/credential-governance';
 import { Methods, Chain } from '@ew-did-registry/did';
@@ -52,8 +52,9 @@ const baseRoleDef = {
   issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   version,
   metadata: {},
+  revoker: { revokerType: 'DID', did: [staticIssuerDID] },
 };
-const roles: Record<string, IRoleDefinition> = {
+const roles: Record<string, IRoleDefinitionV2> = {
   [`${roleName1}.${root}`]: { ...baseRoleDef, roleName: roleName1 },
   [`${roleName2}.${root}`]: {
     ...baseRoleDef,

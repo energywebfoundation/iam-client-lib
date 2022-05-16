@@ -20,6 +20,7 @@ claimsService.getClaimById(claim.id);
 
 ### Methods
 
+- [claimRevocationDetails](modules_claims.ClaimsService.md#claimrevocationdetails)
 - [createClaimRequest](modules_claims.ClaimsService.md#createclaimrequest)
 - [createDelegateProof](modules_claims.ClaimsService.md#createdelegateproof)
 - [createIdentityProof](modules_claims.ClaimsService.md#createidentityproof)
@@ -35,11 +36,14 @@ claimsService.getClaimById(claim.id);
 - [getUserClaims](modules_claims.ClaimsService.md#getuserclaims)
 - [hasOnChainRole](modules_claims.ClaimsService.md#hasonchainrole)
 - [init](modules_claims.ClaimsService.md#init)
+- [isClaimRevoked](modules_claims.ClaimsService.md#isclaimrevoked)
 - [issueClaim](modules_claims.ClaimsService.md#issueclaim)
 - [issueClaimRequest](modules_claims.ClaimsService.md#issueclaimrequest)
 - [publishPublicClaim](modules_claims.ClaimsService.md#publishpublicclaim)
 - [registerOnchain](modules_claims.ClaimsService.md#registeronchain)
 - [rejectClaimRequest](modules_claims.ClaimsService.md#rejectclaimrequest)
+- [revokeClaim](modules_claims.ClaimsService.md#revokeclaim)
+- [revokeMultipleClaim](modules_claims.ClaimsService.md#revokemultipleclaim)
 - [create](modules_claims.ClaimsService.md#create)
 
 ## Constructors
@@ -59,6 +63,41 @@ claimsService.getClaimById(claim.id);
 | `_verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md) |
 
 ## Methods
+
+### claimRevocationDetails
+
+▸ **claimRevocationDetails**(`options`): `Promise`<`undefined` \| [`ClaimRevocationDetailsResult`](../interfaces/modules_claims.ClaimRevocationDetailsResult.md)\>
+
+Get the revocation details for a subject's On-Chain claim. Returns the revoker and revocationTimeStamp for the revocation.
+
+```typescript
+claimsService.claimRevocationDetails({
+    claim: {
+        namespace: 'root.roles.energyweb.iam.ewc',
+        subject: 'did:ethr:volta:0x00...0',
+    },
+});
+```
+or
+```typescript
+claimsService.claimRevocationDetails({
+    claimId: claim.id,
+});
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`ClaimRevocationDetailsOptions`](../interfaces/modules_claims.ClaimRevocationDetailsOptions.md) | object containing options |
+
+#### Returns
+
+`Promise`<`undefined` \| [`ClaimRevocationDetailsResult`](../interfaces/modules_claims.ClaimRevocationDetailsResult.md)\>
+
+revocation details
+
+___
 
 ### createClaimRequest
 
@@ -436,6 +475,41 @@ ___
 
 ___
 
+### isClaimRevoked
+
+▸ **isClaimRevoked**(`options`): `Promise`<`boolean`\>
+
+Check if On-Chain claim is revoked.
+
+```typescript
+claimsService.isClaimRevoked({
+    claim: {
+        namespace: 'root.roles.energyweb.iam.ewc',
+        subject: 'did:ethr:volta:0x00...0',
+    },
+});
+```
+or
+```typescript
+claimsService.isClaimRevoked({
+    claimId: claim.id,
+});
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`IsClaimRevokedOptions`](../interfaces/modules_claims.IsClaimRevokedOptions.md) | object containing options |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if claim is revoked
+
+___
+
 ### issueClaim
 
 ▸ **issueClaim**(`options`): `Promise`<`undefined` \| `string`\>
@@ -582,6 +656,83 @@ claimsService.rejectClaimRequest({
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `options` | [`RejectClaimRequestOptions`](../interfaces/modules_claims.RejectClaimRequestOptions.md) | object containing options |
+
+#### Returns
+
+`Promise`<`void`\>
+
+___
+
+### revokeClaim
+
+▸ **revokeClaim**(`options`): `Promise`<`boolean`\>
+
+Revoke On-Chain issued claim by `claimId` or given `namespace` and `subject`. Required `claimId` or `claim` parameters.
+
+```typescript
+claimsService.revokeClaim({
+    claim: {
+        namespace: 'root.roles.energyweb.iam.ewc',
+        subject: 'did:ethr:volta:0x00...0',
+    },
+    registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+});
+```
+or
+```typescript
+claimsService.revokeClaim({
+    claimId: claim.id,
+    registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+});
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`RevokeClaimOptions`](../interfaces/modules_claims.RevokeClaimOptions.md) | object containing options |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if claim was revoked
+
+___
+
+### revokeMultipleClaim
+
+▸ **revokeMultipleClaim**(`options`): `Promise`<`void`\>
+
+Revoke On-Chain issued claims of the given namespace for multiple subjects. Namespace must be the same for all subjects.
+Specify `claims` or `claimIds` parameters.
+
+```typescript
+claimsService.revokeMultipleClaim({
+    claims: [{
+        namespace: 'root.roles.energyweb.iam.ewc',
+        subject: 'did:ethr:volta:0x00...0',
+        registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+    },
+    {
+        namespace: 'root.roles.energyweb.iam.ewc',
+        subject: 'did:ethr:volta:0x00...1',
+        registrationTypes = [RegistrationTypes.OnChain],
+    }],
+});
+```
+or
+```typescript
+claimsService.revokeMultipleClaim({
+    claimIds: ['245a40a9...776071ca57cec', '245a40a9...776071ca57cec'],
+});
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`RevokeMultipleClaimOptions`](../interfaces/modules_claims.RevokeMultipleClaimOptions.md) | object containing options |
 
 #### Returns
 

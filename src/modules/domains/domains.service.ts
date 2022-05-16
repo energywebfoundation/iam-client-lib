@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers';
 import {
   IAppDefinition,
   IOrganizationDefinition,
+  IRoleDefinitionV2,
   IRoleDefinition,
   EncodedCall,
   DomainReader,
@@ -802,7 +803,10 @@ export class DomainsService {
     type,
     namespace,
   }: GetDefinitionOptions): Promise<
-    IRoleDefinition | IAppDefinition | IOrganizationDefinition
+    | IRoleDefinition
+    | IRoleDefinitionV2
+    | IAppDefinition
+    | IOrganizationDefinition
   > {
     if (type === NamespaceType.Role) {
       return this._cacheClient.getRoleDefinition(namespace);

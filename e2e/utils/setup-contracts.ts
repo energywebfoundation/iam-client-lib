@@ -16,6 +16,10 @@ import { ClaimManager } from '../../ethers/ClaimManager';
 import { setChainConfig } from '../../src/config/chain.config';
 import { labelhash } from '../../src/utils/ens-hash';
 import { RoleDefinitionResolverV2 } from '../../ethers/RoleDefinitionResolverV2';
+import { ClaimsRevocationRegistry } from '../../ethers/ClaimsRevocationRegistry';
+import { CredentialRevocationRegistry } from '../../ethers/CredentialRevocationRegistry';
+import { ClaimsRevocationRegistry__factory } from '../../ethers';
+import { CredentialRevocationRegistry__factory } from '../../ethers/factories/CredentialRevocationRegistry__factory';
 
 const { JsonRpcProvider } = providers;
 const { parseEther, namehash } = utils;
@@ -33,10 +37,12 @@ let ensResolverV2: RoleDefinitionResolverV2;
 let domainNotifer: DomainNotifier;
 let assetsManager: IdentityManager;
 let claimManager: ClaimManager;
+let claimsRevocationRegistry: ClaimsRevocationRegistry;
+let credentialsRevocationRegistry: CredentialRevocationRegistry;
 
 export const deployer = provider.getSigner(0);
 
-const deployDidRegistry = async () => {
+const deployDidRegistry = async (): Promise<void> => {
   const didContractFactory = new ContractFactory(
     didContractAbi,
     didContractBytecode,
@@ -45,7 +51,7 @@ const deployDidRegistry = async () => {
   didRegistry = await didContractFactory.deploy();
 };
 
-const deployEns = async () => {
+const deployEns = async (): Promise<void> => {
   ensRegistry = await new ENSRegistry__factory(deployer).deploy();
   domainNotifer = await new DomainNotifier__factory(deployer).deploy(
     ensRegistry.address
@@ -64,14 +70,23 @@ const deployIdentityManager = async (): Promise<void> => {
   const identityFactory = new OfferableIdentity__factory(deployer);
   const library = await identityFactory.deploy();
   assetsManager = await new IdentityManager__factory(deployer).deploy();
-  assetsManager.initialize(library.address);
+  await assetsManager.initialize(library.address);
 };
 
 const deployClaimManager = async (): Promise<void> => {
   claimManager = await (
     await new ClaimManager__factory(deployer).deploy()
   ).deployed();
-  claimManager.initialize(didRegistry.address, ensRegistry.address);
+  await claimManager.initialize(didRegistry.address, ensRegistry.address);
+};
+
+const deployRevocationRegistry = async (): Promise<void> => {
+  claimsRevocationRegistry = await new ClaimsRevocationRegistry__factory(
+    deployer
+  ).deploy(didRegistry.address, ensRegistry.address, claimManager.address);
+
+  credentialsRevocationRegistry =
+    await new CredentialRevocationRegistry__factory(deployer).deploy();
 };
 
 export const root = 'ewc';
@@ -95,6 +110,7 @@ export const setupENS = async (rootOwner: string) => {
   await deployEns();
   await deployIdentityManager();
   await deployClaimManager();
+  await deployRevocationRegistry();
   const { chainId } = await provider.getNetwork();
   setChainConfig(chainId, {
     rpcUrl,
@@ -106,6 +122,9 @@ export const setupENS = async (rootOwner: string) => {
     assetManagerAddress: assetsManager.address,
     domainNotifierAddress: domainNotifer.address,
     claimManagerAddress: claimManager.address,
+    claimsRevocationRegistryAddress: claimsRevocationRegistry.address,
+    credentialRevocationRegistryAddress: credentialsRevocationRegistry.address,
+    chainDisplayName: 'Volta',
   });
   const tx = await ensRegistry.setSubnodeRecord(
     namehash(''),

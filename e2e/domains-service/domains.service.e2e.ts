@@ -1,6 +1,6 @@
 import { utils, Wallet } from 'ethers';
 import {
-  IRoleDefinition,
+  IRoleDefinitionV2,
   PreconditionType,
 } from '@energyweb/credential-governance';
 import { Methods, Chain } from '@ew-did-registry/did';
@@ -121,11 +121,15 @@ describe('Domains service', () => {
       const roleDomain = `${roleName}.${namespace}`;
       const roleNode = namehash(roleDomain);
 
-      const data: IRoleDefinition = {
+      const data: IRoleDefinitionV2 = {
         requestorFields: [],
         issuerFields: [],
         issuer: {
           issuerType: 'DID',
+          did: [`did:${Methods.Erc1056}:${Chain.VOLTA}:${rootOwner.address}`],
+        },
+        revoker: {
+          revokerType: 'DID',
           did: [`did:${Methods.Erc1056}:${Chain.VOLTA}:${rootOwner.address}`],
         },
         metadata: [],
@@ -152,7 +156,7 @@ describe('Domains service', () => {
         namespace: roleDomain,
         type: NamespaceType.Role,
       });
-      expect(roleDef).toMatchObject<IRoleDefinition>(data);
+      expect(roleDef).toMatchObject<IRoleDefinitionV2>(data);
 
       const reverseName = await domainsService.readName(roleNode);
       expect(reverseName).toEqual(roleDomain);

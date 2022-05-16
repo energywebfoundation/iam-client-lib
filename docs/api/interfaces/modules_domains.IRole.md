@@ -17,7 +17,7 @@
 
 ### definition
 
-• **definition**: `IRoleDefinition`
+• **definition**: `IRoleDefinition` \| `IRoleDefinitionV2`
 
 ___
 

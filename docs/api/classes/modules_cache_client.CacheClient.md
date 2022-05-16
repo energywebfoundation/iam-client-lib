@@ -592,7 +592,7 @@ ___
 
 ### getRoleDefinition
 
-▸ **getRoleDefinition**(`namespace`): `Promise`<`IRoleDefinition`\>
+▸ **getRoleDefinition**(`namespace`): `Promise`<`IRoleDefinition` \| `IRoleDefinitionV2`\>
 
 #### Parameters
 
@@ -602,7 +602,7 @@ ___
 
 #### Returns
 
-`Promise`<`IRoleDefinition`\>
+`Promise`<`IRoleDefinition` \| `IRoleDefinitionV2`\>
 
 #### Implementation of
 
