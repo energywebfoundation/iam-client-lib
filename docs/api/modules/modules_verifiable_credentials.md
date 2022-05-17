@@ -14,14 +14,7 @@
 - [ProofOptions](../interfaces/modules_verifiable_credentials.ProofOptions.md)
 - [RoleCredentialSubject](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)
 - [RoleCredentialSubjectParams](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md)
-- [StoreVcResult](../interfaces/modules_verifiable_credentials.StoreVcResult.md)
 - [VerifyVerifiableCredentialResults](../interfaces/modules_verifiable_credentials.VerifyVerifiableCredentialResults.md)
-- [WebNodeQueryMessage](../interfaces/modules_verifiable_credentials.WebNodeQueryMessage.md)
-- [WebNodeReply](../interfaces/modules_verifiable_credentials.WebNodeReply.md)
-- [WebNodeRequestObject](../interfaces/modules_verifiable_credentials.WebNodeRequestObject.md)
-- [WebNodeResponseObject](../interfaces/modules_verifiable_credentials.WebNodeResponseObject.md)
-- [WebNodeStatus](../interfaces/modules_verifiable_credentials.WebNodeStatus.md)
-- [WebNodeWriteMessage](../interfaces/modules_verifiable_credentials.WebNodeWriteMessage.md)
 
 ### Variables
 
@@ -92,14 +85,13 @@ ___
 
 ### getVerifiableCredentialsService
 
-▸ **getVerifiableCredentialsService**(`signerService`, `storage`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ **getVerifiableCredentialsService**(`signerService`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](../classes/modules_signer.SignerService.md) |
-| `storage` | `default` |
 
 #### Returns
 

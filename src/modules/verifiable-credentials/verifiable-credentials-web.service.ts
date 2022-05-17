@@ -10,7 +10,6 @@ import {
 } from '@spruceid/didkit-wasm';
 import { SignerService } from '../signer';
 import { VerifiableCredentialsServiceBase } from './verifiable-credentials-base.service';
-import VCStorageClient from './storage-client';
 
 export class VerifiableCredentialsServiceWeb extends VerifiableCredentialsServiceBase {
   protected prepareIssueCredential: (
@@ -43,8 +42,8 @@ export class VerifiableCredentialsServiceWeb extends VerifiableCredentialsServic
     proof_options: string
   ) => Promise<string>;
 
-  constructor(_signerService: SignerService, storage: VCStorageClient) {
-    super(_signerService, storage);
+  constructor(_signerService: SignerService) {
+    super(_signerService);
 
     this.completeIssueCredential = completeIssueCredential;
     this.prepareIssueCredential = prepareIssueCredential;
@@ -55,8 +54,8 @@ export class VerifiableCredentialsServiceWeb extends VerifiableCredentialsServic
     this.verifyPresentation = verifyPresentation;
   }
 
-  static async create(signerService: SignerService, storage: VCStorageClient) {
-    const service = new VerifiableCredentialsServiceWeb(signerService, storage);
+  static async create(signerService: SignerService) {
+    const service = new VerifiableCredentialsServiceWeb(signerService);
     return service;
   }
 }
