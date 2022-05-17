@@ -46,13 +46,15 @@ describe('Verifiable credentials tests', () => {
 
   const namespace = 'test.iam.ewc';
   const createExampleSignedCredential = async (
-    issuerFields: IssuerFields[]
+    issuerFields: IssuerFields[],
+    expirationDate?: Date
   ) => {
     return await verifiableCredentialsService.createRoleVC({
       id: rootOwnerDid,
       namespace,
       version: '1',
       issuerFields,
+      expirationDate,
     });
   };
 
@@ -170,17 +172,55 @@ describe('Verifiable credentials tests', () => {
         ),
       });
     });
+
+    test('should throw an error when credential is expired', async () => {
+      const vc = await createExampleSignedCredential(
+        [],
+        new Date(Date.now() - 10000)
+      );
+
+      await expect(
+        verifiableCredentialsService.verify(vc)
+      ).rejects.toMatchObject({
+        message: expect.stringContaining('Verifiable Credential is expired'),
+      });
+    });
+
+    test('should not throw an error when credential is not expired', async () => {
+      const vc = await createExampleSignedCredential(
+        [],
+        new Date(Date.now() + 10000)
+      );
+
+      await expect(
+        verifiableCredentialsService.verify(vc)
+      ).resolves.toBeTruthy();
+    });
   });
 
   describe('Verifiable presentations', () => {
     test('should create a unsigned VP', async () => {
       const vc = await createExampleSignedCredential([]);
 
-      const vp = await verifiableCredentialsService.createPresentation([vc]);
+      const vp = verifiableCredentialsService.createPresentation([vc]);
 
       expect(vp).toBeDefined();
       expect(vp['proof']).toBeUndefined();
       expect(vp.verifiableCredential).toStrictEqual([vc]);
+    });
+
+    test('should create a unsigned VP with credential with expiration', async () => {
+      const vc1 = await createExampleSignedCredential([]);
+      const vc2 = await createExampleSignedCredential(
+        [],
+        new Date(Date.now() + 10000)
+      );
+
+      const vp = verifiableCredentialsService.createPresentation([vc1, vc2]);
+
+      expect(vp).toBeDefined();
+      expect(vp['proof']).toBeUndefined();
+      expect(vp.verifiableCredential).toStrictEqual([vc1, vc2]);
     });
 
     test('should create a VP proof', async () => {
@@ -203,8 +243,58 @@ describe('Verifiable credentials tests', () => {
       );
     });
 
+    test('should create a VP proof with credential with expiration', async () => {
+      const vc = await createExampleSignedCredential(
+        [],
+        new Date(Date.now() + 10000)
+      );
+
+      const vp =
+        await verifiableCredentialsService.createVerifiablePresentation([vc]);
+
+      expect(vp).toBeDefined();
+      expect(vp.proof).toEqual(
+        expect.objectContaining({
+          '@context': 'https://w3id.org/security/suites/eip712sig-2021/v1',
+          type: 'EthereumEip712Signature2021',
+          proofPurpose: 'authentication',
+          proofValue: expect.any(String),
+          verificationMethod: `${rootOwnerDid}#controller`,
+          created: expect.any(String),
+          eip712Domain: expect.any(Object),
+        })
+      );
+    });
+
+    test('should throw an error during creation when a VP has mixed VC and VC with expiration time', async () => {
+      const vc1 = await createExampleSignedCredential([]);
+      const vc2 = await createExampleSignedCredential(
+        [],
+        new Date(Date.now() + 10000)
+      );
+
+      await expect(
+        verifiableCredentialsService.createVerifiablePresentation([vc1, vc2])
+      ).rejects.toMatchObject({
+        message: expect.stringContaining(
+          'Expected all Verifiable Credential to have expiration date'
+        ),
+      });
+    });
+
     test('should verify a valid VP', async () => {
       const vc = await createExampleSignedCredential([]);
+      const vp =
+        await verifiableCredentialsService.createVerifiablePresentation([vc]);
+
+      await verifiableCredentialsService.verify(vp);
+    });
+
+    test('should verify a valid VP with not expired VC', async () => {
+      const vc = await createExampleSignedCredential(
+        [],
+        new Date(Date.now() + 10000)
+      );
       const vp =
         await verifiableCredentialsService.createVerifiablePresentation([vc]);
 

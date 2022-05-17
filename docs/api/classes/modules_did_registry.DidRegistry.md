@@ -2,6 +2,16 @@
 
 [modules/did-registry](../modules/modules_did_registry.md).DidRegistry
 
+Service responsible for handling the DID Document management.
+See more information about DID in IAM stack [here](https://energy-web-foundation.gitbook.io/energy-web/foundational-concepts/self-sovereign-identity#decentralized-identifiers-dids).
+
+```typescript
+const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+const { connectToDidRegistry } = await connectToCacheServer();
+const { didRegistry } = await connectToDidRegistry();
+didRegistry.getDidDocument();
+```
+
 ## Table of contents
 
 ### Constructors
@@ -72,29 +82,41 @@ ___
 
 ▸ **createDocument**(): `Promise`<`boolean`\>
 
-**`description`** create did document if not exists
+Create DID document of the current user if not exists.
+
+```typescript
+didRegistry.createDocument();
+```
 
 #### Returns
 
 `Promise`<`boolean`\>
 
-true if document is created successfully
+true if document was created successfully
 
 ___
 
 ### createPublicClaim
 
-▸ **createPublicClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **createPublicClaim**(`options`): `Promise`<`string`\>
 
-**`description`** create a public claim based on data provided
+Create a public claim with provided data.
+
+```typescript
+didRegistry.createPublicClaim({
+    data: {
+        claimType: 'root.roles.energyweb.iam.ewc',
+        claimTypeVersion: 1,
+    },
+    subject: 'did:ethr:volta:0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.data` | [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md) |
-| `__namedParameters.subject?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CreatePublicClaimOptions`](../interfaces/modules_did_registry.CreatePublicClaimOptions.md) | object with options |
 
 #### Returns
 
@@ -106,68 +128,101 @@ ___
 
 ### decodeJWTToken
 
-▸ **decodeJWTToken**(`__namedParameters`): `Promise`<`unknown`\>
+▸ **decodeJWTToken**(`options`): `Promise`<`unknown`\>
+
+Decode JWT token of the public claim.
+
+```typescript
+didRegistry.decodeJWTToken({
+    token: 'eyJh...VCJ9.ey...IyfQ.SflK...sw5c',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.token` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`DecodeJWTTokenOptions`](../interfaces/modules_did_registry.DecodeJWTTokenOptions.md) | object with options |
 
 #### Returns
 
 `Promise`<`unknown`\>
 
+payload of the JWT token
+
 ___
 
 ### getDidDelegates
 
-▸ **getDidDelegates**(`__namedParameters`): `Promise`<`undefined` \| `string`[]\>
+▸ **getDidDelegates**(`options?`): `Promise`<`undefined` \| `string`[]\>
 
-**`description`** get public keys from DID's document
+Gets delegates from DID document of the given DID.
+
+```typescript
+didRegistry.getDidDelegates({
+    did: 'did:ethr:volta:0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetDidDelegatesOptions`](../interfaces/modules_did_registry.GetDidDelegatesOptions.md) | object with options |
 
 #### Returns
 
 `Promise`<`undefined` \| `string`[]\>
 
-list of DID's delegates
+list of delegates
 
 ___
 
 ### getDidDocument
 
-▸ **getDidDocument**(`__namedParameters?`): `Promise`<{ `service`: `IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]  }\>
+▸ **getDidDocument**(`options?`): `Promise`<`IDIDDocument`\>
+
+Retrieve DID Document of the given DID from SSI-Hub if possible, otherwise from blockchain.
+Optionally include claims object within services in the document.
+
+```typescript
+didRegistry.getDidDocument({
+    did: 'did:ethr:volta:0x00...0',
+    includeClaims: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `undefined` \| { `did?`: `string` ; `includeClaims?`: `boolean`  } |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetDIDDocumentOptions`](../interfaces/modules_did_registry.GetDIDDocumentOptions.md) | object with options |
 
 #### Returns
 
-`Promise`<{ `service`: `IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]  }\>
+`Promise`<`IDIDDocument`\>
+
+DID document
 
 ___
 
 ### getDidPublicKeys
 
-▸ **getDidPublicKeys**(`__namedParameters`): `Promise`<`IPublicKey`[]\>
+▸ **getDidPublicKeys**(`options?`): `Promise`<`IPublicKey`[]\>
 
-**`description`** get public keys from User's DID document
+Gets public keys from DID document of the given DID.
+
+```typescript
+didRegistry.getDidPublicKeys({
+    did: 'did:ethr:volta:0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetDidPublicKeysOptions`](../interfaces/modules_did_registry.GetDidPublicKeysOptions.md) | object with options |
 
 #### Returns
 
@@ -179,19 +234,25 @@ ___
 
 ### getServices
 
-▸ **getServices**(`__namedParameters?`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
+▸ **getServices**(`options?`): `Promise`<`IServiceEndpoint`[]\>
 
-**`description`** gets list of services endpoints from User's DID document
+Gets services from DID document of the given DID.
+
+```typescript
+didRegistry.getServices({
+    did: 'did:ethr:volta:0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `undefined` \| { `did?`: `string`  } |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetServicesOptions`](../interfaces/modules_did_registry.GetServicesOptions.md) | object with options |
 
 #### Returns
 
-`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
+`Promise`<`IServiceEndpoint`[]\>
 
 list of claims
 
@@ -209,23 +270,35 @@ ___
 
 ### issuePublicClaim
 
-▸ **issuePublicClaim**(`__namedParameters`): `Promise`<`string`\>
+▸ **issuePublicClaim**(`options`): `Promise`<`string`\>
 
-**`description`** issue a public claim
+If token provided issue new token signed by issuer,
+otherwise create a new claim token based on provided public claim data.
+
+```typescript
+didRegistry.issuePublicClaim({
+    token: 'eyJh...VCJ9.ey...IyfQ.SflK...sw5c',
+    publicClaim: {
+        did: 'did:ethr:volta:0x00...0',
+        signer: 'did:ethr:volta:0x00...1',
+        claimData: {
+            claimType: 'root.roles.energyweb.iam.ewc',
+        },
+    },
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.publicClaim?` | `IPublicClaim` |
-| `__namedParameters.token?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`IssuePublicClaimOptions`](../interfaces/modules_did_registry.IssuePublicClaimOptions.md) | object with options |
 
 #### Returns
 
 `Promise`<`string`\>
 
-return issued token
+JWT token of created claim
 
 ___
 
@@ -233,37 +306,46 @@ ___
 
 ▸ **revokeDidDocument**(): `Promise`<`boolean`\>
 
-**`description`** revokes did document
+Revoke DID document of the current user.
+
+```typescript
+didRegistry.revokeDidDocument();
+```
 
 #### Returns
 
 `Promise`<`boolean`\>
 
-information (true/false) if the DID document was revoked
+true if document was revoked successfully
 
 ___
 
 ### updateDocument
 
-▸ **updateDocument**(`options`): `Promise`<`boolean`\>
+▸ **updateDocument**(`__namedParameters`): `Promise`<`boolean`\>
 
-**`description`** updates did document based on data provided
+Update DID document of the given DID with provided data.
+
+```typescript
+didRegistry.updateDocument({
+    didAttribute: DIDAttribute.PublicKey,
+    data: publicKey,
+    validity: 60 * 60 * 1000,
+    did: 'did:ethr:volta:0x00...0',
+});
+
+@param {UpdateDocumentOptions} options object with options
+@return true if document was updated successfully
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `options` | `Object` | Options to connect with blockchain |
-| `options.data` | `IUpdateData` | New attribute value |
-| `options.did?` | `string` | Asset did to be updated |
-| `options.didAttribute` | `DIDAttribute` | Type of document to be updated |
-| `options.validity?` | `number` | Time (s) for the attribute to expire |
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | [`UpdateDocumentOptions`](../interfaces/modules_did_registry.UpdateDocumentOptions.md) |
 
 #### Returns
 
 `Promise`<`boolean`\>
-
-true if document is updated successfuly
 
 ___
 
@@ -271,24 +353,29 @@ ___
 
 ▸ **updateSignedDidDelegate**(`__namedParameters`): `Promise`<`boolean`\>
 
-**`description`** updates delegate of the document of controlled `did`
+Updates delegate of the DID document of given DID.
+
+```typescript
+didRegistry.updateSignedDidDelegate({
+    did: 'did:ethr:volta:0x00...0',
+    delegatePublicKey: delegatePublicKey,
+    validity: 60 * 60 * 1000,
+    algo: KeyType.Secp256k1,
+    type: PubKeyType.SignatureAuthentication2018,
+});
+
+@param {UpdateSignedDidDelegateOptions} options object with options
+@return true if document was updated successfully
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.algo` | `KeyType` |
-| `__namedParameters.delegatePublicKey` | `string` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.type` | `PubKeyType` |
-| `__namedParameters.validity?` | `number` |
+| `__namedParameters` | [`UpdateSignedDidDelegateOptions`](../interfaces/modules_did_registry.UpdateSignedDidDelegateOptions.md) |
 
 #### Returns
 
 `Promise`<`boolean`\>
-
-true if document is updated successfuly
 
 ___
 
@@ -296,25 +383,30 @@ ___
 
 ▸ **updateSignedDidPublicKey**(`__namedParameters`): `Promise`<`boolean`\>
 
-**`description`** Adds public key to the document of controlled `did`
+Adds public key to the DID document of given DID.
+
+```typescript
+didRegistry.updateSignedDidPublicKey({
+    did: 'did:ethr:volta:0x00...0',
+    publicKey: publicKey,
+    validity: 60 * 60 * 1000,
+    algo: KeyType.Secp256k1,
+    type: PubKeyType.SignatureAuthentication2018,
+    tag: '#main-key',
+});
+
+@param {UpdateSignedDidPublicKeyOptions} options object with options
+@return true if document was updated successfully
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.algo` | `KeyType` |
-| `__namedParameters.did` | `string` |
-| `__namedParameters.publicKey` | `string` |
-| `__namedParameters.tag` | `string` |
-| `__namedParameters.type` | `PubKeyType` |
-| `__namedParameters.validity?` | `number` |
+| `__namedParameters` | [`UpdateSignedDidPublicKeyOptions`](../interfaces/modules_did_registry.UpdateSignedDidPublicKeyOptions.md) |
 
 #### Returns
 
 `Promise`<`boolean`\>
-
-true if document is updated successfuly
 
 ___
 
@@ -322,20 +414,27 @@ ___
 
 ▸ **verifyPublicClaim**(`token`, `iss`): `Promise`<``null`` \| `string`\>
 
-**`description`** verifies issued token of claim
+Verifies issued token of the public claim.
+
+```typescript
+didRegistry.verifyPublicClaim({
+    token: 'eyJh...VCJ9.ey...IyfQ.SflK...sw5c',
+    iss: 'did:ethr:volta:0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `token` | `string` |
-| `iss` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `token` | `string` | JWT token of the public claim |
+| `iss` | `string` | DID of the issuer |
 
 #### Returns
 
 `Promise`<``null`` \| `string`\>
 
-public claim data
+DID of the authenticated identity on successful verification or null otherwise
 
 ___
 

@@ -1,3 +1,49 @@
+## [5.1.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.29...v5.1.0-alpha.30) (2022-05-17)
+
+
+### Bug Fixes
+
+* fix backward compatibility for did registry interface ([a24a91c](https://github.com/energywebfoundation/iam-client-lib/commit/a24a91c15f487f48267bf410021d0778e18fdc27))
+* retry failed requests on token refresh ([434e262](https://github.com/energywebfoundation/iam-client-lib/commit/434e2621a34bec16e51722e8454e9852ed5daed5))
+
+## [5.1.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.28...v5.1.0-alpha.29) (2022-05-17)
+
+## [5.1.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.27...v5.1.0-alpha.28) (2022-05-16)
+
+
+### Features
+
+* export logger ([819e67c](https://github.com/energywebfoundation/iam-client-lib/commit/819e67c8f5ab64a137ffdeb2405684c972b0b1c2))
+
+## [5.1.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.26...v5.1.0-alpha.27) (2022-05-16)
+
+## [5.1.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.25...v5.1.0-alpha.26) (2022-05-16)
+
+
+### Features
+
+* add logs for axios errors ([2fa44c6](https://github.com/energywebfoundation/iam-client-lib/commit/2fa44c627ed2d11b79b566d90986a8c8e7d4d20c))
+
+## [5.1.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.24...v5.1.0-alpha.25) (2022-05-16)
+
+
+### Features
+
+* **vc:** add verifiable credential expiration date ([e76c66b](https://github.com/energywebfoundation/iam-client-lib/commit/e76c66b1c26b50a7854c3971042fe29ee1224e2e))
+
+## [5.1.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.23...v5.1.0-alpha.24) (2022-05-12)
+
+## [5.1.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.22...v5.1.0-alpha.23) (2022-05-11)
+
+## [5.1.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.21...v5.1.0-alpha.22) (2022-05-11)
+
+## [5.1.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.20...v5.1.0-alpha.21) (2022-05-09)
+
+
+### Bug Fixes
+
+* don't remove deploy badge ([c216ed8](https://github.com/energywebfoundation/iam-client-lib/commit/c216ed81305bebff6d911850c01d1c537cda9f33))
+
 ## [5.1.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.19...v5.1.0-alpha.20) (2022-05-04)
 
 

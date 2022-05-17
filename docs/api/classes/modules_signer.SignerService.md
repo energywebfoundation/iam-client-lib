@@ -2,6 +2,13 @@
 
 [modules/signer](../modules/modules_signer.md).SignerService
 
+Service responsible for signing messages and sending transactions to the blockchain
+
+```typescript
+const { signerService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+signerService.signMessage(...);
+```
+
 ## Table of contents
 
 ### Constructors
@@ -57,9 +64,17 @@
 
 • `get` **accountInfo**(): [`AccountInfo`](../modules/modules_signer.md#accountinfo)
 
+Get account info, including chain id, chain name and user address.
+
+```typescript
+signerService.accountInfo;
+```
+
 #### Returns
 
 [`AccountInfo`](../modules/modules_signer.md#accountinfo)
+
+account info
 
 ___
 
@@ -67,9 +82,17 @@ ___
 
 • `get` **address**(): `string`
 
+Get user address.
+
+```typescript
+signerService.address;
+```
+
 #### Returns
 
 `string`
+
+user address
 
 ___
 
@@ -77,9 +100,17 @@ ___
 
 • `get` **chainId**(): `number`
 
+Get current connection chain id.
+
+```typescript
+signerService.chainId;
+```
+
 #### Returns
 
 `number`
+
+chain id
 
 ___
 
@@ -87,9 +118,17 @@ ___
 
 • `get` **did**(): `string`
 
+Get current user DID
+
+```typescript
+signerService.did;
+```
+
 #### Returns
 
 `string`
+
+DID
 
 ___
 
@@ -97,9 +136,17 @@ ___
 
 • `get` **didHex**(): `string`
 
+Get current user DID address with hex representation of the chain id.
+
+```typescript
+signerService.didHex;
+```
+
 #### Returns
 
 `string`
+
+DID address
 
 ___
 
@@ -107,9 +154,17 @@ ___
 
 • `get` **isEthSigner**(): `boolean`
 
+If signer is EIP-191 compliant https://eips.ethereum.org/EIPS/eip-191.
+
+```typescript
+signerService.isEthSigner;
+```
+
 #### Returns
 
 `boolean`
+
+true if the signer is EIP-191 compliant.
 
 ___
 
@@ -117,9 +172,17 @@ ___
 
 • `get` **provider**(): `Provider`
 
+Get connection provider.
+
+```typescript
+signerService.provider;
+```
+
 #### Returns
 
 `Provider`
+
+connection provider
 
 ___
 
@@ -127,9 +190,17 @@ ___
 
 • `get` **providerType**(): [`ProviderType`](../enums/modules_signer.ProviderType.md)
 
+Get provider type of current signer connection.
+
+```typescript
+signerService.providerType;
+```
+
 #### Returns
 
 [`ProviderType`](../enums/modules_signer.ProviderType.md)
+
+provider type
 
 ___
 
@@ -137,9 +208,17 @@ ___
 
 • `get` **signer**(): `Required`<[`SignerT`](../modules/modules_signer.md#signert)\>
 
+The instance of the `ether` library signer in use by the service
+
+```typescript
+signerService.signer;
+```
+
 #### Returns
 
 `Required`<[`SignerT`](../modules/modules_signer.md#signert)\>
+
+signer
 
 ## Methods
 
@@ -147,30 +226,45 @@ ___
 
 ▸ **balance**(): `Promise`<`BigNumber`\>
 
+Get current user balance.
+
+```typescript
+signerService.getBalance();
+```
+
 #### Returns
 
 `Promise`<`BigNumber`\>
+
+user balance
 
 ___
 
 ### call
 
-▸ **call**(`__namedParameters`): `Promise`<`string`\>
+▸ **call**(`options`): `Promise`<`string`\>
 
-Makes a (readonly) call to a smart contract
+Makes a (readonly) call to a smart contract.
 https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
+
+```typescript
+signerService.call({
+    to: ':0x00...0',
+    data: contract.interface.encodeFunctionData(...)
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `TransactionRequest` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | `TransactionRequest` | object with options |
 
 #### Returns
 
 `Promise`<`string`\>
 
-The result of the call
+the result of the call
 
 ___
 
@@ -178,9 +272,17 @@ ___
 
 ▸ **chainName**(): `string`
 
+Get current chain name.
+
+```typescript
+signerService.chainName();
+```
+
 #### Returns
 
 `string`
+
+chain name
 
 ___
 
@@ -188,9 +290,17 @@ ___
 
 ▸ **closeConnection**(): `Promise`<`boolean`\>
 
+Close connection with the signer wallet.
+
+```typescript
+signerService.closeConnection();
+```
+
 #### Returns
 
 `Promise`<`boolean`\>
+
+true if connection was closed
 
 ___
 
@@ -290,35 +400,68 @@ ___
 
 ▸ **publicKey**(): `Promise`<`string`\>
 
+Get current user public key.
+
+```typescript
+signerService.publicKey();
+```
+
 #### Returns
 
 `Promise`<`string`\>
+
+public key
 
 ___
 
 ### publicKeyAndIdentityToken
 
-▸ **publicKeyAndIdentityToken**(): `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
+▸ **publicKeyAndIdentityToken**(`force?`): `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
+
+Generate public key and identity token for authentication purposes.
+
+```typescript
+signerService.publicKeyAndIdentityToken();
+```
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `force` | `boolean` | `false` | when true recalculates token even if it is already present |
 
 #### Returns
 
 `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
 
+object with public key and identity token
+
 ___
 
 ### send
 
-▸ **send**(`__namedParameters`): `Promise`<`TransactionReceipt`\>
+▸ **send**(`options`): `Promise`<`TransactionReceipt`\>
+
+Send transaction to the blockchain.
+
+```typescript
+signerService.send({
+    to: ':0x00...0',
+    data: contract.interface.encodeFunctionData(...)
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `TransactionRequest` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | `TransactionRequest` | object with options |
 
 #### Returns
 
 `Promise`<`TransactionReceipt`\>
+
+transaction receipt
 
 ___
 
@@ -326,9 +469,13 @@ ___
 
 ▸ **signMessage**(`message`): `Promise`<`string`\>
 
-**`description`** Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign)
-Whether or not to hash the message prior to signature is determined by signature performed during login.
-When running in browser `isEthSigner` variable should be stored in local storage
+Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign).
+Whether or not to hash the message prior to signature is depends on whether is signer EIP-191 compliant.
+When running in browser `isEthSigner` variable should be stored in local storage.
+
+```typescript
+signerService.signMessage(arrayify('Hello World'));
+```
 
 #### Parameters
 
@@ -340,22 +487,34 @@ When running in browser `isEthSigner` variable should be stored in local storage
 
 `Promise`<`string`\>
 
+the signature
+
 ___
 
 ### signTypedData
 
 ▸ **signTypedData**(`domain`, `types`, `message`): `Promise`<`string`\>
 
-**`description`** Tries to create conformant signature (https://eips.ethereum.org/EIPS/eip-712)
+Tries to create conformant EIP-712 signature (https://eips.ethereum.org/EIPS/eip-712).
+
+```typescript
+signerService.signTypedData(
+    { name: 'MyToken', version: '1.0' },
+    { Model: [{ name: 'name', type: 'string' }, { name: 'type', type: 'string' }] },
+    { name: 'MyToken', type: 'erc721' },
+);
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `domain` | `TypedDataDomain` |
-| `types` | `Record`<`string`, `TypedDataField`[]\> |
-| `message` | `Record`<`string`, `unknown`\> |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `domain` | `TypedDataDomain` | EIP-712 domain object |
+| `types` | `Record`<`string`, `TypedDataField`[]\> | EIP-712 types object |
+| `message` | `Record`<`string`, `unknown`\> | EIP-712 message object |
 
 #### Returns
 
 `Promise`<`string`\>
+
+the signature

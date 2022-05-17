@@ -1,4 +1,4 @@
-import { ConsoleLogger, ILogger } from '../utils/logger';
+import { ConsoleLogger, ILogger } from '../utils';
 
 let logger: ILogger = new ConsoleLogger();
 
@@ -10,7 +10,7 @@ export const setLogger = (newLogger: ILogger) => (logger = newLogger);
 
 /**
  *
- * Returns currenly set up logger. Console Logger By default
+ * Returns currently set up logger. Console Logger By default
  * @returns logger
  */
 export const getLogger = () => logger;

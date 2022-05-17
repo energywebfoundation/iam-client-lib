@@ -580,25 +580,26 @@ export class ClaimsService {
 
   // TODO: create docs annotations
   async getClaimId({ claimData }: { claimData: ClaimData }) {
-    const { service = [] } = await this._didRegistry.getDidDocument();
-    const { id, claimTypeVersion } =
-      service.find(
-        ({ profile, claimType, claimTypeVersion }) =>
-          Boolean(profile) ||
-          (claimType === claimData.claimType &&
-            claimTypeVersion === claimData.claimTypeVersion)
-      ) || {};
+    const services = await this._didRegistry.getServices();
+    const service = services.find(
+      ({ profile, claimType, claimTypeVersion }) =>
+        Boolean(profile) ||
+        (claimType === claimData.claimType &&
+          claimTypeVersion === claimData.claimTypeVersion)
+    );
+
+    if (!service) return v4();
 
     if (claimData.profile && id) {
-      return id;
+      return service.id;
     }
 
     if (
       claimData.claimType &&
-      id &&
-      claimData.claimTypeVersion === claimTypeVersion
+      service.id &&
+      claimData.claimTypeVersion === service.claimTypeVersion
     ) {
-      return id;
+      return service.id;
     }
     return v4();
   }
@@ -736,22 +737,25 @@ export class ClaimsService {
   async getUserClaims({
     did = this._signerService.did,
   }: GetUserClaimsOptions): Promise<(IServiceEndpoint & ClaimData)[]> {
-    const [{ service }, issuedClaims] = await Promise.all([
-      this._didRegistry.getDidDocument({ did }),
+    const [services, issuedClaims] = await Promise.all([
+      this._didRegistry.getServices({ did }),
       this.getClaimsBySubject({
         did,
         isAccepted: true,
       }),
     ]);
 
-    if (service.length === 0 || issuedClaims.length === 0) return [];
+    if (services.length === 0 || issuedClaims.length === 0) return [];
 
     const issuedClaimsTypes = issuedClaims
       .filter((c) => c.registrationTypes.includes(RegistrationTypes.OffChain))
       .map(({ claimType }) => claimType);
 
-    return service.filter(
-      ({ claimType }) => claimType && issuedClaimsTypes.includes(claimType)
+    return services.filter(
+      ({ claimType }) =>
+        claimType &&
+        typeof claimType === 'string' &&
+        issuedClaimsTypes.includes(claimType)
     );
   }
 

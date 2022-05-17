@@ -2,6 +2,15 @@
 
 [modules/domains](../modules/modules_domains.md).DomainsService
 
+Service responsible for handling the request to ENS, creating roles/organizations/applications namespaces.
+See more information about ENS and domains in IAM stack [here](https://energy-web-foundation.gitbook.io/energy-web/how-tos-and-tutorials/using-the-ethereum-name-service-ens).
+
+```typescript
+const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+const { domainsService } = await connectToCacheServer();
+domainsService.createOrganization(...);
+```
+
 ## Table of contents
 
 ### Constructors
@@ -57,70 +66,79 @@
 
 ### changeAppOwnership
 
-▸ **changeAppOwnership**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **changeAppOwnership**(`options`): `Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
-changeAppOwnership
+Change owner of application domain.
 
-**`description`** change owner ship of app subdomain and all app owned subdomains
+```typescript
+domainsService.changeAppOwnership({
+    namespace: 'auth.apps.energyweb.iam.ewc',
+    newOwner: '0x00...0',
+    returnSteps: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.newOwner` | `string` |
-| `__namedParameters.returnSteps?` | `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`ChangeAppOwnershipOptions`](../interfaces/modules_domains.ChangeAppOwnershipOptions.md) | object containing options |
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
-return array of steps needed to change ownership
+array of steps if `returnSteps` is true
 
 ___
 
 ### changeOrgOwnership
 
-▸ **changeOrgOwnership**(`__namedParameters`): `Promise`<`undefined` \| [`MulticallTx`](../modules/modules_domains.md#multicalltx)\>
+▸ **changeOrgOwnership**(`options`): `Promise`<`undefined` \| [`MulticallTx`](../modules/modules_domains.md#multicalltx)\>
 
-changeOrgOwnership
+Change owner of organization domain including all subdomains.
 
-**`description`** change owner ship of org subdomain and all org owned roles subdomains
+```typescript
+domainsService.changeOrgOwnership({
+    namespace: 'energyweb.iam.ewc',
+    newOwner: '0x00...0',
+    returnSteps: true,
+    withSubdomains: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.newOwner` | `string` |
-| `__namedParameters.returnSteps?` | `boolean` |
-| `__namedParameters.withSubdomains?` | `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`ChangeOrgOwnershipOptions`](../interfaces/modules_domains.ChangeOrgOwnershipOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`undefined` \| [`MulticallTx`](../modules/modules_domains.md#multicalltx)\>
 
-return array of steps needed to change ownership
+array of steps if `returnSteps` is true
 
 ___
 
 ### changeRoleOwnership
 
-▸ **changeRoleOwnership**(`__namedParameters`): `Promise`<`void`\>
+▸ **changeRoleOwnership**(`options`): `Promise`<`void`\>
 
-changeRoleOwnership
+Change owner of role domain.
 
-**`description`** change ownership of role subdomain
+```typescript
+domainsService.changeRoleOwnership({
+    namespace: 'root.roles.energyweb.iam.ewc',
+    newOwner: '0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.newOwner` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`ChangeRoleOwnershipOptions`](../interfaces/modules_domains.ChangeRoleOwnershipOptions.md) | object containing options |
 
 #### Returns
 
@@ -130,163 +148,205 @@ ___
 
 ### checkExistenceOfDomain
 
-▸ **checkExistenceOfDomain**(`__namedParameters`): `Promise`<`boolean`\>
+▸ **checkExistenceOfDomain**(`options`): `Promise`<`boolean`\>
 
-checkExistenceOfDomain
+Check if domain exists in ENS registry.
 
-**`description`** check existence of domain in ENS registry
+```typescript
+domainsService.checkExistenceOfDomain({
+    domain: 'some.energyweb.iam.ewc',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.domain` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CheckExistenceOfDomainOptions`](../interfaces/modules_domains.CheckExistenceOfDomainOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`boolean`\>
 
-true or false whatever the domain is present
+true if domain exists, false otherwise
 
 ___
 
 ### createApplication
 
-▸ **createApplication**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = 'Set subdomain for application'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **createApplication**(`options`): `Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
-createApp
+Create application domain with given definition for given namespace.
+Also includes creating subdomain for roles. (roles.yourApp.apps.yourOrg.ewc).
 
-**`description`** creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
-
-**`description`** creates roles subdomain for the app namespace
+```typescript
+domainsService.createApplication({
+    appName: 'auth',
+    namespace: 'apps.energyweb.iam.ewc',
+    data: {
+        appName: 'Auth service',
+    },
+    returnSteps: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.appName` | `string` |
-| `__namedParameters.data` | `IAppDefinition` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.returnSteps?` | `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CreateApplicationOptions`](../interfaces/modules_domains.CreateApplicationOptions.md) | object containing options |
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` = 'Set subdomain for application'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+
+array of steps if `returnSteps` is true
 
 ___
 
 ### createOrganization
 
-▸ **createOrganization**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = 'Create organization subdomain'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **createOrganization**(`options`): `Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
-createOrganization
+Create organization domain with given definition for given namespace.
+Also includes creating subdomains for roles and applications. (roles.yourOrg.ewc, apps.yourOrg.ewc).
 
-**`description`** creates organization (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
-
-**`description`** and sets subdomain for roles and app for org namespace
+```typescript
+domainsService.createOrganization({
+    orgName: 'auth',
+    namespace: 'energyweb.iam.ewc',
+    data: {
+        orgName: 'Auth service',
+    },
+    returnSteps: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IOrganizationDefinition` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.orgName` | `string` |
-| `__namedParameters.returnSteps?` | `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CreateOrganizationOptions`](../interfaces/modules_domains.CreateOrganizationOptions.md) | object containing options |
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` = 'Create organization subdomain'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+
+array of steps if `returnSteps` is true
 
 ___
 
 ### createRole
 
-▸ **createRole**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` = 'Create subdomain for role'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **createRole**(`options`): `Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
-createRole
+Create role domain with given definition for given namespace.
 
-**`description`** creates role (create subdomain, sets the domain name and sets the role definition to metadata record in ENS Domain)
+```typescript
+domainsService.createRole({
+    appName: 'root',
+    namespace: 'roles.energyweb.iam.ewc',
+    data: {
+        version: 1,
+        issuer: {
+            issuerType: 'DID',
+            did: ['did:ethr:volta:0x00...0'],
+        },
+        revoker: {
+            issuerType: 'DID',
+            did: ['did:ethr:volta:0x00...0'],
+        },
+        enrolmentPreconditions: [],
+    },
+    returnSteps: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IRoleDefinition` \| `IRoleDefinitionV2` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.returnSteps?` | `boolean` |
-| `__namedParameters.roleName` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`CreateRoleOptions`](../interfaces/modules_domains.CreateRoleOptions.md) | object containing options |
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` = 'Create subdomain for role'; `next`: () => `Promise`<`void`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
-information (true/false) if the role was created
+array of steps if `returnSteps` is true
 
 ___
 
 ### deleteApplication
 
-▸ **deleteApplication**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **deleteApplication**(`options`): `Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
-deleteApplication
+Delete application domain and all subdomains.
 
-**`description`** delete application and roles
+```typescript
+domainsService.deleteApplication({
+    namespace: 'auth.apps.energyweb.iam.ewc',
+    returnSteps: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.returnSteps?` | `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`DeleteApplicationOptions`](../interfaces/modules_domains.DeleteApplicationOptions.md) | object containing options |
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+
+array of steps if `returnSteps` is true
 
 ___
 
 ### deleteOrganization
 
-▸ **deleteOrganization**(`__namedParameters`): `Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+▸ **deleteOrganization**(`options`): `Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
-deleteOrganization
+Delete organization domain and all subdomains.
 
-**`description`** delete organization and roles
+```typescript
+domainsService.deleteOrganization({
+    namespace: 'energyweb.iam.ewc',
+    returnSteps: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.returnSteps?` | `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`DeleteOrganizationOptions`](../interfaces/modules_domains.DeleteOrganizationOptions.md) | object containing options |
 
 #### Returns
 
-`Promise`<`undefined` \| { `info`: `string` ; `next`: (`__namedParameters`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\> ; `tx`: `EncodedCall`  }[]\>
+`Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+
+array of steps if `returnSteps` is true
 
 ___
 
 ### deleteRole
 
-▸ **deleteRole**(`__namedParameters`): `Promise`<`void`\>
+▸ **deleteRole**(`options`): `Promise`<`void`\>
 
-deleteRole
+Delete role domain.
 
-**`description`** delete role
+```typescript
+domainsService.deleteRole({
+    namespace: 'auth.roles.energyweb.iam.ewc',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`DeleteRoleOptions`](../interfaces/modules_domains.DeleteRoleOptions.md) | object containing options |
 
 #### Returns
 
@@ -298,15 +358,17 @@ ___
 
 ▸ **getAllowedRolesByIssuer**(`did`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
-getAllowedRolesByIssuer
+Get all roles that a DID can issue.
 
-**`description`** get all roles that a DID can issue, given its role credentials and all role definitions
+```typescript
+domainsService.getAllowedRolesByIssuer('did:ethr:0x00...0');
+```
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `did` | `string` | DID of issuer |
+| `did` | `string` | issuer DID |
 
 #### Returns
 
@@ -320,21 +382,23 @@ ___
 
 ▸ **getAppsOfOrg**(`org`): `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
-getENSTypesByOwner
+Fetch all applications for organization namespace.
 
-**`description`** get all applications for organization namespace
+```typescript
+domainsService.getAppsOfOrg('energyweb.iam.ewc');
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `org` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `org` | `string` | organization namespace |
 
 #### Returns
 
 `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
-array of subdomains or empty array when there is no subdomains
+array of applications
 
 ___
 
@@ -342,64 +406,78 @@ ___
 
 ▸ **getDIDsByRole**(`role`): `Promise`<`string`[]\>
 
-getDIDsByRole
+Get users did which have certain role.
 
-**`description`** get all users did which have certain role
+```typescript
+domainsService.getDIDsByRole('auth.roles.energyweb.iam.ewc');
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `role` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `role` | `string` | role namespace |
 
 #### Returns
 
 `Promise`<`string`[]\>
 
-array of did's
+array of users DID
 
 ___
 
 ### getDefinition
 
-▸ **getDefinition**(`__namedParameters`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
+▸ **getDefinition**(`options`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
-**`description`** get cached domain definition
+Fetch cached domain definition for organization, application or role.
+
+```typescript
+domainsService.getDefinition({
+    type: NamespaceType.Role,
+    namespace: 'auth.roles.energyweb.iam.ewc',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.type` | [`NamespaceType`](../enums/modules_domains.NamespaceType.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetDefinitionOptions`](../interfaces/modules_domains.GetDefinitionOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
-metadata string or empty string when there is no metadata
+domain definition
 
 ___
 
 ### getENSTypesByOwner
 
-▸ **getENSTypesByOwner**(`__namedParameters`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\> \| `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+▸ **getENSTypesByOwner**(`options`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[] \| [`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
-getENSTypesByOwner
+Get all organization/application/role for certain owner.
+
+```typescript
+domainsService.getENSTypesByOwner({
+    type: NamespaceType.Organization,
+    owner: '0x00...0',
+    withRelations: true,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.owner` | `string` |
-| `__namedParameters.type` | [`NamespaceType`](../enums/modules_domains.NamespaceType.md) |
-| `__namedParameters.withRelations?` | `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetENSTypesByOwnerOptions`](../interfaces/modules_domains.GetENSTypesByOwnerOptions.md) | object containing options |
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\> \| `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\> \| `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[] \| [`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+
+array of organizations/applications/roles for certain owner
 
 ___
 
@@ -407,18 +485,27 @@ ___
 
 ▸ **getENSTypesBySearchPhrase**(`search`, `types?`): `Promise`<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
 
-getENSTypesBySearchPhrase
+Search for organization/application/role with a given search phrase.
+
+```typescript
+domainsService.getENSTypesBySearchPhrase({
+    types: [SearchType.App, SearchType.Org, SearchType.Role],
+    search: 'energyweb',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `search` | `string` |
-| `types?` | [`SearchType`](../enums/modules_cache_client.SearchType.md)[] |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `search` | `string` | search phrase |
+| `types?` | [`SearchType`](../enums/modules_cache_client.SearchType.md)[] | ENS types to search |
 
 #### Returns
 
 `Promise`<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
+
+array of founded organizations/applications/roles
 
 ___
 
@@ -426,45 +513,50 @@ ___
 
 ▸ **getOrgHierarchy**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
 
-getOrgHierarchy
+Get organization hierarchy. Max 20 levels deep.
 
-**`description`** get all hierarchy of an organization (20 levels deep)
+```typescript
+domainsService.getOrgHierarchy('energyweb.iam.ewc');
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `namespace` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `namespace` | `string` | organization namespace |
 
 #### Returns
 
 `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
 
-organization with all nested subOrgs
+organization with all nested sub-organizations
 
 ___
 
 ### getRolesByNamespace
 
-▸ **getRolesByNamespace**(`__namedParameters`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getRolesByNamespace**(`options`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
-getRolesByNamespace
+Fetch all roles subdomains for certain domain.
 
-**`description`** get all subdomains for certain domain
+```typescript
+domainsService.getRolesByNamespace({
+    parentType: NamespaceType.Application,
+    namespace: 'auth.apps.energyweb.iam.ewc',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.parentType` | [`Application`](../enums/modules_domains.NamespaceType.md#application) \| [`Organization`](../enums/modules_domains.NamespaceType.md#organization) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetRolesByNamespaceOptions`](../interfaces/modules_domains.GetRolesByNamespaceOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
-array of subdomains or empty array when there is no subdomains
+array of role subdomains
 
 ___
 
@@ -472,45 +564,50 @@ ___
 
 ▸ **getSubOrgsByOrgNamespace**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
-getSubOrgsByOrgNamespace
+Fetch all sub-organizations for organization namespace.
 
-**`description`** get all sub organizations for organization namespace
+```typescript
+domainsService.getSubOrgsByOrgNamespace('energyweb.iam.ewc');
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `namespace` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `namespace` | `string` | organization namespace |
 
 #### Returns
 
 `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
-array of subdomains or empty array when there is no subdomains
+array of sub-organizations
 
 ___
 
 ### getSubdomains
 
-▸ **getSubdomains**(`__namedParameters`): `Promise`<`string`[]\>
+▸ **getSubdomains**(`options`): `Promise`<`string`[]\>
 
-getSubdomains
+Fetch subdomains for certain domain.
 
-**`description`** get all subdomains for certain domain
+```typescript
+domainsService.getSubdomains({
+    domain: 'energyweb.iam.ewc',
+    mode: 'ALL',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.domain` | `string` |
-| `__namedParameters.mode?` | ``"ALL"`` \| ``"FIRSTLEVEL"`` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`GetSubdomainsOptions`](../interfaces/modules_domains.GetSubdomainsOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`string`[]\>
 
-array of subdomains or empty array when there is no subdomains
+array of subdomains
 
 ___
 
@@ -526,27 +623,28 @@ ___
 
 ### isOwner
 
-▸ **isOwner**(`__namedParameters`): `Promise`<`boolean`\>
+▸ **isOwner**(`options`): `Promise`<`boolean`\>
 
-isOwner
+Check if user is owner of the domain.
 
-**`description`** check ownership of the domain
-
-**`default`** if user is not specified it will check the current logged user
+```typescript
+domainsService.isOwner({
+    domain: 'energyweb.iam.ewc',
+    user: '0x00...0',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.domain` | `string` |
-| `__namedParameters.user?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`IsOwnerOptions`](../interfaces/modules_domains.IsOwnerOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`boolean`\>
 
-true or false whatever the passed is user is a owner of domain
+true if user is owner, false otherwise
 
 ___
 
@@ -554,7 +652,13 @@ ___
 
 ▸ **namespacesWithRelations**(`namespaces`): `Promise`<{ `namespace`: `string` ; `owner`: `string`  }[]\>
 
-**`description`** Collects all namespaces related data. Currently its includes only owner
+Collect related data for given domain. Currently only related data is owner.
+
+```typescript
+domainsService.namespacesWithRelations(['root.roles.energyweb.iam.ewc', 'admin.roles.energyweb.iam.ewc']);
+
+@param {Array<String>} namespaces array of namespaces
+@return object containing registration types for given roles as keys
 
 #### Parameters
 
@@ -588,6 +692,14 @@ ___
 
 ▸ **registrationTypesOfRoles**(`roles`): `Promise`<`Record`<`string`, `Set`<[`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)\>\>\>
 
+Get possible registration types for given roles.
+
+```typescript
+domainsService.registrationTypesOfRoles(['root.roles.energyweb.iam.ewc', 'admin.roles.energyweb.iam.ewc']);
+
+@param {Array<String>} roles array of roles
+@return object containing registration types for given roles as keys
+
 #### Parameters
 
 | Name | Type |
@@ -602,21 +714,24 @@ ___
 
 ### setRoleDefinition
 
-▸ **setRoleDefinition**(`__namedParameters`): `Promise`<`void`\>
+▸ **setRoleDefinition**(`options`): `Promise`<`void`\>
 
-setRoleDefinition
+Update ENS domain definition for already created domain.
 
-**`description`** sets role definition in ENS domain
-
-**`description`** please use it only when you want to update role definitions for already created role (domain)
+```typescript
+domainsService.setRoleDefinition({
+    name: 'auth.apps.energyweb.iam.ewc',
+    data: {
+        appName: 'Auth service',
+    }
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.data` | `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2` |
-| `__namedParameters.domain` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`SetRoleDefinitionOptions`](../interfaces/modules_domains.SetRoleDefinitionOptions.md) | object containing options |
 
 #### Returns
 
@@ -628,16 +743,30 @@ ___
 
 ▸ **updateLegacyDefinition**(`domain`, `data`): `Promise`<`boolean`\>
 
-In initial version of Switchboard, role definitions where contained in ENS PublicResolver.
+Move domain to latest version of resolver.
+
+In initial version, role definitions where contained in ENS PublicResolver.
 However, in order for key properties of role definitions to be readable on-chain, a new RoleDefinitionResolver is used.
-This function sets the resolver in the ENS to the new contract for definitions that are pointing to the old contract
+This function sets the resolver in the ENS to the new contract for definitions that are pointing to the old contract.
+
+```typescript
+domainsService.updateLegacyDefinition({
+    namespace: 'energyweb.iam.ewc',
+    data: {
+         orgName: 'Energy Web Foundation',
+    },
+});
+
+@param {String} domain domain namespace to update
+@param {DomainDefinition} data definition to apply to domain
+@return true if domain was updated, false otherwise
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `domain` | `string` | domain to potentially update |
-| `data` | `IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2` | definition to apply to domain |
+| Name | Type |
+| :------ | :------ |
+| `domain` | `string` |
+| `data` | [`DomainDefinition`](../modules/modules_domains.md#domaindefinition) |
 
 #### Returns
 
@@ -647,25 +776,28 @@ ___
 
 ### validateOwnership
 
-▸ **validateOwnership**(`__namedParameters`): `Promise`<`string`[]\>
+▸ **validateOwnership**(`options`): `Promise`<`string`[]\>
 
-validateOwnership
+Get not owned domains in given namespace for current user.
 
-**`description`** check ownership of the domain and subdomains of org, app or role
+```typescript
+domainsService.validateOwnership({
+    namespace: 'energyweb.iam.ewc',
+    type: NamespaceType.Organization,
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.namespace` | `string` |
-| `__namedParameters.type` | [`NamespaceType`](../enums/modules_domains.NamespaceType.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`ValidateOwnershipOptions`](../interfaces/modules_domains.ValidateOwnershipOptions.md) | object containing options |
 
 #### Returns
 
 `Promise`<`string`[]\>
 
-true or false whatever the passed is user is a owner of org, app or role
+array of not owned domains
 
 ___
 
