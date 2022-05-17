@@ -1,3 +1,11 @@
+## [5.1.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.29...v5.1.0-alpha.30) (2022-05-17)
+
+
+### Bug Fixes
+
+* fix backward compatibility for did registry interface ([a24a91c](https://github.com/energywebfoundation/iam-client-lib/commit/a24a91c15f487f48267bf410021d0778e18fdc27))
+* retry failed requests on token refresh ([434e262](https://github.com/energywebfoundation/iam-client-lib/commit/434e2621a34bec16e51722e8454e9852ed5daed5))
+
 ## [5.1.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.28...v5.1.0-alpha.29) (2022-05-17)
 
 ## [5.1.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.27...v5.1.0-alpha.28) (2022-05-16)
