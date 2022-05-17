@@ -6,9 +6,7 @@ Service responsible for managing verifiable credentials and presentations.
 You can read more about verifiable credentials data model [here](https://www.w3.org/TR/vc-data-model/).
 
 ```typescript
-const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
-const { connectToDidRegistry } = await connectToCacheServer();
-const { verifiableCredentialsService } = await connectToDidRegistry();
+const { verifiableCredentialsService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
 verifiableCredentialsService.createRoleVC(...);
 ```
 
