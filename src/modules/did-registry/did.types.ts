@@ -32,7 +32,7 @@ export interface ClaimData extends Record<string, unknown> {
 
 export interface GetDIDDocumentOptions {
   /* DID of the user */
-  did: string;
+  did?: string;
 
   /* Indicates resolving claims object */
   includeClaims?: boolean;
@@ -40,17 +40,17 @@ export interface GetDIDDocumentOptions {
 
 export interface GetServicesOptions {
   /* DID of the user */
-  did: string;
+  did?: string;
 }
 
 export interface GetDidPublicKeysOptions {
   /* DID of the user */
-  did: string;
+  did?: string;
 }
 
 export interface GetDidDelegatesOptions {
   /* DID of the user */
-  did: string;
+  did?: string;
 }
 
 export interface CreatePublicClaimOptions {

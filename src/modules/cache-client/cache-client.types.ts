@@ -29,3 +29,8 @@ export enum SearchType {
 }
 
 export const TEST_LOGIN_ENDPOINT = '/auth/status';
+
+export interface AuthTokens {
+  token: string;
+  refreshToken: string;
+}

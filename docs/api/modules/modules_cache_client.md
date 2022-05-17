@@ -13,6 +13,7 @@
 
 ### Interfaces
 
+- [AuthTokens](../interfaces/modules_cache_client.AuthTokens.md)
 - [CacheServerClientOptions](../interfaces/modules_cache_client.CacheServerClientOptions.md)
 - [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md)
 

@@ -442,11 +442,13 @@ export class SignerService {
    * ```typescript
    * signerService.publicKeyAndIdentityToken();
    * ```
-   *
+   * @param force when true recalculates token even if it is already present
    * @return object with public key and identity token
    */
-  async publicKeyAndIdentityToken(): Promise<IPubKeyAndIdentityToken> {
-    if (!this._publicKey || !this._identityToken) {
+  async publicKeyAndIdentityToken(
+    force = false
+  ): Promise<IPubKeyAndIdentityToken> {
+    if (!this._publicKey || !this._identityToken || force) {
       await this._calculatePubKeyAndIdentityToken();
     }
     return {

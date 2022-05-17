@@ -134,12 +134,11 @@ export class DidRegistry {
    * @param {GetDIDDocumentOptions} options object with options
    * @return DID document
    */
-  async getDidDocument(
-    { did, includeClaims }: GetDIDDocumentOptions = {
-      did: this._did,
-      includeClaims: true,
-    }
-  ): Promise<IDIDDocument> {
+  async getDidDocument({
+    did = this._did,
+    includeClaims = true,
+  }: GetDIDDocumentOptions = {}): Promise<IDIDDocument> {
+    getLogger().info(`Getting DID document for ${did}`);
     if (this._cacheClient) {
       try {
         const didDoc = await this._cacheClient.getDidDocument(
@@ -179,11 +178,9 @@ export class DidRegistry {
    * @param {GetServicesOptions} options object with options
    * @returns list of claims
    */
-  async getServices(
-    { did }: GetServicesOptions = {
-      did: this._signerService.did,
-    }
-  ): Promise<IServiceEndpoint[]> {
+  async getServices({
+    did = this._signerService.did,
+  }: GetServicesOptions = {}): Promise<IServiceEndpoint[]> {
     const didDocument = await this.getDidDocument({ did });
     return didDocument?.service;
   }
@@ -199,11 +196,9 @@ export class DidRegistry {
    * @param {GetDidPublicKeysOptions} options object with options
    * @returns list of public keys
    */
-  async getDidPublicKeys(
-    { did }: GetDidPublicKeysOptions = {
-      did: this._signerService.did,
-    }
-  ): Promise<IPublicKey[]> {
+  async getDidPublicKeys({
+    did = this._signerService.did,
+  }: GetDidPublicKeysOptions = {}): Promise<IPublicKey[]> {
     const didDocument = await this.getDidDocument({ did });
     return didDocument?.publicKey;
   }
@@ -219,11 +214,9 @@ export class DidRegistry {
    * @param {GetDidDelegatesOptions} options object with options
    * @returns list of delegates
    */
-  async getDidDelegates(
-    { did }: GetDidDelegatesOptions = {
-      did: this._did,
-    }
-  ): Promise<string[] | undefined> {
+  async getDidDelegates({
+    did = this._signerService.did,
+  }: GetDidDelegatesOptions = {}): Promise<string[] | undefined> {
     const didDocument = await this.getDidDocument({ did });
     return didDocument?.delegates;
   }
