@@ -10,6 +10,10 @@ import {
   VC_API_EXCHANGE,
   VpRequest,
   VpRequestQueryType,
+  ExchangeResponse,
+  ContinueExchangeCredentials,
+  ContinueExchangeSelections,
+  VpRequestPresentationDefinitionQuery,
 } from '@ew-did-registry/credentials-interface';
 import { SignerService } from '../signer';
 import {
@@ -20,9 +24,9 @@ import {
   CreatePresentationParams,
   verifiableCredentialEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
-  InitiateExchangeResults,
 } from './types';
 import VCStorageClient from './storage-client';
+import { ERROR_MESSAGES } from '../../errors';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
@@ -146,18 +150,18 @@ export abstract class VerifiableCredentialsServiceBase {
   async initiateExchange({
     type,
     url,
-  }: ExchangeInvitation): Promise<InitiateExchangeResults[]> {
+  }: ExchangeInvitation): Promise<ContinueExchangeSelections> {
     if (type !== VC_API_EXCHANGE) {
       throw new Error('Only VC-API exchange is supported');
     }
 
     const { data: vpRequest } = await axios.post<VpRequest>(url);
-    const presentationDefinitions = vpRequest.query.find(
+    const credentialQuery = vpRequest.query.find(
       (q) => q.type === VpRequestQueryType.presentationDefinition
-    )?.credentialQuery;
+    )?.credentialQuery as VpRequestPresentationDefinitionQuery[];
 
-    return await Promise.all(
-      presentationDefinitions.map(async ({ presentationDefinition }) => {
+    return Promise.all(
+      credentialQuery.map(async ({ presentationDefinition }) => {
         const selectResults =
           await this._storage.getCredentialsByPresentationDefinition(
             presentationDefinition
@@ -171,7 +175,41 @@ export abstract class VerifiableCredentialsServiceBase {
   }
 
   /**
-   * Create a Energy Web role verifiable credential with EIP712 signature.
+   * @description Sends credentials requested by issuer and returns either issued credentials or next credentials request
+   *
+   * @param params.vpRequest credentials required to continue exchange
+   * @returns issued credentials or request of additional credentials
+   */
+  public async continueExchange({
+    vpRequest: {
+      challenge,
+      interact: { service },
+    },
+    credentials,
+  }: ContinueExchangeCredentials<RoleCredentialSubject>) {
+    const requiredPresentation = await this.createVerifiablePresentation(
+      credentials,
+      {
+        challenge,
+      }
+    );
+
+    const {
+      data: { errors, vpRequest: nextVpRequest, vp: requestedPresentation },
+    } = await axios.put<ExchangeResponse>(service[0].serviceEndpoint, {
+      presentation: requiredPresentation,
+    });
+    if (errors.length > 0) {
+      console.dir(errors, { depth: 20 });
+      throw new Error(ERROR_MESSAGES.ERROR_CONTINUING_EXCHANGE);
+    }
+    if (nextVpRequest) {
+      return nextVpRequest;
+    }
+    return requestedPresentation;
+  }
+
+  /* Create a Energy Web role verifiable credential with EIP712 signature.
    *
    * ```typescript
    * verifiableCredentialsService.createRoleVC({

@@ -32,6 +32,7 @@ export interface ProofOptions {
 
   /* Proof purpose */
   proofPurpose?: string;
+  challenge?: string;
 }
 
 export interface CreatePresentationParams {

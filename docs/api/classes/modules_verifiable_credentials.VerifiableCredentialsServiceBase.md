@@ -20,6 +20,7 @@ verifiableCredentialsService.createRoleVC(...);
 
 ### Methods
 
+- [continueExchange](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#continueexchange)
 - [createPresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createpresentation)
 - [createRoleVC](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createrolevc)
 - [createVerifiablePresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createverifiablepresentation)
@@ -41,6 +42,26 @@ verifiableCredentialsService.createRoleVC(...);
 | `_storage` | `default` |
 
 ## Methods
+
+### continueExchange
+
+▸ **continueExchange**(`__namedParameters`): `Promise`<`undefined` \| `VpRequest` \| `VerifiablePresentation`\>
+
+**`description`** Sends credentials requested by issuer and returns either issued credentials or next credentials request
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `ContinueExchangeCredentials`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> |
+
+#### Returns
+
+`Promise`<`undefined` \| `VpRequest` \| `VerifiablePresentation`\>
+
+issued credentials or request of additional credentials
+
+___
 
 ### createPresentation
 
@@ -71,28 +92,16 @@ ___
 
 ▸ **createRoleVC**(`credentialParams`, `proofOptions?`): `Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
 
-Create a Energy Web role verifiable credential with EIP712 signature.
-
-```typescript
-verifiableCredentialsService.createRoleVC({
-     id: 'did:ethr:volta:0x00...0',
-     namespace: 'root.roles.energyweb.iam.ewc',
-     version: '1',
-});
-```
-
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `credentialParams` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) | role credential parameters |
-| `proofOptions?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
+| Name | Type |
+| :------ | :------ |
+| `credentialParams` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) |
+| `proofOptions?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) |
 
 #### Returns
 
 `Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
-
-verifiable credential object
 
 ___
 
@@ -123,7 +132,7 @@ ___
 
 ### initiateExchange
 
-▸ **initiateExchange**(`options`): `Promise`<[`InitiateExchangeResults`](../interfaces/modules_verifiable_credentials.InitiateExchangeResults.md)[]\>
+▸ **initiateExchange**(`options`): `Promise`<`ContinueExchangeSelections`\>
 
 Initialize credential exchange. Only vc-api exchanges currently supported.
 
@@ -142,7 +151,7 @@ verifiableCredentialsService.initiateExchange({
 
 #### Returns
 
-`Promise`<[`InitiateExchangeResults`](../interfaces/modules_verifiable_credentials.InitiateExchangeResults.md)[]\>
+`Promise`<`ContinueExchangeSelections`\>
 
 credentials query with matching verifiable presentations
 

@@ -10,23 +10,29 @@ import { CacheClient, fromPrivateKey } from '../src';
 import {
   getVerifiableCredentialsService,
   IssuerFields,
+  RoleCredentialSubject,
   VerifiableCredentialsServiceBase,
 } from '../src/modules/verifiable-credentials';
 import {
+  PresentationDefinition,
   VC_API_EXCHANGE,
+  VerifiableCredential,
   VpRequest,
   VpRequestInteractServiceType,
+  VpRequestPresentationDefinitionQuery,
   VpRequestQueryType,
 } from '@ew-did-registry/credentials-interface';
 import VCStorageClient from '../src/modules/verifiable-credentials/storage-client';
+import { SelectResults, Status } from '@sphereon/pex';
 
 jest.mock('axios');
-const mockGetCredentialsByDefinition = jest.fn();
+const mockGetCredentialsByPresentationDefinition = jest.fn();
 const mockStoreCredentials = jest.fn();
 jest.mock('../src/modules/verifiable-credentials/storage-client', () => {
   return jest.fn().mockImplementation(() => {
     return {
-      getCredentialsByPresentationDefinition: mockGetCredentialsByDefinition,
+      getCredentialsByPresentationDefinition:
+        mockGetCredentialsByPresentationDefinition,
       store: mockStoreCredentials,
     };
   });
@@ -50,48 +56,6 @@ describe('Verifiable credentials tests', () => {
       issuerFields,
       expirationDate,
     });
-  };
-
-  const vpRequest: VpRequest = {
-    query: [
-      {
-        type: VpRequestQueryType.presentationDefinition,
-        credentialQuery: [
-          {
-            presentationDefinition: {
-              id: '286bc1e0-f1bd-488a-a873-8d71be3c690e',
-              input_descriptors: [
-                {
-                  id: '<DESCRIPTOR ID>',
-                  name: 'Descriptor name',
-                  purpose: 'Descritor purpose',
-                  constraints: {
-                    fields: [
-                      {
-                        path: ['$.credentialSubject.role.namespace'],
-                        filter: {
-                          type: 'string',
-                          const: namespace,
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    ],
-    interact: {
-      service: [
-        {
-          serviceEndpoint: '',
-          type: VpRequestInteractServiceType.unmediatedPresentation,
-        },
-      ],
-    },
-    challenge: '',
   };
 
   beforeEach(async () => {
@@ -376,34 +340,107 @@ describe('Verifiable credentials tests', () => {
   });
 
   describe('Verifiable credentials exchange', () => {
-    const exchangeUrl = 'exchange url with exchange id';
+    const vpRequest: VpRequest = {
+      query: [
+        {
+          type: VpRequestQueryType.presentationDefinition,
+          credentialQuery: [
+            {
+              presentationDefinition: {
+                id: '286bc1e0-f1bd-488a-a873-8d71be3c690e',
+                input_descriptors: [
+                  {
+                    id: '<DESCRIPTOR ID>',
+                    name: 'Descriptor name',
+                    purpose: 'Descriptor purpose',
+                    constraints: {
+                      fields: [
+                        {
+                          path: ['$.credentialSubject.role.namespace'],
+                          filter: {
+                            type: 'string',
+                            const: namespace,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+      interact: {
+        service: [
+          {
+            serviceEndpoint: '',
+            type: VpRequestInteractServiceType.unmediatedPresentation,
+          },
+        ],
+      },
+      challenge: '',
+    };
+    const exchangeUrl = 'http://vc-api/exchanges/exchangeId';
+    let requiredCredentials: VerifiableCredential<RoleCredentialSubject>;
+    const issuedPresentation = jest.fn();
+
+    beforeAll(async () => {
+      requiredCredentials = await createExampleSignedCredential([]);
+      (axios as jest.Mocked<typeof axios>).post.mockImplementation((url) => {
+        return Promise.resolve({
+          data: url === exchangeUrl ? vpRequest : '',
+        });
+      });
+      mockGetCredentialsByPresentationDefinition.mockImplementation(
+        (definition: PresentationDefinition): Promise<SelectResults> =>
+          Promise.resolve(
+            definition.id ===
+              (
+                vpRequest.query[0]
+                  .credentialQuery[0] as VpRequestPresentationDefinitionQuery
+              ).presentationDefinition.id
+              ? {
+                  verifiableCredential: [requiredCredentials],
+                  areRequiredCredentialsPresent: Status.INFO,
+                }
+              : { areRequiredCredentialsPresent: Status.ERROR }
+          )
+      );
+    });
 
     test('initiateExchange() should return presentation matching presentation request', async () => {
-      const vc = await createExampleSignedCredential([]);
-      (axios as jest.Mocked<typeof axios>).post.mockImplementationOnce(
-        (url) => {
-          return Promise.resolve({
-            data: url === exchangeUrl ? vpRequest : '',
-          });
-        }
-      );
-      mockGetCredentialsByDefinition.mockImplementationOnce((vpDefinition) =>
-        Promise.resolve(
-          vpDefinition ===
-            vpRequest.query[0].credentialQuery[0].presentationDefinition
-            ? { verifiableCredential: [vc] }
-            : []
-        )
-      );
-      const [{ presentationDefinition, selectResults }] =
+      const [{ selectResults }] =
         await verifiableCredentialsService.initiateExchange({
           type: VC_API_EXCHANGE,
           url: exchangeUrl,
         });
-      expect(presentationDefinition).toEqual(
-        vpRequest.query[0].credentialQuery[0].presentationDefinition
+      expect(selectResults.verifiableCredential).toHaveLength(1);
+    });
+
+    test('continueExchange() should return issued credentials', async () => {
+      const [{ selectResults }] =
+        await verifiableCredentialsService.initiateExchange({
+          type: VC_API_EXCHANGE,
+          url: exchangeUrl,
+        });
+
+      (axios as jest.Mocked<typeof axios>).put.mockImplementationOnce((url) =>
+        Promise.resolve({
+          data:
+            url === vpRequest.interact.service[0].serviceEndpoint
+              ? { errors: [], vp: issuedPresentation, vpRequest: undefined }
+              : null,
+        })
       );
-      expect(selectResults.verifiableCredential).toEqual([vc]);
+
+      expect(
+        await verifiableCredentialsService.continueExchange({
+          vpRequest,
+          credentials:
+            selectResults.verifiableCredential as VerifiableCredential<RoleCredentialSubject>[],
+        })
+      ).toEqual(issuedPresentation);
     });
   });
 });
