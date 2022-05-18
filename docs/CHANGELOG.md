@@ -1,3 +1,10 @@
+## [5.1.0-alpha.31](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.30...v5.1.0-alpha.31) (2022-05-18)
+
+
+### Features
+
+* continue credentials exchange ([fd07ba0](https://github.com/energywebfoundation/iam-client-lib/commit/fd07ba0a67611b36f4b5e53ed054bf491e9d0375))
+
 ## [5.1.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.29...v5.1.0-alpha.30) (2022-05-17)
 
 
