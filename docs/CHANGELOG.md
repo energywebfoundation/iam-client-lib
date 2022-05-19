@@ -1,3 +1,19 @@
+## [6.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.31...v6.0.0-alpha.1) (2022-05-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* `VerifiableCredentialsService` is initialized earlier.
+
+### Features
+
+* remove verifiable credentials storage ([9501481](https://github.com/energywebfoundation/iam-client-lib/commit/9501481acd4fc1f11819e3f3564caf82d2f432ce))
+
+
+### Bug Fixes
+
+* add checking if service endpoint is a CID ([a0b5d1a](https://github.com/energywebfoundation/iam-client-lib/commit/a0b5d1ab44fdbe4551a4c18e1d96fec831676b9b))
+
 ## [5.1.0-alpha.31](https://github.com/energywebfoundation/iam-client-lib/compare/v5.1.0-alpha.30...v5.1.0-alpha.31) (2022-05-18)
 
 
