@@ -42,8 +42,8 @@ export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServi
     proof_options: string
   ) => Promise<string>;
 
-  constructor(_signerService: SignerService) {
-    super(_signerService);
+  constructor(_signerService: SignerService, _cacheClient) {
+    super(_signerService, _cacheClient);
 
     this.completeIssueCredential = completeIssueCredential;
     this.prepareIssueCredential = prepareIssueCredential;
@@ -54,8 +54,11 @@ export class VerifiableCredentialsServiceNode extends VerifiableCredentialsServi
     this.verifyPresentation = verifyPresentation;
   }
 
-  static async create(signerService: SignerService) {
-    const service = new VerifiableCredentialsServiceNode(signerService);
+  static async create(signerService: SignerService, cacheClient) {
+    const service = new VerifiableCredentialsServiceNode(
+      signerService,
+      cacheClient
+    );
     return service;
   }
 }

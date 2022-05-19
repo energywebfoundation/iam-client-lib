@@ -1,4 +1,3 @@
-import { PresentationDefinition } from '@ew-did-registry/credentials-interface';
 import { IPresentationDefinition, SelectResults } from '@sphereon/pex';
 import { IssuerFields } from './role-credential.types';
 
@@ -47,6 +46,6 @@ export interface VerifyVerifiableCredentialResults {
 }
 
 export interface InitiateExchangeResults {
-  presentationDefinition: PresentationDefinition;
+  presentationDefinition: IPresentationDefinition;
   selectResults: SelectResults;
 }

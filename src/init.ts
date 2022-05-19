@@ -62,9 +62,6 @@ export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
 
 export async function init(signerService: SignerService) {
   const messagingService = await MessagingService.create(signerService);
-  const verifiableCredentialsService = await getVerifiableCredentialsService(
-    signerService
-  );
 
   async function connectToCacheServer() {
     const chainId = signerService.chainId;
@@ -74,6 +71,10 @@ export async function init(signerService: SignerService) {
     const cacheClient = new CacheClient(signerService);
     await cacheClient.init();
     await cacheClient.login();
+    const verifiableCredentialsService = await getVerifiableCredentialsService(
+      signerService,
+      cacheClient
+    );
     const domainsService = await DomainsService.create(
       signerService,
       cacheClient
@@ -115,6 +116,7 @@ export async function init(signerService: SignerService) {
       assetsService,
       connectToDidRegistry,
       stakingPoolService,
+      verifiableCredentialsService,
     };
   }
 
@@ -122,6 +124,5 @@ export async function init(signerService: SignerService) {
     signerService,
     messagingService,
     connectToCacheServer,
-    verifiableCredentialsService,
   };
 }
