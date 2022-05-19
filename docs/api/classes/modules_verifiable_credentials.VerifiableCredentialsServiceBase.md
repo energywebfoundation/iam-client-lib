@@ -6,9 +6,7 @@ Service responsible for managing verifiable credentials and presentations.
 You can read more about verifiable credentials data model [here](https://www.w3.org/TR/vc-data-model/).
 
 ```typescript
-const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
-const { connectToDidRegistry } = await connectToCacheServer();
-const { verifiableCredentialsService } = await connectToDidRegistry();
+const { verifiableCredentialsService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
 verifiableCredentialsService.createRoleVC(...);
 ```
 
@@ -32,14 +30,13 @@ verifiableCredentialsService.createRoleVC(...);
 
 ### constructor
 
-• **new VerifiableCredentialsServiceBase**(`_signerService`, `_storage`)
+• **new VerifiableCredentialsServiceBase**(`_signerService`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `_storage` | `default` |
 
 ## Methods
 
@@ -191,14 +188,13 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `storage`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ `Static` **create**(`signerService`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `storage` | `default` |
 
 #### Returns
 

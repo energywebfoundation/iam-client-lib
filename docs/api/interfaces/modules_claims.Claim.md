@@ -22,6 +22,7 @@
 - [subject](modules_claims.Claim.md#subject)
 - [subjectAgreement](modules_claims.Claim.md#subjectagreement)
 - [token](modules_claims.Claim.md#token)
+- [vp](modules_claims.Claim.md#vp)
 
 ## Properties
 
@@ -118,3 +119,9 @@ ___
 ### token
 
 • **token**: `string`
+
+___
+
+### vp
+
+• `Optional` **vp**: `VerifiablePresentation`

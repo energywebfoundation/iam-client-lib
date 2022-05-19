@@ -25,7 +25,6 @@ import {
   verifiableCredentialEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
 } from './types';
-import VCStorageClient from './storage-client';
 import { ERROR_MESSAGES } from '../../errors';
 
 /**
@@ -33,9 +32,7 @@ import { ERROR_MESSAGES } from '../../errors';
  * You can read more about verifiable credentials data model [here](https://www.w3.org/TR/vc-data-model/).
  *
  * ```typescript
- * const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
- * const { connectToDidRegistry } = await connectToCacheServer();
- * const { verifiableCredentialsService } = await connectToDidRegistry();
+ * const { verifiableCredentialsService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
  * verifiableCredentialsService.createRoleVC(...);
  * ```
  * */
@@ -120,17 +117,12 @@ export abstract class VerifiableCredentialsServiceBase {
     proof_options: string
   ): Promise<string>;
 
-  constructor(
-    protected readonly _signerService: SignerService,
-    private readonly _storage: VCStorageClient
-  ) {}
+  constructor(protected readonly _signerService: SignerService) {}
 
   // * Should be overridden by the implementation
   static async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    signerService: SignerService,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    storage: VCStorageClient
+    signerService: SignerService
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
@@ -162,10 +154,8 @@ export abstract class VerifiableCredentialsServiceBase {
 
     return Promise.all(
       credentialQuery.map(async ({ presentationDefinition }) => {
-        const selectResults =
-          await this._storage.getCredentialsByPresentationDefinition(
-            presentationDefinition
-          );
+        // TODO
+        const selectResults = {} as any;
         return {
           presentationDefinition,
           selectResults,

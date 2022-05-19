@@ -1,4 +1,5 @@
 import { Wallet, providers } from 'ethers';
+import { CID } from 'multiformats/cid';
 import { KeyType } from '@ew-did-registry/keys';
 import { JWT } from '@ew-did-registry/jwt';
 import { ProxyOperator } from '@ew-did-registry/proxyidentity';
@@ -589,6 +590,10 @@ export class DidRegistry {
   }: DownloadClaimsOptions): Promise<(IServiceEndpoint & ClaimData)[]> {
     return Promise.all(
       services.map(async ({ serviceEndpoint, ...rest }) => {
+        if (!this.isCID(serviceEndpoint)) {
+          return { serviceEndpoint, ...rest };
+        }
+
         const data = await this._ipfsStore.get(serviceEndpoint);
         const { claimData, ...claimRest } = this._jwt?.decode(data) as {
           claimData: ClaimData;
@@ -642,6 +647,32 @@ export class DidRegistry {
         ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
           (e as Error).message
       );
+    }
+  }
+
+  /**
+   * Check if given value is a valid IPFS CID.
+   *
+   * ```typescript
+   * didRegistry.isCID('Qm...');
+   * ```
+   *
+   * @param {Any} hash value to check
+   *
+   */
+  private isCID(hash: unknown): boolean {
+    try {
+      if (typeof hash === 'string') {
+        return Boolean(CID.parse(hash));
+      }
+
+      if (hash instanceof Uint8Array) {
+        return Boolean(CID.decode(hash));
+      }
+
+      return Boolean(CID.asCID(hash));
+    } catch (e) {
+      return false;
     }
   }
 }
