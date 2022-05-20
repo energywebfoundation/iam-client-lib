@@ -491,7 +491,7 @@ export abstract class VerifiableCredentialsServiceBase {
   /**
    * Returns issued role verifiable credentials which matches definition
    *
-   * @param presentationDefinition
+   * @param presentationDefinition credential requirements
    * @returns results of matching each role verifiable credential to definition
    */
   public async getCredentialsByDefinition(
