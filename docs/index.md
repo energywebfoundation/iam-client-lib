@@ -4,7 +4,7 @@
 
 
 <p align="center">
-  <a href="https://www.energyweb.org" target="blank"><img src="./docs/images/EnergyWeb_logo.png" width="120" alt="Energy Web Foundation Logo" /></a>
+  <a href="https://www.energyweb.org" target="blank"><img src="/docs/images/EnergyWeb_logo.png" width="120" alt="Energy Web Foundation Logo" /></a>
 </p>
 
 # Identity and Access Management (IAM) Client Library
