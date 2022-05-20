@@ -150,7 +150,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && rm -rf docs/api && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && git add -A docs/api/"
+      "pre-commit": "lint-staged && rm -rf docs/api && cp README.md docs/index.md && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && git add -A docs/api/"
     }
   },
   "lint-staged": {

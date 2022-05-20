@@ -42,7 +42,7 @@ verifiableCredentialsService.createRoleVC(...);
 
 ### continueExchange
 
-▸ **continueExchange**(`__namedParameters`): `Promise`<`undefined` \| `VpRequest` \| `VerifiablePresentation`\>
+▸ **continueExchange**(`__namedParameters`): `Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
 **`description`** Sends credentials requested by issuer and returns either issued credentials or next credentials request
 
@@ -54,7 +54,7 @@ verifiableCredentialsService.createRoleVC(...);
 
 #### Returns
 
-`Promise`<`undefined` \| `VpRequest` \| `VerifiablePresentation`\>
+`Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
 issued credentials or request of additional credentials
 

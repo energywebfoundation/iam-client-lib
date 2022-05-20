@@ -21,6 +21,10 @@ Using `iam-client-lib`, Switchboard allows users to:
 - Define hierarchical, role-based structures for [organizations](./docs/guides/organization.md), [applications](./docs/guides/application.md) and [assets](./docs/guides/asset.md) that participate in grid activities
 - Request and issue Verifiable Credentials that are required to take on roles within an organization or application that is registered on Switchboard
 
+## Documentation
+For documentation on `iam-client-lib` modules and API: 
+- [ReadTheDocs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/)
+
 ## Development
 The following is for installing and building `iam-client-lib` directly. 
 For guidance on how to integrate the library into an application, see [**Getting Started**](#getting-started) below. 
@@ -133,10 +137,6 @@ const {
 ```js
 const { didRegistry, claimsService } = await connectToDidRegistry();
 ```
-
-## Documentation
-For further documentation on `iam-client-lib` modules and API: 
-- [ReadTheDocs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/)
 
 ## Contributing Guidelines 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
