@@ -224,6 +224,20 @@ export class SignerService {
   }
 
   /**
+   * Get current connection chain id in CAIP-2 format.
+   * https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+   *
+   * ```typescript
+   * signerService.chainIdCAIP2;
+   * ```
+   *
+   * @return chain id
+   */
+  get chainIdCAIP2() {
+    return `eip155:${this._chainId}`;
+  }
+
+  /**
    * Get provider type of current signer connection.
    *
    * ```typescript

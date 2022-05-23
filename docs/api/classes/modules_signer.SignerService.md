@@ -20,6 +20,7 @@ signerService.signMessage(...);
 - [accountInfo](modules_signer.SignerService.md#accountinfo)
 - [address](modules_signer.SignerService.md#address)
 - [chainId](modules_signer.SignerService.md#chainid)
+- [chainIdCAIP2](modules_signer.SignerService.md#chainidcaip2)
 - [did](modules_signer.SignerService.md#did)
 - [didHex](modules_signer.SignerService.md#didhex)
 - [isEthSigner](modules_signer.SignerService.md#isethsigner)
@@ -109,6 +110,25 @@ signerService.chainId;
 #### Returns
 
 `number`
+
+chain id
+
+___
+
+### chainIdCAIP2
+
+• `get` **chainIdCAIP2**(): `string`
+
+Get current connection chain id in CAIP-2 format.
+https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+
+```typescript
+signerService.chainIdCAIP2;
+```
+
+#### Returns
+
+`string`
 
 chain id
 

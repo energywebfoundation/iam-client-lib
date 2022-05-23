@@ -37,6 +37,7 @@
 
 | Name | Type |
 | :------ | :------ |
+| `CredentialStatus` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `CredentialSubject` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `EIP712Domain` | `never`[] |
 | `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
@@ -68,6 +69,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
+| `CredentialStatus` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `CredentialSubject` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `EIP712Domain` | `never`[] |
 | `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |

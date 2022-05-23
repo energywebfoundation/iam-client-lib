@@ -1,5 +1,6 @@
 import { ICredentialSubject, PEX } from '@sphereon/pex';
 import { v4 as uuid } from 'uuid';
+import { id } from 'ethers/lib/utils';
 import axios from 'axios';
 import {
   VerifiableCredential,
@@ -26,6 +27,7 @@ import {
   verifiablePresentationWithCredentialEIP712Types,
 } from './types';
 import { ERROR_MESSAGES } from '../../errors';
+import { chainConfigs } from '../../config';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
@@ -513,6 +515,19 @@ export abstract class VerifiableCredentialsServiceBase {
     if (params.expirationDate) {
       credential.expirationDate = params.expirationDate.toISOString();
     }
+
+    credential.credentialStatus = {
+      id: `https://energyweb.org/credential/${id(
+        JSON.stringify(credential)
+      )}#list`,
+      type: 'EVMRevocationList2022',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      chainId: this._signerService.chainIdCAIP2,
+      contractAddress:
+        chainConfigs()[this._signerService.chainId]
+          .credentialRevocationRegistryAddress,
+    };
 
     return credential;
   }

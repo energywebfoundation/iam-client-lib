@@ -7,6 +7,7 @@ export const verifiableCredentialEIP712Types = {
     { name: 'issuer', type: 'string' },
     { name: 'issuanceDate', type: 'string' },
     { name: 'credentialSubject', type: 'CredentialSubject' },
+    { name: 'credentialStatus', type: 'CredentialStatus' },
     { name: 'proof', type: 'Proof' },
   ],
   EWFRole: [
@@ -21,6 +22,12 @@ export const verifiableCredentialEIP712Types = {
     { name: 'id', type: 'string' },
     { name: 'role', type: 'EWFRole' },
     { name: 'issuerFields', type: 'IssuerFields[]' },
+  ],
+  CredentialStatus: [
+    { name: 'id', type: 'string' },
+    { name: 'type', type: 'string' },
+    { name: 'chainId', type: 'string' },
+    { name: 'contractAddress', type: 'address' },
   ],
   Proof: [
     { name: '@context', type: 'string' },
@@ -56,6 +63,7 @@ export const verifiablePresentationWithCredentialEIP712Types = {
     { name: 'IssuerFields', type: 'VC712DomainTypedDataField[]' },
     { name: 'Proof', type: 'VC712DomainTypedDataField[]' },
     { name: 'VerifiableCredential', type: 'VC712DomainTypedDataField[]' },
+    { name: 'CredentialStatus', type: 'VC712DomainTypedDataField[]' },
   ],
   VC712Domain: [
     { name: 'domain', type: 'VC712DomainData' },
@@ -65,6 +73,7 @@ export const verifiablePresentationWithCredentialEIP712Types = {
   EWFRole: verifiableCredentialEIP712Types.EWFRole,
   IssuerFields: verifiableCredentialEIP712Types.IssuerFields,
   CredentialSubject: verifiableCredentialEIP712Types.CredentialSubject,
+  CredentialStatus: verifiableCredentialEIP712Types.CredentialStatus,
   VCProof: [
     ...verifiableCredentialEIP712Types.Proof,
     { type: 'string', name: 'proofValue' },
@@ -77,6 +86,7 @@ export const verifiablePresentationWithCredentialEIP712Types = {
     { type: 'string', name: 'issuer' },
     { type: 'string', name: 'issuanceDate' },
     { type: 'CredentialSubject', name: 'credentialSubject' },
+    { type: 'CredentialStatus', name: 'credentialStatus' },
     { type: 'VCProof', name: 'proof' },
   ],
   Proof: verifiableCredentialEIP712Types.Proof,

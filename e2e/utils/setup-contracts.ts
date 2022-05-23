@@ -106,6 +106,8 @@ export const setupENS = async (rootOwner: string) => {
     assetManagerAddress: assetsManager.address,
     domainNotifierAddress: domainNotifer.address,
     claimManagerAddress: claimManager.address,
+    credentialRevocationRegistryAddress:
+      '0x0000000000000000000000000000000000000000',
   });
   const tx = await ensRegistry.setSubnodeRecord(
     namehash(''),

@@ -34,6 +34,7 @@ export interface ChainConfig {
   didRegistryAddress: string;
   claimManagerAddress: string;
   stakingPoolFactoryAddress: string;
+  credentialRevocationRegistryAddress: string;
 }
 
 export type ChainId = number;
@@ -56,6 +57,8 @@ const chainConfig: Record<number, ChainConfig> = {
     didRegistryAddress: VoltaAddress1056,
     claimManagerAddress: VOLTA_CLAIM_MANAGER_ADDRESS,
     stakingPoolFactoryAddress: VOLTA_STAKING_POOL_FACTORY_ADDRESS,
+    credentialRevocationRegistryAddress:
+      '0x0000000000000000000000000000000000000000',
   },
   [EWC_CHAIN_ID]: {
     chainName: Chain.EWC,
@@ -70,6 +73,8 @@ const chainConfig: Record<number, ChainConfig> = {
     didRegistryAddress: EWC_ADDRESS_1056,
     claimManagerAddress: EWC_CLAIM_MANAGER_ADDRESS,
     stakingPoolFactoryAddress: '', // This is not deployed on EWC
+    credentialRevocationRegistryAddress:
+      '0x0000000000000000000000000000000000000000',
   },
 };
 

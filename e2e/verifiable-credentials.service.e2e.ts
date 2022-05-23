@@ -20,6 +20,7 @@ import {
   VpRequestInteractServiceType,
   VpRequestQueryType,
 } from '@ew-did-registry/credentials-interface';
+import { PEX, Status } from '@sphereon/pex';
 
 jest.mock('axios');
 
@@ -178,6 +179,45 @@ describe('Verifiable credentials tests', () => {
       await expect(
         verifiableCredentialsService.verify(vc)
       ).resolves.toBeTruthy();
+    });
+
+    test('PEX library should work with custom `credentialStatus` object', async () => {
+      const pex = new PEX();
+      const vcs = await Promise.all([
+        createExampleSignedCredential([]),
+        createExampleSignedCredential([{ key: 'foo', value: 'bar' }]),
+        createExampleSignedCredential([{ key: 'cookie', value: 'oreo' }]),
+      ]);
+
+      const presentationDefinition = {
+        id: '286bc1e0-f1bd-488a-a873-8d71be3c690e',
+        input_descriptors: [
+          {
+            id: 'find-bar-credential',
+            name: 'Descriptor name',
+            purpose: 'Descriptor purpose',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.credentialSubject.issuerFields[*].value'],
+                  filter: {
+                    type: 'string',
+                    const: 'bar',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      expect(pex.selectFrom(presentationDefinition, vcs)).toStrictEqual({
+        errors: expect.any(Array),
+        matches: expect.any(Array),
+        areRequiredCredentialsPresent: Status.INFO,
+        verifiableCredential: expect.arrayContaining([vcs[1]]),
+        warnings: expect.any(Array),
+      });
     });
   });
 
