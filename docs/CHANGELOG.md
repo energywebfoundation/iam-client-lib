@@ -1,3 +1,10 @@
+## [6.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.3...v6.0.0-alpha.4) (2022-05-24)
+
+
+### Features
+
+* add claim revocation ([2ab1d93](https://github.com/energywebfoundation/iam-client-lib/commit/2ab1d936e7afcc17ac2165272ccb8603412ed1fc))
+
 ## [6.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.2...v6.0.0-alpha.3) (2022-05-24)
 
 
