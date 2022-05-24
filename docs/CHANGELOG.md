@@ -1,3 +1,15 @@
+## [6.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.4...v6.0.0-alpha.5) (2022-05-24)
+
+
+### Features
+
+* **assets:** fix assets service interfaces ([c9c6a87](https://github.com/energywebfoundation/iam-client-lib/commit/c9c6a8742c4389653a6b593261fab784c27b5ff2))
+
+
+### Bug Fixes
+
+* **domain:** fix domain service interfaces ([50a014e](https://github.com/energywebfoundation/iam-client-lib/commit/50a014ecf8244b9f70cf530f0ea67281b8fd5cee))
+
 ## [6.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.3...v6.0.0-alpha.4) (2022-05-24)
 
 
