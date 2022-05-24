@@ -22,6 +22,7 @@ verifiableCredentialsService.createRoleVC(...);
 - [createPresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createpresentation)
 - [createRoleVC](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createrolevc)
 - [createVerifiablePresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createverifiablepresentation)
+- [getCredentialsByDefinition](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#getcredentialsbydefinition)
 - [initiateExchange](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#initiateexchange)
 - [verify](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#verify)
 - [create](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#create)
@@ -30,13 +31,14 @@ verifiableCredentialsService.createRoleVC(...);
 
 ### constructor
 
-• **new VerifiableCredentialsServiceBase**(`_signerService`)
+• **new VerifiableCredentialsServiceBase**(`_signerService`, `_cacheClient`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
+| `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
 ## Methods
 
@@ -127,6 +129,26 @@ verifiable presentation
 
 ___
 
+### getCredentialsByDefinition
+
+▸ **getCredentialsByDefinition**(`presentationDefinition`): `Promise`<`SelectResults`\>
+
+Returns issued role verifiable credentials which matches definition
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `presentationDefinition` | `IPresentationDefinition` | credential requirements |
+
+#### Returns
+
+`Promise`<`SelectResults`\>
+
+results of matching each role verifiable credential to definition
+
+___
+
 ### initiateExchange
 
 ▸ **initiateExchange**(`options`): `Promise`<`ContinueExchangeSelections`\>
@@ -188,13 +210,14 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ `Static` **create**(`signerService`, `claimsService`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
+| `claimsService` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
 #### Returns
 

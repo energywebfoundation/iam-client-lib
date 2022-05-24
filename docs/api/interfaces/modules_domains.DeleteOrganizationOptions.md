@@ -21,6 +21,6 @@ ___
 
 ### returnSteps
 
-• **returnSteps**: `string`
+• `Optional` **returnSteps**: `boolean`
 
 Indicates whether to run steps immediately (false) or return steps that can be executed later (true)
