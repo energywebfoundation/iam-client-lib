@@ -36,8 +36,12 @@ setCacheClientOptions(1111, {
   cacheServerSupportsAuth: true,
 });
 
-const { cacheClient, domainsService, connectToDidRegistry } =
-  await connectToCacheServer();
+const {
+  cacheClient,
+  domainsService,
+  connectToDidRegistry,
+  verifiableCredentialsService,
+} = await connectToCacheServer();
 ```
 
 3. Connecting to DID registry.

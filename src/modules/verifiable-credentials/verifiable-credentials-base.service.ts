@@ -1,4 +1,9 @@
-import { ICredentialSubject, PEX } from '@sphereon/pex';
+import {
+  ICredentialSubject,
+  IPresentationDefinition,
+  PEX,
+  SelectResults,
+} from '@sphereon/pex';
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
 import {
@@ -26,6 +31,7 @@ import {
   verifiablePresentationWithCredentialEIP712Types,
 } from './types';
 import { ERROR_MESSAGES } from '../../errors';
+import { CacheClient } from '../cache-client';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
@@ -117,12 +123,16 @@ export abstract class VerifiableCredentialsServiceBase {
     proof_options: string
   ): Promise<string>;
 
-  constructor(protected readonly _signerService: SignerService) {}
+  constructor(
+    protected readonly _signerService: SignerService,
+    protected readonly _cacheClient: CacheClient
+  ) {}
 
   // * Should be overridden by the implementation
   static async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    signerService: SignerService
+    signerService: SignerService,
+    claimsService: CacheClient
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
@@ -154,8 +164,9 @@ export abstract class VerifiableCredentialsServiceBase {
 
     return Promise.all(
       credentialQuery.map(async ({ presentationDefinition }) => {
-        // TODO
-        const selectResults = {} as any;
+        const selectResults = await this.getCredentialsByDefinition(
+          presentationDefinition
+        );
         return {
           presentationDefinition,
           selectResults,
@@ -475,6 +486,29 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     return true;
+  }
+
+  /**
+   * Returns issued role verifiable credentials which matches definition
+   *
+   * @param presentationDefinition credential requirements
+   * @returns results of matching each role verifiable credential to definition
+   */
+  public async getCredentialsByDefinition(
+    presentationDefinition: IPresentationDefinition
+  ): Promise<SelectResults> {
+    const claims = await this._cacheClient.getClaimsBySubject(
+      this._signerService.did,
+      {
+        isAccepted: true,
+      }
+    );
+    const vc = claims
+      .filter((claim) => claim.vp)
+      .flatMap((claim) => claim.vp!.verifiableCredential);
+
+    const pex = new PEX();
+    return pex.selectFrom(presentationDefinition, vc);
   }
 
   /**
