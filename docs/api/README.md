@@ -3,7 +3,7 @@
 </p>  
 
 <p align="center">
-  <a href="https://www.energyweb.org" target="blank"><img src="./docs/images/EnergyWeb_logo.png" width="120" alt="Energy Web Foundation Logo" /></a>
+  <a href="https://www.energyweb.org" target="blank"><img src="/docs/images/EnergyWeb_logo.png" width="120" alt="Energy Web Foundation Logo" /></a>
 </p>
 
 # Identity and Access Management (IAM) Client Library
@@ -20,6 +20,10 @@ Using `iam-client-lib`, Switchboard allows users to:
 - Create self-sovereign Decentralized Identifiers (DID) for users and assets using a connection with a crypto wallet such as MetaMask. DIDs are anchored in a smart contract on the Energh Web Chain
 - Define hierarchical, role-based structures for [organizations](./docs/guides/organization.md), [applications](./docs/guides/application.md) and [assets](./docs/guides/asset.md) that participate in grid activities
 - Request and issue Verifiable Credentials that are required to take on roles within an organization or application that is registered on Switchboard
+
+## Documentation
+For documentation on `iam-client-lib` modules and API: 
+- [ReadTheDocs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/)
 
 ## Development
 The following is for installing and building `iam-client-lib` directly. 
@@ -133,10 +137,6 @@ const {
 ```js
 const { didRegistry, claimsService } = await connectToDidRegistry();
 ```
-
-## Documentation
-For further documentation on `iam-client-lib` modules and API: 
-- [ReadTheDocs](https://energy-web-foundation-iam-client-lib.readthedocs-hosted.com/)
 
 ## Contributing Guidelines 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
