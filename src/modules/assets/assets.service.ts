@@ -214,7 +214,7 @@ export class AssetsService {
    */
   async getOfferedAssets({
     did = this._did,
-  }: GetOfferedAssetsOptions): Promise<Asset[]> {
+  }: GetOfferedAssetsOptions = {}): Promise<Asset[]> {
     return this._cacheClient.getOfferedAssets(did);
   }
 
