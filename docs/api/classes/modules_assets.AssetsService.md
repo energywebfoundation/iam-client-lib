@@ -178,7 +178,7 @@ ___
 
 ### getOfferedAssets
 
-▸ **getOfferedAssets**(`options`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getOfferedAssets**(`options?`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 Retrieve assets offered to the given user.
 

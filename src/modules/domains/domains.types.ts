@@ -174,7 +174,7 @@ export interface DeleteOrganizationOptions {
   namespace: string;
 
   /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
-  returnSteps: string;
+  returnSteps?: boolean;
 }
 
 export interface DeleteApplicationOptions {
@@ -182,7 +182,7 @@ export interface DeleteApplicationOptions {
   namespace: string;
 
   /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
-  returnSteps: string;
+  returnSteps?: boolean;
 }
 
 export interface DeleteRoleOptions {

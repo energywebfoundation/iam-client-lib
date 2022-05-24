@@ -57,7 +57,7 @@ export interface GetOwnedAssetsOptions {
 
 export interface GetOfferedAssetsOptions {
   /** DID of the user */
-  did: string;
+  did?: string;
 }
 
 export interface GetAssetByIdOptions {

@@ -12,6 +12,6 @@
 
 ### did
 
-• **did**: `string`
+• `Optional` **did**: `string`
 
 DID of the user

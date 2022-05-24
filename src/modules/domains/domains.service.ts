@@ -621,7 +621,7 @@ export class DomainsService {
    */
   async deleteOrganization({
     namespace,
-    returnSteps,
+    returnSteps = false,
   }: DeleteOrganizationOptions): Promise<
     ReturnStepWithRetryCheck[] | undefined
   > {
@@ -705,7 +705,7 @@ export class DomainsService {
    */
   async deleteApplication({
     namespace,
-    returnSteps,
+    returnSteps = false,
   }: DeleteApplicationOptions): Promise<
     ReturnStepWithRetryCheck[] | undefined
   > {

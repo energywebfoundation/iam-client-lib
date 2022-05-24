@@ -13,7 +13,7 @@
 
 ### presentationDefinition
 
-• **presentationDefinition**: `PresentationDefinition`
+• **presentationDefinition**: `IPresentationDefinition`
 
 ___
 

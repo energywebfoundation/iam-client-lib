@@ -85,13 +85,14 @@ ___
 
 ### getVerifiableCredentialsService
 
-▸ **getVerifiableCredentialsService**(`signerService`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ **getVerifiableCredentialsService**(`signerService`, `cacheClient`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](../classes/modules_signer.SignerService.md) |
+| `cacheClient` | [`CacheClient`](../classes/modules_cache_client.CacheClient.md) |
 
 #### Returns
 
