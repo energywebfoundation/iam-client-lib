@@ -31,6 +31,8 @@ export interface ProofOptions {
 
   /* Proof purpose */
   proofPurpose?: string;
+
+  /* Proof challenge */
   challenge?: string;
 }
 

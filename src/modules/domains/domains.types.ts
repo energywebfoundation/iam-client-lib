@@ -20,7 +20,7 @@ export interface IRole {
   name: string;
   namespace: string;
   owner: string;
-  definition: IRoleDefinition;
+  definition: IRoleDefinition | IRoleDefinitionV2;
   isOwnedByCurrentUser?: boolean;
 }
 
@@ -130,7 +130,7 @@ export interface CreateRoleOptions {
   namespace: string;
 
   /** Role domain definition */
-  data: IRoleDefinition | IRoleDefinitionV2;
+  data: IRoleDefinitionV2;
 
   /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
   returnSteps?: boolean;

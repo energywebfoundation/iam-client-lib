@@ -15,7 +15,7 @@
 
 ### data
 
-• **data**: `IRoleDefinition` \| `IRoleDefinitionV2`
+• **data**: `IRoleDefinitionV2`
 
 Role domain definition
 

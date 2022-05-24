@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { utils, Wallet } from 'ethers';
+import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
   IRoleDefinition,
   PreconditionType,
 } from '@energyweb/credential-governance';
+import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
-import { addressOf } from '@ew-did-registry/did-ethr-resolver';
+import { addressOf, EwSigner } from '@ew-did-registry/did-ethr-resolver';
 import { hashes, IPublicClaim } from '@ew-did-registry/claims';
 import {
   DIDAttribute,
   IServiceEndpoint,
+  ProviderTypes,
 } from '@ew-did-registry/did-resolver-interface';
 import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__factory';
 import { ERROR_MESSAGES } from '../../errors';
@@ -48,6 +50,13 @@ import {
   VerifyEnrolmentPrerequisitesOptions,
   IssueVerifiablePresentationOptions,
   ApproveRolePublishingOptions,
+  RevokeClaimOptions,
+  RevokeMultipleClaimOptions,
+  IsClaimRevokedOptions,
+  ClaimRevocationDetailsOptions,
+  GetRevocationClaimDetailsOptions,
+  GetRevocationClaimDetailsResult,
+  ClaimRevocationDetailsResult,
 } from './claims.types';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -81,6 +90,7 @@ const {
 export class ClaimsService {
   private _claimManager: string;
   private _claimManagerInterface = ClaimManager__factory.createInterface();
+  private _claimRevocation: ClaimRevocation;
 
   constructor(
     private _signerService: SignerService,
@@ -113,6 +123,30 @@ export class ClaimsService {
   async init() {
     const chainId = this._signerService.chainId;
     this._claimManager = chainConfigs()[chainId].claimManagerAddress;
+
+    const signer = this._signerService.signer;
+    const provider = signer.provider;
+    const publicKey = await this._signerService.publicKey();
+    let ewSigner: EwSigner;
+    if (
+      signer instanceof Wallet &&
+      provider instanceof providers.JsonRpcProvider
+    ) {
+      ewSigner = EwSigner.fromPrivateKey(signer.privateKey, {
+        type: ProviderTypes.HTTP,
+        uriOrInfo: provider.connection.url,
+      });
+    } else if (provider instanceof providers.JsonRpcProvider) {
+      ewSigner = EwSigner.fromEthersSigner(signer, publicKey);
+    } else {
+      /** @todo from EIP1193Provider */
+      throw new Error(ERROR_MESSAGES.UNKNOWN_PROVIDER);
+    }
+
+    this._claimRevocation = new ClaimRevocation(
+      ewSigner,
+      chainConfigs()[chainId].claimsRevocationRegistryAddress
+    );
   }
 
   /**
@@ -841,6 +875,203 @@ export class ClaimsService {
    */
   getNamespaceFromClaimType(claimType: string): string {
     return claimType.split('.roles.')[1];
+  }
+
+  /**
+   * Revoke On-Chain issued claim by `claimId` or given `namespace` and `subject`. Required `claimId` or `claim` parameters.
+   *
+   * ```typescript
+   * claimsService.revokeClaim({
+   *     claim: {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *     },
+   *     registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.revokeClaim({
+   *     claimId: claim.id,
+   *     registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+   * });
+   * ```
+   *
+   * @param {RevokeClaimOptions} options object containing options
+   * @return true if claim was revoked
+   */
+  async revokeClaim(options: RevokeClaimOptions): Promise<boolean> {
+    const revoker = this._signerService.did;
+    const { namespace, subject } = await this.getRevocationClaimDetails(
+      options
+    );
+
+    return await this._claimRevocation.revokeClaim(namespace, subject, revoker);
+  }
+
+  /**
+   * Revoke On-Chain issued claims of the given namespace for multiple subjects. Namespace must be the same for all subjects.
+   * Specify `claims` or `claimIds` parameters.
+   *
+   * ```typescript
+   * claimsService.revokeMultipleClaim({
+   *     claims: [{
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *         registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+   *     },
+   *     {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...1',
+   *         registrationTypes = [RegistrationTypes.OnChain],
+   *     }],
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.revokeMultipleClaim({
+   *     claimIds: ['245a40a9...776071ca57cec', '245a40a9...776071ca57cec'],
+   * });
+   * ```
+   *
+   * @param {RevokeMultipleClaimOptions} options object containing options
+   */
+  async revokeMultipleClaim({
+    claimIds,
+    claims,
+  }: RevokeMultipleClaimOptions): Promise<void> {
+    if (!claimIds && !claims) {
+      throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_MISSING_PARAMETERS);
+    }
+
+    const revoker = this._signerService.did;
+    let claimsDetailsToRevoke: RevokeMultipleClaimOptions['claims'] = [
+      ...(claims || []),
+    ];
+    let namespace = claims?.[0]?.namespace || '';
+
+    if (claimIds) {
+      const claimsDetails = await Promise.all([
+        ...claimIds.map(async (claimId) => {
+          return await this.getClaimById(claimId);
+        }),
+      ]);
+      claimsDetailsToRevoke = [
+        ...(claimsDetails.filter((claim) => !!claim) as Claim[]),
+      ];
+      namespace = claimsDetailsToRevoke[0]?.namespace;
+    }
+
+    await this._claimRevocation.revokeClaimforDIDs(
+      namespace,
+      claimsDetailsToRevoke.map((claim) => claim.subject),
+      revoker
+    );
+  }
+
+  /**
+   * Check if On-Chain claim is revoked.
+   *
+   * ```typescript
+   * claimsService.isClaimRevoked({
+   *     claim: {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *     },
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.isClaimRevoked({
+   *     claimId: claim.id,
+   * });
+   * ```
+   *
+   * @param {IsClaimRevokedOptions} options object containing options
+   * @return true if claim is revoked
+   */
+  async isClaimRevoked(options: IsClaimRevokedOptions): Promise<boolean> {
+    const { namespace, subject } = await this.getRevocationClaimDetails(
+      options
+    );
+
+    return this._claimRevocation.isClaimRevoked(namespace, subject);
+  }
+
+  /**
+   * Get the revocation details for a subject's On-Chain claim. Returns the revoker and revocationTimeStamp for the revocation.
+   *
+   * ```typescript
+   * claimsService.claimRevocationDetails({
+   *     claim: {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *     },
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.claimRevocationDetails({
+   *     claimId: claim.id,
+   * });
+   * ```
+   *
+   * @param {ClaimRevocationDetailsOptions} options object containing options
+   * @return revocation details
+   */
+  async claimRevocationDetails(
+    options: ClaimRevocationDetailsOptions
+  ): Promise<ClaimRevocationDetailsResult | undefined> {
+    const { namespace, subject } = await this.getRevocationClaimDetails(
+      options
+    );
+
+    const { 0: revoker, 1: timestamp } =
+      await this._claimRevocation.getRevocationDetail(namespace, subject);
+
+    if (revoker === emptyAddress) {
+      return undefined;
+    }
+
+    return {
+      revoker,
+      timestamp: parseInt(timestamp, 10),
+    };
+  }
+
+  /**
+   * Pick up the claim from the params and return the claim data.
+   * Choose `claimId` first, then `claim`. Throw an error if both are missing.
+   *
+   * @param {GetRevocationClaimDetailsOptions} data claim data or claim id
+   * @return claim data
+   */
+  private async getRevocationClaimDetails({
+    claimId,
+    claim,
+  }: GetRevocationClaimDetailsOptions): Promise<GetRevocationClaimDetailsResult> {
+    if (!claimId && !claim) {
+      throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_MISSING_PARAMETERS);
+    }
+
+    let namespace: string | undefined = claim?.namespace || '';
+    let subject: string | undefined = claim?.subject || '';
+
+    if (claimId) {
+      const claimData = await this.getClaimById(claimId);
+
+      if (!claimData) {
+        throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_NOT_FOUND);
+      }
+
+      namespace = claimData.namespace;
+      subject = claimData.subject;
+    }
+
+    return {
+      namespace,
+      subject,
+    };
   }
 
   /**

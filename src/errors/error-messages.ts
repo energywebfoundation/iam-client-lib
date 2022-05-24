@@ -29,4 +29,6 @@ export enum ERROR_MESSAGES {
   CLAIM_TYPE_MISSING = 'Claim type is required for On-chain registration',
   ERROR_CONTINUING_EXCHANGE = 'Error continuing exchange',
   ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED = 'On-chain role subject agreement not specified',
+  REVOKE_CLAIM_MISSING_PARAMETERS = 'Revoke claim missing parameters. Required one of: claimId or claim',
+  REVOKE_CLAIM_NOT_FOUND = 'Could not find claim to revoke',
 }

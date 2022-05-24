@@ -114,6 +114,10 @@ export class DidRegistry {
     return this._ipfsStore;
   }
 
+  get identityOwner() {
+    return this._identityOwner;
+  }
+
   async init() {
     this._ipfsStore = new DidStore(this._ipfsUrl);
     await this._setOperator();
