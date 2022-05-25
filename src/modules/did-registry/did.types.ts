@@ -67,6 +67,9 @@ export interface IssuePublicClaimOptions {
 
   /* Public claim data object */
   publicClaim?: IPublicClaim;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface UpdateDocumentOptions {

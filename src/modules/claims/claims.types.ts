@@ -73,7 +73,7 @@ export const readyToBeRegisteredOnchain = (
     | 'onChainProof'
     | 'acceptedBy'
     | 'subjectAgreement'
-  >
+  > & { expirationTimestamp?: number }
 > => {
   if (!claim) return false;
   if (typeof claim !== 'object') return false;
@@ -189,8 +189,14 @@ export interface IssueClaimRequestOptions {
   /** Indicates whether to publish role on-chain or not (default: false) */
   publishOnChain?: boolean;
 
-  /** Indicates if credential is actual of the time of verification */
+  /*
+   * Indicates credential status (such as revocation status)
+   * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
+   */
   credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface RegisterOnchainOptions {
@@ -214,6 +220,9 @@ export interface RegisterOnchainOptions {
 
   /** DID of the claim subject */
   subject?: string;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface RejectClaimRequestOptions {
@@ -250,6 +259,15 @@ export interface IssueClaimOptions {
     /** Issuers fields that role is requiring */
     issuerFields?: { key: string; value: string | number }[];
   };
+
+  /*
+   * Indicates credential status (such as revocation status)
+   * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
+   */
+  credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface PublishPublicClaimOptions {
@@ -303,8 +321,14 @@ export interface IssueVerifiablePresentationOptions {
   /** Issuers fields that role is requiring */
   issuerFields?: { key: string; value: string | number }[];
 
-  /** Indicates if credential is actual of the time of verification */
+  /*
+   * Indicates credential status (such as revocation status)
+   * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
+   */
   credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface ApproveRolePublishingOptions {

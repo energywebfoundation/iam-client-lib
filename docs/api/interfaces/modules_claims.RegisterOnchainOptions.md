@@ -9,6 +9,7 @@
 - [acceptedBy](modules_claims.RegisterOnchainOptions.md#acceptedby)
 - [claimType](modules_claims.RegisterOnchainOptions.md#claimtype)
 - [claimTypeVersion](modules_claims.RegisterOnchainOptions.md#claimtypeversion)
+- [expirationTimestamp](modules_claims.RegisterOnchainOptions.md#expirationtimestamp)
 - [onChainProof](modules_claims.RegisterOnchainOptions.md#onchainproof)
 - [subject](modules_claims.RegisterOnchainOptions.md#subject)
 - [subjectAgreement](modules_claims.RegisterOnchainOptions.md#subjectagreement)
@@ -37,6 +38,14 @@ ___
 • `Optional` **claimTypeVersion**: `string`
 
 Version of the claim type
+
+___
+
+### expirationTimestamp
+
+• `Optional` **expirationTimestamp**: `number`
+
+Defines how long the claim is valid.
 
 ___
 

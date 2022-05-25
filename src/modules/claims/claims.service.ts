@@ -398,6 +398,7 @@ export class ClaimsService {
     issuerFields,
     publishOnChain = true,
     credentialStatus,
+    expirationTimestamp,
   }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
       claimData: { claimType: string; claimTypeVersion: number };
@@ -418,7 +419,7 @@ export class ClaimsService {
     const { claimType: role, claimTypeVersion: version } = claimData;
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const expiry = defaultClaimExpiry;
+      const expiry = expirationTimestamp || defaultClaimExpiry;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -437,6 +438,7 @@ export class ClaimsService {
           subjectAgreement,
           onChainProof,
           acceptedBy: this._signerService.did,
+          expirationTimestamp: expiry,
         });
       }
     }
@@ -454,6 +456,7 @@ export class ClaimsService {
       const [issuedToken, vp] = await Promise.all([
         this._didRegistry.issuePublicClaim({
           publicClaim,
+          expirationTimestamp,
         }),
         this.issueVerifiablePresentation({
           subject: sub,
@@ -461,6 +464,7 @@ export class ClaimsService {
           version: version.toString(),
           issuerFields,
           credentialStatus,
+          expirationTimestamp,
         }),
       ]);
       message.issuedToken = issuedToken;
@@ -489,8 +493,9 @@ export class ClaimsService {
    */
   async registerOnchain(claim: RegisterOnchainOptions): Promise<void> {
     // backward compatibility with token
-    if (claim.token)
+    if (claim.token) {
       claim = { ...claim, ...this.extractClaimRequest(claim.token) };
+    }
 
     if (
       !claim.subjectAgreement &&
@@ -515,9 +520,9 @@ export class ClaimsService {
       acceptedBy,
       subjectAgreement,
       onChainProof,
+      expirationTimestamp,
     } = claim;
-    const expiry = defaultClaimExpiry;
-
+    const expiry = expirationTimestamp || defaultClaimExpiry;
     const data = this._claimManagerInterface.encodeFunctionData('register', [
       addressOf(subject),
       namehash(claimType),
@@ -600,6 +605,8 @@ export class ClaimsService {
     subject,
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
+    credentialStatus,
+    expirationTimestamp,
   }: IssueClaimOptions): Promise<string | undefined> {
     await this.verifyVcIssuer(claim.claimType);
     await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
@@ -616,15 +623,28 @@ export class ClaimsService {
         signer: this._signerService.did,
         claimData: claim,
       };
+      const [issuedToken, vp] = await Promise.all([
+        this._didRegistry.issuePublicClaim({
+          publicClaim,
+          expirationTimestamp,
+        }),
+        this.issueVerifiablePresentation({
+          subject,
+          namespace: claim.claimType,
+          version: claim.claimTypeVersion.toString(),
+          issuerFields: claim.issuerFields,
+          credentialStatus,
+          expirationTimestamp,
+        }),
+      ]);
 
-      message.issuedToken = await this._didRegistry.issuePublicClaim({
-        publicClaim,
-      });
+      message.issuedToken = issuedToken;
+      message.vp = vp;
     }
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
-      const expiry = defaultClaimExpiry;
+      const expiry = expirationTimestamp || defaultClaimExpiry;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -1213,6 +1233,9 @@ export class ClaimsService {
       version: options.version,
       issuerFields: options.issuerFields,
       credentialStatus: options.credentialStatus,
+      expirationDate: options.expirationTimestamp
+        ? new Date(options.expirationTimestamp)
+        : undefined,
     });
     const vp =
       await this._verifiableCredentialService.createVerifiablePresentation([
@@ -1232,7 +1255,10 @@ export class ClaimsService {
       claimData: { claimType: string; claimTypeVersion: string };
       sub: string;
     };
-    return { ...claimData, subject: sub };
+    return {
+      ...claimData,
+      subject: sub,
+    };
   }
 
   /**
