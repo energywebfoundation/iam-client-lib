@@ -273,10 +273,11 @@ export class DidRegistry {
   async issuePublicClaim({
     token,
     publicClaim,
+    expirationTimestamp,
   }: IssuePublicClaimOptions): Promise<string> {
     const params = publicClaim || token;
     if (params) {
-      return this._issuerClaims.issuePublicClaim(params);
+      return this._issuerClaims.issuePublicClaim(params, expirationTimestamp);
     }
 
     throw new Error(

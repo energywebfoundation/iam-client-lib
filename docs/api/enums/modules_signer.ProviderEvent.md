@@ -4,18 +4,18 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [AccountChanged](modules_signer.ProviderEvent.md#accountchanged)
 - [Disconnected](modules_signer.ProviderEvent.md#disconnected)
 - [NetworkChanged](modules_signer.ProviderEvent.md#networkchanged)
 - [SessionUpdate](modules_signer.ProviderEvent.md#sessionupdate)
 
-## Enumeration members
+## Enumeration Members
 
 ### AccountChanged
 
-• **AccountChanged** = `"accountsChanged"`
+• **AccountChanged**
 
 Metamask events https://docs.metamask.io/guide/ethereum-provider.html#events
 
@@ -23,7 +23,7 @@ ___
 
 ### Disconnected
 
-• **Disconnected** = `"disconnect"`
+• **Disconnected**
 
 WalletConnect events https://docs.walletconnect.com/1.0/client-api#register-event-subscription
 
@@ -31,10 +31,10 @@ ___
 
 ### NetworkChanged
 
-• **NetworkChanged** = `"networkChanged"`
+• **NetworkChanged**
 
 ___
 
 ### SessionUpdate
 
-• **SessionUpdate** = `"session_update"`
+• **SessionUpdate**

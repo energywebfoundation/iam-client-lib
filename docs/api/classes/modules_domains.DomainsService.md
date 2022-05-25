@@ -453,7 +453,7 @@ ___
 
 ### getDefinition
 
-▸ **getDefinition**(`options`): `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`\>
+▸ **getDefinition**(`options`): `Promise`<`IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
 Fetch cached domain definition for organization, application or role.
 
@@ -472,7 +472,7 @@ domainsService.getDefinition({
 
 #### Returns
 
-`Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`\>
+`Promise`<`IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
 domain definition
 
@@ -480,7 +480,7 @@ ___
 
 ### getENSTypesByOwner
 
-▸ **getENSTypesByOwner**(`options`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[] \| [`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+▸ **getENSTypesByOwner**(`options`): `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[] \| [`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 Get all organization/application/role for certain owner.
 
@@ -500,7 +500,7 @@ domainsService.getENSTypesByOwner({
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[] \| [`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+`Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[] \| [`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 array of organizations/applications/roles for certain owner
 

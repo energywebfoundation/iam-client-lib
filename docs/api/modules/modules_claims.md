@@ -40,7 +40,7 @@
 - [RevokeMultipleClaimOptions](../interfaces/modules_claims.RevokeMultipleClaimOptions.md)
 - [VerifyEnrolmentPrerequisitesOptions](../interfaces/modules_claims.VerifyEnrolmentPrerequisitesOptions.md)
 
-### Type aliases
+### Type Aliases
 
 - [IssueClaim](modules_claims.md#issueclaim)
 - [RejectClaim](modules_claims.md#rejectclaim)
@@ -58,7 +58,7 @@
 
 - [readyToBeRegisteredOnchain](modules_claims.md#readytoberegisteredonchain)
 
-## Type aliases
+## Type Aliases
 
 ### IssueClaim
 
@@ -131,7 +131,7 @@ ___
 
 ### readyToBeRegisteredOnchain
 
-▸ **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimType" \| "claimTypeVersion" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
+▸ **readyToBeRegisteredOnchain**(`claim`): claim is Required<Pick<Claim, "claimType" \| "claimTypeVersion" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\> & Object\>
 
 #### Parameters
 
@@ -141,4 +141,4 @@ ___
 
 #### Returns
 
-claim is Required<Pick<Claim, "claimType" \| "claimTypeVersion" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\>\>
+claim is Required<Pick<Claim, "claimType" \| "claimTypeVersion" \| "subject" \| "onChainProof" \| "acceptedBy" \| "subjectAgreement"\> & Object\>

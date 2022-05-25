@@ -7,6 +7,8 @@
 ### Properties
 
 - [claim](modules_claims.IssueClaimOptions.md#claim)
+- [credentialStatus](modules_claims.IssueClaimOptions.md#credentialstatus)
+- [expirationTimestamp](modules_claims.IssueClaimOptions.md#expirationtimestamp)
 - [registrationTypes](modules_claims.IssueClaimOptions.md#registrationtypes)
 - [subject](modules_claims.IssueClaimOptions.md#subject)
 
@@ -25,6 +27,22 @@ Claim params
 | `claimType` | `string` | Role namespace |
 | `claimTypeVersion` | `number` | Version of the role |
 | `issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] | Issuers fields that role is requiring |
+
+___
+
+### credentialStatus
+
+• `Optional` **credentialStatus**: `StatusList2021Entry`
+
+Indicates if credential is actual of the time of verification
+
+___
+
+### expirationTimestamp
+
+• `Optional` **expirationTimestamp**: `number`
+
+Defines how long the claim is valid.
 
 ___
 

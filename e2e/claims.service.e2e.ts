@@ -11,7 +11,7 @@ import {
   VerifiablePresentation,
   Credential,
 } from '@ew-did-registry/credentials-interface';
-import { providers, utils, Wallet } from 'ethers';
+import { BigNumber, providers, utils, Wallet } from 'ethers';
 import {
   AssetsService,
   ClaimsService,
@@ -48,6 +48,7 @@ const roleName1 = 'myrole1';
 const roleName2 = 'myrole2';
 const roleName3 = 'myrole3';
 const roleName4 = 'myrole4';
+const roleName5 = 'myrole5';
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -79,6 +80,7 @@ const roles: Record<string, IRoleDefinitionV2> = {
     roleName: roleName4,
     issuer: { issuerType: 'ROLE', roleName: `${roleName1}.${root}` },
   },
+  [`${roleName5}.${root}`]: { ...baseRoleDef, roleName: roleName5 },
 };
 const mockGetRoleDefinition = jest
   .fn()
@@ -221,12 +223,14 @@ describe('Enrollment claim tests', () => {
         registrationTypes = [RegistrationTypes.OnChain],
         publishOnChain = true,
         issuerFields,
+        expirationTimestamp,
       }: {
         subjectDID: string;
         claimType: string;
         registrationTypes?: RegistrationTypes[];
         publishOnChain?: boolean;
         issuerFields?: Record<string, string | number>[];
+        expirationTimestamp?: number;
       }
     ) {
       await signerService.connect(requestSigner, ProviderType.PrivateKey);
@@ -244,6 +248,7 @@ describe('Enrollment claim tests', () => {
       await claimsService.issueClaimRequest({
         publishOnChain,
         issuerFields,
+        expirationTimestamp,
         ...message,
       });
       const [, issuedClaim] = <[string, Required<IClaimIssuance>]>(
@@ -277,11 +282,16 @@ describe('Enrollment claim tests', () => {
         expect(vpObject.verifiableCredential[0].issuer).toEqual(
           signerService.didHex
         );
+        expirationTimestamp &&
+          expect(vpObject.verifiableCredential[0].expirationDate).toEqual(
+            new Date(expirationTimestamp).toISOString()
+          );
         expect(vpObject.holder).toEqual(signerService.didHex);
 
-        const { claimData, signer, did } = (await didRegistry.decodeJWTToken({
-          token: issuedToken,
-        })) as { [key: string]: string };
+        const { claimData, signer, did, exp } =
+          (await didRegistry.decodeJWTToken({
+            token: issuedToken,
+          })) as { [key: string]: string };
 
         expect(claimData).toEqual({
           claimType,
@@ -289,6 +299,9 @@ describe('Enrollment claim tests', () => {
           issuerFields,
           requestorFields,
         });
+
+        expirationTimestamp &&
+          expect(exp).toEqual(Math.trunc(expirationTimestamp / 1000));
 
         expect(claimData).not.toContain({
           fields: [{ key: 'temperature', value: 36 }],
@@ -301,8 +314,32 @@ describe('Enrollment claim tests', () => {
       expect(requester).toEqual(requesterDID);
       expect(claimIssuer).toEqual([issuerDID]);
 
-      registrationTypes.includes(RegistrationTypes.OnChain) &&
+      if (registrationTypes.includes(RegistrationTypes.OnChain)) {
         expect(onChainProof).toHaveLength(132);
+
+        if (expirationTimestamp) {
+          const filter = claimManager.filters.RoleRegistered();
+          const logs = await claimManager.queryFilter(filter);
+
+          logs.forEach((log) => {
+            const parsedLog = claimManager.interface.parseLog(log);
+            const args = parsedLog.args as unknown as {
+              subject: string;
+              role: string;
+              version: BigNumber;
+              expiry: BigNumber;
+              issuer: string;
+            };
+
+            if (
+              args.subject === addressOf(subjectDID) &&
+              args.role === namehash(claimType)
+            ) {
+              expect(args.expiry.toNumber()).toEqual(expirationTimestamp);
+            }
+          });
+        }
+      }
 
       expect(acceptedBy).toBe(issuerDID);
 
@@ -505,6 +542,23 @@ describe('Enrollment claim tests', () => {
           claimType: `${roleName3}.${root}`,
         })
       ).rejects.toEqual(new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET));
+    });
+
+    test.only('enrollment with credential/claim time expiration', async () => {
+      const requester = rootOwner;
+      const issuer = staticIssuer;
+      const subjectDID = rootOwnerDID;
+      const claimType = `${roleName1}.${root}`;
+
+      await enrolAndIssue(requester, issuer, {
+        subjectDID,
+        claimType,
+        expirationTimestamp: Date.now() + 100000,
+      });
+
+      expect(
+        await claimsService.hasOnChainRole(subjectDID, claimType, version)
+      ).toBe(true);
     });
 
     describe('Publishing onchain', () => {

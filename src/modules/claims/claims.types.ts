@@ -72,7 +72,7 @@ export const readyToBeRegisteredOnchain = (
     | 'onChainProof'
     | 'acceptedBy'
     | 'subjectAgreement'
-  >
+  > & { expirationTimestamp?: number }
 > => {
   if (!claim) return false;
   if (typeof claim !== 'object') return false;
@@ -182,6 +182,9 @@ export interface IssueClaimRequestOptions {
 
   /** Indicates if credential is actual of the time of verification */
   credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface RegisterOnchainOptions {
@@ -205,6 +208,9 @@ export interface RegisterOnchainOptions {
 
   /** DID of the claim subject */
   subject?: string;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface RejectClaimRequestOptions {
@@ -241,6 +247,12 @@ export interface IssueClaimOptions {
     /** Issuers fields that role is requiring */
     issuerFields?: { key: string; value: string | number }[];
   };
+
+  /** Indicates if credential is actual of the time of verification */
+  credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface PublishPublicClaimOptions {
@@ -296,6 +308,9 @@ export interface IssueVerifiablePresentationOptions {
 
   /** Indicates if credential is actual of the time of verification */
   credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface ApproveRolePublishingOptions {
