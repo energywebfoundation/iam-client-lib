@@ -6,6 +6,12 @@ import {
   IRoleDefinition,
   PreconditionType,
 } from '@energyweb/credential-governance';
+import {
+  CredentialResolver,
+  EthersProviderIssuerDefinitionResolver,
+  IpfsCredentialResolver,
+  VCIssuerVerification,
+} from '@energyweb/vc-verification';
 import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
@@ -16,6 +22,7 @@ import {
   IServiceEndpoint,
   ProviderTypes,
 } from '@ew-did-registry/did-resolver-interface';
+import { VerifiableCredential } from '@ew-did-registry/credentials-interface';
 import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__factory';
 import { ERROR_MESSAGES } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
@@ -64,7 +71,10 @@ import { compareDID, isValidDID } from '../../utils/did';
 import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
-import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
+import {
+  RoleCredentialSubject,
+  VerifiableCredentialsServiceBase,
+} from '../verifiable-credentials';
 import { NotAuthorizedIssuer } from '../../errors/not-authorized-issuer';
 
 const {
@@ -90,6 +100,7 @@ const {
 export class ClaimsService {
   private _claimManager: string;
   private _claimManagerInterface = ClaimManager__factory.createInterface();
+  private _vcIssuerVerifier: VCIssuerVerification;
   private _claimRevocation: ClaimRevocation;
 
   constructor(
@@ -100,6 +111,7 @@ export class ClaimsService {
     private _verifiableCredentialService: VerifiableCredentialsServiceBase
   ) {
     this._signerService.onInit(this.init.bind(this));
+    this._setClaimIssuerVerifier();
   }
 
   static async create(
@@ -374,8 +386,6 @@ export class ClaimsService {
       claimData: { claimType: string; claimTypeVersion: number };
       sub: string;
     };
-    await this.verifyIssuer(claimData.claimType);
-
     await this.verifyEnrolmentPrerequisites({
       subject: sub,
       role: claimData.claimType,
@@ -415,6 +425,7 @@ export class ClaimsService {
     }
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      await this.verifyVcIssuer(claimData.claimType);
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
@@ -439,6 +450,19 @@ export class ClaimsService {
     }
 
     await this._cacheClient.issueClaim(this._signerService.did, message);
+  }
+
+  async verifyVc(vc: VerifiableCredential<RoleCredentialSubject>) {
+    const issuerDID = this._signerService.did;
+    const role = vc.credentialSubject.role.namespace;
+    if (
+      !(
+        (await this._vcIssuerVerifier.verifyIssuerAuthority(role, issuerDID)) ||
+        (await this._vcIssuerVerifier.verifyChainOfTrustByRoleDefinition(vc))
+      )
+    ) {
+      throw new NotAuthorizedIssuer(issuerDID, role);
+    }
   }
 
   /**
@@ -572,7 +596,7 @@ export class ClaimsService {
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
   }: IssueClaimOptions): Promise<string | undefined> {
-    await this.verifyIssuer(claim.claimType);
+    await this.verifyVcIssuer(claim.claimType);
     await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
 
     const message: IClaimIssuance = {
@@ -1114,15 +1138,16 @@ export class ClaimsService {
   }
 
   /**
-   * Verify if the user is able to issue the given role. Throws an error when the user is not able to issue the given role.
+   * Verify if the user is issuer of the role verifiable credential
    *
    * @param {String} role Registration types of the claim
    */
-  private async verifyIssuer(role: string): Promise<void> {
+  private async verifyVcIssuer(role: string): Promise<void> {
     if (
-      !(
-        await this._cacheClient.getAllowedRolesByIssuer(this._signerService.did)
-      ).some((r) => r.namespace === role)
+      !(await this._vcIssuerVerifier.verifyIssuerAuthority(
+        role,
+        this._signerService.did
+      ))
     ) {
       throw new NotAuthorizedIssuer(this._signerService.did, role);
     }
@@ -1310,6 +1335,24 @@ export class ClaimsService {
 
     return canonizeSig(
       await this._signerService.signMessage(arrayify(proofHash))
+    );
+  }
+
+  private _setClaimIssuerVerifier() {
+    const credentialResolver: CredentialResolver = new IpfsCredentialResolver(
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      this._didRegistry.ipfsStore
+    );
+    const issuerResolver = new EthersProviderIssuerDefinitionResolver(
+      this._signerService.provider,
+      chainConfigs()[this._signerService.chainId].ensResolverV2Address
+    );
+    this._vcIssuerVerifier = new VCIssuerVerification(
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      credentialResolver,
+      issuerResolver
     );
   }
 }

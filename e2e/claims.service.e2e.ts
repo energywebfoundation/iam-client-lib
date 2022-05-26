@@ -20,6 +20,7 @@ import {
   MessagingService,
   IClaimIssuance,
   SignerT,
+  Claim,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
@@ -86,6 +87,8 @@ const mockCachedDocument = jest.fn().mockImplementation((did: string) => {
     ],
   }; // all documents are created
 });
+const getClamsBySubjectInitMock: (did: string) => Partial<Claim>[] = () => [];
+
 const mockGetCachedOwnedAssets = jest.fn();
 const mockGetAssetById = jest.fn();
 const mockGetClaimsBySubject = jest.fn();
@@ -123,7 +126,7 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
   };
 });
 
-describe('Enrollment claim tests', () => {
+describe('Сlaim tests', () => {
   let claimsService: ClaimsService;
   let signerService: SignerService;
   let assetsService: AssetsService;
@@ -133,7 +136,7 @@ describe('Enrollment claim tests', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    //mockGetClaimsBySubject.mockReset();
+    mockGetClaimsBySubject.mockImplementation(getClamsBySubjectInitMock);
     await replenish(await staticIssuer.getAddress());
     await replenish(await rootOwner.getAddress());
     await replenish(await dynamicIssuer.getAddress());
@@ -189,7 +192,7 @@ describe('Enrollment claim tests', () => {
     setLogger(new ConsoleLogger(LogLevel.warn));
   });
 
-  describe('Enrollment tests', () => {
+  describe('Role claim tests', () => {
     async function enrolAndIssue(
       requestSigner: Required<SignerT>,
       issueSigner: Required<SignerT>,
@@ -211,7 +214,11 @@ describe('Enrollment claim tests', () => {
       const requesterDID = signerService.did;
       const requestorFields = [{ key: 'temperature', value: 36 }];
       await claimsService.createClaimRequest({
-        claim: { claimType, claimTypeVersion: version, requestorFields },
+        claim: {
+          claimType,
+          claimTypeVersion: version,
+          requestorFields,
+        },
         registrationTypes,
         subject: subjectDID,
       });
@@ -226,6 +233,22 @@ describe('Enrollment claim tests', () => {
       });
       const [, issuedClaim] = <[string, Required<IClaimIssuance>]>(
         mockIssueClaim.mock.calls.pop()
+      );
+
+      const currentGetClaimsBySubjectMock =
+        mockGetClaimsBySubject.getMockImplementation() as jest.Mock;
+      mockGetClaimsBySubject.mockImplementation((did) =>
+        [...currentGetClaimsBySubjectMock(did)].concat(
+          did === subjectDID
+            ? [
+                {
+                  claimType,
+                  claimTypeVersion: version,
+                  issuedToken: issuedClaim.issuedToken,
+                },
+              ]
+            : []
+        )
       );
 
       const {
@@ -409,6 +432,11 @@ describe('Enrollment claim tests', () => {
       await enrolAndIssue(dynamicIssuer, staticIssuer, {
         subjectDID: dynamicIssuerDID,
         claimType: `${roleName1}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain, // role type issuer should have offchain claim
+        ],
+        issuerFields: [],
       });
 
       expect(
@@ -423,7 +451,6 @@ describe('Enrollment claim tests', () => {
         subjectDID: rootOwnerDID,
         claimType: `${roleName2}.${root}`,
       });
-
       return expect(
         await claimsService.hasOnChainRole(
           rootOwnerDID,
@@ -442,16 +469,10 @@ describe('Enrollment claim tests', () => {
         returnSteps: false,
       });
 
-      const role1Claim = {
-        claimType: `${roleName1}.${root}`,
-        isAccepted: true,
-      };
       await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${roleName1}.${root}`,
       });
-      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
-      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify issuance
 
       await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
@@ -474,8 +495,6 @@ describe('Enrollment claim tests', () => {
         data: roles[`${roleName3}.${root}`],
         returnSteps: false,
       });
-
-      mockGetClaimsBySubject.mockImplementationOnce(() => []);
 
       return expect(
         enrolAndIssue(rootOwner, staticIssuer, {
@@ -567,7 +586,7 @@ describe('Enrollment claim tests', () => {
       await claimsService.createClaimRequest({
         claim: {
           claimType: `${roleName1}.${root}`,
-          claimTypeVersion: 1,
+          claimTypeVersion: version,
           requestorFields: [],
         },
         registrationTypes,

@@ -18,6 +18,7 @@ import {
   KeyTags,
   ProviderTypes,
   PubKeyType,
+  RegistrySettings,
 } from '@ew-did-registry/did-resolver-interface';
 import {
   DIDDocumentFull,
@@ -224,6 +225,12 @@ export class DidRegistry {
   }: GetDidDelegatesOptions = {}): Promise<string[] | undefined> {
     const didDocument = await this.getDidDocument({ did });
     return didDocument?.delegates;
+  }
+
+  get registrySettings(): RegistrySettings {
+    return {
+      address: chainConfigs()[this._signerService.chainId].didRegistryAddress,
+    };
   }
 
   /**
