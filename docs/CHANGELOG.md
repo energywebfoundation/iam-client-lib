@@ -1,3 +1,10 @@
+## [6.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.5...v6.0.0-alpha.6) (2022-05-27)
+
+
+### Bug Fixes
+
+* exchange credential tests grouping ([2b1e674](https://github.com/energywebfoundation/iam-client-lib/commit/2b1e6746169b05756125d37595c5744aea12b8ee))
+
 ## [6.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.4...v6.0.0-alpha.5) (2022-05-24)
 
 
