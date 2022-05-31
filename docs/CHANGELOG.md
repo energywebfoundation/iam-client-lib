@@ -1,3 +1,10 @@
+## [6.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.6...v6.0.0-alpha.7) (2022-05-31)
+
+
+### Bug Fixes
+
+* **verifiable-credentials:** check errors on initiating exchange ([bce85a8](https://github.com/energywebfoundation/iam-client-lib/commit/bce85a8eca2a6abc2e89b93c13c44d63fa64bf02))
+
 ## [6.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.5...v6.0.0-alpha.6) (2022-05-27)
 
 
