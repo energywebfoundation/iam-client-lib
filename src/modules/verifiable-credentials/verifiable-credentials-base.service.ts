@@ -157,7 +157,12 @@ export abstract class VerifiableCredentialsServiceBase {
       throw new Error('Only VC-API exchange is supported');
     }
 
-    const { data: vpRequest } = await axios.post<VpRequest>(url);
+    const {
+      data: { errors, vpRequest },
+    } = await axios.post<{ errors: string[]; vpRequest: VpRequest }>(url);
+    if (errors.length > 0) {
+      throw new Error(`Error initiating exchange: ${JSON.stringify(errors)}`);
+    }
     const credentialQuery = vpRequest.query.find(
       (q) => q.type === VpRequestQueryType.presentationDefinition
     )?.credentialQuery as VpRequestPresentationDefinitionQuery[];
