@@ -1,6 +1,6 @@
 {
   "name": "iam-client-lib",
-  "version": "6.0.0-alpha.7",
+  "version": "6.0.0-alpha.8",
   "description": "Library for Decentralized Identity and Access Management",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
