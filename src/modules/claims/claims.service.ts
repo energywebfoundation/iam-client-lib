@@ -955,7 +955,12 @@ export class ClaimsService {
     if (claimIds) {
       const claimsDetails = await Promise.all([
         ...claimIds.map(async (claimId) => {
-          return await this.getClaimById(claimId);
+          const claim = await this.getClaimById(claimId);
+          if (!claim) return undefined;
+          return {
+            namespace: claim.claimType,
+            subject: claim.subject,
+          };
         }),
       ]);
       claimsDetailsToRevoke = [
@@ -1066,7 +1071,7 @@ export class ClaimsService {
         throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_NOT_FOUND);
       }
 
-      namespace = claimData.namespace;
+      namespace = claimData.claimType;
       subject = claimData.subject;
     }
 

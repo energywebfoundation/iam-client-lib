@@ -167,6 +167,7 @@ describe('On-chain claim revocation', () => {
       ...issuedClaim,
       subject: subject.signerService.did,
       namespace: claimType,
+      claimType,
     };
   };
 
