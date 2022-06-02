@@ -8,6 +8,7 @@ export const verifiableCredentialEIP712Types = {
     { name: 'issuanceDate', type: 'string' },
     { name: 'credentialSubject', type: 'CredentialSubject' },
     { name: 'proof', type: 'Proof' },
+    { name: 'credentialStatus', type: 'StatusList2021Entry' },
   ],
   EWFRole: [
     { name: 'namespace', type: 'string' },
@@ -21,6 +22,13 @@ export const verifiableCredentialEIP712Types = {
     { name: 'id', type: 'string' },
     { name: 'role', type: 'EWFRole' },
     { name: 'issuerFields', type: 'IssuerFields[]' },
+  ],
+  StatusList2021Entry: [
+    { name: 'id', type: 'string' },
+    { name: 'type', type: 'string' },
+    { name: 'statusPurpose', type: 'string' },
+    { name: 'statusListIndex', type: 'string' },
+    { name: 'statusListCredential', type: 'string' },
   ],
   Proof: [
     { name: '@context', type: 'string' },
@@ -50,6 +58,7 @@ export const verifiablePresentationWithCredentialEIP712Types = {
   ],
   VC712DomainData: [],
   VC712DomainSchema: [
+    { name: 'StatusList2021Entry', type: 'VC712DomainTypedDataField[]' },
     { name: 'CredentialSubject', type: 'VC712DomainTypedDataField[]' },
     { name: 'EIP712Domain', type: 'VC712DomainTypedDataField[]' },
     { name: 'EWFRole', type: 'VC712DomainTypedDataField[]' },
@@ -65,6 +74,7 @@ export const verifiablePresentationWithCredentialEIP712Types = {
   EWFRole: verifiableCredentialEIP712Types.EWFRole,
   IssuerFields: verifiableCredentialEIP712Types.IssuerFields,
   CredentialSubject: verifiableCredentialEIP712Types.CredentialSubject,
+  StatusList2021Entry: verifiableCredentialEIP712Types.StatusList2021Entry,
   VCProof: [
     ...verifiableCredentialEIP712Types.Proof,
     { type: 'string', name: 'proofValue' },
@@ -77,6 +87,7 @@ export const verifiablePresentationWithCredentialEIP712Types = {
     { type: 'string', name: 'issuer' },
     { type: 'string', name: 'issuanceDate' },
     { type: 'CredentialSubject', name: 'credentialSubject' },
+    { type: 'StatusList2021Entry', name: 'credentialStatus' },
     { type: 'VCProof', name: 'proof' },
   ],
   Proof: verifiableCredentialEIP712Types.Proof,
