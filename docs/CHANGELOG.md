@@ -1,3 +1,10 @@
+## [6.0.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.10...v6.0.0-alpha.11) (2022-06-02)
+
+
+### Bug Fixes
+
+* on-chain claim revocation ([df9eeea](https://github.com/energywebfoundation/iam-client-lib/commit/df9eeea62ed6b05fb13dfec074d52267c5efa335))
+
 ## [6.0.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.9...v6.0.0-alpha.10) (2022-06-02)
 
 
