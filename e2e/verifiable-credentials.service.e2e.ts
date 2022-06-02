@@ -424,20 +424,22 @@ describe('Verifiable credentials tests', () => {
         }
       );
 
-      const [{ selectResults }] =
-        await verifiableCredentialsService.initiateExchange({
-          type: VC_API_EXCHANGE,
-          url: exchangeUrl,
-        });
+      const {
+        selections: [{ selectResults }],
+      } = await verifiableCredentialsService.initiateExchange({
+        type: VC_API_EXCHANGE,
+        url: exchangeUrl,
+      });
       expect(selectResults.verifiableCredential).toHaveLength(1);
     });
 
     test('continueExchange() should return issued credentials', async () => {
-      const [{ selectResults }] =
-        await verifiableCredentialsService.initiateExchange({
-          type: VC_API_EXCHANGE,
-          url: exchangeUrl,
-        });
+      const {
+        selections: [{ selectResults }],
+      } = await verifiableCredentialsService.initiateExchange({
+        type: VC_API_EXCHANGE,
+        url: exchangeUrl,
+      });
 
       (axios as jest.Mocked<typeof axios>).put.mockImplementationOnce((url) =>
         Promise.resolve({
