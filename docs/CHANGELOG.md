@@ -1,3 +1,11 @@
+## [6.0.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.9...v6.0.0-alpha.10) (2022-06-02)
+
+
+### Features
+
+* **claims:** add status to vc ([28c556f](https://github.com/energywebfoundation/iam-client-lib/commit/28c556ffa0a9d53561507fdce95817a6672e43f3))
+* **verifiable-credentials:** add credential status eip712 type ([d9db01f](https://github.com/energywebfoundation/iam-client-lib/commit/d9db01ffe8cdaec5c7192f2ac134a7941e952555))
+
 ## [6.0.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.8...v6.0.0-alpha.9) (2022-06-02)
 
 ## [6.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.7...v6.0.0-alpha.8) (2022-06-01)
