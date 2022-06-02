@@ -1,3 +1,10 @@
+## [6.0.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.11...v6.0.0-alpha.12) (2022-06-02)
+
+
+### Bug Fixes
+
+* add vp request to return of initiate exchange ([ddecbaf](https://github.com/energywebfoundation/iam-client-lib/commit/ddecbafe973c19b0acb17abb94fec062bacc5c62))
+
 ## [6.0.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.10...v6.0.0-alpha.11) (2022-06-02)
 
 
