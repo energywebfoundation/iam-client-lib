@@ -1,4 +1,9 @@
-import { providers, Wallet } from 'ethers';
+import { providers, Wallet, utils } from 'ethers';
+import {
+  CredentialStatusPurpose,
+  CredentialStatusType,
+  Credential,
+} from '@ew-did-registry/credentials-interface';
 import {
   initWithPrivateKeySigner,
   ProviderType,
@@ -10,11 +15,14 @@ import {
   CacheClient,
   IIssuerDefinition,
   IRevokerDefinition,
+  RoleCredentialSubject,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { setLogger } from '../src/config/logger.config';
 import { ConsoleLogger } from '../src/utils/logger';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
+
+const { id } = utils;
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 
@@ -34,6 +42,22 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
         issueClaim: mockIssueClaim,
         getAllowedRolesByIssuer: mockGetAllowedRoles,
         getClaimById: mockGetClaimById,
+        addStatusToCredential: (
+          credential: Credential<RoleCredentialSubject>
+        ): Credential<RoleCredentialSubject> => {
+          return {
+            ...credential,
+            credentialStatus: {
+              id: `https://energyweb.org/credential/${id(
+                JSON.stringify(credential)
+              )}#list`,
+              type: CredentialStatusType.StatusList2021Entry,
+              statusPurpose: CredentialStatusPurpose.REVOCATION,
+              statusListIndex: '1',
+              statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,
+            },
+          };
+        },
       };
     }),
   };

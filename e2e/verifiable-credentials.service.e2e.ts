@@ -1,4 +1,4 @@
-import { Wallet } from 'ethers';
+import { Wallet, utils } from 'ethers';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import {
@@ -14,19 +14,42 @@ import {
   VerifiableCredentialsServiceBase,
 } from '../src/modules/verifiable-credentials';
 import {
+  CredentialStatusType,
   VC_API_EXCHANGE,
   VerifiableCredential,
   VpRequest,
   VpRequestInteractServiceType,
   VpRequestQueryType,
+  Credential,
+  CredentialStatusPurpose,
 } from '@ew-did-registry/credentials-interface';
+
+const { id } = utils;
 
 jest.mock('axios');
 const getClaimsBySubject = jest.fn();
 jest.mock('../src/modules/cache-client/cache-client.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
-      return { getClaimsBySubject };
+      return {
+        getClaimsBySubject,
+        addStatusToCredential: (
+          credential: Credential<RoleCredentialSubject>
+        ): Credential<RoleCredentialSubject> => {
+          return {
+            ...credential,
+            credentialStatus: {
+              id: `https://energyweb.org/credential/${id(
+                JSON.stringify(credential)
+              )}#list`,
+              type: CredentialStatusType.StatusList2021Entry,
+              statusPurpose: CredentialStatusPurpose.REVOCATION,
+              statusListIndex: '1',
+              statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,
+            },
+          };
+        },
+      };
     }),
   };
 });
@@ -332,7 +355,6 @@ describe('Verifiable credentials tests', () => {
     });
   });
 
-  // TODO: add tests for credential exchange
   describe('Verifiable credentials exchange', () => {
     const vpRequest: VpRequest = {
       query: [
@@ -387,13 +409,21 @@ describe('Verifiable credentials tests', () => {
         ]);
       (axios as jest.Mocked<typeof axios>).post.mockImplementation((url) => {
         return Promise.resolve({
-          data: url === exchangeUrl ? { errors: [], vpRequest } : '',
+          data: url === exchangeUrl ? vpRequest : '',
         });
       });
       getClaimsBySubject.mockResolvedValue([{ vp }]);
     });
 
     test('initiateExchange() should return presentation matching presentation request', async () => {
+      (axios as jest.Mocked<typeof axios>).post.mockImplementationOnce(
+        (url) => {
+          return Promise.resolve({
+            data: url === exchangeUrl ? vpRequest : '',
+          });
+        }
+      );
+
       const [{ selectResults }] =
         await verifiableCredentialsService.initiateExchange({
           type: VC_API_EXCHANGE,

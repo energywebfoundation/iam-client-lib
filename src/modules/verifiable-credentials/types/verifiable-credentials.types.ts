@@ -1,3 +1,4 @@
+import { StatusList2021Entry } from '@ew-did-registry/credentials-interface';
 import { IPresentationDefinition, SelectResults } from '@sphereon/pex';
 import { IssuerFields } from './role-credential.types';
 
@@ -23,6 +24,9 @@ export interface RoleCredentialSubjectParams {
 
   /* Expiration date of credential */
   expirationDate?: Date;
+
+  /** Indicates if credential is actual of time of verification */
+  credentialStatus?: StatusList2021Entry;
 }
 
 export interface ProofOptions {

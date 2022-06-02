@@ -2,6 +2,10 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { stringify } from 'qs';
 import { IRoleDefinition } from '@energyweb/credential-governance';
 import { IDIDDocument } from '@ew-did-registry/did-resolver-interface';
+import {
+  Credential,
+  StatusList2021Entry,
+} from '@ew-did-registry/credentials-interface';
 import { IApp, IOrganization, IRole } from '../domains/domains.types';
 import { AssetHistory } from '../assets/assets.types';
 import {
@@ -27,6 +31,7 @@ import {
 } from './cache-client.types';
 import { SearchType } from '.';
 import { getLogger } from '../../config/logger.config';
+import { RoleCredentialSubject } from '../verifiable-credentials';
 
 export class CacheClient implements ICacheClient {
   public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -407,6 +412,27 @@ export class CacheClient implements ICacheClient {
     const { data } = await this._httpClient.get<AssetHistory[]>(
       `/assets/history/${id}?${query}`
     );
+    return data;
+  }
+
+  /**
+   * Sets location of the credential status
+   *
+   * @param credential unsigned credential
+   * @returns credential with reference to status location
+   */
+  async addStatusToCredential(
+    credential: Credential<RoleCredentialSubject>
+  ): Promise<
+    Credential<RoleCredentialSubject> & {
+      credentialStatus: StatusList2021Entry;
+    }
+  > {
+    const { data } = await this._httpClient.post<
+      Credential<RoleCredentialSubject> & {
+        credentialStatus: StatusList2021Entry;
+      }
+    >('/status-list/entries', credential);
     return data;
   }
 
