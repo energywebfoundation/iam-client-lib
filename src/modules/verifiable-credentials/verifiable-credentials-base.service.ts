@@ -157,12 +157,7 @@ export abstract class VerifiableCredentialsServiceBase {
       throw new Error('Only VC-API exchange is supported');
     }
 
-    const {
-      data: { errors, vpRequest },
-    } = await axios.post<{ errors: string[]; vpRequest: VpRequest }>(url);
-    if (errors.length > 0) {
-      throw new Error(`Error initiating exchange: ${JSON.stringify(errors)}`);
-    }
+    const { data: vpRequest } = await axios.post<VpRequest>(url);
     const credentialQuery = vpRequest.query.find(
       (q) => q.type === VpRequestQueryType.presentationDefinition
     )?.credentialQuery as VpRequestPresentationDefinitionQuery[];
@@ -234,7 +229,12 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<VerifiableCredential<RoleCredentialSubject>> {
     const did = this._signerService.didHex;
 
-    const credentialObject = this.createCredential(credentialParams);
+    let credentialObject = this.createCredential(credentialParams);
+    if (!credentialObject.credentialStatus) {
+      credentialObject = await this._cacheClient.addStatusToCredential(
+        credentialObject
+      );
+    }
     const eip712MessageSchema = {
       // TODO: generate types from the credential
       ...JSON.parse(JSON.stringify(verifiableCredentialEIP712Types)),
@@ -522,7 +522,7 @@ export abstract class VerifiableCredentialsServiceBase {
    * @param {RoleCredentialSubjectParams} params verifiable presentation or credential
    * @returns Energy Web credential
    */
-  private createCredential(
+  public createCredential(
     params: RoleCredentialSubjectParams
   ): Credential<RoleCredentialSubject> {
     const credential: Credential<RoleCredentialSubject> = {

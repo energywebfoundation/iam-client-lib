@@ -369,6 +369,7 @@ export class ClaimsService {
     registrationTypes,
     issuerFields,
     publishOnChain = true,
+    credentialStatus,
   }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
       claimData: { claimType: string; claimTypeVersion: number };
@@ -432,6 +433,7 @@ export class ClaimsService {
           namespace: role,
           version: version.toString(),
           issuerFields,
+          credentialStatus,
         }),
       ]);
       message.issuedToken = issuedToken;
@@ -1180,6 +1182,7 @@ export class ClaimsService {
       namespace: options.namespace,
       version: options.version,
       issuerFields: options.issuerFields,
+      credentialStatus: options.credentialStatus,
     });
     const vp =
       await this._verifiableCredentialService.createVerifiablePresentation([
