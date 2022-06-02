@@ -5,7 +5,6 @@ import {
 } from '@ew-did-registry/credentials-interface';
 import { ClaimData } from '../did-registry';
 import { IMessage } from '../messaging/messaging.types';
-import { IssuerFields } from '../verifiable-credentials';
 
 export interface IClaimRequest extends IMessage {
   token: string;
@@ -383,11 +382,4 @@ export interface GetRevocationClaimDetailsResult {
 export interface ClaimRevocationDetailsResult {
   revoker: string;
   timestamp: number;
-}
-
-export interface AddSsiCredentialStatusOptions {
-  sub: string;
-  role: string;
-  version: number;
-  issuerFields?: IssuerFields[];
 }
