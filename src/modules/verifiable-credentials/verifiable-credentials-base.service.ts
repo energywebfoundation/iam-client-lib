@@ -162,7 +162,7 @@ export abstract class VerifiableCredentialsServiceBase {
       (q) => q.type === VpRequestQueryType.presentationDefinition
     )?.credentialQuery as VpRequestPresentationDefinitionQuery[];
 
-    return Promise.all(
+    const selections = await Promise.all(
       credentialQuery.map(async ({ presentationDefinition }) => {
         const selectResults = await this.getCredentialsByDefinition(
           presentationDefinition
@@ -173,6 +173,7 @@ export abstract class VerifiableCredentialsServiceBase {
         };
       })
     );
+    return { vpRequest, selections };
   }
 
   /**
