@@ -409,21 +409,13 @@ describe('Verifiable credentials tests', () => {
         ]);
       (axios as jest.Mocked<typeof axios>).post.mockImplementation((url) => {
         return Promise.resolve({
-          data: url === exchangeUrl ? vpRequest : '',
+          data: url === exchangeUrl ? { errors: [], vpRequest } : '',
         });
       });
       getClaimsBySubject.mockResolvedValue([{ vp }]);
     });
 
     test('initiateExchange() should return presentation matching presentation request', async () => {
-      (axios as jest.Mocked<typeof axios>).post.mockImplementationOnce(
-        (url) => {
-          return Promise.resolve({
-            data: url === exchangeUrl ? vpRequest : '',
-          });
-        }
-      );
-
       const {
         selections: [{ selectResults }],
       } = await verifiableCredentialsService.initiateExchange({
