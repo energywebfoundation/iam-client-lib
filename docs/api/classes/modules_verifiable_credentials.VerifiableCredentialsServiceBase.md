@@ -19,6 +19,7 @@ verifiableCredentialsService.createRoleVC(...);
 ### Methods
 
 - [continueExchange](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#continueexchange)
+- [createCredential](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createcredential)
 - [createPresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createpresentation)
 - [createRoleVC](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createrolevc)
 - [createVerifiablePresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createverifiablepresentation)
@@ -59,6 +60,26 @@ verifiableCredentialsService.createRoleVC(...);
 `Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
 issued credentials or request of additional credentials
+
+___
+
+### createCredential
+
+▸ **createCredential**(`params`): `Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>
+
+Create a credential with given parameters.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `params` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) | verifiable presentation or credential |
+
+#### Returns
+
+`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>
+
+Energy Web credential
 
 ___
 

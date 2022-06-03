@@ -42,6 +42,7 @@
 | `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
 | `IssuerFields` | { `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
 | `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `StatusList2021Entry` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
 
 ___
@@ -73,9 +74,10 @@ ___
 | `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
 | `IssuerFields` | { `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
 | `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `StatusList2021Entry` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `VC712Domain` | { `name`: `string` = 'domain'; `type`: `string` = 'VC712DomainData' }[] |
 | `VC712DomainData` | `never`[] |
-| `VC712DomainSchema` | { `name`: `string` = 'CredentialSubject'; `type`: `string` = 'VC712DomainTypedDataField[]' }[] |
+| `VC712DomainSchema` | { `name`: `string` = 'StatusList2021Entry'; `type`: `string` = 'VC712DomainTypedDataField[]' }[] |
 | `VC712DomainTypedDataField` | { `name`: `string` = 'name'; `type`: `string` = 'string' }[] |
 | `VCProof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
 | `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |

@@ -23,6 +23,7 @@
 ### Methods
 
 - [addDIDToWatchList](modules_cache_client.CacheClient.md#adddidtowatchlist)
+- [addStatusToCredential](modules_cache_client.CacheClient.md#addstatustocredential)
 - [authenticate](modules_cache_client.CacheClient.md#authenticate)
 - [deleteClaim](modules_cache_client.CacheClient.md#deleteclaim)
 - [getAllowedRolesByIssuer](modules_cache_client.CacheClient.md#getallowedrolesbyissuer)
@@ -110,6 +111,26 @@
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cache_client.ICacheClient.md#adddidtowatchlist)
+
+___
+
+### addStatusToCredential
+
+▸ **addStatusToCredential**(`credential`): `Promise`<`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & { `credentialStatus`: `StatusList2021Entry`  }\>
+
+Sets location of the credential status
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `credential` | `Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | unsigned credential |
+
+#### Returns
+
+`Promise`<`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & { `credentialStatus`: `StatusList2021Entry`  }\>
+
+credential with reference to status location
 
 ___
 
