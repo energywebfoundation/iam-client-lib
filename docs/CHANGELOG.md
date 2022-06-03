@@ -1,3 +1,10 @@
+## [6.0.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.12...v6.0.0-alpha.13) (2022-06-03)
+
+
+### Features
+
+* update claim revocation registry address ([effe1d8](https://github.com/energywebfoundation/iam-client-lib/commit/effe1d899d8316005759a2c0050ec4d4c3513d0b))
+
 ## [6.0.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.11...v6.0.0-alpha.12) (2022-06-02)
 
 
