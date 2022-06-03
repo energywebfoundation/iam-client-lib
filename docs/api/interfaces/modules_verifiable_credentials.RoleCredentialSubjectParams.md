@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [credentialStatus](modules_verifiable_credentials.RoleCredentialSubjectParams.md#credentialstatus)
 - [expirationDate](modules_verifiable_credentials.RoleCredentialSubjectParams.md#expirationdate)
 - [id](modules_verifiable_credentials.RoleCredentialSubjectParams.md#id)
 - [issuerFields](modules_verifiable_credentials.RoleCredentialSubjectParams.md#issuerfields)
@@ -13,6 +14,14 @@
 - [version](modules_verifiable_credentials.RoleCredentialSubjectParams.md#version)
 
 ## Properties
+
+### credentialStatus
+
+• `Optional` **credentialStatus**: `StatusList2021Entry`
+
+Indicates if credential is actual of time of verification
+
+___
 
 ### expirationDate
 

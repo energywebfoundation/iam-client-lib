@@ -6,12 +6,21 @@
 
 ### Properties
 
+- [credentialStatus](modules_claims.IssueVerifiablePresentationOptions.md#credentialstatus)
 - [issuerFields](modules_claims.IssueVerifiablePresentationOptions.md#issuerfields)
 - [namespace](modules_claims.IssueVerifiablePresentationOptions.md#namespace)
 - [subject](modules_claims.IssueVerifiablePresentationOptions.md#subject)
 - [version](modules_claims.IssueVerifiablePresentationOptions.md#version)
 
 ## Properties
+
+### credentialStatus
+
+• `Optional` **credentialStatus**: `StatusList2021Entry`
+
+Indicates if credential is actual of the time of verification
+
+___
 
 ### issuerFields
 
