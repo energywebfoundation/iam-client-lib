@@ -25,6 +25,9 @@ verifiableCredentialsService.createRoleVC(...);
 - [createVerifiablePresentation](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#createverifiablepresentation)
 - [getCredentialsByDefinition](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#getcredentialsbydefinition)
 - [initiateExchange](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#initiateexchange)
+- [isRevoked](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#isrevoked)
+- [revocationDetails](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#revocationdetails)
+- [revokeCredential](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#revokecredential)
 - [verify](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#verify)
 - [create](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md#create)
 
@@ -69,11 +72,21 @@ ___
 
 Create a credential with given parameters.
 
+```typescript
+await verifiableCredentialsService.createCredential({
+    id: 'did:ethr:ewc:0x...00',
+    namespace: 'root.energyweb.iam.ewc',
+    version: '1',
+    issuerFields: [],
+    expirationDate: new Date(),
+});
+```
+
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `params` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) | verifiable presentation or credential |
+| `params` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) | verifiable credential parameters |
 
 #### Returns
 
@@ -154,7 +167,11 @@ ___
 
 ▸ **getCredentialsByDefinition**(`presentationDefinition`): `Promise`<`SelectResults`\>
 
-Returns issued role verifiable credentials which matches definition
+Returns issued role verifiable credentials which matches definition.
+
+```typescript
+await verifiableCredentialsService.getCredentialsByDefinition(presentationDefinition);
+```
 
 #### Parameters
 
@@ -197,6 +214,78 @@ credentials query with matching verifiable presentations
 
 ___
 
+### isRevoked
+
+▸ **isRevoked**(`credential`): `Promise`<`boolean`\>
+
+Check if given verifiable credential is revoked.
+
+```typescript
+await verifiableCredentialsService.isRevoked(credential);
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if credential is revoked
+
+___
+
+### revocationDetails
+
+▸ **revocationDetails**(`credential`): `Promise`<``null`` \| [`CredentialRevocationDetailsResult`](../interfaces/modules_verifiable_credentials.CredentialRevocationDetailsResult.md)\>
+
+Get the credentials revocation details.
+
+```typescript
+await verifiableCredentialsService.revocationDetails(credential);
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
+
+#### Returns
+
+`Promise`<``null`` \| [`CredentialRevocationDetailsResult`](../interfaces/modules_verifiable_credentials.CredentialRevocationDetailsResult.md)\>
+
+revoker and revocationTimeStamp for the revocation
+
+___
+
+### revokeCredential
+
+▸ **revokeCredential**(`credential`): `Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+
+Revoke given verifiable credential with StatusList2021.
+
+```typescript
+await verifiableCredentialsService.revokeCredential(credential);
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
+
+#### Returns
+
+`Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+
+StatusList2021Credential
+
+___
+
 ### verify
 
 ▸ **verify**<`T`\>(`vp`, `options?`): `Promise`<`boolean`\>
@@ -231,14 +320,14 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `claimsService`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ `Static` **create**(`signerService`, `cacheClient`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
-| `claimsService` | [`CacheClient`](modules_cache_client.CacheClient.md) |
+| `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
 #### Returns
 

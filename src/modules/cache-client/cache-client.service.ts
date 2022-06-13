@@ -5,6 +5,7 @@ import { IDIDDocument } from '@ew-did-registry/did-resolver-interface';
 import {
   Credential,
   StatusList2021Entry,
+  VerifiableCredential,
 } from '@ew-did-registry/credentials-interface';
 import { IApp, IOrganization, IRole } from '../domains/domains.types';
 import { AssetHistory } from '../assets/assets.types';
@@ -31,7 +32,11 @@ import {
 } from './cache-client.types';
 import { SearchType } from '.';
 import { getLogger } from '../../config/logger.config';
-import { RoleCredentialSubject } from '../verifiable-credentials';
+import {
+  RoleCredentialSubject,
+  StatusList2021Credential,
+  StatusList2021UnsignedCredential,
+} from '../verifiable-credentials';
 
 export class CacheClient implements ICacheClient {
   public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
@@ -419,7 +424,7 @@ export class CacheClient implements ICacheClient {
    * Sets location of the credential status
    *
    * @param credential unsigned credential
-   * @returns credential with reference to status location
+   * @return credential with reference to status location
    */
   async addStatusToCredential(
     credential: Credential<RoleCredentialSubject>
@@ -432,8 +437,69 @@ export class CacheClient implements ICacheClient {
       Credential<RoleCredentialSubject> & {
         credentialStatus: StatusList2021Entry;
       }
-    >('/status-list/entries', credential);
+    >('/status-list/entries', { options: {}, credential });
     return data;
+  }
+
+  /**
+   * Get the StatusList2021Credential object to be signed
+   *
+   * @param verifiableCredential verifiable credential to be revoked
+   * @return unsigned status list credential
+   */
+  async initiateCredentialStatusUpdate(
+    verifiableCredential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<StatusList2021UnsignedCredential> {
+    const { data } =
+      await this._httpClient.post<StatusList2021UnsignedCredential>(
+        '/status-list/credentials/status/initiate',
+        {
+          options: {},
+          verifiableCredential,
+        }
+      );
+    return data;
+  }
+
+  /**
+   * Persist signed StatusList2021Credential object in storage.
+   *
+   * @param statusListCredential signed status list
+   * @return status list credential
+   */
+  async persistCredentialStatusUpdate(
+    statusListCredential: StatusList2021Credential
+  ): Promise<StatusList2021Credential> {
+    const { data } = await this._httpClient.post<StatusList2021Credential>(
+      '/status-list/credentials/status/finalize',
+      {
+        options: {},
+        statusListCredential,
+      }
+    );
+    return data;
+  }
+
+  /**
+   * Fetch the StatusList2021Credential object from storage.
+   *
+   * @param credential verifiable credential with status list 2021
+   * @return status list credential if found
+   */
+  async getStatusListCredential(
+    credential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<StatusList2021Credential | null> {
+    if (!credential.credentialStatus?.statusListCredential) {
+      throw new Error(
+        'Missing statusListCredential property in given credential status'
+      );
+    }
+
+    const response = await axios.get<StatusList2021Credential | null>(
+      credential.credentialStatus?.statusListCredential
+    );
+
+    return response.status === 200 ? response.data : null;
   }
 
   private async refreshToken(): Promise<AuthTokens | undefined> {
