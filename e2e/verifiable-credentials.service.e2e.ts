@@ -422,8 +422,11 @@ describe('Verifiable credentials tests', () => {
     });
     test('getCredentialsByDefinition() should return matching select results from Sphereon library', async () => {
       getClaimsBySubject.mockResolvedValueOnce(claimsBySubject);
-      const result = await verifiableCredentialsService.getCredentialsByDefinition(presentationDefinition as IPresentationDefinition)
-      expect(result).toEqual(selectResults)
+      const result =
+        await verifiableCredentialsService.getCredentialsByDefinition(
+          presentationDefinition as IPresentationDefinition
+        );
+      expect(result).toEqual(selectResults);
     });
 
     test('initiateExchange() should return presentation matching presentation request', async () => {
