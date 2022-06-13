@@ -6,6 +6,9 @@ import {
   validExampleExternalVC,
   bloxmoveVpRequest,
   customerRoleClaim,
+  presentationDefinition,
+  selectResults,
+  claimsBySubject,
 } from './fixtures';
 import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
 import { CacheClient, fromPrivateKey } from '../src';
@@ -25,6 +28,7 @@ import {
   CredentialStatusPurpose,
   StatusListEntryType,
 } from '@ew-did-registry/credentials-interface';
+import { IPresentationDefinition } from '@sphereon/pex';
 
 const { id } = utils;
 
@@ -415,6 +419,11 @@ describe('Verifiable credentials tests', () => {
         });
       });
       getClaimsBySubject.mockResolvedValue([{ vp }]);
+    });
+    test('getCredentialsByDefinition() should return matching select results from Sphereon library', async () => {
+      getClaimsBySubject.mockResolvedValueOnce(claimsBySubject);
+      const result = await verifiableCredentialsService.getCredentialsByDefinition(presentationDefinition as IPresentationDefinition)
+      expect(result).toEqual(selectResults)
     });
 
     test('initiateExchange() should return presentation matching presentation request', async () => {
