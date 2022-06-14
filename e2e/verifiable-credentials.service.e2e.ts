@@ -421,7 +421,7 @@ describe('Verifiable credentials tests', () => {
       getClaimsBySubject.mockResolvedValue([{ vp }]);
     });
     test('getCredentialsByDefinition() should return matching select results from Sphereon library', async () => {
-      getClaimsBySubject.mockResolvedValueOnce(claimsBySubject);
+      getClaimsBySubject.mockResolvedValue(claimsBySubject);
       const result =
         await verifiableCredentialsService.getCredentialsByDefinition(
           presentationDefinition as IPresentationDefinition
