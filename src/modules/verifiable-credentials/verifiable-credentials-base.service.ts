@@ -169,8 +169,14 @@ export abstract class VerifiableCredentialsServiceBase {
 
     const selections = await Promise.all(
       credentialQuery.map(async ({ presentationDefinition }) => {
+        const presentationDefFiltered = {
+          ...presentationDefinition,
+          input_descriptors: this.filterSelfSignDescriptors(
+            presentationDefinition?.input_descriptors
+          ),
+        };
         const selectResults = await this.getCredentialsByDefinition(
-          presentationDefinition
+          presentationDefFiltered
         );
         return {
           presentationDefinition,
@@ -520,6 +526,18 @@ export abstract class VerifiableCredentialsServiceBase {
 
     const pex = new PEX();
     return pex.selectFrom(presentationDefinition, vc);
+  }
+  /*
+   * We have observed that pex may have bugs when dealing with subject_is_issuer credentials
+   * and when handling a presentation definition with more than one input descriptor.
+   * This could be related to these issues:
+   *    - https://github.com/Sphereon-Opensource/pex/issues/96
+   *    - https://github.com/Sphereon-Opensource/pex/issues/91
+   * We are therefore trying to simplify the input to pex so remove the possibility of it generating incorrect results.
+   * Once the above issues are fixed, pex can be updated and perhaps this filtering will not needed.
+   */
+  private filterSelfSignDescriptors(descriptors) {
+    return descriptors?.filter((desc) => !desc?.constraints?.subject_is_issuer);
   }
 
   /**
