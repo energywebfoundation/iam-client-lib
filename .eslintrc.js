@@ -8,4 +8,5 @@ module.exports = {
   parserOptions: {
     project: ['tsconfig.json', 'tsconfig.eslint.json'],
   },
+  ignorePatterns: ['src/utils/domains-build.js'],
 };

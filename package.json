@@ -37,7 +37,9 @@
     "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 1337 -a 20 -e 10000000 -l=10000000",
     "test:watch": "npm run start-rpc -- \"jest --coverage --env=./jest.env.js --watchAll\"",
     "test": "npm run start-rpc -- \"jest --no-cache --env=./jest.env.js\"",
-    "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\""
+    "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\"",
+    "updateDomains": "npx ts-node scripts/update_domains",
+    "transferDomains": "npx ts-node scripts/transfer_omains"
   },
   "keywords": [
     "decentralized",
