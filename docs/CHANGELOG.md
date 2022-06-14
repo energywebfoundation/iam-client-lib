@@ -1,3 +1,10 @@
+## [6.0.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.15...v6.0.0-alpha.16) (2022-06-14)
+
+
+### Features
+
+* ens scripts ([d7f0df3](https://github.com/energywebfoundation/iam-client-lib/commit/d7f0df38c5eb0ff1d7b44159b6a83ec606927790))
+
 ## [6.0.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.14...v6.0.0-alpha.15) (2022-06-13)
 
 ## [6.0.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.13...v6.0.0-alpha.14) (2022-06-03)
