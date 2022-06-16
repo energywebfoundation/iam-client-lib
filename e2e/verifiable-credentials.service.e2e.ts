@@ -4,6 +4,8 @@ import { v4 as uuid } from 'uuid';
 import {
   exampleExternalVCWithInvalidSubjectId,
   validExampleExternalVC,
+  bloxmoveVpRequest,
+  customerRoleClaim,
 } from './fixtures';
 import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
 import { CacheClient, fromPrivateKey } from '../src';
@@ -424,7 +426,51 @@ describe('Verifiable credentials tests', () => {
       });
       expect(selectResults.verifiableCredential).toHaveLength(1);
     });
-
+    test('initiateExchange() should filter self-sign data input_descriptors before fetching credentials and selecting matches', async () => {
+      /*
+       * For rationale for this behaviour, see the comment on `verifiable-credentials-base.filterSelfSignDescriptors()`
+       */
+      const vpRequest: VpRequest = bloxmoveVpRequest as VpRequest;
+      (axios as jest.Mocked<typeof axios>).post.mockImplementation(() => {
+        return Promise.resolve({
+          data: { errors: [], vpRequest },
+        });
+      });
+      getClaimsBySubject.mockResolvedValue(customerRoleClaim);
+      const getCredentialsByDefinitionSpy = jest.spyOn(
+        verifiableCredentialsService,
+        'getCredentialsByDefinition'
+      );
+      const {
+        selections: [{ selectResults }],
+      } = await verifiableCredentialsService.initiateExchange({
+        type: VC_API_EXCHANGE,
+        url: exchangeUrl,
+      });
+      expect(getCredentialsByDefinitionSpy).toHaveBeenCalledWith({
+        id: 'did:ethr:blxm-dev:0xE8538b4D84816Cc38D5CB4379e6b4fDf81d52d2a',
+        input_descriptors: [
+          {
+            id: 'energy_supplier_customer_contract',
+            name: 'Energy Supplier Customer Contract',
+            purpose:
+              'An energy supplier contract is needed for Rebeam authorization',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.credentialSubject.role.namespace'],
+                  filter: {
+                    type: 'string',
+                    const: 'customer.roles.rebeam.apps.eliagroup.iam.ewc',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      });
+      expect(selectResults.matches).toHaveLength(1);
+    });
     test('continueExchange() should return issued credentials', async () => {
       const {
         selections: [{ selectResults }],
