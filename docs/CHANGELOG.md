@@ -1,3 +1,10 @@
+## [6.0.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.16...v6.0.0-alpha.17) (2022-06-16)
+
+
+### Bug Fixes
+
+* filter self-signed credential from presDef before sending to PEX ([6d43aeb](https://github.com/energywebfoundation/iam-client-lib/commit/6d43aeb5d7b530461ec92be663b30626e641c9db))
+
 ## [6.0.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.15...v6.0.0-alpha.16) (2022-06-14)
 
 
