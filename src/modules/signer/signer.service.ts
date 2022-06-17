@@ -259,10 +259,9 @@ export class SignerService {
    * @return DID address
    */
   get didHex() {
-    const chainBn = BigNumber.from(this.chainId);
-    return `did:${
-      Methods.Erc1056
-    }:${chainBn.toHexString()}:${this._address.toLowerCase()}`;
+    return `did:${Methods.Erc1056}:${`0x${this.chainId.toString(
+      16
+    )}`}:${this._address.toLowerCase()}`;
   }
 
   /**

@@ -9,15 +9,23 @@
 ### Interfaces
 
 - [CreatePresentationParams](../interfaces/modules_verifiable_credentials.CreatePresentationParams.md)
+- [CredentialRevocationDetailsResult](../interfaces/modules_verifiable_credentials.CredentialRevocationDetailsResult.md)
 - [InitiateExchangeResults](../interfaces/modules_verifiable_credentials.InitiateExchangeResults.md)
 - [IssuerFields](../interfaces/modules_verifiable_credentials.IssuerFields.md)
 - [ProofOptions](../interfaces/modules_verifiable_credentials.ProofOptions.md)
 - [RoleCredentialSubject](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)
 - [RoleCredentialSubjectParams](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md)
+- [StatusList2021CredentialSubject](../interfaces/modules_verifiable_credentials.StatusList2021CredentialSubject.md)
+- [StatusList2021UnsignedCredential](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)
 - [VerifyVerifiableCredentialResults](../interfaces/modules_verifiable_credentials.VerifyVerifiableCredentialResults.md)
+
+### Type aliases
+
+- [StatusList2021Credential](modules_verifiable_credentials.md#statuslist2021credential)
 
 ### Variables
 
+- [statusList2021CredentialEIP712Types](modules_verifiable_credentials.md#statuslist2021credentialeip712types)
 - [verifiableCredentialEIP712Types](modules_verifiable_credentials.md#verifiablecredentialeip712types)
 - [verifiablePresentationEIP712Types](modules_verifiable_credentials.md#verifiablepresentationeip712types)
 - [verifiablePresentationWithCredentialEIP712Types](modules_verifiable_credentials.md#verifiablepresentationwithcredentialeip712types)
@@ -27,7 +35,28 @@
 - [getVerifiableCredentialsService](modules_verifiable_credentials.md#getverifiablecredentialsservice)
 - [isRoleCredential](modules_verifiable_credentials.md#isrolecredential)
 
+## Type aliases
+
+### StatusList2021Credential
+
+Ƭ **StatusList2021Credential**: `VerifiableCredential`<[`StatusList2021CredentialSubject`](../interfaces/modules_verifiable_credentials.StatusList2021CredentialSubject.md)\>
+
 ## Variables
+
+### statusList2021CredentialEIP712Types
+
+• `Const` **statusList2021CredentialEIP712Types**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `EIP712Domain` | `never`[] |
+| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `StatusList2021` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+
+___
 
 ### verifiableCredentialEIP712Types
 

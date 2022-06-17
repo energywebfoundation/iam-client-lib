@@ -626,7 +626,7 @@ export class ClaimsService {
 
     if (!service) return v4();
 
-    if (claimData.profile && id) {
+    if (claimData.profile && service.id) {
       return service.id;
     }
 

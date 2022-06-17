@@ -29,9 +29,13 @@ import {
   CreatePresentationParams,
   verifiableCredentialEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
+  StatusList2021Credential,
+  statusList2021CredentialEIP712Types,
+  CredentialRevocationDetailsResult,
 } from './types';
 import { ERROR_MESSAGES } from '../../errors';
 import { CacheClient } from '../cache-client';
+import { KEY_TYPE } from './verifiable-credentials.const';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
@@ -132,7 +136,8 @@ export abstract class VerifiableCredentialsServiceBase {
   static async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     signerService: SignerService,
-    claimsService: CacheClient
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cacheClient: CacheClient
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
@@ -271,18 +276,11 @@ export abstract class VerifiableCredentialsServiceBase {
       },
     };
 
-    const keyType = {
-      kty: 'EC',
-      crv: 'secp256k1',
-      alg: 'ES256K-R',
-      key_ops: ['signTypedData'],
-    };
-
     const stringifyCredential = JSON.stringify(credentialObject);
     const preparedVC = await this.prepareIssueCredential(
       stringifyCredential,
       JSON.stringify(proofOptionsObject),
-      JSON.stringify(keyType)
+      JSON.stringify(KEY_TYPE)
     );
     const preparation = JSON.parse(preparedVC);
 
@@ -506,7 +504,11 @@ export abstract class VerifiableCredentialsServiceBase {
   }
 
   /**
-   * Returns issued role verifiable credentials which matches definition
+   * Returns issued role verifiable credentials which matches definition.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.getCredentialsByDefinition(presentationDefinition);
+   * ```
    *
    * @param presentationDefinition credential requirements
    * @returns results of matching each role verifiable credential to definition
@@ -543,7 +545,17 @@ export abstract class VerifiableCredentialsServiceBase {
   /**
    * Create a credential with given parameters.
    *
-   * @param {RoleCredentialSubjectParams} params verifiable presentation or credential
+   * ```typescript
+   * await verifiableCredentialsService.createCredential({
+   *     id: 'did:ethr:ewc:0x...00',
+   *     namespace: 'root.energyweb.iam.ewc',
+   *     version: '1',
+   *     issuerFields: [],
+   *     expirationDate: new Date(),
+   * });
+   * ```
+   *
+   * @param {RoleCredentialSubjectParams} params verifiable credential parameters
    * @returns Energy Web credential
    */
   public createCredential(
@@ -577,6 +589,122 @@ export abstract class VerifiableCredentialsServiceBase {
       credential.expirationDate = params.expirationDate.toISOString();
     }
 
+    if (params.credentialStatus) {
+      credential.credentialStatus = params.credentialStatus;
+    }
+
     return credential;
+  }
+
+  /**
+   * Revoke given verifiable credential with StatusList2021.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.revokeCredential(credential);
+   * ```
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject>} credential verifiable credential
+   * @return StatusList2021Credential
+   */
+  public async revokeCredential(
+    credential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<StatusList2021Credential> {
+    const statusListUnsignedCredential =
+      await this._cacheClient.initiateCredentialStatusUpdate(credential);
+
+    const proofOptionsObject = {
+      verificationMethod: `${statusListUnsignedCredential.issuer}#controller`,
+      proofPurpose: 'assertionMethod',
+      eip712Domain: {
+        primaryType: 'VerifiableCredential',
+        domain: {},
+        messageSchema: statusList2021CredentialEIP712Types,
+      },
+    };
+
+    const stringifyCredential = JSON.stringify(statusListUnsignedCredential);
+    const preparedVC = await this.prepareIssueCredential(
+      stringifyCredential,
+      JSON.stringify(proofOptionsObject),
+      JSON.stringify(KEY_TYPE)
+    );
+    const preparation = JSON.parse(preparedVC);
+
+    const typedData = preparation.signingInput;
+    if (!typedData || !typedData.primaryType) {
+      throw new Error('Expected EIP-712 TypedData');
+    }
+
+    delete typedData.types['EIP712Domain'];
+
+    const signature = await this._signerService.signTypedData(
+      typedData.domain,
+      typedData.types,
+      typedData.message
+    );
+
+    const signedCredential = await this.completeIssueCredential(
+      stringifyCredential,
+      preparedVC,
+      signature
+    );
+
+    const statusList2021Credential = JSON.parse(
+      signedCredential
+    ) as StatusList2021Credential;
+
+    return await this._cacheClient.persistCredentialStatusUpdate(
+      statusList2021Credential
+    );
+  }
+
+  /**
+   * Check if given verifiable credential is revoked.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.isRevoked(credential);
+   * ```
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject>} credential verifiable credential
+   * @return true if credential is revoked
+   */
+  public async isRevoked(
+    credential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<boolean> {
+    const revocationDetails = await this.revocationDetails(credential);
+    return !!revocationDetails;
+  }
+
+  /**
+   * Get the credentials revocation details.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.revocationDetails(credential);
+   * ```
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject>} credential verifiable credential
+   * @return revoker and revocationTimeStamp for the revocation
+   */
+  public async revocationDetails(
+    credential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<CredentialRevocationDetailsResult | null> {
+    const statusListCredential =
+      await this._cacheClient.getStatusListCredential(credential);
+
+    if (!statusListCredential) return null;
+
+    try {
+      await this.verify(statusListCredential);
+
+      return {
+        revoker:
+          typeof statusListCredential.issuer === 'string'
+            ? statusListCredential.issuer
+            : statusListCredential.issuer.id,
+        timestamp: new Date(statusListCredential.issuanceDate).getTime(),
+      };
+    } catch {
+      return null;
+    }
   }
 }
