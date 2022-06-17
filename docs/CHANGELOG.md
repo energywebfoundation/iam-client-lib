@@ -1,3 +1,10 @@
+## [6.0.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.17...v6.0.0-alpha.18) (2022-06-17)
+
+
+### Features
+
+* add credential revocation ([1f8f028](https://github.com/energywebfoundation/iam-client-lib/commit/1f8f0282a38853d3bc6fbbce3e02a028f68749ff))
+
 ## [6.0.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.16...v6.0.0-alpha.17) (2022-06-16)
 
 
