@@ -5,6 +5,12 @@ import {
 import { Methods, Chain } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';
+import {
+  CredentialStatusPurpose,
+  CredentialStatusType,
+  VerifiablePresentation,
+  Credential,
+} from '@ew-did-registry/credentials-interface';
 import { providers, utils, Wallet } from 'ethers';
 import {
   AssetsService,
@@ -21,6 +27,7 @@ import {
   IClaimIssuance,
   SignerT,
   Claim,
+  RoleCredentialSubject,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
@@ -28,9 +35,8 @@ import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
 import { setLogger } from '../src/config/logger.config';
 import { ConsoleLogger, LogLevel } from '../src/utils/logger';
-import { VerifiablePresentation } from '@ew-did-registry/credentials-interface';
 
-const { namehash } = utils;
+const { namehash, id } = utils;
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 const staticIssuer = Wallet.createRandom().connect(provider);
@@ -111,6 +117,22 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
         issueClaim: mockIssueClaim,
         rejectClaim: mockRejectClaim,
         getAllowedRolesByIssuer: mockGetAllowedRoles,
+        addStatusToCredential: (
+          credential: Credential<RoleCredentialSubject>
+        ): Credential<RoleCredentialSubject> => {
+          return {
+            ...credential,
+            credentialStatus: {
+              id: `https://energyweb.org/credential/${id(
+                JSON.stringify(credential)
+              )}#list`,
+              type: CredentialStatusType.StatusList2021Entry,
+              statusPurpose: CredentialStatusPurpose.REVOCATION,
+              statusListIndex: '1',
+              statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,
+            },
+          };
+        },
       };
     }),
   };

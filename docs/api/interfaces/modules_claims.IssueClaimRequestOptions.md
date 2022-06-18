@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [credentialStatus](modules_claims.IssueClaimRequestOptions.md#credentialstatus)
 - [id](modules_claims.IssueClaimRequestOptions.md#id)
 - [issuerFields](modules_claims.IssueClaimRequestOptions.md#issuerfields)
 - [publishOnChain](modules_claims.IssueClaimRequestOptions.md#publishonchain)
@@ -15,6 +16,14 @@
 - [token](modules_claims.IssueClaimRequestOptions.md#token)
 
 ## Properties
+
+### credentialStatus
+
+• `Optional` **credentialStatus**: `StatusList2021Entry`
+
+Indicates if credential is actual of the time of verification
+
+___
 
 ### id
 

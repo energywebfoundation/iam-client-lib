@@ -1,3 +1,80 @@
+## [6.0.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.17...v6.0.0-alpha.18) (2022-06-17)
+
+
+### Features
+
+* add credential revocation ([1f8f028](https://github.com/energywebfoundation/iam-client-lib/commit/1f8f0282a38853d3bc6fbbce3e02a028f68749ff))
+
+## [6.0.0-alpha.17](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.16...v6.0.0-alpha.17) (2022-06-16)
+
+
+### Bug Fixes
+
+* filter self-signed credential from presDef before sending to PEX ([6d43aeb](https://github.com/energywebfoundation/iam-client-lib/commit/6d43aeb5d7b530461ec92be663b30626e641c9db))
+
+## [6.0.0-alpha.16](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.15...v6.0.0-alpha.16) (2022-06-14)
+
+
+### Features
+
+* ens scripts ([d7f0df3](https://github.com/energywebfoundation/iam-client-lib/commit/d7f0df38c5eb0ff1d7b44159b6a83ec606927790))
+
+## [6.0.0-alpha.15](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.14...v6.0.0-alpha.15) (2022-06-13)
+
+## [6.0.0-alpha.14](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.13...v6.0.0-alpha.14) (2022-06-03)
+
+
+### Bug Fixes
+
+* **verifiable-credentials:** check errors in exchange initiating ([1bc8626](https://github.com/energywebfoundation/iam-client-lib/commit/1bc8626f0e97404c7f3edf222955c8c4399adfa8))
+
+## [6.0.0-alpha.13](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.12...v6.0.0-alpha.13) (2022-06-03)
+
+
+### Features
+
+* update claim revocation registry address ([effe1d8](https://github.com/energywebfoundation/iam-client-lib/commit/effe1d899d8316005759a2c0050ec4d4c3513d0b))
+
+## [6.0.0-alpha.12](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.11...v6.0.0-alpha.12) (2022-06-02)
+
+
+### Bug Fixes
+
+* add vp request to return of initiate exchange ([ddecbaf](https://github.com/energywebfoundation/iam-client-lib/commit/ddecbafe973c19b0acb17abb94fec062bacc5c62))
+
+## [6.0.0-alpha.11](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.10...v6.0.0-alpha.11) (2022-06-02)
+
+
+### Bug Fixes
+
+* on-chain claim revocation ([df9eeea](https://github.com/energywebfoundation/iam-client-lib/commit/df9eeea62ed6b05fb13dfec074d52267c5efa335))
+
+## [6.0.0-alpha.10](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.9...v6.0.0-alpha.10) (2022-06-02)
+
+
+### Features
+
+* **claims:** add status to vc ([28c556f](https://github.com/energywebfoundation/iam-client-lib/commit/28c556ffa0a9d53561507fdce95817a6672e43f3))
+* **verifiable-credentials:** add credential status eip712 type ([d9db01f](https://github.com/energywebfoundation/iam-client-lib/commit/d9db01ffe8cdaec5c7192f2ac134a7941e952555))
+
+## [6.0.0-alpha.9](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.8...v6.0.0-alpha.9) (2022-06-02)
+
+## [6.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.7...v6.0.0-alpha.8) (2022-06-01)
+
+## [6.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.6...v6.0.0-alpha.7) (2022-05-31)
+
+
+### Bug Fixes
+
+* **verifiable-credentials:** check errors on initiating exchange ([bce85a8](https://github.com/energywebfoundation/iam-client-lib/commit/bce85a8eca2a6abc2e89b93c13c44d63fa64bf02))
+
+## [6.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.5...v6.0.0-alpha.6) (2022-05-27)
+
+
+### Bug Fixes
+
+* exchange credential tests grouping ([2b1e674](https://github.com/energywebfoundation/iam-client-lib/commit/2b1e6746169b05756125d37595c5744aea12b8ee))
+
 ## [6.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.4...v6.0.0-alpha.5) (2022-05-24)
 
 

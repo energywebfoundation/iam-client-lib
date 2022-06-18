@@ -29,9 +29,13 @@ import {
   CreatePresentationParams,
   verifiableCredentialEIP712Types,
   verifiablePresentationWithCredentialEIP712Types,
+  StatusList2021Credential,
+  statusList2021CredentialEIP712Types,
+  CredentialRevocationDetailsResult,
 } from './types';
 import { ERROR_MESSAGES } from '../../errors';
 import { CacheClient } from '../cache-client';
+import { KEY_TYPE } from './verifiable-credentials.const';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
@@ -132,7 +136,8 @@ export abstract class VerifiableCredentialsServiceBase {
   static async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     signerService: SignerService,
-    claimsService: CacheClient
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cacheClient: CacheClient
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
@@ -157,15 +162,26 @@ export abstract class VerifiableCredentialsServiceBase {
       throw new Error('Only VC-API exchange is supported');
     }
 
-    const { data: vpRequest } = await axios.post<VpRequest>(url);
+    const {
+      data: { errors, vpRequest },
+    } = await axios.post<{ errors: string[]; vpRequest: VpRequest }>(url);
+    if (errors.length > 0) {
+      throw new Error(`Error initiating exchange: ${JSON.stringify(errors)}`);
+    }
     const credentialQuery = vpRequest.query.find(
       (q) => q.type === VpRequestQueryType.presentationDefinition
     )?.credentialQuery as VpRequestPresentationDefinitionQuery[];
 
-    return Promise.all(
+    const selections = await Promise.all(
       credentialQuery.map(async ({ presentationDefinition }) => {
+        const presentationDefFiltered = {
+          ...presentationDefinition,
+          input_descriptors: this.filterSelfSignDescriptors(
+            presentationDefinition?.input_descriptors
+          ),
+        };
         const selectResults = await this.getCredentialsByDefinition(
-          presentationDefinition
+          presentationDefFiltered
         );
         return {
           presentationDefinition,
@@ -173,6 +189,7 @@ export abstract class VerifiableCredentialsServiceBase {
         };
       })
     );
+    return { vpRequest, selections };
   }
 
   /**
@@ -229,7 +246,12 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<VerifiableCredential<RoleCredentialSubject>> {
     const did = this._signerService.didHex;
 
-    const credentialObject = this.createCredential(credentialParams);
+    let credentialObject = this.createCredential(credentialParams);
+    if (!credentialObject.credentialStatus) {
+      credentialObject = await this._cacheClient.addStatusToCredential(
+        credentialObject
+      );
+    }
     const eip712MessageSchema = {
       // TODO: generate types from the credential
       ...JSON.parse(JSON.stringify(verifiableCredentialEIP712Types)),
@@ -254,18 +276,11 @@ export abstract class VerifiableCredentialsServiceBase {
       },
     };
 
-    const keyType = {
-      kty: 'EC',
-      crv: 'secp256k1',
-      alg: 'ES256K-R',
-      key_ops: ['signTypedData'],
-    };
-
     const stringifyCredential = JSON.stringify(credentialObject);
     const preparedVC = await this.prepareIssueCredential(
       stringifyCredential,
       JSON.stringify(proofOptionsObject),
-      JSON.stringify(keyType)
+      JSON.stringify(KEY_TYPE)
     );
     const preparation = JSON.parse(preparedVC);
 
@@ -489,7 +504,11 @@ export abstract class VerifiableCredentialsServiceBase {
   }
 
   /**
-   * Returns issued role verifiable credentials which matches definition
+   * Returns issued role verifiable credentials which matches definition.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.getCredentialsByDefinition(presentationDefinition);
+   * ```
    *
    * @param presentationDefinition credential requirements
    * @returns results of matching each role verifiable credential to definition
@@ -510,14 +529,36 @@ export abstract class VerifiableCredentialsServiceBase {
     const pex = new PEX();
     return pex.selectFrom(presentationDefinition, vc);
   }
+  /*
+   * We have observed that pex may have bugs when dealing with subject_is_issuer credentials
+   * and when handling a presentation definition with more than one input descriptor.
+   * This could be related to these issues:
+   *    - https://github.com/Sphereon-Opensource/pex/issues/96
+   *    - https://github.com/Sphereon-Opensource/pex/issues/91
+   * We are therefore trying to simplify the input to pex so remove the possibility of it generating incorrect results.
+   * Once the above issues are fixed, pex can be updated and perhaps this filtering will not needed.
+   */
+  private filterSelfSignDescriptors(descriptors) {
+    return descriptors?.filter((desc) => !desc?.constraints?.subject_is_issuer);
+  }
 
   /**
    * Create a credential with given parameters.
    *
-   * @param {RoleCredentialSubjectParams} params verifiable presentation or credential
+   * ```typescript
+   * await verifiableCredentialsService.createCredential({
+   *     id: 'did:ethr:ewc:0x...00',
+   *     namespace: 'root.energyweb.iam.ewc',
+   *     version: '1',
+   *     issuerFields: [],
+   *     expirationDate: new Date(),
+   * });
+   * ```
+   *
+   * @param {RoleCredentialSubjectParams} params verifiable credential parameters
    * @returns Energy Web credential
    */
-  private createCredential(
+  public createCredential(
     params: RoleCredentialSubjectParams
   ): Credential<RoleCredentialSubject> {
     const credential: Credential<RoleCredentialSubject> = {
@@ -548,6 +589,122 @@ export abstract class VerifiableCredentialsServiceBase {
       credential.expirationDate = params.expirationDate.toISOString();
     }
 
+    if (params.credentialStatus) {
+      credential.credentialStatus = params.credentialStatus;
+    }
+
     return credential;
+  }
+
+  /**
+   * Revoke given verifiable credential with StatusList2021.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.revokeCredential(credential);
+   * ```
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject>} credential verifiable credential
+   * @return StatusList2021Credential
+   */
+  public async revokeCredential(
+    credential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<StatusList2021Credential> {
+    const statusListUnsignedCredential =
+      await this._cacheClient.initiateCredentialStatusUpdate(credential);
+
+    const proofOptionsObject = {
+      verificationMethod: `${statusListUnsignedCredential.issuer}#controller`,
+      proofPurpose: 'assertionMethod',
+      eip712Domain: {
+        primaryType: 'VerifiableCredential',
+        domain: {},
+        messageSchema: statusList2021CredentialEIP712Types,
+      },
+    };
+
+    const stringifyCredential = JSON.stringify(statusListUnsignedCredential);
+    const preparedVC = await this.prepareIssueCredential(
+      stringifyCredential,
+      JSON.stringify(proofOptionsObject),
+      JSON.stringify(KEY_TYPE)
+    );
+    const preparation = JSON.parse(preparedVC);
+
+    const typedData = preparation.signingInput;
+    if (!typedData || !typedData.primaryType) {
+      throw new Error('Expected EIP-712 TypedData');
+    }
+
+    delete typedData.types['EIP712Domain'];
+
+    const signature = await this._signerService.signTypedData(
+      typedData.domain,
+      typedData.types,
+      typedData.message
+    );
+
+    const signedCredential = await this.completeIssueCredential(
+      stringifyCredential,
+      preparedVC,
+      signature
+    );
+
+    const statusList2021Credential = JSON.parse(
+      signedCredential
+    ) as StatusList2021Credential;
+
+    return await this._cacheClient.persistCredentialStatusUpdate(
+      statusList2021Credential
+    );
+  }
+
+  /**
+   * Check if given verifiable credential is revoked.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.isRevoked(credential);
+   * ```
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject>} credential verifiable credential
+   * @return true if credential is revoked
+   */
+  public async isRevoked(
+    credential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<boolean> {
+    const revocationDetails = await this.revocationDetails(credential);
+    return !!revocationDetails;
+  }
+
+  /**
+   * Get the credentials revocation details.
+   *
+   * ```typescript
+   * await verifiableCredentialsService.revocationDetails(credential);
+   * ```
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject>} credential verifiable credential
+   * @return revoker and revocationTimeStamp for the revocation
+   */
+  public async revocationDetails(
+    credential: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<CredentialRevocationDetailsResult | null> {
+    const statusListCredential =
+      await this._cacheClient.getStatusListCredential(credential);
+
+    if (!statusListCredential) return null;
+
+    try {
+      await this.verify(statusListCredential);
+
+      return {
+        revoker:
+          typeof statusListCredential.issuer === 'string'
+            ? statusListCredential.issuer
+            : statusListCredential.issuer.id,
+        timestamp: new Date(statusListCredential.issuanceDate).getTime(),
+      };
+    } catch {
+      return null;
+    }
   }
 }

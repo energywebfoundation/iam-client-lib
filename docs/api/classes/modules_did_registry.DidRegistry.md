@@ -23,6 +23,7 @@ didRegistry.getDidDocument();
 - [identityOwner](modules_did_registry.DidRegistry.md#identityowner)
 - [ipfsStore](modules_did_registry.DidRegistry.md#ipfsstore)
 - [jwt](modules_did_registry.DidRegistry.md#jwt)
+- [registrySettings](modules_did_registry.DidRegistry.md#registrysettings)
 
 ### Methods
 
@@ -86,6 +87,16 @@ ___
 #### Returns
 
 `JWT`
+
+___
+
+### registrySettings
+
+• `get` **registrySettings**(): `RegistrySettings`
+
+#### Returns
+
+`RegistrySettings`
 
 ## Methods
 

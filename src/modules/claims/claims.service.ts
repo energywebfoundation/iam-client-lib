@@ -3,12 +3,13 @@ import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
+  DomainReader,
   IRoleDefinition,
   PreconditionType,
 } from '@energyweb/credential-governance';
 import {
   CredentialResolver,
-  EthersProviderIssuerDefinitionResolver,
+  EthersProviderIssuerResolver,
   IpfsCredentialResolver,
   VCIssuerVerification,
 } from '@energyweb/vc-verification';
@@ -381,6 +382,7 @@ export class ClaimsService {
     registrationTypes,
     issuerFields,
     publishOnChain = true,
+    credentialStatus,
   }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
       claimData: { claimType: string; claimTypeVersion: number };
@@ -443,6 +445,7 @@ export class ClaimsService {
           namespace: role,
           version: version.toString(),
           issuerFields,
+          credentialStatus,
         }),
       ]);
       message.issuedToken = issuedToken;
@@ -648,7 +651,7 @@ export class ClaimsService {
 
     if (!service) return v4();
 
-    if (claimData.profile && id) {
+    if (claimData.profile && service.id) {
       return service.id;
     }
 
@@ -977,7 +980,12 @@ export class ClaimsService {
     if (claimIds) {
       const claimsDetails = await Promise.all([
         ...claimIds.map(async (claimId) => {
-          return await this.getClaimById(claimId);
+          const claim = await this.getClaimById(claimId);
+          if (!claim) return undefined;
+          return {
+            namespace: claim.claimType,
+            subject: claim.subject,
+          };
         }),
       ]);
       claimsDetailsToRevoke = [
@@ -1088,7 +1096,7 @@ export class ClaimsService {
         throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_NOT_FOUND);
       }
 
-      namespace = claimData.namespace;
+      namespace = claimData.claimType;
       subject = claimData.subject;
     }
 
@@ -1205,6 +1213,7 @@ export class ClaimsService {
       namespace: options.namespace,
       version: options.version,
       issuerFields: options.issuerFields,
+      credentialStatus: options.credentialStatus,
     });
     const vp =
       await this._verifiableCredentialService.createVerifiablePresentation([
@@ -1344,13 +1353,9 @@ export class ClaimsService {
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
     );
-    const issuerResolver = new EthersProviderIssuerDefinitionResolver(
-      this._signerService.provider,
-      chainConfigs()[this._signerService.chainId].ensResolverV2Address
-    );
+    const domainReader = new DomainReader({ensRegistryAddress: chainConfigs()[this._signerService.chainId].ensResolverV2Address, provider: this._signerService.provider})
+    const issuerResolver = new EthersProviderIssuerResolver(domainReader);
     this._vcIssuerVerifier = new VCIssuerVerification(
-      this._signerService.provider,
-      this._didRegistry.registrySettings,
       credentialResolver,
       issuerResolver
     );

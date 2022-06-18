@@ -1,9 +1,11 @@
-import { Wallet } from 'ethers';
+import { Wallet, utils } from 'ethers';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import {
   exampleExternalVCWithInvalidSubjectId,
   validExampleExternalVC,
+  bloxmoveVpRequest,
+  customerRoleClaim,
 } from './fixtures';
 import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
 import { CacheClient, fromPrivateKey } from '../src';
@@ -14,19 +16,42 @@ import {
   VerifiableCredentialsServiceBase,
 } from '../src/modules/verifiable-credentials';
 import {
+  CredentialStatusType,
   VC_API_EXCHANGE,
   VerifiableCredential,
   VpRequest,
   VpRequestInteractServiceType,
   VpRequestQueryType,
+  Credential,
+  CredentialStatusPurpose,
 } from '@ew-did-registry/credentials-interface';
+
+const { id } = utils;
 
 jest.mock('axios');
 const getClaimsBySubject = jest.fn();
 jest.mock('../src/modules/cache-client/cache-client.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
-      return { getClaimsBySubject };
+      return {
+        getClaimsBySubject,
+        addStatusToCredential: (
+          credential: Credential<RoleCredentialSubject>
+        ): Credential<RoleCredentialSubject> => {
+          return {
+            ...credential,
+            credentialStatus: {
+              id: `https://energyweb.org/credential/${id(
+                JSON.stringify(credential)
+              )}#list`,
+              type: CredentialStatusType.StatusList2021Entry,
+              statusPurpose: CredentialStatusPurpose.REVOCATION,
+              statusListIndex: '1',
+              statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,
+            },
+          };
+        },
+      };
     }),
   };
 });
@@ -332,7 +357,6 @@ describe('Verifiable credentials tests', () => {
     });
   });
 
-  // TODO: add tests for credential exchange
   describe('Verifiable credentials exchange', () => {
     const vpRequest: VpRequest = {
       query: [
@@ -381,56 +405,96 @@ describe('Verifiable credentials tests', () => {
 
     beforeEach(async () => {
       requiredCredentials = await createExampleSignedCredential([]);
+      const vp =
+        await verifiableCredentialsService.createVerifiablePresentation([
+          requiredCredentials,
+        ]);
       (axios as jest.Mocked<typeof axios>).post.mockImplementation((url) => {
         return Promise.resolve({
-          data: url === exchangeUrl ? vpRequest : '',
+          data: url === exchangeUrl ? { errors: [], vpRequest } : '',
         });
       });
-      getClaimsBySubject.mockResolvedValue([requiredCredentials]);
+      getClaimsBySubject.mockResolvedValue([{ vp }]);
+    });
 
-      test('initiateExchange() should return presentation matching presentation request', async () => {
-        const vc = await createExampleSignedCredential([]);
-        vc;
-        (axios as jest.Mocked<typeof axios>).post.mockImplementationOnce(
-          (url) => {
-            return Promise.resolve({
-              data: url === exchangeUrl ? vpRequest : '',
-            });
-          }
-        );
-
-        const [{ selectResults }] =
-          await verifiableCredentialsService.initiateExchange({
-            type: VC_API_EXCHANGE,
-            url: exchangeUrl,
-          });
-        expect(selectResults.verifiableCredential).toHaveLength(1);
+    test('initiateExchange() should return presentation matching presentation request', async () => {
+      const {
+        selections: [{ selectResults }],
+      } = await verifiableCredentialsService.initiateExchange({
+        type: VC_API_EXCHANGE,
+        url: exchangeUrl,
+      });
+      expect(selectResults.verifiableCredential).toHaveLength(1);
+    });
+    test('initiateExchange() should filter self-sign data input_descriptors before fetching credentials and selecting matches', async () => {
+      /*
+       * For rationale for this behaviour, see the comment on `verifiable-credentials-base.filterSelfSignDescriptors()`
+       */
+      const vpRequest: VpRequest = bloxmoveVpRequest as VpRequest;
+      (axios as jest.Mocked<typeof axios>).post.mockImplementation(() => {
+        return Promise.resolve({
+          data: { errors: [], vpRequest },
+        });
+      });
+      getClaimsBySubject.mockResolvedValue(customerRoleClaim);
+      const getCredentialsByDefinitionSpy = jest.spyOn(
+        verifiableCredentialsService,
+        'getCredentialsByDefinition'
+      );
+      const {
+        selections: [{ selectResults }],
+      } = await verifiableCredentialsService.initiateExchange({
+        type: VC_API_EXCHANGE,
+        url: exchangeUrl,
+      });
+      expect(getCredentialsByDefinitionSpy).toHaveBeenCalledWith({
+        id: 'did:ethr:blxm-dev:0xE8538b4D84816Cc38D5CB4379e6b4fDf81d52d2a',
+        input_descriptors: [
+          {
+            id: 'energy_supplier_customer_contract',
+            name: 'Energy Supplier Customer Contract',
+            purpose:
+              'An energy supplier contract is needed for Rebeam authorization',
+            constraints: {
+              fields: [
+                {
+                  path: ['$.credentialSubject.role.namespace'],
+                  filter: {
+                    type: 'string',
+                    const: 'customer.roles.rebeam.apps.eliagroup.iam.ewc',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      });
+      expect(selectResults.matches).toHaveLength(1);
+    });
+    test('continueExchange() should return issued credentials', async () => {
+      const {
+        selections: [{ selectResults }],
+      } = await verifiableCredentialsService.initiateExchange({
+        type: VC_API_EXCHANGE,
+        url: exchangeUrl,
       });
 
-      test('continueExchange() should return issued credentials', async () => {
-        const [{ selectResults }] =
-          await verifiableCredentialsService.initiateExchange({
-            type: VC_API_EXCHANGE,
-            url: exchangeUrl,
-          });
+      (axios as jest.Mocked<typeof axios>).put.mockImplementationOnce((url) =>
+        Promise.resolve({
+          data:
+            url === vpRequest.interact.service[0].serviceEndpoint
+              ? { errors: [], vp: issuedPresentation, vpRequest: undefined }
+              : null,
+        })
+      );
 
-        (axios as jest.Mocked<typeof axios>).put.mockImplementationOnce((url) =>
-          Promise.resolve({
-            data:
-              url === vpRequest.interact.service[0].serviceEndpoint
-                ? { errors: [], vp: issuedPresentation, vpRequest: undefined }
-                : null,
-          })
-        );
-
-        expect(
-          await verifiableCredentialsService.continueExchange({
-            vpRequest,
-            credentials:
-              selectResults.verifiableCredential as VerifiableCredential<RoleCredentialSubject>[],
-          })
-        ).toEqual(issuedPresentation);
-      });
+      expect(
+        await verifiableCredentialsService.continueExchange({
+          vpRequest,
+          credentials:
+            selectResults.verifiableCredential as VerifiableCredential<RoleCredentialSubject>[],
+        })
+      ).toEqual(issuedPresentation);
     });
   });
 });
