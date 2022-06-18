@@ -1353,7 +1353,11 @@ export class ClaimsService {
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
     );
-    const domainReader = new DomainReader({ensRegistryAddress: chainConfigs()[this._signerService.chainId].ensResolverV2Address, provider: this._signerService.provider})
+    const domainReader = new DomainReader({
+      ensRegistryAddress:
+        chainConfigs()[this._signerService.chainId].ensResolverV2Address,
+      provider: this._signerService.provider,
+    });
     const issuerResolver = new EthersProviderIssuerResolver(domainReader);
     this._vcIssuerVerifier = new VCIssuerVerification(
       credentialResolver,
