@@ -30,6 +30,7 @@ domainsService.createOrganization(...);
 - [deleteOrganization](modules_domains.DomainsService.md#deleteorganization)
 - [deleteRole](modules_domains.DomainsService.md#deleterole)
 - [getAllowedRolesByIssuer](modules_domains.DomainsService.md#getallowedrolesbyissuer)
+- [getAllowedRolesByRevoker](modules_domains.DomainsService.md#getallowedrolesbyrevoker)
 - [getAppsOfOrg](modules_domains.DomainsService.md#getappsoforg)
 - [getDIDsByRole](modules_domains.DomainsService.md#getdidsbyrole)
 - [getDefinition](modules_domains.DomainsService.md#getdefinition)
@@ -362,6 +363,30 @@ Get all roles that a DID can issue.
 
 ```typescript
 domainsService.getAllowedRolesByIssuer('did:ethr:0x00...0');
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `did` | `string` | issuer DID |
+
+#### Returns
+
+`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+
+array of roles that the DID can issue
+
+___
+
+### getAllowedRolesByRevoker
+
+▸ **getAllowedRolesByRevoker**(`did`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+
+Get all roles that a DID can revoke.
+
+```typescript
+domainsService.getAllowedRolesByRevoker('did:ethr:0x00...0');
 ```
 
 #### Parameters
