@@ -25,6 +25,7 @@ export interface ICacheClient {
   getRolesDefinition: (
     namespace: string[]
   ) => Promise<Record<string, IRoleDefinition>>;
+  getRolesByRevoker: (revoker: string) => Promise<IRole[]>;
   getOrgDefinition: (namespace: string) => Promise<IOrganizationDefinition>;
   getAppDefinition: (namespace: string) => Promise<IAppDefinition>;
   getApplicationRoles: (namespace: string) => Promise<IRole[]>;

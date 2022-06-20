@@ -335,6 +335,13 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
+  async getRolesByRevoker(revoker: string) {
+    const { data } = await this._httpClient.get<IRole[]>(
+      `/claim/revoker/roles/allowed/${revoker}`
+    );
+    return data;
+  }
+
   async getClaimById(claimId: string): Promise<Claim | undefined> {
     const { data } = await this._httpClient.get<Claim | undefined>(
       `/claim/${claimId}`

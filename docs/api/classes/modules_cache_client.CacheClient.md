@@ -50,6 +50,7 @@
 - [getPreviouslyOwnedAssets](modules_cache_client.CacheClient.md#getpreviouslyownedassets)
 - [getRoleDefinition](modules_cache_client.CacheClient.md#getroledefinition)
 - [getRolesByOwner](modules_cache_client.CacheClient.md#getrolesbyowner)
+- [getRolesByRevoker](modules_cache_client.CacheClient.md#getrolesbyrevoker)
 - [getRolesDefinition](modules_cache_client.CacheClient.md#getrolesdefinition)
 - [getStatusListCredential](modules_cache_client.CacheClient.md#getstatuslistcredential)
 - [getSubOrganizationsByOrganization](modules_cache_client.CacheClient.md#getsuborganizationsbyorganization)
@@ -651,6 +652,26 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByOwner](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyowner)
+
+___
+
+### getRolesByRevoker
+
+▸ **getRolesByRevoker**(`revoker`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `revoker` | `string` |
+
+#### Returns
+
+`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+
+#### Implementation of
+
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByRevoker](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyrevoker)
 
 ___
 

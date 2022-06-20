@@ -861,6 +861,20 @@ export class DomainsService {
   }
 
   /**
+   * Get all roles that a DID can revoke.
+   *
+   * ```typescript
+   * domainsService.getAllowedRolesByRevoker('did:ethr:0x00...0');
+   * ```
+   *
+   * @param {String} did issuer DID
+   * @returns array of roles that the DID can issue
+   */
+  async getAllowedRolesByRevoker(did: string): Promise<IRole[]> {
+    return await this._cacheClient.getRolesByRevoker(did);
+  }
+
+  /**
    * Get all organization/application/role for certain owner.
    *
    * ```typescript
