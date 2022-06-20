@@ -1,3 +1,10 @@
+## [6.0.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.18...v6.0.0-alpha.19) (2022-06-20)
+
+
+### Features
+
+* add method to get claims by revoker to cache client interface ([e24b506](https://github.com/energywebfoundation/iam-client-lib/commit/e24b506a929f5c7ff17df99b6d23dd7b31440efe))
+
 ## [6.0.0-alpha.18](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.17...v6.0.0-alpha.18) (2022-06-17)
 
 
