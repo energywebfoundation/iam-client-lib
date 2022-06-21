@@ -378,9 +378,15 @@ export class ClaimsService {
     };
     await this.verifyIssuer(claimData.claimType);
 
+    const roleDefinition = await this._domainsService.getDefinition({
+      type: NamespaceType.Role,
+      namespace: claimData.claimType,
+    });
+
     await this.verifyEnrolmentPrerequisites({
       subject: sub,
       role: claimData.claimType,
+      roleDefinition,
     });
 
     const message: IClaimIssuance = {
@@ -392,8 +398,16 @@ export class ClaimsService {
     const strippedClaimData = this.stripClaimData(claimData);
     const { claimType: role, claimTypeVersion: version } = claimData;
 
+    const defaultValidityPeriod = roleDefinition?.['defaultValidityPeriod'];
+    const roleDefinitionExpirationTimestamp = defaultValidityPeriod
+      ? Date.now() + defaultValidityPeriod
+      : undefined;
+
+    const claimExpirationTimestamp =
+      expirationTimestamp || roleDefinitionExpirationTimestamp;
+
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const expiry = expirationTimestamp || defaultClaimExpiry;
+      const expiry = claimExpirationTimestamp || defaultClaimExpiry;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -429,7 +443,7 @@ export class ClaimsService {
       const [issuedToken, vp] = await Promise.all([
         this._didRegistry.issuePublicClaim({
           publicClaim,
-          expirationTimestamp,
+          expirationTimestamp: claimExpirationTimestamp,
         }),
         this.issueVerifiablePresentation({
           subject: sub,
@@ -437,7 +451,7 @@ export class ClaimsService {
           version: version.toString(),
           issuerFields,
           credentialStatus,
-          expirationTimestamp,
+          expirationTimestamp: claimExpirationTimestamp,
         }),
       ]);
       message.issuedToken = issuedToken;
@@ -582,7 +596,17 @@ export class ClaimsService {
     expirationTimestamp,
   }: IssueClaimOptions): Promise<string | undefined> {
     await this.verifyIssuer(claim.claimType);
-    await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+
+    const roleDefinition = await this._domainsService.getDefinition({
+      type: NamespaceType.Role,
+      namespace: claim.claimType,
+    });
+
+    await this.verifyEnrolmentPrerequisites({
+      subject,
+      role: claim.claimType,
+      roleDefinition,
+    });
 
     const message: IClaimIssuance = {
       id: v4(),
@@ -590,6 +614,15 @@ export class ClaimsService {
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
     };
+
+    const defaultValidityPeriod = roleDefinition?.['defaultValidityPeriod'];
+    const roleDefinitionExpirationTimestamp = defaultValidityPeriod
+      ? Date.now() + defaultValidityPeriod
+      : undefined;
+
+    const claimExpirationTimestamp =
+      expirationTimestamp || roleDefinitionExpirationTimestamp;
+
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       const publicClaim: IPublicClaim = {
         did: subject,
@@ -599,7 +632,7 @@ export class ClaimsService {
       const [issuedToken, vp] = await Promise.all([
         this._didRegistry.issuePublicClaim({
           publicClaim,
-          expirationTimestamp,
+          expirationTimestamp: claimExpirationTimestamp,
         }),
         this.issueVerifiablePresentation({
           subject,
@@ -607,7 +640,7 @@ export class ClaimsService {
           version: claim.claimTypeVersion.toString(),
           issuerFields: claim.issuerFields,
           credentialStatus,
-          expirationTimestamp,
+          expirationTimestamp: claimExpirationTimestamp,
         }),
       ]);
 
@@ -617,7 +650,7 @@ export class ClaimsService {
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
-      const expiry = expirationTimestamp || defaultClaimExpiry;
+      const expiry = claimExpirationTimestamp || defaultClaimExpiry;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -1163,11 +1196,14 @@ export class ClaimsService {
   private async verifyEnrolmentPrerequisites({
     subject,
     role,
+    roleDefinition: cachedRoleDefinition,
   }: VerifyEnrolmentPrerequisitesOptions): Promise<void> {
-    const roleDefinition = await this._domainsService.getDefinition({
-      type: NamespaceType.Role,
-      namespace: role,
-    });
+    const roleDefinition =
+      cachedRoleDefinition ||
+      (await this._domainsService.getDefinition({
+        type: NamespaceType.Role,
+        namespace: role,
+      }));
 
     if (!roleDefinition) {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
