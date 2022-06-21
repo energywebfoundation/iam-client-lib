@@ -81,7 +81,11 @@ const roles: Record<string, IRoleDefinitionV2> = {
     roleName: roleName4,
     issuer: { issuerType: 'ROLE', roleName: `${roleName1}.${root}` },
   },
-  [`${roleName5}.${root}`]: { ...baseRoleDef, roleName: roleName5 },
+  [`${roleName5}.${root}`]: {
+    ...baseRoleDef,
+    roleName: roleName5,
+    defaultValidityPeriod: 1000,
+  },
 };
 const mockGetRoleDefinition = jest
   .fn()
@@ -191,6 +195,12 @@ describe('Сlaim tests', () => {
       data: roles[`${roleName4}.${root}`],
       returnSteps: false,
     });
+    await domainsService.createRole({
+      roleName: roleName5,
+      namespace,
+      data: roles[`${roleName5}.${root}`],
+      returnSteps: false,
+    });
     ({ didRegistry, claimsService } = await connectToDidRegistry());
     mockGetAllowedRoles.mockImplementation(async (issuer) => {
       const roleDefs = Object.values(roles);
@@ -287,6 +297,9 @@ describe('Сlaim tests', () => {
         vp,
       } = issuedClaim;
 
+      const roleDefinitionValidityPeriod =
+        roles[claimType].defaultValidityPeriod;
+
       if (registrationTypes.includes(RegistrationTypes.OffChain)) {
         expect(issuedToken).toBeDefined();
         expect(vp).toBeDefined();
@@ -309,6 +322,13 @@ describe('Сlaim tests', () => {
           expect(vpObject.verifiableCredential[0].expirationDate).toEqual(
             new Date(expirationTimestamp).toISOString()
           );
+
+        if (roleDefinitionValidityPeriod && !expirationTimestamp) {
+          expect(vpObject.verifiableCredential[0].expirationDate).toEqual(
+            new Date(Date.now() + roleDefinitionValidityPeriod).toISOString()
+          );
+        }
+
         expect(vpObject.holder).toEqual(signerService.didHex);
 
         const { claimData, signer, did, exp } =
@@ -340,7 +360,7 @@ describe('Сlaim tests', () => {
       if (registrationTypes.includes(RegistrationTypes.OnChain)) {
         expect(onChainProof).toHaveLength(132);
 
-        if (expirationTimestamp) {
+        if (expirationTimestamp || roleDefinitionValidityPeriod) {
           const filter = claimManager.filters.RoleRegistered();
           const logs = await claimManager.queryFilter(filter);
 
@@ -358,7 +378,14 @@ describe('Сlaim tests', () => {
               args.subject === addressOf(subjectDID) &&
               args.role === namehash(claimType)
             ) {
-              expect(args.expiry.toNumber()).toEqual(expirationTimestamp);
+              expirationTimestamp &&
+                expect(args.expiry.toNumber()).toEqual(expirationTimestamp);
+
+              !expirationTimestamp &&
+                roleDefinitionValidityPeriod &&
+                expect(args.expiry.toNumber()).toBeLessThanOrEqual(
+                  Date.now() + roleDefinitionValidityPeriod
+                );
             }
           });
         }
@@ -563,7 +590,7 @@ describe('Сlaim tests', () => {
       ).rejects.toEqual(new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET));
     });
 
-    test.only('enrollment with credential/claim time expiration', async () => {
+    test('enrollment with credential/claim time expiration', async () => {
       const requester = rootOwner;
       const issuer = staticIssuer;
       const subjectDID = rootOwnerDID;
@@ -573,6 +600,22 @@ describe('Сlaim tests', () => {
         subjectDID,
         claimType,
         expirationTimestamp: Date.now() + 100000,
+      });
+
+      expect(
+        await claimsService.hasOnChainRole(subjectDID, claimType, version)
+      ).toBe(true);
+    });
+
+    test('enrollment with credential/claim default time expiration from role definition', async () => {
+      const requester = rootOwner;
+      const issuer = staticIssuer;
+      const subjectDID = rootOwnerDID;
+      const claimType = `${roleName5}.${root}`;
+
+      await enrolAndIssue(requester, issuer, {
+        subjectDID,
+        claimType,
       });
 
       expect(

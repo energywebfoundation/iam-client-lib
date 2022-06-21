@@ -7,6 +7,7 @@
 ### Properties
 
 - [role](modules_claims.VerifyEnrolmentPrerequisitesOptions.md#role)
+- [roleDefinition](modules_claims.VerifyEnrolmentPrerequisitesOptions.md#roledefinition)
 - [subject](modules_claims.VerifyEnrolmentPrerequisitesOptions.md#subject)
 
 ## Properties
@@ -16,6 +17,14 @@
 • **role**: `string`
 
 Role claim type
+
+___
+
+### roleDefinition
+
+• `Optional` **roleDefinition**: `IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`
+
+Role definition
 
 ___
 

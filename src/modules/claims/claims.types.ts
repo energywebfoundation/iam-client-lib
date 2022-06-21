@@ -5,6 +5,12 @@ import {
 } from '@ew-did-registry/credentials-interface';
 import { ClaimData } from '../did-registry';
 import { IMessage } from '../messaging/messaging.types';
+import {
+  IAppDefinition,
+  IOrganizationDefinition,
+  IRoleDefinition,
+  IRoleDefinitionV2,
+} from '@energyweb/credential-governance';
 
 export interface IClaimRequest extends IMessage {
   token: string;
@@ -306,6 +312,13 @@ export interface VerifyEnrolmentPrerequisitesOptions {
 
   /** Role claim type */
   role: string;
+
+  /** Role definition */
+  roleDefinition?:
+    | IRoleDefinition
+    | IRoleDefinitionV2
+    | IAppDefinition
+    | IOrganizationDefinition;
 }
 
 export interface IssueVerifiablePresentationOptions {
