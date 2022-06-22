@@ -39,6 +39,7 @@
 - [getPreviouslyOwnedAssets](modules_cache_client.ICacheClient.md#getpreviouslyownedassets)
 - [getRoleDefinition](modules_cache_client.ICacheClient.md#getroledefinition)
 - [getRolesByOwner](modules_cache_client.ICacheClient.md#getrolesbyowner)
+- [getRolesByRevoker](modules_cache_client.ICacheClient.md#getrolesbyrevoker)
 - [getRolesDefinition](modules_cache_client.ICacheClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](modules_cache_client.ICacheClient.md#getsuborganizationsbyorganization)
 - [isAuthEnabled](modules_cache_client.ICacheClient.md#isauthenabled)
@@ -455,6 +456,22 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `owner` | `string` |
+
+#### Returns
+
+`Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+
+___
+
+### getRolesByRevoker
+
+▸ **getRolesByRevoker**(`revoker`): `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `revoker` | `string` |
 
 #### Returns
 

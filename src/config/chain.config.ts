@@ -62,7 +62,7 @@ const chainConfig: Record<number, ChainConfig> = {
     credentialRevocationRegistryAddress:
       '0x018Ae0454a3e2f77048a455dD731bB669a218959',
     claimsRevocationRegistryAddress:
-      '0xfaFF879ffF4276ECC60632BEC5A162F2e4b7300f',
+      '0x9876d992D124f8E05e3eB35132226a819aaC840A',
   },
   [EWC_CHAIN_ID]: {
     chainName: Chain.EWC,

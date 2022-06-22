@@ -23,6 +23,7 @@
 ### Methods
 
 - [addDIDToWatchList](modules_cache_client.CacheClient.md#adddidtowatchlist)
+- [addStatusToCredential](modules_cache_client.CacheClient.md#addstatustocredential)
 - [authenticate](modules_cache_client.CacheClient.md#authenticate)
 - [deleteClaim](modules_cache_client.CacheClient.md#deleteclaim)
 - [getAllowedRolesByIssuer](modules_cache_client.CacheClient.md#getallowedrolesbyissuer)
@@ -49,13 +50,17 @@
 - [getPreviouslyOwnedAssets](modules_cache_client.CacheClient.md#getpreviouslyownedassets)
 - [getRoleDefinition](modules_cache_client.CacheClient.md#getroledefinition)
 - [getRolesByOwner](modules_cache_client.CacheClient.md#getrolesbyowner)
+- [getRolesByRevoker](modules_cache_client.CacheClient.md#getrolesbyrevoker)
 - [getRolesDefinition](modules_cache_client.CacheClient.md#getrolesdefinition)
+- [getStatusListCredential](modules_cache_client.CacheClient.md#getstatuslistcredential)
 - [getSubOrganizationsByOrganization](modules_cache_client.CacheClient.md#getsuborganizationsbyorganization)
 - [handleError](modules_cache_client.CacheClient.md#handleerror)
 - [init](modules_cache_client.CacheClient.md#init)
+- [initiateCredentialStatusUpdate](modules_cache_client.CacheClient.md#initiatecredentialstatusupdate)
 - [isAuthEnabled](modules_cache_client.CacheClient.md#isauthenabled)
 - [issueClaim](modules_cache_client.CacheClient.md#issueclaim)
 - [login](modules_cache_client.CacheClient.md#login)
+- [persistCredentialStatusUpdate](modules_cache_client.CacheClient.md#persistcredentialstatusupdate)
 - [rejectClaim](modules_cache_client.CacheClient.md#rejectclaim)
 - [requestClaim](modules_cache_client.CacheClient.md#requestclaim)
 
@@ -110,6 +115,26 @@
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cache_client.ICacheClient.md#adddidtowatchlist)
+
+___
+
+### addStatusToCredential
+
+▸ **addStatusToCredential**(`credential`): `Promise`<`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & { `credentialStatus`: `StatusList2021Entry`  }\>
+
+Sets location of the credential status
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `credential` | `Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | unsigned credential |
+
+#### Returns
+
+`Promise`<`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & { `credentialStatus`: `StatusList2021Entry`  }\>
+
+credential with reference to status location
 
 ___
 
@@ -630,6 +655,26 @@ ___
 
 ___
 
+### getRolesByRevoker
+
+▸ **getRolesByRevoker**(`revoker`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `revoker` | `string` |
+
+#### Returns
+
+`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+
+#### Implementation of
+
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByRevoker](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyrevoker)
+
+___
+
 ### getRolesDefinition
 
 ▸ **getRolesDefinition**(`namespaces`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
@@ -647,6 +692,26 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesDefinition](../interfaces/modules_cache_client.ICacheClient.md#getrolesdefinition)
+
+___
+
+### getStatusListCredential
+
+▸ **getStatusListCredential**(`credential`): `Promise`<``null`` \| [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+
+Fetch the StatusList2021Credential object from storage.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential with status list 2021 |
+
+#### Returns
+
+`Promise`<``null`` \| [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+
+status list credential if found
 
 ___
 
@@ -700,6 +765,26 @@ ___
 
 ___
 
+### initiateCredentialStatusUpdate
+
+▸ **initiateCredentialStatusUpdate**(`verifiableCredential`): `Promise`<[`StatusList2021UnsignedCredential`](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)\>
+
+Get the StatusList2021Credential object to be signed
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential to be revoked |
+
+#### Returns
+
+`Promise`<[`StatusList2021UnsignedCredential`](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)\>
+
+unsigned status list credential
+
+___
+
 ### isAuthEnabled
 
 ▸ **isAuthEnabled**(): `boolean`
@@ -749,6 +834,26 @@ https://energyweb.atlassian.net/wiki/spaces/MYEN/pages/2303295607/ICL-+ICS+Auth+
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[login](../interfaces/modules_cache_client.ICacheClient.md#login)
+
+___
+
+### persistCredentialStatusUpdate
+
+▸ **persistCredentialStatusUpdate**(`statusListCredential`): `Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+
+Persist signed StatusList2021Credential object in storage.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `statusListCredential` | [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential) | signed status list |
+
+#### Returns
+
+`Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+
+status list credential
 
 ___
 

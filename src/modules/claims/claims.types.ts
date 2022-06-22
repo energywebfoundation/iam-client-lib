@@ -1,5 +1,8 @@
 import { utils } from 'ethers';
-import { VerifiablePresentation } from '@ew-did-registry/credentials-interface';
+import {
+  VerifiablePresentation,
+  StatusList2021Entry,
+} from '@ew-did-registry/credentials-interface';
 import { ClaimData } from '../did-registry';
 import { IMessage } from '../messaging/messaging.types';
 
@@ -176,6 +179,9 @@ export interface IssueClaimRequestOptions {
 
   /** Indicates whether to publish role on-chain or not (default: false) */
   publishOnChain?: boolean;
+
+  /** Indicates if credential is actual of the time of verification */
+  credentialStatus?: StatusList2021Entry;
 }
 
 export interface RegisterOnchainOptions {
@@ -287,6 +293,9 @@ export interface IssueVerifiablePresentationOptions {
 
   /** Issuers fields that role is requiring */
   issuerFields?: { key: string; value: string | number }[];
+
+  /** Indicates if credential is actual of the time of verification */
+  credentialStatus?: StatusList2021Entry;
 }
 
 export interface ApproveRolePublishingOptions {
