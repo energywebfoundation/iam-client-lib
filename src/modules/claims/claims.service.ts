@@ -3,9 +3,9 @@ import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
+  DomainReader,
   IRoleDefinition,
   PreconditionType,
-  DomainReader,
 } from '@energyweb/credential-governance';
 import {
   CredentialResolver,

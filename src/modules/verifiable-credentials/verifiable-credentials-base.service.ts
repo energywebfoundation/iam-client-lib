@@ -583,7 +583,7 @@ export abstract class VerifiableCredentialsServiceBase {
           : [],
         id: params.id,
       },
-    };
+    } as Credential<RoleCredentialSubject>;
 
     if (params.expirationDate) {
       credential.expirationDate = params.expirationDate.toISOString();
