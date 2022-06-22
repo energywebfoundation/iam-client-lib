@@ -1,3 +1,10 @@
+## [6.0.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.19...v6.0.0-alpha.20) (2022-06-22)
+
+
+### Bug Fixes
+
+* cache-client token refresh ([05e9f1a](https://github.com/energywebfoundation/iam-client-lib/commit/05e9f1a216f091d412319f8ce2590d5183080e46))
+
 ## [6.0.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.18...v6.0.0-alpha.19) (2022-06-20)
 
 
