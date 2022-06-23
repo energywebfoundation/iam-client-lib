@@ -25,6 +25,7 @@
 - [getClaimById](modules_cache_client.ICacheClient.md#getclaimbyid)
 - [getClaimsByIssuer](modules_cache_client.ICacheClient.md#getclaimsbyissuer)
 - [getClaimsByRequester](modules_cache_client.ICacheClient.md#getclaimsbyrequester)
+- [getClaimsByRevoker](modules_cache_client.ICacheClient.md#getclaimsbyrevoker)
 - [getClaimsBySubject](modules_cache_client.ICacheClient.md#getclaimsbysubject)
 - [getClaimsBySubjects](modules_cache_client.ICacheClient.md#getclaimsbysubjects)
 - [getDIDsForRole](modules_cache_client.ICacheClient.md#getdidsforrole)
@@ -227,6 +228,22 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `requester` | `string` |
+| `filter?` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
+
+#### Returns
+
+`Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+
+___
+
+### getClaimsByRevoker
+
+▸ **getClaimsByRevoker**(`filter?`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
 | `filter?` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns

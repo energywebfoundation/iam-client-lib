@@ -30,6 +30,7 @@ claimsService.getClaimById(claim.id);
 - [getClaimId](modules_claims.ClaimsService.md#getclaimid)
 - [getClaimsByIssuer](modules_claims.ClaimsService.md#getclaimsbyissuer)
 - [getClaimsByRequester](modules_claims.ClaimsService.md#getclaimsbyrequester)
+- [getClaimsByRevoker](modules_claims.ClaimsService.md#getclaimsbyrevoker)
 - [getClaimsBySubject](modules_claims.ClaimsService.md#getclaimsbysubject)
 - [getClaimsBySubjects](modules_claims.ClaimsService.md#getclaimsbysubjects)
 - [getNamespaceFromClaimType](modules_claims.ClaimsService.md#getnamespacefromclaimtype)
@@ -326,6 +327,32 @@ claimsService.getClaimsByRequester({
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `options` | [`GetClaimsByRequesterOptions`](../interfaces/modules_claims.GetClaimsByRequesterOptions.md) | object containing options |
+
+#### Returns
+
+`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+
+list of claims
+
+___
+
+### getClaimsByRevoker
+
+▸ **getClaimsByRevoker**(`options?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+
+Retrieve all claims that a user can revoke. Allow to filter by namespace
+
+```typescript
+claimsService.getClaimsByRevoker({
+ namespace?: 'energyweb.iam.ewc'
+});
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options?` | [`GetClaimsByRevokerOptions`](../interfaces/modules_claims.GetClaimsByRevokerOptions.md) |
 
 #### Returns
 
