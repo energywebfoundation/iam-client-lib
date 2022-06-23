@@ -1,3 +1,10 @@
+## [6.0.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.20...v6.0.0-alpha.21) (2022-06-23)
+
+
+### Bug Fixes
+
+* throw an error when a did document update failed ([e7c1ae9](https://github.com/energywebfoundation/iam-client-lib/commit/e7c1ae9b892b9fbfafca6bdbe4c375d40317f1f8))
+
 ## [6.0.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.19...v6.0.0-alpha.20) (2022-06-22)
 
 
