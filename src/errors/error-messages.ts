@@ -31,4 +31,5 @@ export enum ERROR_MESSAGES {
   ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED = 'On-chain role subject agreement not specified',
   REVOKE_CLAIM_MISSING_PARAMETERS = 'Revoke claim missing parameters. Required one of: claimId or claim',
   REVOKE_CLAIM_NOT_FOUND = 'Could not find claim to revoke',
+  DID_DOCUMENT_NOT_UPDATED = 'DID Document was not updated',
 }

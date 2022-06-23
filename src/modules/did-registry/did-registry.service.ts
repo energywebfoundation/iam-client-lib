@@ -1,4 +1,4 @@
-import { Wallet, providers } from 'ethers';
+import { Wallet, providers, BigNumber } from 'ethers';
 import { CID } from 'multiformats/cid';
 import { KeyType } from '@ew-did-registry/keys';
 import { JWT } from '@ew-did-registry/jwt';
@@ -341,7 +341,7 @@ export class DidRegistry {
 
     const update = await didDocument.update(didAttribute, updateData, validity);
 
-    return Boolean(update);
+    return update._hex !== BigNumber.from(0)._hex;
   }
 
   /**
