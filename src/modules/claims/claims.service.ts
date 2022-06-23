@@ -719,11 +719,15 @@ export class ClaimsService {
           hashAlg: 'SHA256',
         },
       };
-      await this._didRegistry.updateDocument({
+      const isDocUpdated = await this._didRegistry.updateDocument({
         didAttribute: DIDAttribute.ServicePoint,
         data,
         did: sub,
       });
+
+      if (!isDocUpdated) {
+        throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_UPDATED);
+      }
     }
     return url;
   }
