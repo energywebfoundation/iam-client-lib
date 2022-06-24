@@ -374,12 +374,13 @@ ___
 
 ### getClaimsByRevoker
 
-▸ **getClaimsByRevoker**(`__namedParameters?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRevoker**(`revoker`, `__namedParameters?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
+| `revoker` | `string` |
 | `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns

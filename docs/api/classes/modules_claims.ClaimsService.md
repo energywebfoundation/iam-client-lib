@@ -338,13 +338,14 @@ ___
 
 ### getClaimsByRevoker
 
-▸ **getClaimsByRevoker**(`options?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRevoker**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 Retrieve all claims that a user can revoke. Allow to filter by namespace
 
 ```typescript
 claimsService.getClaimsByRevoker({
- namespace?: 'energyweb.iam.ewc'
+ did: 'did:ethr:0x00...0',
+ namespace: 'energyweb.iam.ewc',
 });
 ```
 
@@ -352,7 +353,7 @@ claimsService.getClaimsByRevoker({
 
 | Name | Type |
 | :------ | :------ |
-| `options?` | [`GetClaimsByRevokerOptions`](../interfaces/modules_claims.GetClaimsByRevokerOptions.md) |
+| `options` | [`GetClaimsByRevokerOptions`](../interfaces/modules_claims.GetClaimsByRevokerOptions.md) |
 
 #### Returns
 

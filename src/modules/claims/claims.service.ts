@@ -272,17 +272,19 @@ export class ClaimsService {
    *
    * ```typescript
    * claimsService.getClaimsByRevoker({
-   *  namespace?: 'energyweb.iam.ewc'
+   *  did: 'did:ethr:0x00...0',
+   *  namespace: 'energyweb.iam.ewc',
    * });
    * ```
    *
    * @param {GetClaimsByRevokerOptions} options
    * @return list of claims
    */
-  async getClaimsByRevoker(
-    options?: GetClaimsByRevokerOptions
-  ): Promise<Claim[]> {
-    return this._cacheClient.getClaimsByRevoker(options);
+  async getClaimsByRevoker({
+    did,
+    namespace,
+  }: GetClaimsByRevokerOptions): Promise<Claim[]> {
+    return this._cacheClient.getClaimsByRevoker(did, { namespace });
   }
 
   /**

@@ -347,12 +347,15 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
-  async getClaimsByRevoker({ namespace }: ClaimsFilter = {}) {
-    const { data } = await this._httpClient.get<Claim[]>(`/claim/revoker`, {
-      params: {
-        namespace,
-      },
-    });
+  async getClaimsByRevoker(revoker: string, { namespace }: ClaimsFilter = {}) {
+    const { data } = await this._httpClient.get<Claim[]>(
+      `/claim/revoker/${revoker}`,
+      {
+        params: {
+          namespace,
+        },
+      }
+    );
     return data;
   }
 

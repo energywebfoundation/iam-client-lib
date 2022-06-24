@@ -60,7 +60,10 @@ export interface ICacheClient {
     filter?: ClaimsFilter
   ) => Promise<Claim[]>;
   getClaimById: (claimId: string) => Promise<Claim | undefined>;
-  getClaimsByRevoker: (filter?: ClaimsFilter) => Promise<Claim[]>;
+  getClaimsByRevoker: (
+    revoker: string,
+    filter?: ClaimsFilter
+  ) => Promise<Claim[]>;
   requestClaim: (message: IClaimRequest) => Promise<void>;
   issueClaim: (issuer: string, message: IClaimIssuance) => Promise<void>;
   rejectClaim: (issuer: string, message: IClaimRejection) => Promise<void>;

@@ -139,6 +139,9 @@ export interface GetClaimsBySubjectOptions {
 }
 
 export interface GetClaimsByRevokerOptions {
+  /** DID of the subject */
+  did: string;
+
   /** Indicates what namespace `Claims` should be in */
   namespace?: string;
 }

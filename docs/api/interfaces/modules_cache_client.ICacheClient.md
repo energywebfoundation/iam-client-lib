@@ -238,12 +238,13 @@ ___
 
 ### getClaimsByRevoker
 
-▸ **getClaimsByRevoker**(`filter?`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+▸ **getClaimsByRevoker**(`revoker`, `filter?`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
+| `revoker` | `string` |
 | `filter?` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns

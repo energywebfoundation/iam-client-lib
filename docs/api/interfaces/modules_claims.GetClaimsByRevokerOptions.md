@@ -6,9 +6,18 @@
 
 ### Properties
 
+- [did](modules_claims.GetClaimsByRevokerOptions.md#did)
 - [namespace](modules_claims.GetClaimsByRevokerOptions.md#namespace)
 
 ## Properties
+
+### did
+
+• **did**: `string`
+
+DID of the subject
+
+___
 
 ### namespace
 
