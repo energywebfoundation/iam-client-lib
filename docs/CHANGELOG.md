@@ -1,3 +1,10 @@
+## [6.0.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.21...v6.0.0-alpha.22) (2022-06-27)
+
+
+### Features
+
+* add createdAt property to Claim interface ([c71344d](https://github.com/energywebfoundation/iam-client-lib/commit/c71344d24ba3f99373306ba56cdcd94ed713d59f))
+
 ## [6.0.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.20...v6.0.0-alpha.21) (2022-06-23)
 
 
