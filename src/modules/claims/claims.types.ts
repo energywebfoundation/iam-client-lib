@@ -57,6 +57,7 @@ export interface Claim {
   acceptedBy?: string;
   isRejected?: boolean;
   namespace: string;
+  createdAt: string;
   redirectUri?: string;
   vp?: VerifiablePresentation;
 }
