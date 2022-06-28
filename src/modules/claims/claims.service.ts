@@ -57,6 +57,7 @@ import {
   GetRevocationClaimDetailsOptions,
   GetRevocationClaimDetailsResult,
   ClaimRevocationDetailsResult,
+  GetClaimsByRevokerOptions,
 } from './claims.types';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -264,6 +265,26 @@ export class ClaimsService {
     namespace,
   }: GetClaimsBySubjectOptions): Promise<Claim[]> {
     return this._cacheClient.getClaimsBySubject(did, { isAccepted, namespace });
+  }
+
+  /**
+   * Retrieve all claims that a user can revoke. Allow to filter by namespace
+   *
+   * ```typescript
+   * claimsService.getClaimsByRevoker({
+   *  did: 'did:ethr:0x00...0',
+   *  namespace: 'energyweb.iam.ewc',
+   * });
+   * ```
+   *
+   * @param {GetClaimsByRevokerOptions} options
+   * @return list of claims
+   */
+  async getClaimsByRevoker({
+    did,
+    namespace,
+  }: GetClaimsByRevokerOptions): Promise<Claim[]> {
+    return this._cacheClient.getClaimsByRevoker(did, { namespace });
   }
 
   /**

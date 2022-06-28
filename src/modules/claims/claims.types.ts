@@ -139,6 +139,14 @@ export interface GetClaimsBySubjectOptions {
   namespace?: string;
 }
 
+export interface GetClaimsByRevokerOptions {
+  /** DID of the subject */
+  did: string;
+
+  /** Indicates what namespace `Claims` should be in */
+  namespace?: string;
+}
+
 export interface CreateClaimRequestOptions {
   /** Claim request params */
   claim: {
