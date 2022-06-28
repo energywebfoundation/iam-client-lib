@@ -1,3 +1,11 @@
+## [6.0.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.23...v6.0.0-alpha.24) (2022-06-28)
+
+
+### Features
+
+* **RevokeClaim:** add endpoint to fetch claims by revoker (current user) ([80cf934](https://github.com/energywebfoundation/iam-client-lib/commit/80cf93485d7f53460ab5df78b37f40fe5eedb4c7))
+* **revokeClaim:** make did param required ([b6648d6](https://github.com/energywebfoundation/iam-client-lib/commit/b6648d6549b569fb6a74ccaba8b5c5b970ce7806))
+
 ## [6.0.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.22...v6.0.0-alpha.23) (2022-06-28)
 
 
