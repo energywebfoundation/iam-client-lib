@@ -745,6 +745,8 @@ ___
 
 ▸ **verifyVc**(`vc`): `Promise`<`void`\>
 
+Verify the issuer and and chain of trust for a Verifiable Credential
+
 #### Parameters
 
 | Name | Type |
