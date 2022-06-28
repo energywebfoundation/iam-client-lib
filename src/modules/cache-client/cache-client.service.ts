@@ -113,7 +113,7 @@ export class CacheClient implements ICacheClient {
     }
 
     // Run previously failed requests
-    console.log(
+    getLogger().info(
       `[CACHE CLIENT] Running failed requests: ${this.failedRequests.length}`
     );
     this.failedRequests = this.failedRequests.filter((callback) => callback());
@@ -156,9 +156,14 @@ export class CacheClient implements ICacheClient {
         });
       });
       if (!this.isAuthenticating) {
-        this.isAuthenticating = true;
-        await this.authenticate();
-        this.isAuthenticating = false;
+        try {
+          this.isAuthenticating = true;
+          await this.authenticate();
+        } catch {
+          return Promise.reject(error);
+        } finally {
+          this.isAuthenticating = false;
+        }
       }
       return retryOriginalRequest;
     }
