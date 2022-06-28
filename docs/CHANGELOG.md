@@ -1,3 +1,10 @@
+## [6.0.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.22...v6.0.0-alpha.23) (2022-06-28)
+
+
+### Bug Fixes
+
+* cache client authentication ([619845d](https://github.com/energywebfoundation/iam-client-lib/commit/619845d320833e9adbc330bde5c35f15d735e57d))
+
 ## [6.0.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.21...v6.0.0-alpha.22) (2022-06-27)
 
 
