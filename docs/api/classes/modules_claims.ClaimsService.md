@@ -749,7 +749,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `vc` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> |
+| `vc` | `VerifiableCredential`<`RoleCredentialSubject`\> |
 
 #### Returns
 

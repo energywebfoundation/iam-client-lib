@@ -6,6 +6,8 @@ import {
   DomainReader,
   IRoleDefinition,
   PreconditionType,
+  RoleCredentialSubject,
+  ResolverContractType,
 } from '@energyweb/credential-governance';
 import {
   CredentialResolver,
@@ -73,7 +75,6 @@ import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import {
-  RoleCredentialSubject,
   VerifiableCredentialsServiceBase,
 } from '../verifiable-credentials';
 import { NotAuthorizedIssuer } from '../../errors/not-authorized-issuer';
@@ -1353,7 +1354,12 @@ export class ClaimsService {
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
     );
-    const domainReader = new DomainReader({ensRegistryAddress: chainConfigs()[this._signerService.chainId].ensResolverV2Address, provider: this._signerService.provider})
+    const domainReader = new DomainReader({ensRegistryAddress: chainConfigs()[this._signerService.chainId].ensRegistryAddress, provider: this._signerService.provider});
+    domainReader.addKnownResolver({
+      chainId: this._signerService.chainId, 
+      address: chainConfigs()[this._signerService.chainId].ensResolverV2Address,
+      type: ResolverContractType.RoleDefinitionResolver_v2,
+    })
     const issuerResolver = new EthersProviderIssuerResolver(domainReader);
     // const issuerResolver = new EthersProviderIssuerResolver(
     //   this._signerService.provider,
