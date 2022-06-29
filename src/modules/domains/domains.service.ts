@@ -1412,4 +1412,8 @@ export class DomainsService {
       throw new ENSOwnerNotValidAddressError(owner);
     }
   }
+
+  get domainReader(): DomainReader {
+   return this._domainDefinitionReader;
+  }
 }

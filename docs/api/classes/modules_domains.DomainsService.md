@@ -17,6 +17,10 @@ domainsService.createOrganization(...);
 
 - [constructor](modules_domains.DomainsService.md#constructor)
 
+### Accessors
+
+- [domainReader](modules_domains.DomainsService.md#domainreader)
+
 ### Methods
 
 - [changeAppOwnership](modules_domains.DomainsService.md#changeappownership)
@@ -62,6 +66,16 @@ domainsService.createOrganization(...);
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
+
+## Accessors
+
+### domainReader
+
+• `get` **domainReader**(): `DomainReader`
+
+#### Returns
+
+`DomainReader`
 
 ## Methods
 
