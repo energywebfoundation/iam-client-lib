@@ -1414,10 +1414,6 @@ export class DomainsService {
   }
 
   getDomainReader() {
-    return new DomainReader({
-      ensRegistryAddress:
-        chainConfigs()[this._signerService.chainId].ensRegistryAddress,
-      provider: this._signerService.provider,
-    });
+   return this._domainDefinitionReader;
   }
 }

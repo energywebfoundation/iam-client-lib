@@ -5,7 +5,6 @@ import { v4 } from 'uuid';
 import {
   IRoleDefinition,
   PreconditionType,
-  ResolverContractType,
 } from '@energyweb/credential-governance';
 import {
   CredentialResolver,
@@ -1342,11 +1341,6 @@ export class ClaimsService {
       this._didRegistry.ipfsStore
     );
     const domainReader = this._domainsService.getDomainReader();
-    domainReader.addKnownResolver({
-      chainId: this._signerService.chainId,
-      address: chainConfigs()[this._signerService.chainId].ensResolverV2Address,
-      type: ResolverContractType.RoleDefinitionResolver_v2,
-    });
     const issuerResolver = new EthersProviderIssuerResolver(domainReader);
     this._vcIssuerVerifier = new VCIssuerVerification(
       credentialResolver,
