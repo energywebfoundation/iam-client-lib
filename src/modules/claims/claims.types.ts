@@ -57,6 +57,7 @@ export interface Claim {
   acceptedBy?: string;
   isRejected?: boolean;
   namespace: string;
+  createdAt: string;
   redirectUri?: string;
   vp?: VerifiablePresentation;
 }
@@ -133,6 +134,14 @@ export interface GetClaimsBySubjectOptions {
 
   /** Indicates whether to show only accepted `Claims` */
   isAccepted?: boolean;
+
+  /** Indicates what namespace `Claims` should be in */
+  namespace?: string;
+}
+
+export interface GetClaimsByRevokerOptions {
+  /** DID of the subject */
+  did: string;
 
   /** Indicates what namespace `Claims` should be in */
   namespace?: string;

@@ -1,3 +1,39 @@
+## [6.0.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.23...v6.0.0-alpha.24) (2022-06-28)
+
+
+### Features
+
+* **RevokeClaim:** add endpoint to fetch claims by revoker (current user) ([80cf934](https://github.com/energywebfoundation/iam-client-lib/commit/80cf93485d7f53460ab5df78b37f40fe5eedb4c7))
+* **revokeClaim:** make did param required ([b6648d6](https://github.com/energywebfoundation/iam-client-lib/commit/b6648d6549b569fb6a74ccaba8b5c5b970ce7806))
+
+## [6.0.0-alpha.23](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.22...v6.0.0-alpha.23) (2022-06-28)
+
+
+### Bug Fixes
+
+* cache client authentication ([619845d](https://github.com/energywebfoundation/iam-client-lib/commit/619845d320833e9adbc330bde5c35f15d735e57d))
+
+## [6.0.0-alpha.22](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.21...v6.0.0-alpha.22) (2022-06-27)
+
+
+### Features
+
+* add createdAt property to Claim interface ([c71344d](https://github.com/energywebfoundation/iam-client-lib/commit/c71344d24ba3f99373306ba56cdcd94ed713d59f))
+
+## [6.0.0-alpha.21](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.20...v6.0.0-alpha.21) (2022-06-23)
+
+
+### Bug Fixes
+
+* throw an error when a did document update failed ([e7c1ae9](https://github.com/energywebfoundation/iam-client-lib/commit/e7c1ae9b892b9fbfafca6bdbe4c375d40317f1f8))
+
+## [6.0.0-alpha.20](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.19...v6.0.0-alpha.20) (2022-06-22)
+
+
+### Bug Fixes
+
+* cache-client token refresh ([05e9f1a](https://github.com/energywebfoundation/iam-client-lib/commit/05e9f1a216f091d412319f8ce2590d5183080e46))
+
 ## [6.0.0-alpha.19](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.18...v6.0.0-alpha.19) (2022-06-20)
 
 

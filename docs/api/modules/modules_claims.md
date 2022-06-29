@@ -22,6 +22,7 @@
 - [DeleteClaimOptions](../interfaces/modules_claims.DeleteClaimOptions.md)
 - [GetClaimsByIssuerOptions](../interfaces/modules_claims.GetClaimsByIssuerOptions.md)
 - [GetClaimsByRequesterOptions](../interfaces/modules_claims.GetClaimsByRequesterOptions.md)
+- [GetClaimsByRevokerOptions](../interfaces/modules_claims.GetClaimsByRevokerOptions.md)
 - [GetClaimsBySubjectOptions](../interfaces/modules_claims.GetClaimsBySubjectOptions.md)
 - [GetRevocationClaimDetailsOptions](../interfaces/modules_claims.GetRevocationClaimDetailsOptions.md)
 - [GetRevocationClaimDetailsResult](../interfaces/modules_claims.GetRevocationClaimDetailsResult.md)

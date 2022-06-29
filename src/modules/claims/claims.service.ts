@@ -63,6 +63,7 @@ import {
   GetRevocationClaimDetailsOptions,
   GetRevocationClaimDetailsResult,
   ClaimRevocationDetailsResult,
+  GetClaimsByRevokerOptions,
 } from './claims.types';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -272,6 +273,26 @@ export class ClaimsService {
     namespace,
   }: GetClaimsBySubjectOptions): Promise<Claim[]> {
     return this._cacheClient.getClaimsBySubject(did, { isAccepted, namespace });
+  }
+
+  /**
+   * Retrieve all claims that a user can revoke. Allow to filter by namespace
+   *
+   * ```typescript
+   * claimsService.getClaimsByRevoker({
+   *  did: 'did:ethr:0x00...0',
+   *  namespace: 'energyweb.iam.ewc',
+   * });
+   * ```
+   *
+   * @param {GetClaimsByRevokerOptions} options
+   * @return list of claims
+   */
+  async getClaimsByRevoker({
+    did,
+    namespace,
+  }: GetClaimsByRevokerOptions): Promise<Claim[]> {
+    return this._cacheClient.getClaimsByRevoker(did, { namespace });
   }
 
   /**
@@ -726,11 +747,15 @@ export class ClaimsService {
           hashAlg: 'SHA256',
         },
       };
-      await this._didRegistry.updateDocument({
+      const isDocUpdated = await this._didRegistry.updateDocument({
         didAttribute: DIDAttribute.ServicePoint,
         data,
         did: sub,
       });
+
+      if (!isDocUpdated) {
+        throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_UPDATED);
+      }
     }
     return url;
   }

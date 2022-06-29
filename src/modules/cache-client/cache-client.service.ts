@@ -76,12 +76,24 @@ export class CacheClient implements ICacheClient {
   async authenticate() {
     let tokens: AuthTokens | undefined = undefined;
 
+    const setTokens = () => {
+      if (!tokens) return;
+      if (!this.isBrowser) {
+        this._httpClient.defaults.headers.common[
+          'Authorization'
+        ] = `Bearer ${tokens.token}`;
+      }
+      this.refresh_token = tokens.refreshToken;
+    };
+
     // First try to refresh access token
     try {
       const refreshedTokens = await this.refreshToken();
+      tokens = refreshedTokens;
+      setTokens();
 
-      if (refreshedTokens && (await this.isAuthenticated())) {
-        tokens = refreshedTokens;
+      if (!(await this.isAuthenticated())) {
+        tokens = undefined;
       }
     } catch {
       getLogger().error('[CACHE CLIENT] Failed to refresh tokens');
@@ -97,18 +109,11 @@ export class CacheClient implements ICacheClient {
       });
       this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
       tokens = data;
+      setTokens();
     }
-
-    // Set new tokens
-    if (!this.isBrowser) {
-      this._httpClient.defaults.headers.common[
-        'Authorization'
-      ] = `Bearer ${tokens.token}`;
-    }
-    this.refresh_token = tokens.refreshToken;
 
     // Run previously failed requests
-    console.log(
+    getLogger().info(
       `[CACHE CLIENT] Running failed requests: ${this.failedRequests.length}`
     );
     this.failedRequests = this.failedRequests.filter((callback) => callback());
@@ -151,9 +156,14 @@ export class CacheClient implements ICacheClient {
         });
       });
       if (!this.isAuthenticating) {
-        this.isAuthenticating = true;
-        await this.authenticate();
-        this.isAuthenticating = false;
+        try {
+          this.isAuthenticating = true;
+          await this.authenticate();
+        } catch {
+          return Promise.reject(error);
+        } finally {
+          this.isAuthenticating = false;
+        }
       }
       return retryOriginalRequest;
     }
@@ -338,6 +348,18 @@ export class CacheClient implements ICacheClient {
   async getRolesByRevoker(revoker: string) {
     const { data } = await this._httpClient.get<IRole[]>(
       `/claim/revoker/roles/allowed/${revoker}`
+    );
+    return data;
+  }
+
+  async getClaimsByRevoker(revoker: string, { namespace }: ClaimsFilter = {}) {
+    const { data } = await this._httpClient.get<Claim[]>(
+      `/claim/revoker/${revoker}`,
+      {
+        params: {
+          namespace,
+        },
+      }
     );
     return data;
   }
