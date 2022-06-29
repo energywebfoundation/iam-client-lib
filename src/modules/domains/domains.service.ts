@@ -1412,4 +1412,12 @@ export class DomainsService {
       throw new ENSOwnerNotValidAddressError(owner);
     }
   }
+
+  getDomainReader() {
+    return new DomainReader({
+      ensRegistryAddress:
+        chainConfigs()[this._signerService.chainId].ensRegistryAddress,
+      provider: this._signerService.provider,
+    });
+  }
 }

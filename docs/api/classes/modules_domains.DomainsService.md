@@ -34,6 +34,7 @@ domainsService.createOrganization(...);
 - [getAppsOfOrg](modules_domains.DomainsService.md#getappsoforg)
 - [getDIDsByRole](modules_domains.DomainsService.md#getdidsbyrole)
 - [getDefinition](modules_domains.DomainsService.md#getdefinition)
+- [getDomainReader](modules_domains.DomainsService.md#getdomainreader)
 - [getENSTypesByOwner](modules_domains.DomainsService.md#getenstypesbyowner)
 - [getENSTypesBySearchPhrase](modules_domains.DomainsService.md#getenstypesbysearchphrase)
 - [getOrgHierarchy](modules_domains.DomainsService.md#getorghierarchy)
@@ -475,6 +476,16 @@ domainsService.getDefinition({
 `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`\>
 
 domain definition
+
+___
+
+### getDomainReader
+
+▸ **getDomainReader**(): `DomainReader`
+
+#### Returns
+
+`DomainReader`
 
 ___
 

@@ -3,10 +3,8 @@ import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
-  DomainReader,
   IRoleDefinition,
   PreconditionType,
-  RoleCredentialSubject,
   ResolverContractType,
 } from '@energyweb/credential-governance';
 import {
@@ -25,7 +23,6 @@ import {
   IServiceEndpoint,
   ProviderTypes,
 } from '@ew-did-registry/did-resolver-interface';
-import { VerifiableCredential } from '@ew-did-registry/credentials-interface';
 import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__factory';
 import { ERROR_MESSAGES } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
@@ -452,24 +449,6 @@ export class ClaimsService {
     }
 
     await this._cacheClient.issueClaim(this._signerService.did, message);
-  }
-
-  /**
-   * Verify the issuer and and chain of trust for a Verifiable Credential
-   *
-   * @param {VerifiableCredential<RoleCredentialSubject} credential to be verified
-   */
-  async verifyVc(vc: VerifiableCredential<RoleCredentialSubject>) {
-    const issuerDID = this._signerService.did;
-    const role = vc.credentialSubject.role.namespace;
-    if (
-      !(
-        (await this._vcIssuerVerifier.verifyIssuerAuthority(role, issuerDID)) ||
-        (await this._vcIssuerVerifier.verifyChainOfTrustByRoleDefinition(vc))
-      )
-    ) {
-      throw new NotAuthorizedIssuer(issuerDID, role);
-    }
   }
 
   /**
@@ -1150,7 +1129,7 @@ export class ClaimsService {
   }
 
   /**
-   * Verify if the user is issuer of the role verifiable credential
+   * Verify if the user is an authorized issuer of a role
    *
    * @param {String} role Registration types of the claim
    */
@@ -1362,24 +1341,14 @@ export class ClaimsService {
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
     );
-    const domainReader = new DomainReader({
-      ensRegistryAddress:
-        chainConfigs()[this._signerService.chainId].ensRegistryAddress,
-      provider: this._signerService.provider,
-    });
+    const domainReader = this._domainsService.getDomainReader();
     domainReader.addKnownResolver({
       chainId: this._signerService.chainId,
       address: chainConfigs()[this._signerService.chainId].ensResolverV2Address,
       type: ResolverContractType.RoleDefinitionResolver_v2,
     });
     const issuerResolver = new EthersProviderIssuerResolver(domainReader);
-    // const issuerResolver = new EthersProviderIssuerResolver(
-    //   this._signerService.provider,
-    //   chainConfigs()[this._signerService.chainId].ensResolverV2Address
-    // );
     this._vcIssuerVerifier = new VCIssuerVerification(
-      // this._signerService.provider,
-      // this._didRegistry.registrySettings,
       credentialResolver,
       issuerResolver
     );

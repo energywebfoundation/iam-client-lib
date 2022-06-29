@@ -44,7 +44,6 @@ claimsService.getClaimById(claim.id);
 - [rejectClaimRequest](modules_claims.ClaimsService.md#rejectclaimrequest)
 - [revokeClaim](modules_claims.ClaimsService.md#revokeclaim)
 - [revokeMultipleClaim](modules_claims.ClaimsService.md#revokemultipleclaim)
-- [verifyVc](modules_claims.ClaimsService.md#verifyvc)
 - [create](modules_claims.ClaimsService.md#create)
 
 ## Constructors
@@ -734,24 +733,6 @@ claimsService.revokeMultipleClaim({
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `options` | [`RevokeMultipleClaimOptions`](../interfaces/modules_claims.RevokeMultipleClaimOptions.md) | object containing options |
-
-#### Returns
-
-`Promise`<`void`\>
-
-___
-
-### verifyVc
-
-▸ **verifyVc**(`vc`): `Promise`<`void`\>
-
-Verify the issuer and and chain of trust for a Verifiable Credential
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `vc` | `VerifiableCredential`<`RoleCredentialSubject`\> |
 
 #### Returns
 
