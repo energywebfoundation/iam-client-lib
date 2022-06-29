@@ -17,6 +17,10 @@ domainsService.createOrganization(...);
 
 - [constructor](modules_domains.DomainsService.md#constructor)
 
+### Accessors
+
+- [domainReader](modules_domains.DomainsService.md#domainreader)
+
 ### Methods
 
 - [changeAppOwnership](modules_domains.DomainsService.md#changeappownership)
@@ -34,7 +38,6 @@ domainsService.createOrganization(...);
 - [getAppsOfOrg](modules_domains.DomainsService.md#getappsoforg)
 - [getDIDsByRole](modules_domains.DomainsService.md#getdidsbyrole)
 - [getDefinition](modules_domains.DomainsService.md#getdefinition)
-- [getDomainReader](modules_domains.DomainsService.md#getdomainreader)
 - [getENSTypesByOwner](modules_domains.DomainsService.md#getenstypesbyowner)
 - [getENSTypesBySearchPhrase](modules_domains.DomainsService.md#getenstypesbysearchphrase)
 - [getOrgHierarchy](modules_domains.DomainsService.md#getorghierarchy)
@@ -63,6 +66,16 @@ domainsService.createOrganization(...);
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
+
+## Accessors
+
+### domainReader
+
+• `get` **domainReader**(): `DomainReader`
+
+#### Returns
+
+`DomainReader`
 
 ## Methods
 
@@ -476,16 +489,6 @@ domainsService.getDefinition({
 `Promise`<`IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`\>
 
 domain definition
-
-___
-
-### getDomainReader
-
-▸ **getDomainReader**(): `DomainReader`
-
-#### Returns
-
-`DomainReader`
 
 ___
 

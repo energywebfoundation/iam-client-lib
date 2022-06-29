@@ -1413,7 +1413,7 @@ export class DomainsService {
     }
   }
 
-  getDomainReader() {
+  get domainReader(): DomainReader {
    return this._domainDefinitionReader;
   }
 }

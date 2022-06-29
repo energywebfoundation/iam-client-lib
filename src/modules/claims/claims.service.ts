@@ -1365,7 +1365,7 @@ export class ClaimsService {
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
     );
-    const domainReader = this._domainsService.getDomainReader();
+    const domainReader = this._domainsService.domainReader;
     const issuerResolver = new EthersProviderIssuerResolver(domainReader);
     this._vcIssuerVerifier = new VCIssuerVerification(
       credentialResolver,
