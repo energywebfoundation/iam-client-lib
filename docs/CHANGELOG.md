@@ -1,3 +1,23 @@
+## [6.0.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.24...v6.0.0-alpha.25) (2022-06-29)
+
+
+### Features
+
+* add documentation ([543494f](https://github.com/energywebfoundation/iam-client-lib/commit/543494fb0a7caa0fe57fd0880cefb13090ea086d))
+* apply prettier formatting ([abc5154](https://github.com/energywebfoundation/iam-client-lib/commit/abc5154b1cd9e509fc7f30d8115e9eaf243d94fd))
+* **claims:** verify role vc ([b318dbd](https://github.com/energywebfoundation/iam-client-lib/commit/b318dbdc2771165b8bbc215abb02d3f14f2020f1))
+* **domain-reader:** refactor domainreader initialisation ([9f7ea6e](https://github.com/energywebfoundation/iam-client-lib/commit/9f7ea6ed79acbb58f95773d1d17272c61312184f))
+* types in claims service (EthersProviderIssuerResolver) ([11ac865](https://github.com/energywebfoundation/iam-client-lib/commit/11ac8656440c958df1c8216f7917e6ffce696e26))
+* update types and interfaces from ew-credentials ([0ed9855](https://github.com/energywebfoundation/iam-client-lib/commit/0ed98552c3fb98ac08b9a9389cf35d4c3cac2196))
+
+
+### Bug Fixes
+
+* **addVcVerifier:** add VerifyVCIssuer method ([6052d41](https://github.com/energywebfoundation/iam-client-lib/commit/6052d41bd7fb7d22fbd16910d20d04c3a14381e1))
+* **addVcVerifier:** return instance of domain reader ([ce037f4](https://github.com/energywebfoundation/iam-client-lib/commit/ce037f449ef0960129f4cf1f59f1460076f1c9ed))
+* **addVcVerifier:** return type for Domain Reader ([84ba78f](https://github.com/energywebfoundation/iam-client-lib/commit/84ba78f82d5bfb6deedb0de366206cd49bd34ef6))
+* **addVcVerifier:** update package-lock version ([9eb00ac](https://github.com/energywebfoundation/iam-client-lib/commit/9eb00ac0744acd88f275a9593c37c5ecdddf069e))
+
 ## [6.0.0-alpha.24](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.23...v6.0.0-alpha.24) (2022-06-28)
 
 
