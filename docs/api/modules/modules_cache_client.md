@@ -17,7 +17,7 @@
 - [CacheServerClientOptions](../interfaces/modules_cache_client.CacheServerClientOptions.md)
 - [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md)
 
-### Type aliases
+### Type Aliases
 
 - [AssetsFilter](modules_cache_client.md#assetsfilter)
 - [ClaimsFilter](modules_cache_client.md#claimsfilter)
@@ -26,7 +26,7 @@
 
 - [TEST\_LOGIN\_ENDPOINT](modules_cache_client.md#test_login_endpoint)
 
-## Type aliases
+## Type Aliases
 
 ### AssetsFilter
 

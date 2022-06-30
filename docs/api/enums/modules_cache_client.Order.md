@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [ASC](modules_cache_client.Order.md#asc)
 - [DESC](modules_cache_client.Order.md#desc)
 
-## Enumeration members
+## Enumeration Members
 
 ### ASC
 
-• **ASC** = `"ASC"`
+• **ASC**
 
 ___
 
 ### DESC
 
-• **DESC** = `"DESC"`
+• **DESC**

@@ -35,7 +35,7 @@
 - [SetRoleDefinitionOptions](../interfaces/modules_domains.SetRoleDefinitionOptions.md)
 - [ValidateOwnershipOptions](../interfaces/modules_domains.ValidateOwnershipOptions.md)
 
-### Type aliases
+### Type Aliases
 
 - [DomainDefinition](modules_domains.md#domaindefinition)
 - [MulticallTx](modules_domains.md#multicalltx)
@@ -48,7 +48,7 @@
 
 - [castToV2](modules_domains.md#casttov2)
 
-## Type aliases
+## Type Aliases
 
 ### DomainDefinition
 
