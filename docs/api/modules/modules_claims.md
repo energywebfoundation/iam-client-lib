@@ -40,7 +40,7 @@
 - [RevokeMultipleClaimOptions](../interfaces/modules_claims.RevokeMultipleClaimOptions.md)
 - [VerifyEnrolmentPrerequisitesOptions](../interfaces/modules_claims.VerifyEnrolmentPrerequisitesOptions.md)
 
-### Type Aliases
+### Type aliases
 
 - [IssueClaim](modules_claims.md#issueclaim)
 - [RejectClaim](modules_claims.md#rejectclaim)
@@ -49,8 +49,8 @@
 ### Variables
 
 - [agreement\_type\_hash](modules_claims.md#agreement_type_hash)
-- [defaultClaimExpiry](modules_claims.md#defaultclaimexpiry)
 - [erc712\_type\_hash](modules_claims.md#erc712_type_hash)
+- [eternityTimestamp](modules_claims.md#eternitytimestamp)
 - [proof\_type\_hash](modules_claims.md#proof_type_hash)
 - [typedMsgPrefix](modules_claims.md#typedmsgprefix)
 
@@ -58,7 +58,7 @@
 
 - [readyToBeRegisteredOnchain](modules_claims.md#readytoberegisteredonchain)
 
-## Type Aliases
+## Type aliases
 
 ### IssueClaim
 
@@ -105,15 +105,15 @@ ___
 
 ___
 
-### defaultClaimExpiry
-
-• `Const` **defaultClaimExpiry**: `number`
-
-___
-
 ### erc712\_type\_hash
 
 • `Const` **erc712\_type\_hash**: `string`
+
+___
+
+### eternityTimestamp
+
+• `Const` **eternityTimestamp**: `number`
 
 ___
 

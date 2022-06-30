@@ -16,7 +16,7 @@
 
 - [IPubKeyAndIdentityToken](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)
 
-### Type Aliases
+### Type aliases
 
 - [AccountInfo](modules_signer.md#accountinfo)
 - [ServiceInitializer](modules_signer.md#serviceinitializer)
@@ -37,7 +37,7 @@
 - [fromWalletConnectMetamask](modules_signer.md#fromwalletconnectmetamask)
 - [isMetamaskExtensionPresent](modules_signer.md#ismetamaskextensionpresent)
 
-## Type Aliases
+## Type aliases
 
 ### AccountInfo
 
