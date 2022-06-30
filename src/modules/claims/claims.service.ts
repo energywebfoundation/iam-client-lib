@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { providers, utils, Wallet } from 'ethers';
+import {
+  verifyCredential,
+} from 'didkit-wasm-node';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
   IRoleDefinition,
   IRoleDefinitionV2,
   PreconditionType,
+  RoleCredentialSubject,
 } from '@energyweb/credential-governance';
 import {
-  CredentialResolver,
-  EthersProviderIssuerResolver,
-  IpfsCredentialResolver,
-  VCIssuerVerification,
-} from '@energyweb/vc-verification';
+  VerifiableCredential
+} from '@ew-did-registry/credentials-interface';
 import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
@@ -66,6 +67,12 @@ import {
   ClaimRevocationDetailsResult,
   GetClaimsByRevokerOptions,
 } from './claims.types';
+import {
+  CredentialResolver,
+  EthersProviderIssuerResolver,
+  IpfsCredentialResolver,
+  VCIssuerVerification,
+} from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
@@ -97,18 +104,22 @@ const {
 export class ClaimsService {
   private _claimManager: string;
   private _claimManagerInterface = ClaimManager__factory.createInterface();
-  private _vcIssuerVerifier: VCIssuerVerification;
   private _claimRevocation: ClaimRevocation;
-
+  private _vcIssuerVerifier: VCIssuerVerification;
+  protected verifyProof: (
+    vc: string,
+    proof_options: string
+  )  => Promise<string>
   constructor(
     private _signerService: SignerService,
     private _domainsService: DomainsService,
     private _cacheClient: CacheClient,
     private _didRegistry: DidRegistry,
-    private _verifiableCredentialService: VerifiableCredentialsServiceBase
+    private _verifiableCredentialService: VerifiableCredentialsServiceBase,
   ) {
     this._signerService.onInit(this.init.bind(this));
     this._setClaimIssuerVerifier();
+    this.verifyProof = verifyCredential;
   }
 
   static async create(
@@ -123,7 +134,7 @@ export class ClaimsService {
       domainsService,
       cacheClient,
       didRegistry,
-      verifiableCredentialService
+      verifiableCredentialService,
     );
     await service.init();
     return service;
@@ -457,7 +468,7 @@ export class ClaimsService {
     }
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      await this.verifyVcIssuer(claimData.claimType);
+      await this.verifyIssuer(claimData.claimType);
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
@@ -626,7 +637,7 @@ export class ClaimsService {
       namespace: claim.claimType,
     });
 
-    await this.verifyVcIssuer(claim.claimType);
+    await this.verifyIssuer(claim.claimType);
     await this.verifyEnrolmentPrerequisites({
       subject,
       role: claim.claimType,
@@ -1204,8 +1215,11 @@ export class ClaimsService {
    *
    * @param {String} role Registration types of the claim
    */
-  private async verifyVcIssuer(role: string): Promise<void> {
-    await this._vcIssuerVerifier.verifyIssuer(this._signerService.did, role);
+  private async verifyIssuer(role: string): Promise<void> {
+    await this._vcIssuerVerifier.verifyIssuer(
+      this._signerService.did,
+      role,
+    );
   }
 
   /**
@@ -1403,7 +1417,21 @@ export class ClaimsService {
     );
   }
 
-  /**
+    /**
+   * Verifies that credential was issued by authorized issuer
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject} vc to be verified
+   */
+     async verifyVc(vc: VerifiableCredential<RoleCredentialSubject>) {
+      const issuerDID = this._signerService.did;
+      if (!await this._verifiableCredentialService.verify(vc)) {
+        throw new Error(ERROR_MESSAGES.PROOF_NOT_VERIFIED)
+      }
+       const role = vc.credentialSubject.role.namespace;
+       await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
+    }
+
+    /**
    *
    * Set the Verifier for Claim Issuance.
    *

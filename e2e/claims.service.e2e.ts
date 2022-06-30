@@ -514,7 +514,6 @@ describe('Сlaim tests', () => {
         data: roles[`${roleName2}.${root}`],
         returnSteps: false,
       });
-
       await enrolAndIssue(dynamicIssuer, staticIssuer, {
         subjectDID: dynamicIssuerDID,
         claimType: `${roleName1}.${root}`,
