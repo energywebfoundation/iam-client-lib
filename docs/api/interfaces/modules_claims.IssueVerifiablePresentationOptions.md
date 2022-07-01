@@ -7,6 +7,7 @@
 ### Properties
 
 - [credentialStatus](modules_claims.IssueVerifiablePresentationOptions.md#credentialstatus)
+- [expirationTimestamp](modules_claims.IssueVerifiablePresentationOptions.md#expirationtimestamp)
 - [issuerFields](modules_claims.IssueVerifiablePresentationOptions.md#issuerfields)
 - [namespace](modules_claims.IssueVerifiablePresentationOptions.md#namespace)
 - [subject](modules_claims.IssueVerifiablePresentationOptions.md#subject)
@@ -18,7 +19,13 @@
 
 • `Optional` **credentialStatus**: `StatusList2021Entry`
 
-Indicates if credential is actual of the time of verification
+___
+
+### expirationTimestamp
+
+• `Optional` **expirationTimestamp**: `number`
+
+Defines how long the claim is valid.
 
 ___
 

@@ -5,6 +5,12 @@ import {
 } from '@ew-did-registry/credentials-interface';
 import { ClaimData } from '../did-registry';
 import { IMessage } from '../messaging/messaging.types';
+import {
+  IAppDefinition,
+  IOrganizationDefinition,
+  IRoleDefinition,
+  IRoleDefinitionV2,
+} from '@energyweb/credential-governance';
 
 export interface IClaimRequest extends IMessage {
   token: string;
@@ -73,7 +79,7 @@ export const readyToBeRegisteredOnchain = (
     | 'onChainProof'
     | 'acceptedBy'
     | 'subjectAgreement'
-  >
+  > & { expirationTimestamp?: number }
 > => {
   if (!claim) return false;
   if (typeof claim !== 'object') return false;
@@ -100,7 +106,7 @@ export const agreement_type_hash = utils.id(
 export const proof_type_hash = utils.id(
   'Proof(address subject,bytes32 role,uint256 version,uint256 expiry,address issuer)'
 );
-export const defaultClaimExpiry = Number.MAX_SAFE_INTEGER - 1; // constraint of ethers.BigNumber
+export const eternityTimestamp = Number.MAX_SAFE_INTEGER - 1; // constraint of ethers.BigNumber
 
 export type RequestClaim = { requester: string; message: IClaimRequest };
 export type IssueClaim = { issuer: string; message: IClaimIssuance };
@@ -189,8 +195,14 @@ export interface IssueClaimRequestOptions {
   /** Indicates whether to publish role on-chain or not (default: false) */
   publishOnChain?: boolean;
 
-  /** Indicates if credential is actual of the time of verification */
+  /*
+   * Indicates credential status (such as revocation status)
+   * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
+   */
   credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface RegisterOnchainOptions {
@@ -214,6 +226,9 @@ export interface RegisterOnchainOptions {
 
   /** DID of the claim subject */
   subject?: string;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface RejectClaimRequestOptions {
@@ -250,6 +265,15 @@ export interface IssueClaimOptions {
     /** Issuers fields that role is requiring */
     issuerFields?: { key: string; value: string | number }[];
   };
+
+  /*
+   * Indicates credential status (such as revocation status)
+   * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
+   */
+  credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface PublishPublicClaimOptions {
@@ -288,6 +312,13 @@ export interface VerifyEnrolmentPrerequisitesOptions {
 
   /** Role claim type */
   role: string;
+
+  /** Role definition */
+  roleDefinition?:
+    | IRoleDefinition
+    | IRoleDefinitionV2
+    | IAppDefinition
+    | IOrganizationDefinition;
 }
 
 export interface IssueVerifiablePresentationOptions {
@@ -303,8 +334,14 @@ export interface IssueVerifiablePresentationOptions {
   /** Issuers fields that role is requiring */
   issuerFields?: { key: string; value: string | number }[];
 
-  /** Indicates if credential is actual of the time of verification */
+  /*
+   * Indicates credential status (such as revocation status)
+   * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
+   */
   credentialStatus?: StatusList2021Entry;
+
+  /** Defines how long the claim is valid. */
+  expirationTimestamp?: number;
 }
 
 export interface ApproveRolePublishingOptions {

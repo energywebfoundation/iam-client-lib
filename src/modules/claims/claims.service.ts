@@ -4,6 +4,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
   IRoleDefinition,
+  IRoleDefinitionV2,
   PreconditionType,
 } from '@energyweb/credential-governance';
 import {
@@ -36,7 +37,7 @@ import {
   IClaimRejection,
   IClaimRequest,
   RegistrationTypes,
-  defaultClaimExpiry,
+  eternityTimestamp,
   erc712_type_hash,
   proof_type_hash,
   typedMsgPrefix,
@@ -398,14 +399,22 @@ export class ClaimsService {
     issuerFields,
     publishOnChain = true,
     credentialStatus,
+    expirationTimestamp,
   }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
       claimData: { claimType: string; claimTypeVersion: number };
       sub: string;
     };
+
+    const roleDefinition = await this._domainsService.getDefinition({
+      type: NamespaceType.Role,
+      namespace: claimData.claimType,
+    });
+
     await this.verifyEnrolmentPrerequisites({
       subject: sub,
       role: claimData.claimType,
+      roleDefinition,
     });
 
     const message: IClaimIssuance = {
@@ -417,8 +426,13 @@ export class ClaimsService {
     const strippedClaimData = this.stripClaimData(claimData);
     const { claimType: role, claimTypeVersion: version } = claimData;
 
+    const claimExpirationTimestamp = this.getClaimExpirationTimestamp(
+      roleDefinition as IRoleDefinitionV2,
+      expirationTimestamp
+    );
+
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const expiry = defaultClaimExpiry;
+      const expiry = claimExpirationTimestamp || eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -437,6 +451,7 @@ export class ClaimsService {
           subjectAgreement,
           onChainProof,
           acceptedBy: this._signerService.did,
+          expirationTimestamp: expiry,
         });
       }
     }
@@ -454,6 +469,7 @@ export class ClaimsService {
       const [issuedToken, vp] = await Promise.all([
         this._didRegistry.issuePublicClaim({
           publicClaim,
+          expirationTimestamp: claimExpirationTimestamp,
         }),
         this.issueVerifiablePresentation({
           subject: sub,
@@ -461,6 +477,7 @@ export class ClaimsService {
           version: version.toString(),
           issuerFields,
           credentialStatus,
+          expirationTimestamp: claimExpirationTimestamp,
         }),
       ]);
       message.issuedToken = issuedToken;
@@ -489,8 +506,9 @@ export class ClaimsService {
    */
   async registerOnchain(claim: RegisterOnchainOptions): Promise<void> {
     // backward compatibility with token
-    if (claim.token)
+    if (claim.token) {
       claim = { ...claim, ...this.extractClaimRequest(claim.token) };
+    }
 
     if (
       !claim.subjectAgreement &&
@@ -515,9 +533,9 @@ export class ClaimsService {
       acceptedBy,
       subjectAgreement,
       onChainProof,
+      expirationTimestamp,
     } = claim;
-    const expiry = defaultClaimExpiry;
-
+    const expiry = expirationTimestamp || eternityTimestamp;
     const data = this._claimManagerInterface.encodeFunctionData('register', [
       addressOf(subject),
       namehash(claimType),
@@ -600,9 +618,20 @@ export class ClaimsService {
     subject,
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
+    credentialStatus,
+    expirationTimestamp,
   }: IssueClaimOptions): Promise<string | undefined> {
+    const roleDefinition = await this._domainsService.getDefinition({
+      type: NamespaceType.Role,
+      namespace: claim.claimType,
+    });
+
     await this.verifyVcIssuer(claim.claimType);
-    await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+    await this.verifyEnrolmentPrerequisites({
+      subject,
+      role: claim.claimType,
+      roleDefinition,
+    });
 
     const message: IClaimIssuance = {
       id: v4(),
@@ -610,21 +639,40 @@ export class ClaimsService {
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
     };
+
+    const claimExpirationTimestamp = this.getClaimExpirationTimestamp(
+      roleDefinition as IRoleDefinitionV2,
+      expirationTimestamp
+    );
+
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       const publicClaim: IPublicClaim = {
         did: subject,
         signer: this._signerService.did,
         claimData: claim,
       };
+      const [issuedToken, vp] = await Promise.all([
+        this._didRegistry.issuePublicClaim({
+          publicClaim,
+          expirationTimestamp: claimExpirationTimestamp,
+        }),
+        this.issueVerifiablePresentation({
+          subject,
+          namespace: claim.claimType,
+          version: claim.claimTypeVersion.toString(),
+          issuerFields: claim.issuerFields,
+          credentialStatus,
+          expirationTimestamp: claimExpirationTimestamp,
+        }),
+      ]);
 
-      message.issuedToken = await this._didRegistry.issuePublicClaim({
-        publicClaim,
-      });
+      message.issuedToken = issuedToken;
+      message.vp = vp;
     }
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
-      const expiry = defaultClaimExpiry;
+      const expiry = claimExpirationTimestamp || eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -1168,11 +1216,14 @@ export class ClaimsService {
   private async verifyEnrolmentPrerequisites({
     subject,
     role,
+    roleDefinition: cachedRoleDefinition,
   }: VerifyEnrolmentPrerequisitesOptions): Promise<void> {
-    const roleDefinition = await this._domainsService.getDefinition({
-      type: NamespaceType.Role,
-      namespace: role,
-    });
+    const roleDefinition =
+      cachedRoleDefinition ||
+      (await this._domainsService.getDefinition({
+        type: NamespaceType.Role,
+        namespace: role,
+      }));
 
     if (!roleDefinition) {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
@@ -1213,6 +1264,9 @@ export class ClaimsService {
       version: options.version,
       issuerFields: options.issuerFields,
       credentialStatus: options.credentialStatus,
+      expirationDate: options.expirationTimestamp
+        ? new Date(options.expirationTimestamp)
+        : undefined,
     });
     const vp =
       await this._verifiableCredentialService.createVerifiablePresentation([
@@ -1232,7 +1286,10 @@ export class ClaimsService {
       claimData: { claimType: string; claimTypeVersion: string };
       sub: string;
     };
-    return { ...claimData, subject: sub };
+    return {
+      ...claimData,
+      subject: sub,
+    };
   }
 
   /**
@@ -1368,5 +1425,25 @@ export class ClaimsService {
           JSON.parse(proofOptions)
         )
     );
+  }
+
+  /**
+   * Get claim expiration timestamp based on issuer value and role definition.
+   *
+   * @param {IRoleDefinitionV2} roleDefinition role definition
+   * @param {Number} [expirationTimestamp] issuer-defined expiration timestamp
+   *
+   * @return claim expiration timestamp
+   */
+  private getClaimExpirationTimestamp(
+    roleDefinition: IRoleDefinitionV2,
+    expirationTimestamp?: number
+  ) {
+    const defaultValidityPeriod = roleDefinition?.defaultValidityPeriod;
+    const roleDefinitionExpirationTimestamp = defaultValidityPeriod
+      ? Date.now() + defaultValidityPeriod
+      : undefined;
+
+    return expirationTimestamp || roleDefinitionExpirationTimestamp;
   }
 }

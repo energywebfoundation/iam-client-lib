@@ -4,12 +4,12 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [Nats](modules_messaging.MessagingMethod.md#nats)
 
-## Enumeration members
+## Enumeration Members
 
 ### Nats
 
-• **Nats** = `"nats"`
+• **Nats**
