@@ -1,10 +1,10 @@
 import { providers, Wallet } from 'ethers';
 import {
   CredentialStatusPurpose,
-  CredentialStatusType,
   Credential,
   VerifiablePresentation,
   VerifiableCredential,
+  StatusListEntryType,
 } from '@ew-did-registry/credentials-interface';
 import {
   initWithPrivateKeySigner,
@@ -55,7 +55,7 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
             ...credential,
             credentialStatus: {
               id: `https://identitycache.org/v1/status-list/${credential.id}`,
-              type: CredentialStatusType.StatusList2021Entry,
+              type: StatusListEntryType.Entry2021,
               statusPurpose: CredentialStatusPurpose.REVOCATION,
               statusListIndex: '1',
               statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,

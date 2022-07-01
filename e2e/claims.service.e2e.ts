@@ -7,9 +7,9 @@ import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';
 import {
   CredentialStatusPurpose,
-  CredentialStatusType,
   VerifiablePresentation,
   Credential,
+  StatusListEntryType,
 } from '@ew-did-registry/credentials-interface';
 import { providers, utils, Wallet } from 'ethers';
 import {
@@ -126,7 +126,7 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
               id: `https://energyweb.org/credential/${id(
                 JSON.stringify(credential)
               )}#list`,
-              type: CredentialStatusType.StatusList2021Entry,
+              type: StatusListEntryType.Entry2021,
               statusPurpose: CredentialStatusPurpose.REVOCATION,
               statusListIndex: '1',
               statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,

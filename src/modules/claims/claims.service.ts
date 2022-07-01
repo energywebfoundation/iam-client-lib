@@ -72,7 +72,6 @@ import { JWT } from '@ew-did-registry/jwt';
 import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
-import { NotAuthorizedIssuer } from '../../errors/not-authorized-issuer';
 
 const {
   id,
@@ -1158,14 +1157,7 @@ export class ClaimsService {
    * @param {String} role Registration types of the claim
    */
   private async verifyVcIssuer(role: string): Promise<void> {
-    if (
-      !(await this._vcIssuerVerifier.verifyIssuerAuthority(
-        role,
-        this._signerService.did
-      ))
-    ) {
-      throw new NotAuthorizedIssuer(this._signerService.did, role);
-    }
+    await this._vcIssuerVerifier.verifyIssuer(this._signerService.did, role);
   }
 
   /**
@@ -1368,8 +1360,13 @@ export class ClaimsService {
     const domainReader = this._domainsService.domainReader;
     const issuerResolver = new EthersProviderIssuerResolver(domainReader);
     this._vcIssuerVerifier = new VCIssuerVerification(
+      issuerResolver,
       credentialResolver,
-      issuerResolver
+      (vc: string, proofOptions: string) =>
+        this._verifiableCredentialService.verify(
+          JSON.parse(vc),
+          JSON.parse(proofOptions)
+        )
     );
   }
 }

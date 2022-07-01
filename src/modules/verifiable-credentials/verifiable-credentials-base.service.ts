@@ -19,6 +19,7 @@ import {
   ContinueExchangeCredentials,
   ContinueExchangeSelections,
   VpRequestPresentationDefinitionQuery,
+  CredentialType,
 } from '@ew-did-registry/credentials-interface';
 import { SignerService } from '../signer';
 import {
@@ -444,7 +445,7 @@ export abstract class VerifiableCredentialsServiceBase {
     options?: ProofOptions
   ): Promise<boolean> {
     let verifyFunc: (vp: string, proof_options: string) => Promise<string>;
-    switch (vp.type.includes('VerifiablePresentation')) {
+    switch (vp.type.includes(CredentialType.VerifiablePresentation)) {
       case true:
         verifyFunc = this.verifyPresentation;
         break;
@@ -475,7 +476,7 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     if (
-      vp.type.includes('VerifiableCredential') &&
+      vp.type.includes(CredentialType.VerifiableCredential) &&
       'expirationDate' in vp &&
       vp.expirationDate
     ) {
@@ -488,7 +489,7 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     if (
-      vp.type.includes('VerifiablePresentation') &&
+      vp.type.includes(CredentialType.VerifiablePresentation) &&
       'verifiableCredential' in vp &&
       vp.verifiableCredential &&
       Array.isArray(vp.verifiableCredential)
