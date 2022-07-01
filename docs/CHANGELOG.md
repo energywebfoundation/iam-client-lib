@@ -1,3 +1,10 @@
+## [6.0.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.26...v6.0.0-alpha.27) (2022-07-01)
+
+
+### Features
+
+* claim expieration ([#567](https://github.com/energywebfoundation/iam-client-lib/issues/567)) ([757de5a](https://github.com/energywebfoundation/iam-client-lib/commit/757de5a4458b0864d621cbb41c44f764c87b3b5c))
+
 ## [6.0.0-alpha.26](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.25...v6.0.0-alpha.26) (2022-07-01)
 
 ## [6.0.0-alpha.25](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.24...v6.0.0-alpha.25) (2022-06-29)
