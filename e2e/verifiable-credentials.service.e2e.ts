@@ -16,7 +16,6 @@ import {
   VerifiableCredentialsServiceBase,
 } from '../src/modules/verifiable-credentials';
 import {
-  CredentialStatusType,
   VC_API_EXCHANGE,
   VerifiableCredential,
   VpRequest,
@@ -24,6 +23,7 @@ import {
   VpRequestQueryType,
   Credential,
   CredentialStatusPurpose,
+  StatusListEntryType,
 } from '@ew-did-registry/credentials-interface';
 
 const { id } = utils;
@@ -44,7 +44,7 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
               id: `https://energyweb.org/credential/${id(
                 JSON.stringify(credential)
               )}#list`,
-              type: CredentialStatusType.StatusList2021Entry,
+              type: StatusListEntryType.Entry2021,
               statusPurpose: CredentialStatusPurpose.REVOCATION,
               statusListIndex: '1',
               statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,
