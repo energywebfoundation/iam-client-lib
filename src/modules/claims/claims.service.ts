@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { providers, utils, Wallet } from 'ethers';
-import {
-  verifyCredential,
-} from 'didkit-wasm-node';
+import { verifyCredential } from 'didkit-wasm-node';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
@@ -11,9 +9,7 @@ import {
   PreconditionType,
   RoleCredentialSubject,
 } from '@energyweb/credential-governance';
-import {
-  VerifiableCredential
-} from '@ew-did-registry/credentials-interface';
+import { VerifiableCredential } from '@ew-did-registry/credentials-interface';
 import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
@@ -106,16 +102,13 @@ export class ClaimsService {
   private _claimManagerInterface = ClaimManager__factory.createInterface();
   private _claimRevocation: ClaimRevocation;
   private _vcIssuerVerifier: VCIssuerVerification;
-  protected verifyProof: (
-    vc: string,
-    proof_options: string
-  )  => Promise<string>
+  private verifyProof: (vc: string, proof_options: string) => Promise<string>;
   constructor(
     private _signerService: SignerService,
     private _domainsService: DomainsService,
     private _cacheClient: CacheClient,
     private _didRegistry: DidRegistry,
-    private _verifiableCredentialService: VerifiableCredentialsServiceBase,
+    private _verifiableCredentialService: VerifiableCredentialsServiceBase
   ) {
     this._signerService.onInit(this.init.bind(this));
     this._setClaimIssuerVerifier();
@@ -134,7 +127,7 @@ export class ClaimsService {
       domainsService,
       cacheClient,
       didRegistry,
-      verifiableCredentialService,
+      verifiableCredentialService
     );
     await service.init();
     return service;
@@ -1216,10 +1209,7 @@ export class ClaimsService {
    * @param {String} role Registration types of the claim
    */
   private async verifyIssuer(role: string): Promise<void> {
-    await this._vcIssuerVerifier.verifyIssuer(
-      this._signerService.did,
-      role,
-    );
+    await this._vcIssuerVerifier.verifyIssuer(this._signerService.did, role);
   }
 
   /**
@@ -1417,21 +1407,24 @@ export class ClaimsService {
     );
   }
 
-    /**
+  /**
    * Verifies that credential was issued by authorized issuer
    *
    * @param {VerifiableCredential<RoleCredentialSubject} vc to be verified
+   * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
    */
-     async verifyVc(vc: VerifiableCredential<RoleCredentialSubject>) {
-      const issuerDID = this._signerService.did;
-      if (!await this._verifiableCredentialService.verify(vc)) {
-        throw new Error(ERROR_MESSAGES.PROOF_NOT_VERIFIED)
-      }
-       const role = vc.credentialSubject.role.namespace;
-       await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
+  async verifyVc(
+    vc: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<void> {
+    const issuerDID = this._signerService.did;
+    if (!(await this._verifiableCredentialService.verify(vc))) {
+      throw new Error(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
+    const role = vc.credentialSubject.role.namespace;
+    await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
+  }
 
-    /**
+  /**
    *
    * Set the Verifier for Claim Issuance.
    *

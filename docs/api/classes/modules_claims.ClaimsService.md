@@ -785,6 +785,8 @@ Verifies that credential was issued by authorized issuer
 
 `Promise`<`void`\>
 
+void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+
 ___
 
 ### create
