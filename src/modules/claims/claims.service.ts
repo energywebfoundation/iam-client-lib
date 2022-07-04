@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
@@ -23,6 +22,8 @@ import {
   IServiceEndpoint,
   ProviderTypes,
 } from '@ew-did-registry/did-resolver-interface';
+import { JWT } from '@ew-did-registry/jwt';
+import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__factory';
 import { ERROR_MESSAGES } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
@@ -69,8 +70,6 @@ import {
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
-import { JWT } from '@ew-did-registry/jwt';
-import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
 
