@@ -11,6 +11,7 @@
 - [claimType](modules_claims.Claim.md#claimtype)
 - [claimTypeVersion](modules_claims.Claim.md#claimtypeversion)
 - [createdAt](modules_claims.Claim.md#createdat)
+- [expirationTimestamp](modules_claims.Claim.md#expirationtimestamp)
 - [id](modules_claims.Claim.md#id)
 - [isAccepted](modules_claims.Claim.md#isaccepted)
 - [isRejected](modules_claims.Claim.md#isrejected)
@@ -54,6 +55,12 @@ ___
 ### createdAt
 
 • **createdAt**: `string`
+
+___
+
+### expirationTimestamp
+
+• `Optional` **expirationTimestamp**: `string`
 
 ___
 
