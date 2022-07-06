@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { providers, utils, Wallet } from 'ethers';
-import { verifyCredential } from 'didkit-wasm-node';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
@@ -68,6 +67,7 @@ import {
   EthersProviderIssuerResolver,
   IpfsCredentialResolver,
   VCIssuerVerification,
+  ClaimIssuerVerification
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -102,7 +102,8 @@ export class ClaimsService {
   private _claimManagerInterface = ClaimManager__factory.createInterface();
   private _claimRevocation: ClaimRevocation;
   private _vcIssuerVerifier: VCIssuerVerification;
-  private verifyProof: (vc: string, proof_options: string) => Promise<string>;
+  private _issuerResolver: EthersProviderIssuerResolver;
+  private _credentialResolver: CredentialResolver
   constructor(
     private _signerService: SignerService,
     private _domainsService: DomainsService,
@@ -112,7 +113,6 @@ export class ClaimsService {
   ) {
     this._signerService.onInit(this.init.bind(this));
     this._setClaimIssuerVerifier();
-    this.verifyProof = verifyCredential;
   }
 
   static async create(
@@ -1408,7 +1408,9 @@ export class ClaimsService {
   }
 
   /**
-   * Verifies that credential was issued by authorized issuer
+   * Verifies:
+   * - That credential proof is valid
+   * - That credential was issued by authorized issuer
    *
    * @param {VerifiableCredential<RoleCredentialSubject} vc to be verified
    * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
@@ -1424,22 +1426,73 @@ export class ClaimsService {
     await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
   }
 
+    /**
+   * Verifies:
+   * - That off-chain claim was issued by authorized issuer
+   * - That off-chain claim proof is valid
+   *
+   * @param subjectDID The DID to try to resolve a credential for
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc") 
+   * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+   */
+     async verifyOffChainClaim(subjectDID: string, roleNamespace: string): Promise<void> {
+      const errors: string[] = [];
+      const issuerDID = this._signerService.did;
+      const claimIssuerVerifier = new ClaimIssuerVerification(this._signerService.provider, this._didRegistry.registrySettings, this._credentialResolver, this._issuerResolver);
+      const issuerVerified  = await claimIssuerVerifier.verifyIssuer(issuerDID, roleNamespace);
+      //let claimVerified
+      if (!issuerVerified) {
+        errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED)
+      }
+      try {
+        await claimIssuerVerifier.verifyIssuance(subjectDID, roleNamespace);
+      } catch (e) {
+        //claimVerified = false;
+        errors.push(JSON.stringify(e));
+      }
+      // return {
+      //   errors: offChainVerificationErrofs,
+      //   verified: claimVerified && issuerVerified
+      // }      
+    }
+
+   /**
+   * Resolve a credential from storage and verify its proof/signature and its issuer's authority
+   *
+   * @param subjectDID The DID to try to resolve a credential for
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc") 
+   * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+   */
+
+    async  resolveCredentialAndVerify(subjectDID: string, roleNamespace: string): Promise<void> {
+      /*
+      ...some code to resolve the credential 
+      if (foundOffChainClaim) {
+        return verifyOffChainClaim(offChainClaim);
+      }
+      if (foundVc) {
+        return verifyVc(vc);
+      }
+      */
+
+    }
+
   /**
    *
    * Set the Verifier for Claim Issuance.
    *
    */
   private _setClaimIssuerVerifier() {
-    const credentialResolver: CredentialResolver = new IpfsCredentialResolver(
+    this._credentialResolver = new IpfsCredentialResolver(
       this._signerService.provider,
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
     );
     const domainReader = this._domainsService.domainReader;
-    const issuerResolver = new EthersProviderIssuerResolver(domainReader);
+    this._issuerResolver = new EthersProviderIssuerResolver(domainReader);
     this._vcIssuerVerifier = new VCIssuerVerification(
-      issuerResolver,
-      credentialResolver,
+      this._issuerResolver,
+      this._credentialResolver,
       (vc: string, proofOptions: string) =>
         this._verifiableCredentialService.verify(
           JSON.parse(vc),

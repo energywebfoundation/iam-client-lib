@@ -4,26 +4,26 @@
 
 ## Table of contents
 
-### Enumeration Members
+### Enumeration members
 
 - [Application](modules_domains.NamespaceType.md#application)
 - [Organization](modules_domains.NamespaceType.md#organization)
 - [Role](modules_domains.NamespaceType.md#role)
 
-## Enumeration Members
+## Enumeration members
 
 ### Application
 
-• **Application**
+• **Application** = `"apps"`
 
 ___
 
 ### Organization
 
-• **Organization**
+• **Organization** = `"org"`
 
 ___
 
 ### Role
 
-• **Role**
+• **Role** = `"roles"`

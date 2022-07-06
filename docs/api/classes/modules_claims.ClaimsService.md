@@ -43,8 +43,10 @@ claimsService.getClaimById(claim.id);
 - [publishPublicClaim](modules_claims.ClaimsService.md#publishpublicclaim)
 - [registerOnchain](modules_claims.ClaimsService.md#registeronchain)
 - [rejectClaimRequest](modules_claims.ClaimsService.md#rejectclaimrequest)
+- [resolveCredentialAndVerify](modules_claims.ClaimsService.md#resolvecredentialandverify)
 - [revokeClaim](modules_claims.ClaimsService.md#revokeclaim)
 - [revokeMultipleClaim](modules_claims.ClaimsService.md#revokemultipleclaim)
+- [verifyOffChainClaim](modules_claims.ClaimsService.md#verifyoffchainclaim)
 - [verifyVc](modules_claims.ClaimsService.md#verifyvc)
 - [create](modules_claims.ClaimsService.md#create)
 
@@ -692,6 +694,27 @@ claimsService.rejectClaimRequest({
 
 ___
 
+### resolveCredentialAndVerify
+
+▸ **resolveCredentialAndVerify**(`subjectDID`, `roleNamespace`): `Promise`<`void`\>
+
+Resolve a credential from storage and verify its proof/signature and its issuer's authority
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjectDID` | `string` | The DID to try to resolve a credential for |
+| `roleNamespace` | `string` | - |
+
+#### Returns
+
+`Promise`<`void`\>
+
+void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+
+___
+
 ### revokeClaim
 
 ▸ **revokeClaim**(`options`): `Promise`<`boolean`\>
@@ -769,11 +792,36 @@ claimsService.revokeMultipleClaim({
 
 ___
 
+### verifyOffChainClaim
+
+▸ **verifyOffChainClaim**(`subjectDID`, `roleNamespace`): `Promise`<`void`\>
+
+Verifies:
+- That off-chain claim was issued by authorized issuer
+- That off-chain claim proof is valid
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjectDID` | `string` | The DID to try to resolve a credential for |
+| `roleNamespace` | `string` | - |
+
+#### Returns
+
+`Promise`<`void`\>
+
+void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+
+___
+
 ### verifyVc
 
 ▸ **verifyVc**(`vc`): `Promise`<`void`\>
 
-Verifies that credential was issued by authorized issuer
+Verifies:
+- That credential proof is valid
+- That credential was issued by authorized issuer
 
 #### Parameters
 
