@@ -583,11 +583,11 @@ export class CacheClient implements ICacheClient {
   }
 
   /**
-   * @description Interceptor of authentication errors. Queues failed requests and starts authentication process.
+   * Decides whether to retry the request or not based on the given axios error.
    *
-   * @param error Intercepted response from failed request
+   * @param error axios error
    *
-   * @returns Promise, which resolves with result of resending of failed request
+   * @return true if request should be retried
    */
   private async handleRequestError(error: Error): Promise<boolean> {
     if (!axios.isAxiosError(error)) {
@@ -607,13 +607,13 @@ export class CacheClient implements ICacheClient {
       return true;
     }
 
-    const isAuthError = [401, 403, 407].includes(response.status);
     const clientErrorsToRetry = [401, 403, 407, 408, 411, 412, 425, 426];
 
     const isAuthEndpoint =
-      (config.url?.indexOf('/login') || -1) >= 0 &&
-      (config.url?.indexOf('/refresh_token') || -1) >= 0 &&
-      (config.url?.indexOf(TEST_LOGIN_ENDPOINT) || -1) >= 0;
+      config.url &&
+      (config.url.indexOf('/login') >= 0 ||
+        config.url.indexOf('/refresh_token') >= 0 ||
+        config.url.indexOf(TEST_LOGIN_ENDPOINT) >= 0);
 
     if (isAuthEndpoint) {
       return false;
@@ -622,12 +622,12 @@ export class CacheClient implements ICacheClient {
     // Retry some client errors
     if (
       response.status >= 400 &&
-      response.status < 500 &&
       !clientErrorsToRetry.includes(response.status)
     ) {
       return false;
     }
 
+    const isAuthError = [401, 403, 407].includes(response.status);
     if (!isAuthError) {
       return true;
     }
@@ -652,7 +652,11 @@ export class CacheClient implements ICacheClient {
     return promiseRetry(
       async (retry) => {
         return request().catch(async (err) => {
-          if (await this.handleRequestError(err)) {
+          try {
+            if (await this.handleRequestError(err)) {
+              retry(err);
+            }
+          } catch {
             retry(err);
           }
           throw err;
