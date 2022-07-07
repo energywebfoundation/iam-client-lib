@@ -557,7 +557,7 @@ export class CacheClient implements ICacheClient {
    * @return true if cache client is authenticated server
    */
   async isAuthenticated(): Promise<boolean> {
-    getLogger().error('[CACHE CLIENT] fetching authorization status');
+    getLogger().info('[CACHE CLIENT] fetching authorization status');
     try {
       const { data } = await this._httpClient.get<{
         user: string | null;
@@ -565,15 +565,19 @@ export class CacheClient implements ICacheClient {
       const isAuthenticated = data.user
         ? data.user === this._signerService.did
         : false;
-      getLogger().error(
+      getLogger().info(
         `[CACHE CLIENT] authorization status: ${
           isAuthenticated ? 'OK' : 'FAIL'
         }`
       );
       return isAuthenticated;
     } catch (error) {
-      getLogger().error('[CACHE CLIENT] authorization status: FAIL');
-      getLogger().error(error);
+      getLogger().info('[CACHE CLIENT] authorization status: FAIL');
+      if (error instanceof Error) {
+        getLogger().error(
+          `[CACHE CLIENT] error occurred while checking authorization status: ${error.message}`
+        );
+      }
       return false;
     }
   }
@@ -598,18 +602,34 @@ export class CacheClient implements ICacheClient {
       return true;
     }
 
-    if (!config || !this.authEnabled || !config.url) {
+    // Retry server errors
+    if (response.status >= 500) {
+      return true;
+    }
+
+    const isAuthError = [401, 403, 407].includes(response.status);
+    const clientErrorsToRetry = [401, 403, 407, 408, 411, 412, 425, 426];
+
+    const isAuthEndpoint =
+      (config.url?.indexOf('/login') || -1) >= 0 &&
+      (config.url?.indexOf('/refresh_token') || -1) >= 0 &&
+      (config.url?.indexOf(TEST_LOGIN_ENDPOINT) || -1) >= 0;
+
+    if (isAuthEndpoint) {
       return false;
     }
 
-    const isAuthError = response.status === 401 || response.status === 403;
-    const isAuthEndpoint =
-      config.url?.indexOf('/login') >= 0 &&
-      config.url?.indexOf('/refresh_token') >= 0 &&
-      config.url?.indexOf(TEST_LOGIN_ENDPOINT) >= 0;
-
-    if (!isAuthError || isAuthEndpoint) {
+    // Retry some client errors
+    if (
+      response.status >= 400 &&
+      response.status < 500 &&
+      !clientErrorsToRetry.includes(response.status)
+    ) {
       return false;
+    }
+
+    if (!isAuthError) {
+      return true;
     }
 
     getLogger().debug(`[CACHE CLIENT] axios error unauthorized`);
@@ -635,7 +655,6 @@ export class CacheClient implements ICacheClient {
           if (await this.handleRequestError(err)) {
             retry(err);
           }
-          console.log('HALLO ERROR');
           throw err;
         });
       },
