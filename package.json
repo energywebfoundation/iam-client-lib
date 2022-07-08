@@ -105,10 +105,10 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/core": "7.18.5",
-    "@babel/plugin-transform-regenerator": "7.18.0",
+    "@babel/core": "7.18.6",
+    "@babel/plugin-transform-regenerator": "7.18.6",
     "@babel/plugin-transform-runtime": "^7.17.0",
-    "@babel/preset-env": "7.18.2",
+    "@babel/preset-env": "7.18.6",
     "@babel/runtime": "^7.17.2",
     "@energyweb/eslint-config": "^0.0.2",
     "@energyweb/prettier-config": "^0.0.1",
@@ -150,8 +150,8 @@
     "semantic-release": "^19.0.2",
     "ts-jest": "26.5.6",
     "typechain": "5.2.0",
-    "typedoc": "^0.22.0",
-    "typedoc-plugin-markdown": "~3.12.0",
+    "typedoc": "^0.23.0",
+    "typedoc-plugin-markdown": "~3.13.0",
     "typescript": "^4.0.2"
   },
   "husky": {
