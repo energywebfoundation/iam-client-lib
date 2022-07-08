@@ -94,12 +94,12 @@ export class CacheClient implements ICacheClient {
         tokens = undefined;
       }
     } catch {
-      getLogger().error('[CACHE CLIENT] failed to refresh tokens');
+      getLogger().warn('[CACHE CLIENT] failed to refresh tokens');
     }
 
     // If refresh token failed or access token is not valid, then sign new identity token
     if (!tokens) {
-      getLogger().error('[CACHE CLIENT] obtaining new tokens');
+      getLogger().info('[CACHE CLIENT] obtaining new tokens');
       delete this._httpClient.defaults.headers.common['Authorization'];
       const pubKeyAndIdentityToken =
         await this._signerService.publicKeyAndIdentityToken(true);
@@ -668,7 +668,7 @@ export class CacheClient implements ICacheClient {
 
   private async refreshToken(): Promise<AuthTokens | undefined> {
     if (!this.refresh_token) return undefined;
-    getLogger().debug('[CACHE CLIENT] refreshing tokens');
+    getLogger().info('[CACHE CLIENT] refreshing tokens');
     const { data } = await this._httpClient.get<{
       token: string;
       refreshToken: string;
