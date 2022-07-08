@@ -94,12 +94,12 @@ export class CacheClient implements ICacheClient {
         tokens = undefined;
       }
     } catch {
-      getLogger().error('[CACHE CLIENT] failed to refresh tokens');
+      getLogger().warn('[CACHE CLIENT] failed to refresh tokens');
     }
 
     // If refresh token failed or access token is not valid, then sign new identity token
     if (!tokens) {
-      getLogger().error('[CACHE CLIENT] obtaining new tokens');
+      getLogger().info('[CACHE CLIENT] obtaining new tokens');
       delete this._httpClient.defaults.headers.common['Authorization'];
       const pubKeyAndIdentityToken =
         await this._signerService.publicKeyAndIdentityToken(true);
@@ -557,7 +557,7 @@ export class CacheClient implements ICacheClient {
    * @return true if cache client is authenticated server
    */
   async isAuthenticated(): Promise<boolean> {
-    getLogger().error('[CACHE CLIENT] fetching authorization status');
+    getLogger().info('[CACHE CLIENT] fetching authorization status');
     try {
       const { data } = await this._httpClient.get<{
         user: string | null;
@@ -565,25 +565,29 @@ export class CacheClient implements ICacheClient {
       const isAuthenticated = data.user
         ? data.user === this._signerService.did
         : false;
-      getLogger().error(
+      getLogger().info(
         `[CACHE CLIENT] authorization status: ${
           isAuthenticated ? 'OK' : 'FAIL'
         }`
       );
       return isAuthenticated;
     } catch (error) {
-      getLogger().error('[CACHE CLIENT] authorization status: FAIL');
-      getLogger().error(error);
+      getLogger().info('[CACHE CLIENT] authorization status: FAIL');
+      if (error instanceof Error) {
+        getLogger().error(
+          `[CACHE CLIENT] error occurred while checking authorization status: ${error.message}`
+        );
+      }
       return false;
     }
   }
 
   /**
-   * @description Interceptor of authentication errors. Queues failed requests and starts authentication process.
+   * Decides whether to retry the request or not based on the given axios error.
    *
-   * @param error Intercepted response from failed request
+   * @param error axios error
    *
-   * @returns Promise, which resolves with result of resending of failed request
+   * @return true if request should be retried
    */
   private async handleRequestError(error: Error): Promise<boolean> {
     if (!axios.isAxiosError(error)) {
@@ -598,18 +602,34 @@ export class CacheClient implements ICacheClient {
       return true;
     }
 
-    if (!config || !this.authEnabled || !config.url) {
+    // Retry server errors
+    if (response.status >= 500) {
+      return true;
+    }
+
+    const clientErrorsToRetry = [401, 403, 407, 408, 411, 412, 425, 426];
+
+    const isAuthEndpoint =
+      config.url &&
+      (config.url.indexOf('/login') >= 0 ||
+        config.url.indexOf('/refresh_token') >= 0 ||
+        config.url.indexOf(TEST_LOGIN_ENDPOINT) >= 0);
+
+    if (isAuthEndpoint) {
       return false;
     }
 
-    const isAuthError = response.status === 401 || response.status === 403;
-    const isAuthEndpoint =
-      config.url?.indexOf('/login') >= 0 &&
-      config.url?.indexOf('/refresh_token') >= 0 &&
-      config.url?.indexOf(TEST_LOGIN_ENDPOINT) >= 0;
-
-    if (!isAuthError || isAuthEndpoint) {
+    // Retry some client errors
+    if (
+      response.status >= 400 &&
+      !clientErrorsToRetry.includes(response.status)
+    ) {
       return false;
+    }
+
+    const isAuthError = [401, 403, 407].includes(response.status);
+    if (!isAuthError) {
+      return true;
     }
 
     getLogger().debug(`[CACHE CLIENT] axios error unauthorized`);
@@ -632,10 +652,13 @@ export class CacheClient implements ICacheClient {
     return promiseRetry(
       async (retry) => {
         return request().catch(async (err) => {
-          if (await this.handleRequestError(err)) {
+          try {
+            if (await this.handleRequestError(err)) {
+              retry(err);
+            }
+          } catch {
             retry(err);
           }
-          console.log('HALLO ERROR');
           throw err;
         });
       },
@@ -645,7 +668,7 @@ export class CacheClient implements ICacheClient {
 
   private async refreshToken(): Promise<AuthTokens | undefined> {
     if (!this.refresh_token) return undefined;
-    getLogger().debug('[CACHE CLIENT] refreshing tokens');
+    getLogger().info('[CACHE CLIENT] refreshing tokens');
     const { data } = await this._httpClient.get<{
       token: string;
       refreshToken: string;
