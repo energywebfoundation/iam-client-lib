@@ -23,4 +23,4 @@ ___
 
 • **isVerified**: `boolean`
 
-Verifies if a claim has been successfully verified
+Indicates if a claim has been successfully verified

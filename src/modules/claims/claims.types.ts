@@ -431,7 +431,7 @@ export interface ClaimRevocationDetailsResult {
 }
 
 export interface CredentialVerificationResult {
-  /** Verifies if a claim has been successfully verified */
+  /** Indicates if a claim has been successfully verified */
   isVerified: boolean;
 
   /** Verification errors */
