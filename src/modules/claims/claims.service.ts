@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
@@ -23,6 +22,8 @@ import {
   IServiceEndpoint,
   ProviderTypes,
 } from '@ew-did-registry/did-resolver-interface';
+import { JWT } from '@ew-did-registry/jwt';
+import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__factory';
 import { ERROR_MESSAGES } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
@@ -69,8 +70,6 @@ import {
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
-import { JWT } from '@ew-did-registry/jwt';
-import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
 
@@ -417,12 +416,6 @@ export class ClaimsService {
       roleDefinition,
     });
 
-    const message: IClaimIssuance = {
-      id,
-      requester,
-      claimIssuer: [this._signerService.did],
-      acceptedBy: this._signerService.did,
-    };
     const strippedClaimData = this.stripClaimData(claimData);
     const { claimType: role, claimTypeVersion: version } = claimData;
 
@@ -430,6 +423,14 @@ export class ClaimsService {
       roleDefinition as IRoleDefinitionV2,
       expirationTimestamp
     );
+
+    const message: IClaimIssuance = {
+      id,
+      requester,
+      claimIssuer: [this._signerService.did],
+      acceptedBy: this._signerService.did,
+      expirationTimestamp: claimExpirationTimestamp,
+    };
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const expiry = claimExpirationTimestamp || eternityTimestamp;
@@ -633,17 +634,18 @@ export class ClaimsService {
       roleDefinition,
     });
 
+    const claimExpirationTimestamp = this.getClaimExpirationTimestamp(
+      roleDefinition as IRoleDefinitionV2,
+      expirationTimestamp
+    );
+
     const message: IClaimIssuance = {
       id: v4(),
       requester: subject,
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
+      expirationTimestamp: claimExpirationTimestamp,
     };
-
-    const claimExpirationTimestamp = this.getClaimExpirationTimestamp(
-      roleDefinition as IRoleDefinitionV2,
-      expirationTimestamp
-    );
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       const publicClaim: IPublicClaim = {
@@ -759,6 +761,9 @@ export class ClaimsService {
 
       await this.registerOnchain({
         ...claimData,
+        expirationTimestamp: claimData.expirationTimestamp
+          ? +claimData.expirationTimestamp
+          : undefined,
         onChainProof: claimData.onChainProof as string,
         acceptedBy: claimData.acceptedBy as string,
       });
