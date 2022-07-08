@@ -33,5 +33,6 @@ export enum ERROR_MESSAGES {
   REVOKE_CLAIM_NOT_FOUND = 'Could not find claim to revoke',
   DID_DOCUMENT_NOT_UPDATED = 'DID Document was not updated',
   PROOF_NOT_VERIFIED = 'Proof not verified',
-  OFFCHAIN_ISSUER_NOT_AUTHORIZED = 'Issuer of OffChain Claim is not authorized'
+  OFFCHAIN_ISSUER_NOT_AUTHORIZED = 'Issuer of OffChain Claim is not authorized',
+  NO_CLAIM_RESOLVED = 'No claim found for given DID and role'
 }

@@ -61,6 +61,7 @@ import {
   GetRevocationClaimDetailsResult,
   ClaimRevocationDetailsResult,
   GetClaimsByRevokerOptions,
+  CredentialVerificationResult,
 } from './claims.types';
 import {
   CredentialResolver,
@@ -1413,17 +1414,29 @@ export class ClaimsService {
    * - That credential was issued by authorized issuer
    *
    * @param {VerifiableCredential<RoleCredentialSubject} vc to be verified
-   * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+   * @return Boolean indicating if verified and array of error messages
    */
   async verifyVc(
     vc: VerifiableCredential<RoleCredentialSubject>
-  ): Promise<void> {
+  ): Promise<CredentialVerificationResult> {
+    const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    if (!(await this._verifiableCredentialService.verify(vc))) {
-      throw new Error(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
+    const proofVerified = await this._verifiableCredentialService.verify(vc)
+    if (!proofVerified) {
+      errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
     const role = vc.credentialSubject.role.namespace;
-    await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
+    let issuerVerified = true;
+    try {
+      await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
+    } catch(e) {
+      issuerVerified = false;
+      errors.push((e as Error).message)
+    }
+    return {
+      errors,
+      isVerified: proofVerified && issuerVerified
+    }
   }
 
     /**
@@ -1433,27 +1446,27 @@ export class ClaimsService {
    *
    * @param subjectDID The DID to try to resolve a credential for
    * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc") 
-   * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+   * @return Boolean indicating if verified and array of error messages
    */
-     async verifyOffChainClaim(subjectDID: string, roleNamespace: string): Promise<void> {
+     async verifyOffChainClaim(subjectDID: string, roleNamespace: string): Promise<CredentialVerificationResult> {
       const errors: string[] = [];
       const issuerDID = this._signerService.did;
       const claimIssuerVerifier = new ClaimIssuerVerification(this._signerService.provider, this._didRegistry.registrySettings, this._credentialResolver, this._issuerResolver);
       const issuerVerified  = await claimIssuerVerifier.verifyIssuer(issuerDID, roleNamespace);
-      //let claimVerified
       if (!issuerVerified) {
         errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED)
       }
+      let proofVerified = true;
       try {
         await claimIssuerVerifier.verifyIssuance(subjectDID, roleNamespace);
       } catch (e) {
-        //claimVerified = false;
-        errors.push(JSON.stringify(e));
+        proofVerified = false;
+        errors.push((e as Error).message);
       }
-      // return {
-      //   errors: offChainVerificationErrofs,
-      //   verified: claimVerified && issuerVerified
-      // }      
+      return {
+        errors: errors,
+        isVerified: proofVerified && issuerVerified
+      }      
     }
 
    /**
@@ -1463,18 +1476,16 @@ export class ClaimsService {
    * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc") 
    * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
    */
-
-    async  resolveCredentialAndVerify(subjectDID: string, roleNamespace: string): Promise<void> {
-      /*
-      ...some code to resolve the credential 
-      if (foundOffChainClaim) {
-        return verifyOffChainClaim(offChainClaim);
+    async  resolveCredentialAndVerify(subjectDID: string, roleNamespace: string): Promise<CredentialVerificationResult> {
+      const resolvedCredential = await this._credentialResolver.getCredential(subjectDID, roleNamespace);
+      if (!resolvedCredential) {
+        return {
+          isVerified: false,
+          errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED]
+        }
       }
-      if (foundVc) {
-        return verifyVc(vc);
-      }
-      */
-
+      const credentialIsOffChain = resolvedCredential?.issuedToken;
+      return credentialIsOffChain ? this.verifyOffChainClaim(subjectDID, roleNamespace) : this.verifyVc(resolvedCredential as VerifiableCredential<RoleCredentialSubject>);
     }
 
   /**

@@ -696,7 +696,7 @@ ___
 
 ### resolveCredentialAndVerify
 
-▸ **resolveCredentialAndVerify**(`subjectDID`, `roleNamespace`): `Promise`<`void`\>
+▸ **resolveCredentialAndVerify**(`subjectDID`, `roleNamespace`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Resolve a credential from storage and verify its proof/signature and its issuer's authority
 
@@ -709,7 +709,7 @@ Resolve a credential from storage and verify its proof/signature and its issuer'
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
 
@@ -794,7 +794,7 @@ ___
 
 ### verifyOffChainClaim
 
-▸ **verifyOffChainClaim**(`subjectDID`, `roleNamespace`): `Promise`<`void`\>
+▸ **verifyOffChainClaim**(`subjectDID`, `roleNamespace`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Verifies:
 - That off-chain claim was issued by authorized issuer
@@ -809,15 +809,15 @@ Verifies:
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
-void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+Boolean indicating if verified and array of error messages
 
 ___
 
 ### verifyVc
 
-▸ **verifyVc**(`vc`): `Promise`<`void`\>
+▸ **verifyVc**(`vc`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Verifies:
 - That credential proof is valid
@@ -831,9 +831,9 @@ Verifies:
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
-void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+Boolean indicating if verified and array of error messages
 
 ___
 
