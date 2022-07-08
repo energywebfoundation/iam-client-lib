@@ -55,10 +55,10 @@
 - [getRolesDefinition](modules_cache_client.CacheClient.md#getrolesdefinition)
 - [getStatusListCredential](modules_cache_client.CacheClient.md#getstatuslistcredential)
 - [getSubOrganizationsByOrganization](modules_cache_client.CacheClient.md#getsuborganizationsbyorganization)
-- [handleError](modules_cache_client.CacheClient.md#handleerror)
 - [init](modules_cache_client.CacheClient.md#init)
 - [initiateCredentialStatusUpdate](modules_cache_client.CacheClient.md#initiatecredentialstatusupdate)
 - [isAuthEnabled](modules_cache_client.CacheClient.md#isauthenabled)
+- [isAuthenticated](modules_cache_client.CacheClient.md#isauthenticated)
 - [issueClaim](modules_cache_client.CacheClient.md#issueclaim)
 - [login](modules_cache_client.CacheClient.md#login)
 - [persistCredentialStatusUpdate](modules_cache_client.CacheClient.md#persistcredentialstatusupdate)
@@ -757,26 +757,6 @@ ___
 
 ___
 
-### handleError
-
-▸ **handleError**(`error`): `Promise`<`unknown`\>
-
-**`description`** Interceptor of authentication errors. Queues failed requests and starts authentication process.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | `AxiosError`<`unknown`, `any`\> | Intercepted response from failed request |
-
-#### Returns
-
-`Promise`<`unknown`\>
-
-Promise, which resolves with result of resending of failed request
-
-___
-
 ### init
 
 ▸ **init**(): `Promise`<`void`\>
@@ -818,6 +798,22 @@ ___
 #### Implementation of
 
 [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[isAuthEnabled](../interfaces/modules_cache_client.ICacheClient.md#isauthenabled)
+
+___
+
+### isAuthenticated
+
+▸ **isAuthenticated**(): `Promise`<`boolean`\>
+
+Checks that auth token has been created, has not expired and corresponds to signer.
+This is done by a request to the server because the auth token is stored in an HTTP-only cookie and
+so the Javascript has no way to check its validity
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+true if cache client is authenticated server
 
 ___
 
