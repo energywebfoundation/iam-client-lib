@@ -12,3 +12,4 @@ compiled
 ethers
 site
 ethers-staking
+*.heapprofile
