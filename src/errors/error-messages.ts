@@ -34,5 +34,5 @@ export enum ERROR_MESSAGES {
   DID_DOCUMENT_NOT_UPDATED = 'DID Document was not updated',
   PROOF_NOT_VERIFIED = 'Proof not verified',
   OFFCHAIN_ISSUER_NOT_AUTHORIZED = 'Issuer of OffChain Claim is not authorized',
-  NO_CLAIM_RESOLVED = 'No claim found for given DID and role'
+  NO_CLAIM_RESOLVED = 'No claim found for given DID and role',
 }

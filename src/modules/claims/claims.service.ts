@@ -68,7 +68,7 @@ import {
   EthersProviderIssuerResolver,
   IpfsCredentialResolver,
   VCIssuerVerification,
-  ClaimIssuerVerification
+  ClaimIssuerVerification,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -104,7 +104,7 @@ export class ClaimsService {
   private _claimRevocation: ClaimRevocation;
   private _vcIssuerVerifier: VCIssuerVerification;
   private _issuerResolver: EthersProviderIssuerResolver;
-  private _credentialResolver: CredentialResolver
+  private _credentialResolver: CredentialResolver;
   constructor(
     private _signerService: SignerService,
     private _domainsService: DomainsService,
@@ -1421,7 +1421,7 @@ export class ClaimsService {
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    const proofVerified = await this._verifiableCredentialService.verify(vc)
+    const proofVerified = await this._verifiableCredentialService.verify(vc);
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
@@ -1429,64 +1429,86 @@ export class ClaimsService {
     let issuerVerified = true;
     try {
       await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
-    } catch(e) {
+    } catch (e) {
       issuerVerified = false;
-      errors.push((e as Error).message)
+      errors.push((e as Error).message);
     }
     return {
       errors,
-      isVerified: proofVerified && issuerVerified
-    }
+      isVerified: proofVerified && issuerVerified,
+    };
   }
 
-    /**
+  /**
    * Verifies:
    * - That off-chain claim was issued by authorized issuer
    * - That off-chain claim proof is valid
    *
    * @param subjectDID The DID to try to resolve a credential for
-   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc") 
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
    * @return Boolean indicating if verified and array of error messages
    */
-     async verifyOffChainClaim(subjectDID: string, roleNamespace: string): Promise<CredentialVerificationResult> {
-      const errors: string[] = [];
-      const issuerDID = this._signerService.did;
-      const claimIssuerVerifier = new ClaimIssuerVerification(this._signerService.provider, this._didRegistry.registrySettings, this._credentialResolver, this._issuerResolver);
-      const issuerVerified  = await claimIssuerVerifier.verifyIssuer(issuerDID, roleNamespace);
-      if (!issuerVerified) {
-        errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED)
-      }
-      let proofVerified = true;
-      try {
-        await claimIssuerVerifier.verifyIssuance(subjectDID, roleNamespace);
-      } catch (e) {
-        proofVerified = false;
-        errors.push((e as Error).message);
-      }
-      return {
-        errors: errors,
-        isVerified: proofVerified && issuerVerified
-      }      
-    }
+  async verifyOffChainClaim(
+    subjectDID: string,
+    roleNamespace: string
+  ): Promise<CredentialVerificationResult> {
+    const errors: string[] = [];
+    const issuerDID = this._signerService.did;
+    const claimIssuerVerifier = new ClaimIssuerVerification(
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      this._credentialResolver,
+      this._issuerResolver
+    );
+      const issuerVerified = await claimIssuerVerifier.verifyIssuer(
+        issuerDID,
+        roleNamespace
+      );
 
-   /**
+    if (!issuerVerified) {
+      errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED);
+    }
+    let proofVerified = true;
+    try {
+      await claimIssuerVerifier.verifyIssuance(subjectDID, roleNamespace);
+    } catch (e) {
+      proofVerified = false;
+      errors.push((e as Error).message);
+    }
+    return {
+      errors: errors,
+      isVerified: proofVerified && issuerVerified,
+    };
+  }
+
+  /**
    * Resolve a credential from storage and verify its proof/signature and its issuer's authority
    *
    * @param subjectDID The DID to try to resolve a credential for
-   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc") 
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
    * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
    */
-    async  resolveCredentialAndVerify(subjectDID: string, roleNamespace: string): Promise<CredentialVerificationResult> {
-      const resolvedCredential = await this._credentialResolver.getCredential(subjectDID, roleNamespace);
-      if (!resolvedCredential) {
-        return {
-          isVerified: false,
-          errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED]
-        }
-      }
-      const credentialIsOffChain = resolvedCredential?.issuedToken;
-      return credentialIsOffChain ? this.verifyOffChainClaim(subjectDID, roleNamespace) : this.verifyVc(resolvedCredential as VerifiableCredential<RoleCredentialSubject>);
+  async resolveCredentialAndVerify(
+    subjectDID: string,
+    roleNamespace: string
+  ): Promise<CredentialVerificationResult> {
+    const resolvedCredential = await this._credentialResolver.getCredential(
+      subjectDID,
+      roleNamespace
+    );
+    if (!resolvedCredential) {
+      return {
+        isVerified: false,
+        errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED],
+      };
     }
+    const credentialIsOffChain = resolvedCredential?.issuedToken;
+    return credentialIsOffChain
+      ? this.verifyOffChainClaim(subjectDID, roleNamespace)
+      : this.verifyVc(
+          resolvedCredential as VerifiableCredential<RoleCredentialSubject>
+        );
+  }
 
   /**
    *
