@@ -13,3 +13,4 @@ ethers
 site
 ethers-staking
 *.heapprofile
+*.cpuprofile

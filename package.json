@@ -40,7 +40,8 @@
     "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\"",
     "updateDomains": "npx ts-node scripts/update_domains",
     "transferDomains": "npx ts-node scripts/transfer_omains",
-    "profile": "rm ./profile/*.heapprofile && node --heap-prof-dir ./profile --heap-prof ./profile/init_iam.js"
+    "profile:mem": "rm -f ./profile/*.heapprofile && node --heap-prof-dir ./profile --heap-prof ./profile/init_iam.js",
+    "profile:cpu": "rm -f ./profile/*.cpuprofile && node --cpu-prof-dir ./profile --cpu-prof ./profile/init_iam.js"
   },
   "keywords": [
     "decentralized",

@@ -7,6 +7,7 @@ const { chainConfigs, initWithPrivateKeySigner } = require('../dist');
 const profile_init = async () => {
   const key = Wallet.createRandom().privateKey;
   const rpc = chainConfigs()[VOLTA_CHAIN_ID].rpcUrl;
-  const iam = await initWithPrivateKeySigner(key, rpc);
+  const { connectToCacheServer } = await initWithPrivateKeySigner(key, rpc);
+  const { verifiableCredentialsService } = await connectToCacheServer();
 };
 profile_init();
