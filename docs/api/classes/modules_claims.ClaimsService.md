@@ -794,7 +794,7 @@ ___
 
 ### verifyOffChainClaim
 
-▸ **verifyOffChainClaim**(`subjectDID`, `roleNamespace`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+▸ **verifyOffChainClaim**(`offChainClaim`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Verifies:
 - That off-chain claim was issued by authorized issuer
@@ -802,10 +802,9 @@ Verifies:
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `subjectDID` | `string` | The DID to try to resolve a credential for |
-| `roleNamespace` | `string` | - |
+| Name | Type |
+| :------ | :------ |
+| `offChainClaim` | `OffChainClaim` |
 
 #### Returns
 

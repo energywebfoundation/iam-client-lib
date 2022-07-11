@@ -69,6 +69,7 @@ import {
   IpfsCredentialResolver,
   VCIssuerVerification,
   ClaimIssuerVerification,
+  OffChainClaim,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -1444,14 +1445,13 @@ export class ClaimsService {
    * - That off-chain claim was issued by authorized issuer
    * - That off-chain claim proof is valid
    *
-   * @param subjectDID The DID to try to resolve a credential for
-   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
+   * @param {OffChainClaim} off chain claim to verify
    * @return Boolean indicating if verified and array of error messages
    */
   async verifyOffChainClaim(
-    subjectDID: string,
-    roleNamespace: string
+    offChainClaim: OffChainClaim
   ): Promise<CredentialVerificationResult> {
+    const {claimType, issuedToken, iss} = offChainClaim;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
     const claimIssuerVerifier = new ClaimIssuerVerification(
@@ -1462,22 +1462,19 @@ export class ClaimsService {
     );
       const issuerVerified = await claimIssuerVerifier.verifyIssuer(
         issuerDID,
-        roleNamespace
+        claimType
       );
 
     if (!issuerVerified) {
       errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED);
     }
-    let proofVerified = true;
-    try {
-      await claimIssuerVerifier.verifyIssuance(subjectDID, roleNamespace);
-    } catch (e) {
-      proofVerified = false;
-      errors.push((e as Error).message);
+    const proofVerified = await this._didRegistry.verifyPublicClaim(issuedToken, iss);
+    if (!proofVerified) {
+      errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED)
     }
     return {
       errors: errors,
-      isVerified: proofVerified && issuerVerified,
+      isVerified: !!proofVerified && issuerVerified,
     };
   }
 
@@ -1504,7 +1501,7 @@ export class ClaimsService {
     }
     const credentialIsOffChain = resolvedCredential?.issuedToken;
     return credentialIsOffChain
-      ? this.verifyOffChainClaim(subjectDID, roleNamespace)
+      ? this.verifyOffChainClaim(resolvedCredential as OffChainClaim)
       : this.verifyVc(
           resolvedCredential as VerifiableCredential<RoleCredentialSubject>
         );

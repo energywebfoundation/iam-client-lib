@@ -936,52 +936,52 @@ describe('Сlaim tests', () => {
       console.log(result, 'THE RESOLVE RESULT');
     });
     test('verifyOffChainClaim should verify an issued off chain claim', async () => {
-      const roleName = `${verifyOffChainClaimRole}.${root}`;
-      await signerService.connect(rootOwner, ProviderType.PrivateKey);
-      const requestorFields = [{ key: 'temperature', value: 36 }];
-      //CREATE CLAIM REQUEST AND ISSUE CLAIM RESQUEST
-      await domainsService.createRole({
-        roleName: verifyOffChainClaimRole,
-        namespace,
-        data: roles[roleName],
-        returnSteps: false,
-      });
-      const claimRequest = await claimsService.createClaimRequest({
-        claim: {
-          claimType: roleName,
-          claimTypeVersion: version,
-          requestorFields,
-        },
-        registrationTypes: [
-          RegistrationTypes.OffChain,
-          RegistrationTypes.OnChain,
-        ],
-        subject: rootOwnerDID,
-      });
-      console.log(claimRequest, 'THE CLAIM REQUEST');
-      const [message] = mockRequestClaim.mock.calls.pop();
+      // const roleName = `${verifyOffChainClaimRole}.${root}`;
+      // await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      // const requestorFields = [{ key: 'temperature', value: 36 }];
+      // //CREATE CLAIM REQUEST AND ISSUE CLAIM RESQUEST
+      // await domainsService.createRole({
+      //   roleName: verifyOffChainClaimRole,
+      //   namespace,
+      //   data: roles[roleName],
+      //   returnSteps: false,
+      // });
+      // const claimRequest = await claimsService.createClaimRequest({
+      //   claim: {
+      //     claimType: roleName,
+      //     claimTypeVersion: version,
+      //     requestorFields,
+      //   },
+      //   registrationTypes: [
+      //     RegistrationTypes.OffChain,
+      //     RegistrationTypes.OnChain,
+      //   ],
+      //   subject: rootOwnerDID,
+      // });
+      // console.log(claimRequest, 'THE CLAIM REQUEST');
+      // const [message] = mockRequestClaim.mock.calls.pop();
 
-      message.claimIssuer = [staticIssuerDID];
-      console.log(message, 'THE MESSAGE');
-      console.log(staticIssuer, 'THE STATIC ISSUER');
-      await signerService.connect(staticIssuer, ProviderType.PrivateKey);
-      const issuance = await claimsService.issueClaimRequest({
-        publishOnChain: false,
-        issuerFields: [],
-        expirationTimestamp: undefined,
-        ...message,
-      });
-      console.log(issuance, 'THE ISSUANCE');
-      const [, issuedClaim] = <[string, Required<IClaimIssuance>]>(
-        mockIssueClaim.mock.calls.pop()
-      );
-      console.log(issuedClaim, 'THE ISSUED CLAIM');
-      //await signerService.connect(rootOwner, ProviderType.PrivateKey);
-      const result = await claimsService.verifyOffChainClaim(
-        rootOwnerDID,
-        roleName
-      );
-      console.log(result, 'ON CHAIN CLAIM RESULT');
+      // message.claimIssuer = [staticIssuerDID];
+      // console.log(message, 'THE MESSAGE');
+      // console.log(staticIssuer, 'THE STATIC ISSUER');
+      // await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+      // const issuance = await claimsService.issueClaimRequest({
+      //   publishOnChain: false,
+      //   issuerFields: [],
+      //   expirationTimestamp: undefined,
+      //   ...message,
+      // });
+      // console.log(issuance, 'THE ISSUANCE');
+      // const [, issuedClaim] = <[string, Required<IClaimIssuance>]>(
+      //   mockIssueClaim.mock.calls.pop()
+      // );
+      // console.log(issuedClaim, 'THE ISSUED CLAIM');
+      // //await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      // const result = await claimsService.verifyOffChainClaim(
+      //   rootOwnerDID,
+      //   roleName
+      // );
+      // console.log(result, 'ON CHAIN CLAIM RESULT');
     });
   });
 });
