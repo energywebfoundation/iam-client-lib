@@ -16,6 +16,7 @@
 - [claimIssuer](modules_claims.IClaimIssuance.md#claimissuer)
 - [claimType](modules_claims.IClaimIssuance.md#claimtype)
 - [claimTypeVersion](modules_claims.IClaimIssuance.md#claimtypeversion)
+- [expirationTimestamp](modules_claims.IClaimIssuance.md#expirationtimestamp)
 - [id](modules_claims.IClaimIssuance.md#id)
 - [issuedToken](modules_claims.IClaimIssuance.md#issuedtoken)
 - [onChainProof](modules_claims.IClaimIssuance.md#onchainproof)
@@ -49,6 +50,12 @@ ___
 ### claimTypeVersion
 
 • `Optional` **claimTypeVersion**: `string`
+
+___
+
+### expirationTimestamp
+
+• `Optional` **expirationTimestamp**: `number`
 
 ___
 
