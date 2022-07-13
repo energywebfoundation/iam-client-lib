@@ -1,3 +1,24 @@
+## [6.0.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.28...v6.0.0-alpha.29) (2022-07-13)
+
+
+### Features
+
+* **verifyVc:** add jsonwebtoken and update package-lock ([81ff25d](https://github.com/energywebfoundation/iam-client-lib/commit/81ff25d6d8af124c5fedd2aa9de29978cfb61626))
+* **verifyVc:** add unit tests ([c4390b1](https://github.com/energywebfoundation/iam-client-lib/commit/c4390b1c41ceca5970231ada1618803a290338b2))
+* **verifyVC:** add verifyVC method to VC Base Service ([3187e5e](https://github.com/energywebfoundation/iam-client-lib/commit/3187e5e66253f429b9769e20a306ece5255325b5))
+* **verifyVC:** make proof private; add error and return types ([0da3229](https://github.com/energywebfoundation/iam-client-lib/commit/0da322967191a75f6d2c57446c1df37ff1c743c4))
+* **verifyVc:** remove comments and update test case descriptions ([04f9c9f](https://github.com/energywebfoundation/iam-client-lib/commit/04f9c9f4baebe79903cd0a782c1906f33b0a3bf8))
+* **verifyVc:** resolve conflicts and add formatting ([b24f328](https://github.com/energywebfoundation/iam-client-lib/commit/b24f32830e77e582e5a5aa3b436eaa00b1decdfb))
+* **verifyVC:** update ew-credentials ([877fad6](https://github.com/energywebfoundation/iam-client-lib/commit/877fad6af609df1baebf17cc9661c862af1095c8))
+* **verifyVc:** update ew-credentials version and use to resolve credentials ([cd77eb0](https://github.com/energywebfoundation/iam-client-lib/commit/cd77eb05c526628a582306ecc9affab05461373d))
+* **verifyVc:** update method and params ([9800557](https://github.com/energywebfoundation/iam-client-lib/commit/9800557e5ff96e341de069d97c6ee5804ee8a422))
+* **verifyVc:** update method documentation ([86e47e1](https://github.com/energywebfoundation/iam-client-lib/commit/86e47e13b5864981284aedc61c90ea4c2008bb46))
+* **verifyVc:** update resolve method and add method for offchain verify ([800c903](https://github.com/energywebfoundation/iam-client-lib/commit/800c903339c2cbc3908879816385731d37edef74))
+* **verifyVc:** update unit tests ([9d5e7ba](https://github.com/energywebfoundation/iam-client-lib/commit/9d5e7ba7c1c3f2298b083f4d35195a06823075ff))
+* **verifyVc:** update unit tests ([eb0c7e0](https://github.com/energywebfoundation/iam-client-lib/commit/eb0c7e07e9872e82b6d4cf431640297d2646ab53))
+* **verifyVc:** update verify method name ([e5733c6](https://github.com/energywebfoundation/iam-client-lib/commit/e5733c64a6e3775d88c57cd5dc756912925dcc32))
+* **verifyVc:** update verifyOffChainClaim method to accept Claim interface ([3034101](https://github.com/energywebfoundation/iam-client-lib/commit/3034101f37cdbd1d3b64b3fc0540d8996effa589))
+
 ## [6.0.0-alpha.28](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.27...v6.0.0-alpha.28) (2022-07-08)
 
 ## [6.0.0-alpha.27](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.26...v6.0.0-alpha.27) (2022-07-01)
