@@ -1448,8 +1448,8 @@ export class ClaimsService {
    * @param {OffChainClaim} off chain claim to verify
    * @return Boolean indicating if verified and array of error messages
    */
-  async verifyOffChainClaim(
-    offChainClaim: RoleEIP191JWT
+  async verifyRoleEIP191JWT(
+    roleEIP191JWT: RoleEIP191JWT
   ): Promise<CredentialVerificationResult> {
     const {payload, eip191Jwt} = offChainClaim;
     const errors: string[] = [];
