@@ -5,6 +5,7 @@ import { SignerService } from '../signer';
 import { VerifiableCredentialsServiceBase } from './verifiable-credentials-base.service';
 import { ExecutionEnvironment, executionEnvironment } from '../../utils';
 import { CacheClient } from '../cache-client/cache-client.service';
+import { VerifiableCredentialsServiceNode } from './verifiable-credentials-node.service';
 
 export const getVerifiableCredentialsService = async (
   signerService: SignerService,
@@ -12,21 +13,12 @@ export const getVerifiableCredentialsService = async (
 ): Promise<VerifiableCredentialsServiceBase> => {
   let service: VerifiableCredentialsServiceBase;
   if (executionEnvironment() === ExecutionEnvironment.NODE) {
-    service = await import('./verifiable-credentials-node.service').then(
-      (module) =>
-        module.VerifiableCredentialsServiceNode.create(
-          signerService,
-          cacheClient
-        )
+    service = await VerifiableCredentialsServiceNode.create(
+      signerService,
+      cacheClient
     );
   } else {
-    service = await import('./verifiable-credentials-web.service').then(
-      (module) =>
-        module.VerifiableCredentialsServiceWeb.create(
-          signerService,
-          cacheClient
-        )
-    );
+    throw new Error();
   }
 
   return service;
