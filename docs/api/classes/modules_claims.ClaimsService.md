@@ -804,7 +804,7 @@ Verifies:
 
 | Name | Type |
 | :------ | :------ |
-| `offChainClaim` | `OffChainClaim` |
+| `offChainClaim` | `RoleEIP191JWT` |
 
 #### Returns
 
