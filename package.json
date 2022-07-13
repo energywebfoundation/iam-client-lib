@@ -63,11 +63,11 @@
     "npm": ">= 6.0.0"
   },
   "dependencies": {
-    "@energyweb/credential-governance": "^1.0.1-alpha.181.0",
+    "@energyweb/credential-governance": "^1.0.1-alpha.191.0",
     "@energyweb/ekc": "^0.6.6",
-    "@energyweb/onchain-claims": "^1.0.1-alpha.181.0",
+    "@energyweb/onchain-claims": "^1.0.1-alpha.191.0",
     "@energyweb/staking-pool": "^1.0.0-rc.14",
-    "@energyweb/vc-verification": "^1.0.1-alpha.181.0",
+    "@energyweb/vc-verification": "^1.0.1-alpha.191.0",
     "@ensdomains/ens": "^0.6.2",
     "@ew-did-registry/claims": "^0.6.3-alpha.682.0",
     "@ew-did-registry/credentials-interface": "^0.6.3-alpha.682.0",
@@ -94,6 +94,7 @@
     "didkit-wasm-node": "^0.1.6",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "^5.6.1",
+    "ipfsd-ctl": "^12.0.0",
     "js-sha3": "^0.8.0",
     "jsonwebtoken": "^8.5.1",
     "lodash.difference": "^4.5.0",

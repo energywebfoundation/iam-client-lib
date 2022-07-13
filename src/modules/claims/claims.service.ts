@@ -69,7 +69,7 @@ import {
   IpfsCredentialResolver,
   VCIssuerVerification,
   ClaimIssuerVerification,
-  OffChainClaim,
+  RoleEIP191JWT,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -1449,9 +1449,9 @@ export class ClaimsService {
    * @return Boolean indicating if verified and array of error messages
    */
   async verifyOffChainClaim(
-    offChainClaim: OffChainClaim
+    offChainClaim: RoleEIP191JWT
   ): Promise<CredentialVerificationResult> {
-    const {claimType, issuedToken, iss} = offChainClaim;
+    const {payload, eip191Jwt} = offChainClaim;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
     const claimIssuerVerifier = new ClaimIssuerVerification(
@@ -1462,19 +1462,18 @@ export class ClaimsService {
     );
       const issuerVerified = await claimIssuerVerifier.verifyIssuer(
         issuerDID,
-        claimType
+        payload?.claimData?.claimType
       );
-
     if (!issuerVerified) {
       errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED);
     }
-    const proofVerified = await this._didRegistry.verifyPublicClaim(issuedToken, iss);
+    const proofVerified = await this._didRegistry.verifyPublicClaim(eip191Jwt, payload?.iss as string);
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED)
     }
     return {
       errors: errors,
-      isVerified: !!proofVerified && issuerVerified,
+      isVerified: !!proofVerified && !!issuerVerified,
     };
   }
 
@@ -1499,9 +1498,9 @@ export class ClaimsService {
         errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED],
       };
     }
-    const credentialIsOffChain = resolvedCredential?.issuedToken;
+    const credentialIsOffChain = resolvedCredential.eip191Jwt;
     return credentialIsOffChain
-      ? this.verifyOffChainClaim(resolvedCredential as OffChainClaim)
+      ? this.verifyOffChainClaim(resolvedCredential as RoleEIP191JWT)
       : this.verifyVc(
           resolvedCredential as VerifiableCredential<RoleCredentialSubject>
         );
