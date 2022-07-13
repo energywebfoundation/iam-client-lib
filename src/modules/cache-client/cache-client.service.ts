@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { stringify } from 'qs';
 import { IRoleDefinition } from '@energyweb/credential-governance';
 import { IDIDDocument } from '@ew-did-registry/did-resolver-interface';
@@ -7,6 +7,7 @@ import {
   StatusList2021Entry,
   VerifiableCredential,
 } from '@ew-did-registry/credentials-interface';
+import promiseRetry from 'promise-retry';
 import { IApp, IOrganization, IRole } from '../domains/domains.types';
 import { AssetHistory } from '../assets/assets.types';
 import {
@@ -41,8 +42,8 @@ import {
 export class CacheClient implements ICacheClient {
   public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
   private _httpClient: AxiosInstance;
+  private authenticatePromise: Promise<void>;
   private isAuthenticating = false;
-  private failedRequests: Array<() => void> = [];
   private authEnabled: boolean;
   private isBrowser: boolean;
   private refresh_token: string | undefined;
@@ -58,9 +59,6 @@ export class CacheClient implements ICacheClient {
       baseURL: url,
       withCredentials: true,
     });
-    this._httpClient.interceptors.response.use((response: AxiosResponse) => {
-      return response;
-    }, this.handleError.bind(this));
     this.authEnabled = cacheServerSupportsAuth;
     this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
   }
@@ -92,15 +90,16 @@ export class CacheClient implements ICacheClient {
       tokens = refreshedTokens;
       setTokens();
 
-      if (!(await this.isAuthenticated())) {
+      if (!tokens || !(await this.isAuthenticated())) {
         tokens = undefined;
       }
     } catch {
-      getLogger().error('[CACHE CLIENT] Failed to refresh tokens');
+      getLogger().warn('[CACHE CLIENT] failed to refresh tokens');
     }
 
     // If refresh token failed or access token is not valid, then sign new identity token
     if (!tokens) {
+      getLogger().info('[CACHE CLIENT] obtaining new tokens');
       delete this._httpClient.defaults.headers.common['Authorization'];
       const pubKeyAndIdentityToken =
         await this._signerService.publicKeyAndIdentityToken(true);
@@ -111,63 +110,7 @@ export class CacheClient implements ICacheClient {
       tokens = data;
       setTokens();
     }
-
-    // Run previously failed requests
-    getLogger().info(
-      `[CACHE CLIENT] Running failed requests: ${this.failedRequests.length}`
-    );
-    this.failedRequests = this.failedRequests.filter((callback) => callback());
-  }
-
-  /**
-   * @description Interceptor of authentication errors. Queues failed requests and starts authentication process.
-   *
-   * @param error Intercepted response from failed request
-   *
-   * @returns Promise, which resolves with result of resending of failed request
-   */
-  async handleError(error: AxiosError) {
-    getLogger().debug(`[CACHE CLIENT] Axios error: ${error.message}`);
-    const { config, response } = error;
-    const originalRequest = config;
-
-    if (
-      this.authEnabled &&
-      response &&
-      (response.status === 401 || response.status === 403) &&
-      config &&
-      config.url?.indexOf('/login') === -1 &&
-      config.url?.indexOf('/refresh_token') === -1 &&
-      config.url?.indexOf(TEST_LOGIN_ENDPOINT) === -1
-    ) {
-      getLogger().debug(`[CACHE CLIENT] axios error unauthorized`);
-      const retryOriginalRequest = new Promise((resolve, reject) => {
-        this.failedRequests.push(() => {
-          axios({
-            ...originalRequest,
-            headers: {
-              ...originalRequest.headers,
-              Authorization:
-                this._httpClient.defaults.headers.common['Authorization'],
-            },
-          })
-            .then(resolve)
-            .catch(reject);
-        });
-      });
-      if (!this.isAuthenticating) {
-        try {
-          this.isAuthenticating = true;
-          await this.authenticate();
-        } catch {
-          return Promise.reject(error);
-        } finally {
-          this.isAuthenticating = false;
-        }
-      }
-      return retryOriginalRequest;
-    }
-    return Promise.reject(error);
+    getLogger().info('[CACHE CLIENT] authenticated');
   }
 
   /**
@@ -185,171 +128,210 @@ export class CacheClient implements ICacheClient {
   }
 
   async getRoleDefinition(namespace: string) {
-    const { data } = await this._httpClient.get<IRole>(`/role/${namespace}`);
-    return data?.definition;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IRole>(`/role/${namespace}`);
+      return data?.definition;
+    });
   }
 
   async getRolesDefinition(namespaces: string[]) {
-    const { data } = await this._httpClient.get<IRole[]>(
-      `/role?namespaces=${namespaces.join(',')}`
-    );
-    const rolesWithDefinitions = data?.map((entry) => ({
-      definition: entry.definition,
-      role: entry.namespace,
-    }));
-    return rolesWithDefinitions.reduce((result, { role, definition }) => {
-      return { ...result, [role]: definition };
-    }, {} as Record<string, IRoleDefinition>);
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IRole[]>(
+        `/role?namespaces=${namespaces.join(',')}`
+      );
+      const rolesWithDefinitions = data?.map((entry) => ({
+        definition: entry.definition,
+        role: entry.namespace,
+      }));
+      return rolesWithDefinitions.reduce((result, { role, definition }) => {
+        return { ...result, [role]: definition };
+      }, {} as Record<string, IRoleDefinition>);
+    });
   }
 
   async getOrgDefinition(namespace: string) {
-    const { data } = await this._httpClient.get<IOrganization>(
-      `/org/${namespace}`
-    );
-    return data?.definition;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IOrganization>(
+        `/org/${namespace}`
+      );
+      return data?.definition;
+    });
   }
 
   async getAppDefinition(namespace: string) {
-    const { data } = await this._httpClient.get<IApp>(`/app/${namespace}`);
-    return data?.definition;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IApp>(`/app/${namespace}`);
+      return data?.definition;
+    });
   }
 
   async getApplicationRoles(namespace: string) {
-    const { data } = await this._httpClient.get<IRole[]>(
-      `/app/${namespace}/roles`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IRole[]>(
+        `/app/${namespace}/roles`
+      );
+      return data;
+    });
   }
 
   async getOrganizationRoles(namespace: string) {
-    const { data } = await this._httpClient.get<IRole[]>(
-      `/org/${namespace}/roles`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IRole[]>(
+        `/org/${namespace}/roles`
+      );
+      return data;
+    });
   }
 
   async getOrganizationsByOwner(owner: string, withRelations = true) {
-    const { data } = await this._httpClient.get<IOrganization[]>(
-      `/org/owner/${owner}?withRelations=${withRelations}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IOrganization[]>(
+        `/org/owner/${owner}?withRelations=${withRelations}`
+      );
+      return data;
+    });
   }
 
   async getSubOrganizationsByOrganization(namespace: string) {
-    const { data } = await this._httpClient.get<IOrganization[]>(
-      `/org/${namespace}/suborgs`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IOrganization[]>(
+        `/org/${namespace}/suborgs`
+      );
+      return data;
+    });
   }
 
   async getOrgHierarchy(namespace: string) {
-    const { data } = await this._httpClient.get<IOrganization>(
-      `/org/${namespace}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IOrganization>(
+        `/org/${namespace}`
+      );
+      return data;
+    });
   }
 
   async getNamespaceBySearchPhrase(search: string, types?: SearchType[]) {
-    if (types && types.length > 0) {
+    return await this.makeRetryRequest(async () => {
+      if (types && types.length > 0) {
+        const { data } = await this._httpClient.get<
+          (IOrganization | IApp | IRole)[]
+        >(`/search/${search}`, {
+          params: {
+            types,
+          },
+          paramsSerializer: (params) => {
+            return stringify(params, { arrayFormat: 'brackets' });
+          },
+        });
+        return data;
+      }
       const { data } = await this._httpClient.get<
         (IOrganization | IApp | IRole)[]
-      >(`/search/${search}`, {
-        params: {
-          types,
-        },
-        paramsSerializer: (params) => {
-          return stringify(params, { arrayFormat: 'brackets' });
-        },
-      });
+      >(`/search/${search}`);
       return data;
-    }
-    const { data } = await this._httpClient.get<
-      (IOrganization | IApp | IRole)[]
-    >(`/search/${search}`);
-    return data;
+    });
   }
 
   async getApplicationsByOwner(owner: string, withRelations = true) {
-    const { data } = await this._httpClient.get<IApp[]>(
-      `/app/owner/${owner}?withRelations=${withRelations}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IApp[]>(
+        `/app/owner/${owner}?withRelations=${withRelations}`
+      );
+      return data;
+    });
   }
 
   async getApplicationsByOrganization(namespace: string) {
-    const { data } = await this._httpClient.get<IApp[]>(
-      `/org/${namespace}/apps`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IApp[]>(
+        `/org/${namespace}/apps`
+      );
+      return data;
+    });
   }
 
   async getRolesByOwner(owner: string) {
-    const { data } = await this._httpClient.get<IRole[]>(
-      `/role/owner/${owner}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IRole[]>(
+        `/role/owner/${owner}`
+      );
+      return data;
+    });
   }
 
   async getClaimsBySubjects(subjects: string[]): Promise<Claim[]> {
-    const { data } = await this._httpClient.get<Claim[]>('/claim/by/subjects', {
-      params: { subjects: subjects.join(',') },
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Claim[]>(
+        '/claim/by/subjects',
+        {
+          params: { subjects: subjects.join(',') },
+        }
+      );
+      return data;
     });
-    return data;
   }
 
   async getClaimsByIssuer(
     issuer: string,
     { isAccepted, namespace }: ClaimsFilter = {}
   ) {
-    const { data } = await this._httpClient.get<Claim[]>(
-      `/claim/issuer/${issuer}`,
-      {
-        params: {
-          isAccepted,
-          namespace,
-        },
-      }
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Claim[]>(
+        `/claim/issuer/${issuer}`,
+        {
+          params: {
+            isAccepted,
+            namespace,
+          },
+        }
+      );
+      return data;
+    });
   }
 
   async getClaimsByRequester(
     requester: string,
     { isAccepted, namespace }: ClaimsFilter = {}
   ) {
-    const { data } = await this._httpClient.get<Claim[]>(
-      `/claim/requester/${requester}`,
-      {
-        params: {
-          isAccepted,
-          namespace,
-        },
-      }
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Claim[]>(
+        `/claim/requester/${requester}`,
+        {
+          params: {
+            isAccepted,
+            namespace,
+          },
+        }
+      );
+      return data;
+    });
   }
 
   async getClaimsBySubject(
     subject: string,
     { isAccepted, namespace }: ClaimsFilter = {}
   ) {
-    const { data } = await this._httpClient.get<Claim[]>(
-      `/claim/subject/${subject}`,
-      {
-        params: {
-          isAccepted,
-          namespace,
-        },
-      }
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Claim[]>(
+        `/claim/subject/${subject}`,
+        {
+          params: {
+            isAccepted,
+            namespace,
+          },
+        }
+      );
+      return data;
+    });
   }
 
   async getRolesByRevoker(revoker: string) {
-    const { data } = await this._httpClient.get<IRole[]>(
-      `/claim/revoker/roles/allowed/${revoker}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IRole[]>(
+        `/claim/revoker/roles/allowed/${revoker}`
+      );
+      return data;
+    });
   }
 
   async getClaimsByRevoker(revoker: string, { namespace }: ClaimsFilter = {}) {
@@ -365,88 +347,116 @@ export class CacheClient implements ICacheClient {
   }
 
   async getClaimById(claimId: string): Promise<Claim | undefined> {
-    const { data } = await this._httpClient.get<Claim | undefined>(
-      `/claim/${claimId}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Claim | undefined>(
+        `/claim/${claimId}`
+      );
+      return data;
+    });
   }
 
   async requestClaim(message: IClaimRequest) {
-    await this._httpClient.post<void>('/claim/request', message);
+    return await this.makeRetryRequest(async () => {
+      await this._httpClient.post<void>('/claim/request', message);
+    });
   }
 
   async issueClaim(issuer: string, message: IClaimIssuance) {
-    await this._httpClient.post<void>(`/claim/issue/${issuer}`, message);
+    return await this.makeRetryRequest(async () => {
+      await this._httpClient.post<void>(`/claim/issue/${issuer}`, message);
+    });
   }
 
   async rejectClaim(issuer: string, message: IClaimRejection) {
-    await this._httpClient.post<void>(`/claim/reject/${issuer}`, message);
+    return await this.makeRetryRequest(async () => {
+      await this._httpClient.post<void>(`/claim/reject/${issuer}`, message);
+    });
   }
 
   async deleteClaim(id: string) {
-    await this._httpClient.delete<void>(`/claim/${id}`);
+    return await this.makeRetryRequest(async () => {
+      await this._httpClient.delete<void>(`/claim/${id}`);
+    });
   }
 
   async getDIDsForRole(namespace: string) {
-    const { data } = await this._httpClient.get<string[]>(
-      `/claim/did/${namespace}?accepted=true`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<string[]>(
+        `/claim/did/${namespace}?accepted=true`
+      );
+      return data;
+    });
   }
 
   async getDidDocument(did: string, includeClaims?: boolean) {
-    const { data } = await this._httpClient.get<IDIDDocument>(
-      `/DID/${did}?includeClaims=${includeClaims || false}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IDIDDocument>(
+        `/DID/${did}?includeClaims=${includeClaims || false}`
+      );
+      return data;
+    });
   }
 
   async getAllowedRolesByIssuer(did: string) {
-    const { data } = await this._httpClient.get<IRole[]>(
-      `/claim/issuer/roles/allowed/${did}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<IRole[]>(
+        `/claim/issuer/roles/allowed/${did}`
+      );
+      return data;
+    });
   }
 
   async addDIDToWatchList(did: string) {
-    await this._httpClient.post(`/DID/${did}`);
+    return await this.makeRetryRequest(async () => {
+      await this._httpClient.post(`/DID/${did}`);
+    });
   }
 
   async getOwnedAssets(did: string) {
-    const { data } = await this._httpClient.get<Asset[]>(
-      `/assets/owner/${did}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Asset[]>(
+        `/assets/owner/${did}`
+      );
+      return data;
+    });
   }
 
   async getOfferedAssets(did: string) {
-    const { data } = await this._httpClient.get<Asset[]>(
-      `/assets/offered_to/${did}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Asset[]>(
+        `/assets/offered_to/${did}`
+      );
+      return data;
+    });
   }
 
   async getAssetById(id: string) {
-    const { data } = await this._httpClient.get<Asset>(`/assets/${id}`);
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Asset>(`/assets/${id}`);
+      return data;
+    });
   }
 
   async getPreviouslyOwnedAssets(owner: string) {
-    const { data } = await this._httpClient.get<Asset[]>(
-      `/assets/owner/history/${owner}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.get<Asset[]>(
+        `/assets/owner/history/${owner}`
+      );
+      return data;
+    });
   }
 
   async getAssetHistory(
     id: string,
     { order, take, skip, type }: AssetsFilter = {}
   ) {
-    const query = stringify({ order, take, skip, type }, { skipNulls: true });
-    const { data } = await this._httpClient.get<AssetHistory[]>(
-      `/assets/history/${id}?${query}`
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const query = stringify({ order, take, skip, type }, { skipNulls: true });
+      const { data } = await this._httpClient.get<AssetHistory[]>(
+        `/assets/history/${id}?${query}`
+      );
+      return data;
+    });
   }
 
   /**
@@ -462,12 +472,14 @@ export class CacheClient implements ICacheClient {
       credentialStatus: StatusList2021Entry;
     }
   > {
-    const { data } = await this._httpClient.post<
-      Credential<RoleCredentialSubject> & {
-        credentialStatus: StatusList2021Entry;
-      }
-    >('/status-list/entries', { options: {}, credential });
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.post<
+        Credential<RoleCredentialSubject> & {
+          credentialStatus: StatusList2021Entry;
+        }
+      >('/status-list/entries', { options: {}, credential });
+      return data;
+    });
   }
 
   /**
@@ -479,15 +491,17 @@ export class CacheClient implements ICacheClient {
   async initiateCredentialStatusUpdate(
     verifiableCredential: VerifiableCredential<RoleCredentialSubject>
   ): Promise<StatusList2021UnsignedCredential> {
-    const { data } =
-      await this._httpClient.post<StatusList2021UnsignedCredential>(
-        '/status-list/credentials/status/initiate',
-        {
-          options: {},
-          verifiableCredential,
-        }
-      );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } =
+        await this._httpClient.post<StatusList2021UnsignedCredential>(
+          '/status-list/credentials/status/initiate',
+          {
+            options: {},
+            verifiableCredential,
+          }
+        );
+      return data;
+    });
   }
 
   /**
@@ -499,14 +513,16 @@ export class CacheClient implements ICacheClient {
   async persistCredentialStatusUpdate(
     statusListCredential: StatusList2021Credential
   ): Promise<StatusList2021Credential> {
-    const { data } = await this._httpClient.post<StatusList2021Credential>(
-      '/status-list/credentials/status/finalize',
-      {
-        options: {},
-        statusListCredential,
-      }
-    );
-    return data;
+    return await this.makeRetryRequest(async () => {
+      const { data } = await this._httpClient.post<StatusList2021Credential>(
+        '/status-list/credentials/status/finalize',
+        {
+          options: {},
+          statusListCredential,
+        }
+      );
+      return data;
+    });
   }
 
   /**
@@ -518,24 +534,141 @@ export class CacheClient implements ICacheClient {
   async getStatusListCredential(
     credential: VerifiableCredential<RoleCredentialSubject>
   ): Promise<StatusList2021Credential | null> {
-    if (!credential.credentialStatus?.statusListCredential) {
-      throw new Error(
-        'Missing statusListCredential property in given credential status'
+    return await this.makeRetryRequest(async () => {
+      if (!credential.credentialStatus?.statusListCredential) {
+        throw new Error(
+          'Missing statusListCredential property in given credential status'
+        );
+      }
+
+      const response = await axios.get<StatusList2021Credential | null>(
+        credential.credentialStatus?.statusListCredential
       );
+
+      return response.status === 200 ? response.data : null;
+    });
+  }
+
+  /**
+   * Checks that auth token has been created, has not expired and corresponds to signer.
+   * This is done by a request to the server because the auth token is stored in an HTTP-only cookie and
+   * so the Javascript has no way to check its validity
+   *
+   * @return true if cache client is authenticated server
+   */
+  async isAuthenticated(): Promise<boolean> {
+    getLogger().info('[CACHE CLIENT] fetching authorization status');
+    try {
+      const { data } = await this._httpClient.get<{
+        user: string | null;
+      }>(`${TEST_LOGIN_ENDPOINT}`);
+      const isAuthenticated = data.user
+        ? data.user === this._signerService.did
+        : false;
+      getLogger().info(
+        `[CACHE CLIENT] authorization status: ${
+          isAuthenticated ? 'OK' : 'FAIL'
+        }`
+      );
+      return isAuthenticated;
+    } catch (error) {
+      getLogger().info('[CACHE CLIENT] authorization status: FAIL');
+      if (error instanceof Error) {
+        getLogger().error(
+          `[CACHE CLIENT] error occurred while checking authorization status: ${error.message}`
+        );
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Decides whether to retry the request or not based on the given axios error.
+   *
+   * @param error axios error
+   *
+   * @return true if request should be retried
+   */
+  private async handleRequestError(error: Error): Promise<boolean> {
+    if (!axios.isAxiosError(error)) {
+      return false;
     }
 
-    const response = await axios.get<StatusList2021Credential | null>(
-      credential.credentialStatus?.statusListCredential
-    );
+    getLogger().debug(`[CACHE CLIENT] axios error: ${error.message}`);
+    const { config, response } = error;
 
-    return response.status === 200 ? response.data : null;
+    if (!response) {
+      // ECONNREFUSED error handling,
+      return true;
+    }
+
+    // Retry server errors
+    if (response.status >= 500) {
+      return true;
+    }
+
+    const clientErrorsToRetry = [401, 403, 407, 408, 411, 412, 425, 426];
+
+    const isAuthEndpoint =
+      config.url &&
+      (config.url.indexOf('/login') >= 0 ||
+        config.url.indexOf('/refresh_token') >= 0 ||
+        config.url.indexOf(TEST_LOGIN_ENDPOINT) >= 0);
+
+    if (isAuthEndpoint) {
+      return false;
+    }
+
+    // Retry some client errors
+    if (
+      response.status >= 400 &&
+      !clientErrorsToRetry.includes(response.status)
+    ) {
+      return false;
+    }
+
+    const isAuthError = [401, 403, 407].includes(response.status);
+    if (!isAuthError) {
+      return true;
+    }
+
+    getLogger().debug(`[CACHE CLIENT] axios error unauthorized`);
+
+    if (!this.isAuthenticating) {
+      this.isAuthenticating = true;
+      this.authenticatePromise = this.authenticate();
+    }
+
+    try {
+      await this.authenticatePromise;
+    } finally {
+      this.isAuthenticating = false;
+    }
+
+    return true;
+  }
+
+  private async makeRetryRequest<T>(request: () => Promise<T>): Promise<T> {
+    return promiseRetry(
+      async (retry) => {
+        return request().catch(async (err) => {
+          try {
+            if (await this.handleRequestError(err)) {
+              retry(err);
+            }
+          } catch {
+            retry(err);
+          }
+          throw err;
+        });
+      },
+      { retries: 5 }
+    );
   }
 
   private async refreshToken(): Promise<AuthTokens | undefined> {
-    getLogger().debug('[CACHE CLIENT] Refreshing token');
     if (!this.refresh_token) return undefined;
-
-    getLogger().debug('[CACHE CLIENT] Fetching new token');
+    getLogger().info('[CACHE CLIENT] refreshing tokens');
     const { data } = await this._httpClient.get<{
       token: string;
       refreshToken: string;
@@ -544,36 +677,7 @@ export class CacheClient implements ICacheClient {
         this.isBrowser ? '' : `?refresh_token=${this.refresh_token}`
       }`
     );
-    getLogger().debug('[CACHE CLIENT] Token fetched');
+    getLogger().debug('[CACHE CLIENT] refreshed tokens fetched');
     return data;
-  }
-
-  /**
-   * @description Checks that auth token has been created, has not expired and corresponds to signer.
-   * This is done by a request to the server because the auth token is stored in an HTTP-only cookie and
-   * so the Javascript has no way to check its validity
-   *
-   * @todo specific endpoint on cache server to return login info instead of error
-   */
-  private async isAuthenticated(): Promise<boolean> {
-    getLogger().error('[CACHE CLIENT] Fetching authorization status');
-    try {
-      const { data } = await this._httpClient.get<{
-        user: string | null;
-      }>(`${TEST_LOGIN_ENDPOINT}`);
-      const isAuthenticated = data.user
-        ? data.user === this._signerService.did
-        : false;
-      getLogger().error(
-        `[CACHE CLIENT] Authorization status: ${
-          isAuthenticated ? 'OK' : 'FAIL'
-        }`
-      );
-      return isAuthenticated;
-    } catch (error) {
-      getLogger().error('[CACHE CLIENT] Authorization status failed');
-      getLogger().error(error);
-      return false;
-    }
   }
 }

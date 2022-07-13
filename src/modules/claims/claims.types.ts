@@ -29,6 +29,7 @@ export interface IClaimIssuance extends IMessage {
   claimTypeVersion?: string;
   acceptedBy: string;
   vp?: string;
+  expirationTimestamp?: number;
 }
 
 export interface IClaimRejection extends IMessage {
@@ -66,6 +67,7 @@ export interface Claim {
   createdAt: string;
   redirectUri?: string;
   vp?: VerifiablePresentation;
+  expirationTimestamp?: string;
 }
 
 export const readyToBeRegisteredOnchain = (
