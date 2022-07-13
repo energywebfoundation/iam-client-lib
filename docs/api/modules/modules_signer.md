@@ -106,7 +106,9 @@ ___
 
 ▸ **fromGnosis**(`safeAppSdk`): `Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
-**`description`** Intended for use in Volta Gnosis web interface(https://volta.gnosis-safe.io/).
+**`Description`**
+
+Intended for use in Volta Gnosis web interface(https://volta.gnosis-safe.io/).
 Dapp should provide SafeAppSdk injected by Gnosis interface
 
 #### Parameters

@@ -14,16 +14,16 @@
 
 ### Application
 
-• **Application**
+• **Application** = ``"apps"``
 
 ___
 
 ### Organization
 
-• **Organization**
+• **Organization** = ``"org"``
 
 ___
 
 ### Role
 
-• **Role**
+• **Role** = ``"roles"``

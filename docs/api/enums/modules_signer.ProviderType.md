@@ -17,34 +17,34 @@
 
 ### EKC
 
-• **EKC**
+• **EKC** = ``"Enterprise Key Connect"``
 
 ___
 
 ### EwKeyManager
 
-• **EwKeyManager**
+• **EwKeyManager** = ``"EwKeyManager"``
 
 ___
 
 ### Gnosis
 
-• **Gnosis**
+• **Gnosis** = ``"Gnosis"``
 
 ___
 
 ### MetaMask
 
-• **MetaMask**
+• **MetaMask** = ``"MetaMask"``
 
 ___
 
 ### PrivateKey
 
-• **PrivateKey**
+• **PrivateKey** = ``"PrivateKey"``
 
 ___
 
 ### WalletConnect
 
-• **WalletConnect**
+• **WalletConnect** = ``"WalletConnect"``

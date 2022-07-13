@@ -13,10 +13,10 @@
 
 ### OffChain
 
-• **OffChain**
+• **OffChain** = ``"RegistrationTypes::OffChain"``
 
 ___
 
 ### OnChain
 
-• **OnChain**
+• **OnChain** = ``"RegistrationTypes::OnChain"``

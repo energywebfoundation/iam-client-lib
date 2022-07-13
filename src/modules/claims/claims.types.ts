@@ -431,3 +431,11 @@ export interface ClaimRevocationDetailsResult {
   revoker: string;
   timestamp: number;
 }
+
+export interface CredentialVerificationResult {
+  /** Indicates if a claim has been successfully verified */
+  isVerified: boolean;
+
+  /** Verification errors */
+  errors: string[];
+}

@@ -1,10 +1,12 @@
 import {
   IRoleDefinitionV2,
+  IssuerFields,
   PreconditionType,
 } from '@energyweb/credential-governance';
 import { Methods, Chain } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';
+import {} from '../src';
 import {
   CredentialStatusPurpose,
   VerifiablePresentation,
@@ -28,6 +30,9 @@ import {
   SignerT,
   Claim,
   RoleCredentialSubject,
+  CacheClient,
+  VerifiableCredentialsServiceBase,
+  getVerifiableCredentialsService,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
@@ -50,6 +55,10 @@ const roleName2 = 'myrole2';
 const roleName3 = 'myrole3';
 const roleName4 = 'myrole4';
 const roleName5 = 'myrole5';
+const verifyVcRole = 'verifyVcRole';
+const verifyVcRole2 = 'verifyVcRole2';
+const verifyOffChainClaimRole = 'verifyOnChain';
+const resolveVC = 'resolvevc';
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -85,6 +94,24 @@ const roles: Record<string, IRoleDefinitionV2> = {
     ...baseRoleDef,
     roleName: roleName5,
     defaultValidityPeriod: 1000,
+  },
+  [`${verifyVcRole}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyVcRole,
+    issuer: { issuerType: 'DID', did: [rootOwnerDID] },
+  },
+  [`${resolveVC}.${root}`]: {
+    ...baseRoleDef,
+    roleName: resolveVC,
+  },
+  [`${verifyVcRole2}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyVcRole2,
+  },
+  [`${verifyOffChainClaimRole}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyOffChainClaimRole,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
 };
 const mockGetRoleDefinition = jest
@@ -161,6 +188,7 @@ describe('Сlaim tests', () => {
   let domainsService: DomainsService;
   let claimManager: ClaimManager;
   let didRegistry: DidRegistry;
+  let verifiableCredentialsService: VerifiableCredentialsServiceBase;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -201,6 +229,30 @@ describe('Сlaim tests', () => {
       data: roles[`${roleName5}.${root}`],
       returnSteps: false,
     });
+    await domainsService.createRole({
+      roleName: verifyVcRole,
+      namespace,
+      data: roles[`${verifyVcRole}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: verifyVcRole2,
+      namespace,
+      data: roles[`${verifyVcRole2}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: verifyOffChainClaimRole,
+      namespace,
+      data: roles[`${verifyOffChainClaimRole}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: resolveVC,
+      namespace,
+      data: roles[`${resolveVC}.${root}`],
+      returnSteps: false,
+    });
     ({ didRegistry, claimsService } = await connectToDidRegistry());
     mockGetAllowedRoles.mockImplementation(async (issuer) => {
       const roleDefs = Object.values(roles);
@@ -224,6 +276,11 @@ describe('Сlaim tests', () => {
     });
     Reflect.set(didRegistry, '_cacheClient', undefined);
     setLogger(new ConsoleLogger(LogLevel.warn));
+    const cacheClient = new CacheClient(signerService);
+    verifiableCredentialsService = await getVerifiableCredentialsService(
+      signerService,
+      cacheClient
+    );
   });
 
   describe('Role claim tests', () => {
@@ -514,7 +571,6 @@ describe('Сlaim tests', () => {
         data: roles[`${roleName2}.${root}`],
         returnSteps: false,
       });
-
       await enrolAndIssue(dynamicIssuer, staticIssuer, {
         subjectDID: dynamicIssuerDID,
         claimType: `${roleName1}.${root}`,
@@ -754,6 +810,124 @@ describe('Сlaim tests', () => {
           (s) => s.serviceEndpoint === claimUrl && s.claimType === claimType
         )
       ).toBeDefined();
+    });
+
+    const createExampleSignedCredential = async (
+      issuerFields: IssuerFields[],
+      namespace: string,
+      expirationDate?: Date
+    ) => {
+      return await verifiableCredentialsService.createRoleVC({
+        id: rootOwnerDID,
+        namespace: namespace,
+        version: '1',
+        issuerFields,
+        expirationDate,
+      });
+    };
+
+    test('verifyVc should verify a VC with no errors if the issuer is authorized', async () => {
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await domainsService.createRole({
+        roleName: verifyVcRole,
+        namespace,
+        data: roles[`${verifyVcRole}.${root}`],
+        returnSteps: false,
+      });
+      const vc = await createExampleSignedCredential(
+        [],
+        `${verifyVcRole}.${root}`
+      );
+      const result = await claimsService.verifyVc(vc);
+      expect(result.errors).toHaveLength(0);
+      expect(result.isVerified).toBeTruthy;
+    });
+    test('resolveCredentialAndVerify should resolve a Verifiable Credential and call correct verification method (verifyVC)', async () => {
+      const roleName = `${resolveVC}.${root}`;
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await domainsService.createRole({
+        roleName: resolveVC,
+        namespace,
+        data: roles[roleName],
+        returnSteps: false,
+      });
+      await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+      await createExampleSignedCredential([], roleName);
+      const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+        subjectDID: rootOwnerDID,
+        claimType: roleName,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain, // role type issuer should have offchain claim
+        ],
+        publishOnChain: true,
+        issuerFields: [],
+      });
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      let subjectDoc = await didRegistry.getDidDocument({
+        did: rootOwnerDID,
+        includeClaims: true,
+      });
+      mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+
+      await claimsService.publishPublicClaim({
+        claim: { token: issuedToken },
+      });
+
+      subjectDoc = await didRegistry.getDidDocument({
+        did: rootOwnerDID,
+        includeClaims: true,
+      });
+      const result = await claimsService.resolveCredentialAndVerify(
+        rootOwnerDID,
+        roleName
+      );
+      expect(result.errors).toHaveLength(0);
+      expect(result.isVerified).toBeTruthy;
+      expect(claimsService.verifyVc).toHaveBeenCalled;
+    });
+    test('resolveAndVerify should resolve an EIP191JWT and verify the claim', async () => {
+      const roleName = `${verifyOffChainClaimRole}.${root}`;
+      await domainsService.createRole({
+        roleName: verifyOffChainClaimRole,
+        namespace,
+        data: roles[roleName],
+        returnSteps: false,
+      });
+
+      await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+      const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+        subjectDID: rootOwnerDID,
+        claimType: roleName,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain,
+        ],
+        publishOnChain: true,
+        issuerFields: [],
+      });
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      let subjectDoc = await didRegistry.getDidDocument({
+        did: rootOwnerDID,
+        includeClaims: true,
+      });
+      mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+
+      await claimsService.publishPublicClaim({
+        claim: { token: issuedToken },
+      });
+
+      subjectDoc = await didRegistry.getDidDocument({
+        did: rootOwnerDID,
+        includeClaims: true,
+      });
+      const result = await claimsService.resolveCredentialAndVerify(
+        rootOwnerDID,
+        roleName
+      );
+      expect(result.errors).toHaveLength(0);
+      expect(result.isVerified).toBeTruthy;
+      expect(claimsService.verifyRoleEIP191JWT).toHaveBeenCalled;
     });
   });
 

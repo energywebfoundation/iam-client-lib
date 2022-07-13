@@ -5,13 +5,9 @@ import {
   IRoleDefinition,
   IRoleDefinitionV2,
   PreconditionType,
+  RoleCredentialSubject,
 } from '@energyweb/credential-governance';
-import {
-  CredentialResolver,
-  EthersProviderIssuerResolver,
-  IpfsCredentialResolver,
-  VCIssuerVerification,
-} from '@energyweb/vc-verification';
+import { VerifiableCredential } from '@ew-did-registry/credentials-interface';
 import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
@@ -66,7 +62,16 @@ import {
   GetRevocationClaimDetailsResult,
   ClaimRevocationDetailsResult,
   GetClaimsByRevokerOptions,
+  CredentialVerificationResult,
 } from './claims.types';
+import {
+  CredentialResolver,
+  EthersProviderIssuerResolver,
+  IpfsCredentialResolver,
+  VCIssuerVerification,
+  ClaimIssuerVerification,
+  RoleEIP191JWT,
+} from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
@@ -96,9 +101,10 @@ const {
 export class ClaimsService {
   private _claimManager: string;
   private _claimManagerInterface = ClaimManager__factory.createInterface();
-  private _vcIssuerVerifier: VCIssuerVerification;
   private _claimRevocation: ClaimRevocation;
-
+  private _vcIssuerVerifier: VCIssuerVerification;
+  private _issuerResolver: EthersProviderIssuerResolver;
+  private _credentialResolver: CredentialResolver;
   constructor(
     private _signerService: SignerService,
     private _domainsService: DomainsService,
@@ -458,7 +464,7 @@ export class ClaimsService {
     }
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      await this.verifyVcIssuer(claimData.claimType);
+      await this.verifyIssuer(claimData.claimType);
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
@@ -627,7 +633,7 @@ export class ClaimsService {
       namespace: claim.claimType,
     });
 
-    await this.verifyVcIssuer(claim.claimType);
+    await this.verifyIssuer(claim.claimType);
     await this.verifyEnrolmentPrerequisites({
       subject,
       role: claim.claimType,
@@ -1209,7 +1215,7 @@ export class ClaimsService {
    *
    * @param {String} role Registration types of the claim
    */
-  private async verifyVcIssuer(role: string): Promise<void> {
+  private async verifyIssuer(role: string): Promise<void> {
     await this._vcIssuerVerifier.verifyIssuer(this._signerService.did, role);
   }
 
@@ -1409,21 +1415,121 @@ export class ClaimsService {
   }
 
   /**
+   * Verifies:
+   * - That credential proof is valid
+   * - That credential was issued by authorized issuer
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject} vc to be verified
+   * @return Boolean indicating if verified and array of error messages
+   */
+  async verifyVc(
+    vc: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<CredentialVerificationResult> {
+    const errors: string[] = [];
+    const issuerDID = this._signerService.did;
+    const proofVerified = await this._verifiableCredentialService.verify(vc);
+    if (!proofVerified) {
+      errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
+    }
+    const role = vc.credentialSubject.role.namespace;
+    let issuerVerified = true;
+    try {
+      await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
+    } catch (e) {
+      issuerVerified = false;
+      errors.push((e as Error).message);
+    }
+    return {
+      errors,
+      isVerified: proofVerified && issuerVerified,
+    };
+  }
+
+  /**
+   * Verifies:
+   * - That off-chain claim was issued by authorized issuer
+   * - That off-chain claim proof is valid
+   *
+   * @param {OffChainClaim} off chain claim to verify
+   * @return Boolean indicating if verified and array of error messages
+   */
+  async verifyRoleEIP191JWT(
+    roleEIP191JWT: RoleEIP191JWT
+  ): Promise<CredentialVerificationResult> {
+    const { payload, eip191Jwt } = roleEIP191JWT;
+    const errors: string[] = [];
+    const issuerDID = this._signerService.did;
+    const claimIssuerVerifier = new ClaimIssuerVerification(
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      this._credentialResolver,
+      this._issuerResolver
+    );
+    const issuerVerified = await claimIssuerVerifier.verifyIssuer(
+      issuerDID,
+      payload?.claimData?.claimType
+    );
+    if (!issuerVerified) {
+      errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED);
+    }
+    const proofVerified = await this._didRegistry.verifyPublicClaim(
+      eip191Jwt,
+      payload?.iss as string
+    );
+    if (!proofVerified) {
+      errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
+    }
+    return {
+      errors: errors,
+      isVerified: !!proofVerified && !!issuerVerified,
+    };
+  }
+
+  /**
+   * Resolve a credential from storage and verify its proof/signature and its issuer's authority
+   *
+   * @param subjectDID The DID to try to resolve a credential for
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
+   * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+   */
+  async resolveCredentialAndVerify(
+    subjectDID: string,
+    roleNamespace: string
+  ): Promise<CredentialVerificationResult> {
+    const resolvedCredential = await this._credentialResolver.getCredential(
+      subjectDID,
+      roleNamespace
+    );
+    if (!resolvedCredential) {
+      return {
+        isVerified: false,
+        errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED],
+      };
+    }
+    const credentialIsOffChain = resolvedCredential.eip191Jwt;
+    return credentialIsOffChain
+      ? this.verifyRoleEIP191JWT(resolvedCredential as RoleEIP191JWT)
+      : this.verifyVc(
+          resolvedCredential as VerifiableCredential<RoleCredentialSubject>
+        );
+  }
+
+  /**
    *
    * Set the Verifier for Claim Issuance.
    *
    */
   private _setClaimIssuerVerifier() {
-    const credentialResolver: CredentialResolver = new IpfsCredentialResolver(
+    this._credentialResolver = new IpfsCredentialResolver(
       this._signerService.provider,
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
     );
     const domainReader = this._domainsService.domainReader;
-    const issuerResolver = new EthersProviderIssuerResolver(domainReader);
+    this._issuerResolver = new EthersProviderIssuerResolver(domainReader);
     this._vcIssuerVerifier = new VCIssuerVerification(
-      issuerResolver,
-      credentialResolver,
+      this._issuerResolver,
+      this._credentialResolver,
       (vc: string, proofOptions: string) =>
         this._verifiableCredentialService.verify(
           JSON.parse(vc),

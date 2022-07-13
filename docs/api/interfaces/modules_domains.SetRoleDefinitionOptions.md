@@ -13,7 +13,7 @@
 
 ### data
 
-• **data**: `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`
+• **data**: `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`
 
 New domain definition
 

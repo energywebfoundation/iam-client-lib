@@ -58,7 +58,7 @@ ___
 
 ### MulticallTx
 
-Ƭ **MulticallTx**: { `info`: `string` ; `tx`: `EncodedCall` ; `next`: (`opts?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>  }[]
+Ƭ **MulticallTx**: { `info`: `string` ; `next`: (`opts?`: { `retryCheck?`: `boolean`  }) => `Promise`<`providers.TransactionReceipt` \| `undefined`\> ; `tx`: `EncodedCall`  }[]
 
 ## Variables
 

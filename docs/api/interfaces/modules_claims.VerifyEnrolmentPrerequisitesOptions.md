@@ -22,7 +22,7 @@ ___
 
 ### roleDefinition
 
-• `Optional` **roleDefinition**: `IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`
+• `Optional` **roleDefinition**: `IRoleDefinition` \| `IOrganizationDefinition` \| `IAppDefinition` \| `IRoleDefinitionV2`
 
 Role definition
 

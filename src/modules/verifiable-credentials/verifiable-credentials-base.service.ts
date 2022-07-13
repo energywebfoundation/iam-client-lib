@@ -127,10 +127,9 @@ export abstract class VerifiableCredentialsServiceBase {
     vp: string,
     proof_options: string
   ): Promise<string>;
-
   constructor(
     protected readonly _signerService: SignerService,
-    protected readonly _cacheClient: CacheClient
+    protected readonly _cacheClient: CacheClient,
   ) {}
 
   // * Should be overridden by the implementation
@@ -138,7 +137,7 @@ export abstract class VerifiableCredentialsServiceBase {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     signerService: SignerService,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cacheClient: CacheClient
+    cacheClient: CacheClient,
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }

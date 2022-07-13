@@ -14,16 +14,16 @@
 
 ### NONSTAKING
 
-• **NONSTAKING**
+• **NONSTAKING** = ``0``
 
 ___
 
 ### STAKING
 
-• **STAKING**
+• **STAKING** = ``1``
 
 ___
 
 ### WITHDRAWING
 
-• **WITHDRAWING**
+• **WITHDRAWING** = ``2``

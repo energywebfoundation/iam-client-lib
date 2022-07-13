@@ -115,7 +115,7 @@
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cache_client.ICacheClient.md#adddidtowatchlist)
+ICacheClient.addDIDToWatchList
 
 ___
 
@@ -143,7 +143,9 @@ ___
 
 ▸ **authenticate**(): `Promise`<`void`\>
 
-**`description`** Refreshes access token. If login still fails then signs new identity token and requests access token
+**`Description`**
+
+Refreshes access token. If login still fails then signs new identity token and requests access token
 After authentication runs previously failed requests
 
 #### Returns
@@ -168,7 +170,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[deleteClaim](../interfaces/modules_cache_client.ICacheClient.md#deleteclaim)
+ICacheClient.deleteClaim
 
 ___
 
@@ -204,7 +206,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAppDefinition](../interfaces/modules_cache_client.ICacheClient.md#getappdefinition)
+ICacheClient.getAppDefinition
 
 ___
 
@@ -224,7 +226,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationRoles](../interfaces/modules_cache_client.ICacheClient.md#getapplicationroles)
+ICacheClient.getApplicationRoles
 
 ___
 
@@ -244,7 +246,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationsByOrganization](../interfaces/modules_cache_client.ICacheClient.md#getapplicationsbyorganization)
+ICacheClient.getApplicationsByOrganization
 
 ___
 
@@ -265,7 +267,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationsByOwner](../interfaces/modules_cache_client.ICacheClient.md#getapplicationsbyowner)
+ICacheClient.getApplicationsByOwner
 
 ___
 
@@ -285,7 +287,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAssetById](../interfaces/modules_cache_client.ICacheClient.md#getassetbyid)
+ICacheClient.getAssetById
 
 ___
 
@@ -306,7 +308,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAssetHistory](../interfaces/modules_cache_client.ICacheClient.md#getassethistory)
+ICacheClient.getAssetHistory
 
 ___
 
@@ -326,7 +328,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimById](../interfaces/modules_cache_client.ICacheClient.md#getclaimbyid)
+ICacheClient.getClaimById
 
 ___
 
@@ -347,7 +349,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByIssuer](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyissuer)
+ICacheClient.getClaimsByIssuer
 
 ___
 
@@ -368,7 +370,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByRequester](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyrequester)
+ICacheClient.getClaimsByRequester
 
 ___
 
@@ -389,7 +391,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByRevoker](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyrevoker)
+ICacheClient.getClaimsByRevoker
 
 ___
 
@@ -410,7 +412,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsBySubject](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbysubject)
+ICacheClient.getClaimsBySubject
 
 ___
 
@@ -430,7 +432,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsBySubjects](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbysubjects)
+ICacheClient.getClaimsBySubjects
 
 ___
 
@@ -450,7 +452,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getDIDsForRole](../interfaces/modules_cache_client.ICacheClient.md#getdidsforrole)
+ICacheClient.getDIDsForRole
 
 ___
 
@@ -471,7 +473,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getDidDocument](../interfaces/modules_cache_client.ICacheClient.md#getdiddocument)
+ICacheClient.getDidDocument
 
 ___
 
@@ -492,7 +494,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getNamespaceBySearchPhrase](../interfaces/modules_cache_client.ICacheClient.md#getnamespacebysearchphrase)
+ICacheClient.getNamespaceBySearchPhrase
 
 ___
 
@@ -512,7 +514,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOfferedAssets](../interfaces/modules_cache_client.ICacheClient.md#getofferedassets)
+ICacheClient.getOfferedAssets
 
 ___
 
@@ -532,7 +534,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrgDefinition](../interfaces/modules_cache_client.ICacheClient.md#getorgdefinition)
+ICacheClient.getOrgDefinition
 
 ___
 
@@ -552,7 +554,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrgHierarchy](../interfaces/modules_cache_client.ICacheClient.md#getorghierarchy)
+ICacheClient.getOrgHierarchy
 
 ___
 
@@ -572,7 +574,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrganizationRoles](../interfaces/modules_cache_client.ICacheClient.md#getorganizationroles)
+ICacheClient.getOrganizationRoles
 
 ___
 
@@ -593,7 +595,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrganizationsByOwner](../interfaces/modules_cache_client.ICacheClient.md#getorganizationsbyowner)
+ICacheClient.getOrganizationsByOwner
 
 ___
 
@@ -613,7 +615,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOwnedAssets](../interfaces/modules_cache_client.ICacheClient.md#getownedassets)
+ICacheClient.getOwnedAssets
 
 ___
 
@@ -633,7 +635,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getPreviouslyOwnedAssets](../interfaces/modules_cache_client.ICacheClient.md#getpreviouslyownedassets)
+ICacheClient.getPreviouslyOwnedAssets
 
 ___
 
@@ -653,7 +655,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRoleDefinition](../interfaces/modules_cache_client.ICacheClient.md#getroledefinition)
+ICacheClient.getRoleDefinition
 
 ___
 
@@ -673,7 +675,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByOwner](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyowner)
+ICacheClient.getRolesByOwner
 
 ___
 
@@ -693,7 +695,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByRevoker](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyrevoker)
+ICacheClient.getRolesByRevoker
 
 ___
 
@@ -713,7 +715,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesDefinition](../interfaces/modules_cache_client.ICacheClient.md#getrolesdefinition)
+ICacheClient.getRolesDefinition
 
 ___
 
@@ -753,7 +755,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getSubOrganizationsByOrganization](../interfaces/modules_cache_client.ICacheClient.md#getsuborganizationsbyorganization)
+ICacheClient.getSubOrganizationsByOrganization
 
 ___
 
@@ -797,7 +799,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[isAuthEnabled](../interfaces/modules_cache_client.ICacheClient.md#isauthenabled)
+ICacheClient.isAuthEnabled
 
 ___
 
@@ -834,7 +836,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[issueClaim](../interfaces/modules_cache_client.ICacheClient.md#issueclaim)
+ICacheClient.issueClaim
 
 ___
 
@@ -851,7 +853,7 @@ https://energyweb.atlassian.net/wiki/spaces/MYEN/pages/2303295607/ICL-+ICS+Auth+
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[login](../interfaces/modules_cache_client.ICacheClient.md#login)
+ICacheClient.login
 
 ___
 
@@ -892,7 +894,7 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[rejectClaim](../interfaces/modules_cache_client.ICacheClient.md#rejectclaim)
+ICacheClient.rejectClaim
 
 ___
 
@@ -912,4 +914,4 @@ ___
 
 #### Implementation of
 
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[requestClaim](../interfaces/modules_cache_client.ICacheClient.md#requestclaim)
+ICacheClient.requestClaim

@@ -19,6 +19,7 @@
 - [ClaimRevocationDetailsResult](../interfaces/modules_claims.ClaimRevocationDetailsResult.md)
 - [CreateClaimRequestOptions](../interfaces/modules_claims.CreateClaimRequestOptions.md)
 - [CreateSelfSignedClaimOptions](../interfaces/modules_claims.CreateSelfSignedClaimOptions.md)
+- [CredentialVerificationResult](../interfaces/modules_claims.CredentialVerificationResult.md)
 - [DeleteClaimOptions](../interfaces/modules_claims.DeleteClaimOptions.md)
 - [GetClaimsByIssuerOptions](../interfaces/modules_claims.GetClaimsByIssuerOptions.md)
 - [GetClaimsByRequesterOptions](../interfaces/modules_claims.GetClaimsByRequesterOptions.md)

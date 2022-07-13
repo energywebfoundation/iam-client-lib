@@ -35,7 +35,9 @@ Intended for staking pool
 
 ▸ **allServices**(): `Promise`<[`Service`](../modules/modules_staking.md#service)[]\>
 
-**`description`** Returns all services for which pools are launched
+**`Description`**
+
+Returns all services for which pools are launched
 
 #### Returns
 
@@ -47,7 +49,9 @@ ___
 
 ▸ **getPool**(): `Promise`<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
 
-**`description`** Returns pool launched for energyweb org
+**`Description`**
+
+Returns pool launched for energyweb org
 
 #### Returns
 

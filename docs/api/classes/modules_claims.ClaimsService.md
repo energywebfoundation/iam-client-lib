@@ -43,8 +43,11 @@ claimsService.getClaimById(claim.id);
 - [publishPublicClaim](modules_claims.ClaimsService.md#publishpublicclaim)
 - [registerOnchain](modules_claims.ClaimsService.md#registeronchain)
 - [rejectClaimRequest](modules_claims.ClaimsService.md#rejectclaimrequest)
+- [resolveCredentialAndVerify](modules_claims.ClaimsService.md#resolvecredentialandverify)
 - [revokeClaim](modules_claims.ClaimsService.md#revokeclaim)
 - [revokeMultipleClaim](modules_claims.ClaimsService.md#revokemultipleclaim)
+- [verifyRoleEIP191JWT](modules_claims.ClaimsService.md#verifyroleeip191jwt)
+- [verifyVc](modules_claims.ClaimsService.md#verifyvc)
 - [create](modules_claims.ClaimsService.md#create)
 
 ## Constructors
@@ -691,6 +694,27 @@ claimsService.rejectClaimRequest({
 
 ___
 
+### resolveCredentialAndVerify
+
+▸ **resolveCredentialAndVerify**(`subjectDID`, `roleNamespace`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+
+Resolve a credential from storage and verify its proof/signature and its issuer's authority
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjectDID` | `string` | The DID to try to resolve a credential for |
+| `roleNamespace` | `string` | - |
+
+#### Returns
+
+`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+
+void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+
+___
+
 ### revokeClaim
 
 ▸ **revokeClaim**(`options`): `Promise`<`boolean`\>
@@ -765,6 +789,50 @@ claimsService.revokeMultipleClaim({
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### verifyRoleEIP191JWT
+
+▸ **verifyRoleEIP191JWT**(`roleEIP191JWT`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+
+Verifies:
+- That off-chain claim was issued by authorized issuer
+- That off-chain claim proof is valid
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `roleEIP191JWT` | `RoleEIP191JWT` |
+
+#### Returns
+
+`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+
+Boolean indicating if verified and array of error messages
+
+___
+
+### verifyVc
+
+▸ **verifyVc**(`vc`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+
+Verifies:
+- That credential proof is valid
+- That credential was issued by authorized issuer
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `vc` | `VerifiableCredential`<`RoleCredentialSubject`\> | to be verified |
+
+#### Returns
+
+`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+
+Boolean indicating if verified and array of error messages
 
 ___
 

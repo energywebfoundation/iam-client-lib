@@ -15,7 +15,7 @@
 
 ### AccountChanged
 
-• **AccountChanged**
+• **AccountChanged** = ``"accountsChanged"``
 
 Metamask events https://docs.metamask.io/guide/ethereum-provider.html#events
 
@@ -23,7 +23,7 @@ ___
 
 ### Disconnected
 
-• **Disconnected**
+• **Disconnected** = ``"disconnect"``
 
 WalletConnect events https://docs.walletconnect.com/1.0/client-api#register-event-subscription
 
@@ -31,10 +31,10 @@ ___
 
 ### NetworkChanged
 
-• **NetworkChanged**
+• **NetworkChanged** = ``"networkChanged"``
 
 ___
 
 ### SessionUpdate
 
-• **SessionUpdate**
+• **SessionUpdate** = ``"session_update"``

@@ -13,10 +13,10 @@
 
 ### ASC
 
-• **ASC**
+• **ASC** = ``"ASC"``
 
 ___
 
 ### DESC
 
-• **DESC**
+• **DESC** = ``"DESC"``
