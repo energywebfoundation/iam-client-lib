@@ -353,7 +353,9 @@ ___
 
 Add event handler for certain events
 
-**`requires`** to be called after the connection to wallet was initialized
+**`Requires`**
+
+to be called after the connection to wallet was initialized
 
 #### Returns
 

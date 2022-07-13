@@ -15,11 +15,11 @@
 - [IMessage](../interfaces/modules_messaging.IMessage.md)
 - [SubscribeToOptions](../interfaces/modules_messaging.SubscribeToOptions.md)
 
-### Type aliases
+### Type Aliases
 
 - [MessageHandler](modules_messaging.md#messagehandler)
 
-## Type aliases
+## Type Aliases
 
 ### MessageHandler
 

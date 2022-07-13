@@ -46,7 +46,7 @@ claimsService.getClaimById(claim.id);
 - [resolveCredentialAndVerify](modules_claims.ClaimsService.md#resolvecredentialandverify)
 - [revokeClaim](modules_claims.ClaimsService.md#revokeclaim)
 - [revokeMultipleClaim](modules_claims.ClaimsService.md#revokemultipleclaim)
-- [verifyOffChainClaim](modules_claims.ClaimsService.md#verifyoffchainclaim)
+- [verifyRoleEIP191JWT](modules_claims.ClaimsService.md#verifyroleeip191jwt)
 - [verifyVc](modules_claims.ClaimsService.md#verifyvc)
 - [create](modules_claims.ClaimsService.md#create)
 
@@ -792,9 +792,9 @@ claimsService.revokeMultipleClaim({
 
 ___
 
-### verifyOffChainClaim
+### verifyRoleEIP191JWT
 
-▸ **verifyOffChainClaim**(`offChainClaim`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+▸ **verifyRoleEIP191JWT**(`roleEIP191JWT`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Verifies:
 - That off-chain claim was issued by authorized issuer
@@ -804,7 +804,7 @@ Verifies:
 
 | Name | Type |
 | :------ | :------ |
-| `offChainClaim` | `RoleEIP191JWT` |
+| `roleEIP191JWT` | `RoleEIP191JWT` |
 
 #### Returns
 

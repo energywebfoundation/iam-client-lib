@@ -127,7 +127,7 @@ ___
 
 ▸ **partialWithdraw**(`value`): `Promise`<`ContractReceipt`\>
 
-**`description`**
+**`Description`**
 
 #### Parameters
 
@@ -145,9 +145,13 @@ ___
 
 ▸ **putStake**(`stake`): `Promise`<`void`\>
 
-**`description`** Locks stake and starts accumulating reward
+**`Description`**
 
-**`emits`** StakingPool.StakePut
+Locks stake and starts accumulating reward
+
+**`Emits`**
+
+StakingPool.StakePut
 
 #### Parameters
 
@@ -165,7 +169,9 @@ ___
 
 ▸ **withdraw**(): `Promise`<`void`\>
 
-**`description`** pays back stake with accumulated reward.
+**`Description`**
+
+pays back stake with accumulated reward.
 
 #### Returns
 

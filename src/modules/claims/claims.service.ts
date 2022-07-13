@@ -1451,7 +1451,7 @@ export class ClaimsService {
   async verifyRoleEIP191JWT(
     roleEIP191JWT: RoleEIP191JWT
   ): Promise<CredentialVerificationResult> {
-    const {payload, eip191Jwt} = offChainClaim;
+    const {payload, eip191Jwt} = roleEIP191JWT;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
     const claimIssuerVerifier = new ClaimIssuerVerification(
@@ -1500,7 +1500,7 @@ export class ClaimsService {
     }
     const credentialIsOffChain = resolvedCredential.eip191Jwt;
     return credentialIsOffChain
-      ? this.verifyOffChainClaim(resolvedCredential as RoleEIP191JWT)
+      ? this.verifyRoleEIP191JWT(resolvedCredential as RoleEIP191JWT)
       : this.verifyVc(
           resolvedCredential as VerifiableCredential<RoleCredentialSubject>
         );

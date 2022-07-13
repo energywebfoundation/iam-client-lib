@@ -77,4 +77,4 @@ ___
 
 • `Optional` **token**: `string`
 
-**`deprecated`**
+**`Deprecated`**

@@ -4,26 +4,26 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [App](modules_cache_client.SearchType.md#app)
 - [Org](modules_cache_client.SearchType.md#org)
 - [Role](modules_cache_client.SearchType.md#role)
 
-## Enumeration members
+## Enumeration Members
 
 ### App
 
-• **App** = `"App"`
+• **App** = ``"App"``
 
 ___
 
 ### Org
 
-• **Org** = `"Org"`
+• **Org** = ``"Org"``
 
 ___
 
 ### Role
 
-• **Role** = `"Role"`
+• **Role** = ``"Role"``
