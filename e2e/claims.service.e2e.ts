@@ -183,11 +183,11 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
 
 describe('Сlaim tests', () => {
   let claimsService: ClaimsService;
-  let signerService: SignerService; //
+  let signerService: SignerService;
   let assetsService: AssetsService;
   let domainsService: DomainsService;
   let claimManager: ClaimManager;
-  let didRegistry: DidRegistry; //
+  let didRegistry: DidRegistry;
   let verifiableCredentialsService: VerifiableCredentialsServiceBase;
 
   beforeEach(async () => {
@@ -212,7 +212,6 @@ describe('Сlaim tests', () => {
     ({ domainsService, connectToDidRegistry, assetsService } =
       await connectToCacheServer());
     await domainsService.createRole({
-      //USE THIS TO CREATE ROLE!!!!
       roleName: roleName1,
       namespace,
       data: roles[`${roleName1}.${root}`],
@@ -827,7 +826,7 @@ describe('Сlaim tests', () => {
       });
     };
 
-    test('verifyVc should verify a credential with no errors if the Issuer is authorized', async () => {
+    test('verifyVc should verify a VC with no errors if the issuer is authorized', async () => {
       await signerService.connect(rootOwner, ProviderType.PrivateKey);
       await domainsService.createRole({
         roleName: verifyVcRole,
@@ -887,9 +886,8 @@ describe('Сlaim tests', () => {
       expect(result.isVerified).toBeTruthy;
       expect(claimsService.verifyVc).toHaveBeenCalled;
     });
-    test('resolveAndVerify should verify an issued off chain claim', async () => {
+    test('resolveAndVerify should resolve an EIP191JWT and verify the claim', async () => {
       const roleName = `${verifyOffChainClaimRole}.${root}`;
-      //CREATE CLAIM REQUEST AND ISSUE CLAIM RESQUEST
       await domainsService.createRole({
         roleName: verifyOffChainClaimRole,
         namespace,
@@ -903,7 +901,7 @@ describe('Сlaim tests', () => {
         claimType: roleName,
         registrationTypes: [
           RegistrationTypes.OnChain,
-          RegistrationTypes.OffChain, // role type issuer should have offchain claim
+          RegistrationTypes.OffChain,
         ],
         publishOnChain: true,
         issuerFields: [],
@@ -958,7 +956,6 @@ describe('Сlaim tests', () => {
         { document: { id: assetDID }, id: assetDID },
       ]);
       const claimType = 'test claim';
-      //CLAIM URL!!!!
       const claimUrl = await claimsService.createSelfSignedClaim({
         data: { claimType },
         subject: assetDID,
