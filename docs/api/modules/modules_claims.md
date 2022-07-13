@@ -42,7 +42,7 @@
 - [RevokeMultipleClaimOptions](../interfaces/modules_claims.RevokeMultipleClaimOptions.md)
 - [VerifyEnrolmentPrerequisitesOptions](../interfaces/modules_claims.VerifyEnrolmentPrerequisitesOptions.md)
 
-### Type aliases
+### Type Aliases
 
 - [IssueClaim](modules_claims.md#issueclaim)
 - [RejectClaim](modules_claims.md#rejectclaim)
@@ -60,7 +60,7 @@
 
 - [readyToBeRegisteredOnchain](modules_claims.md#readytoberegisteredonchain)
 
-## Type aliases
+## Type Aliases
 
 ### IssueClaim
 

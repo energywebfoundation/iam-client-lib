@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [EKC](modules_signer.ProviderType.md#ekc)
 - [EwKeyManager](modules_signer.ProviderType.md#ewkeymanager)
@@ -13,38 +13,38 @@
 - [PrivateKey](modules_signer.ProviderType.md#privatekey)
 - [WalletConnect](modules_signer.ProviderType.md#walletconnect)
 
-## Enumeration members
+## Enumeration Members
 
 ### EKC
 
-• **EKC** = `"Enterprise Key Connect"`
+• **EKC** = ``"Enterprise Key Connect"``
 
 ___
 
 ### EwKeyManager
 
-• **EwKeyManager** = `"EwKeyManager"`
+• **EwKeyManager** = ``"EwKeyManager"``
 
 ___
 
 ### Gnosis
 
-• **Gnosis** = `"Gnosis"`
+• **Gnosis** = ``"Gnosis"``
 
 ___
 
 ### MetaMask
 
-• **MetaMask** = `"MetaMask"`
+• **MetaMask** = ``"MetaMask"``
 
 ___
 
 ### PrivateKey
 
-• **PrivateKey** = `"PrivateKey"`
+• **PrivateKey** = ``"PrivateKey"``
 
 ___
 
 ### WalletConnect
 
-• **WalletConnect** = `"WalletConnect"`
+• **WalletConnect** = ``"WalletConnect"``

@@ -4,26 +4,26 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [NONSTAKING](modules_staking.StakeStatus.md#nonstaking)
 - [STAKING](modules_staking.StakeStatus.md#staking)
 - [WITHDRAWING](modules_staking.StakeStatus.md#withdrawing)
 
-## Enumeration members
+## Enumeration Members
 
 ### NONSTAKING
 
-• **NONSTAKING** = `0`
+• **NONSTAKING** = ``0``
 
 ___
 
 ### STAKING
 
-• **STAKING** = `1`
+• **STAKING** = ``1``
 
 ___
 
 ### WITHDRAWING
 
-• **WITHDRAWING** = `2`
+• **WITHDRAWING** = ``2``

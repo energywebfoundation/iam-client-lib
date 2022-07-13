@@ -7,11 +7,8 @@
 ### Properties
 
 - [info](modules_domains.ReturnStep.md#info)
-- [tx](modules_domains.ReturnStep.md#tx)
-
-### Methods
-
 - [next](modules_domains.ReturnStep.md#next)
+- [tx](modules_domains.ReturnStep.md#tx)
 
 ## Properties
 
@@ -21,16 +18,20 @@
 
 ___
 
+### next
+
+• **next**: () => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (): `Promise`<`void`\>
+
+##### Returns
+
+`Promise`<`void`\>
+
+___
+
 ### tx
 
 • **tx**: `EncodedCall`
-
-## Methods
-
-### next
-
-▸ **next**(): `Promise`<`void`\>
-
-#### Returns
-
-`Promise`<`void`\>

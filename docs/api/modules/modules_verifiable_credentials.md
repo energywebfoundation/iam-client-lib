@@ -19,7 +19,7 @@
 - [StatusList2021UnsignedCredential](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)
 - [VerifyVerifiableCredentialResults](../interfaces/modules_verifiable_credentials.VerifyVerifiableCredentialResults.md)
 
-### Type aliases
+### Type Aliases
 
 - [StatusList2021Credential](modules_verifiable_credentials.md#statuslist2021credential)
 
@@ -35,7 +35,7 @@
 - [getVerifiableCredentialsService](modules_verifiable_credentials.md#getverifiablecredentialsservice)
 - [isRoleCredential](modules_verifiable_credentials.md#isrolecredential)
 
-## Type aliases
+## Type Aliases
 
 ### StatusList2021Credential
 

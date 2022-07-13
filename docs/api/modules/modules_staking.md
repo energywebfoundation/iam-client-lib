@@ -11,12 +11,12 @@
 - [StakingFactoryService](../classes/modules_staking.StakingFactoryService.md)
 - [StakingPoolService](../classes/modules_staking.StakingPoolService.md)
 
-### Type aliases
+### Type Aliases
 
 - [Service](modules_staking.md#service)
 - [Stake](modules_staking.md#stake)
 
-## Type aliases
+## Type Aliases
 
 ### Service
 

@@ -7,11 +7,8 @@
 ### Properties
 
 - [info](modules_domains.ReturnStepWithRetryCheck.md#info)
-- [tx](modules_domains.ReturnStepWithRetryCheck.md#tx)
-
-### Methods
-
 - [next](modules_domains.ReturnStepWithRetryCheck.md#next)
+- [tx](modules_domains.ReturnStepWithRetryCheck.md#tx)
 
 ## Properties
 
@@ -21,23 +18,27 @@
 
 ___
 
-### tx
-
-• **tx**: `EncodedCall`
-
-## Methods
-
 ### next
 
-▸ **next**(`opt?`): `Promise`<`undefined` \| `TransactionReceipt`\>
+• **next**: (`opt?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>
 
-#### Parameters
+#### Type declaration
+
+▸ (`opt?`): `Promise`<`undefined` \| `TransactionReceipt`\>
+
+##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `opt?` | `Object` |
 | `opt.retryCheck?` | `boolean` |
 
-#### Returns
+##### Returns
 
 `Promise`<`undefined` \| `TransactionReceipt`\>
+
+___
+
+### tx
+
+• **tx**: `EncodedCall`
