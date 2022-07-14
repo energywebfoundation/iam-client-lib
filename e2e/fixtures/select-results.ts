@@ -1,36 +1,11 @@
 export const selectResults = {
-  errors: [
-    {
-      tag: 'FilterEvaluation',
-      status: 'error',
-      message:
-        'Input candidate does not contain property: $.input_descriptors[1]: $[0]',
-    },
-    {
-      tag: 'FilterEvaluation',
-      status: 'error',
-      message:
-        'Input candidate does not contain property: $.input_descriptors[1]: $[0]',
-    },
-    {
-      tag: 'FilterEvaluation',
-      status: 'error',
-      message:
-        'Input candidate does not contain property: $.input_descriptors[1]: $[0]',
-    },
-    {
-      tag: 'MarkForSubmissionEvaluation',
-      status: 'error',
-      message:
-        'The input candidate is not eligible for submission: $.input_descriptors[1]: $[0]',
-    },
-  ],
+  errors: [],
   matches: [
     {
       name: 'Energy Supplier Customer Contract',
       rule: 'all',
-      vc_path: ['$.verifiableCredential[0]'],
-    },
+      vc_path: ['$.verifiableCredential[0]']
+    }
   ],
   areRequiredCredentialsPresent: 'info',
   verifiableCredential: [
@@ -52,21 +27,21 @@ export const selectResults = {
               { name: 'verificationMethod', type: 'string' },
               { name: 'created', type: 'string' },
               { name: 'proofPurpose', type: 'string' },
-              { name: 'type', type: 'string' },
+              { name: 'type', type: 'string' }
             ],
             EWFRole: [
               { name: 'namespace', type: 'string' },
-              { name: 'version', type: 'string' },
+              { name: 'version', type: 'string' }
             ],
             EIP712Domain: [],
             IssuerFields: [
               { name: 'key', type: 'string' },
-              { name: 'value', type: 'string' },
+              { name: 'value', type: 'string' }
             ],
             CredentialSubject: [
               { name: 'id', type: 'string' },
               { name: 'role', type: 'EWFRole' },
-              { name: 'issuerFields', type: 'IssuerFields[]' },
+              { name: 'issuerFields', type: 'IssuerFields[]' }
             ],
             VerifiableCredential: [
               { name: '@context', type: 'string[]' },
@@ -75,13 +50,13 @@ export const selectResults = {
               { name: 'issuer', type: 'string' },
               { name: 'issuanceDate', type: 'string' },
               { name: 'credentialSubject', type: 'CredentialSubject' },
-              { name: 'proof', type: 'Proof' },
-            ],
-          },
+              { name: 'proof', type: 'Proof' }
+            ]
+          }
         },
         proofPurpose: 'assertionMethod',
         verificationMethod:
-          'did:ethr:0x012047:0x2670a5f431f0b444329db18b3bd07ccfe6bf4cf3#controller',
+          'did:ethr:0x012047:0x2670a5f431f0b444329db18b3bd07ccfe6bf4cf3#controller'
       },
       issuer: 'did:ethr:0x012047:0x2670a5f431f0b444329db18b3bd07ccfe6bf4cf3',
       '@context': ['https://www.w3.org/2018/credentials/v1'],
@@ -90,11 +65,11 @@ export const selectResults = {
         id: 'did:ethr:volta:0x06Bdb40FE8bD203aD7Af211ba1fF67f83F09A6D1',
         role: {
           version: '1',
-          namespace: 'customer.roles.rebeam.apps.eliagroup.iam.ewc',
+          namespace: 'customer.roles.rebeam.apps.eliagroup.iam.ewc'
         },
-        issuerFields: [{ key: 'iscustomer', value: 'true' }],
-      },
-    },
+        issuerFields: [{ key: 'iscustomer', value: 'true' }]
+      }
+    }
   ],
-  warnings: [],
+  warnings: []
 };
