@@ -6,7 +6,6 @@ import {
 import { Methods, Chain } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';
-import {} from '../src';
 import {
   CredentialStatusPurpose,
   VerifiablePresentation,
@@ -14,6 +13,7 @@ import {
   StatusListEntryType,
 } from '@ew-did-registry/credentials-interface';
 import { BigNumber, providers, utils, Wallet } from 'ethers';
+import nock from 'nock';
 import {
   AssetsService,
   ClaimsService,
@@ -33,13 +33,14 @@ import {
   CacheClient,
   VerifiableCredentialsServiceBase,
   getVerifiableCredentialsService,
+  setLogger,
+  ConsoleLogger,
+  LogLevel,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
 import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
-import { setLogger } from '../src/config/logger.config';
-import { ConsoleLogger, LogLevel } from '../src/utils/logger';
 
 const { namehash, id } = utils;
 
@@ -838,6 +839,9 @@ describe('Сlaim tests', () => {
         [],
         `${verifyVcRole}.${root}`
       );
+      nock(vc.credentialStatus?.statusListCredential as string)
+        .get('')
+        .reply(200, undefined);
       const result = await claimsService.verifyVc(vc);
       expect(result.errors).toHaveLength(0);
       expect(result.isVerified).toBeTruthy;

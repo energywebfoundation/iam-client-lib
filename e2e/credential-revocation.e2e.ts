@@ -6,6 +6,7 @@ import {
   VerifiableCredential,
   StatusListEntryType,
 } from '@ew-did-registry/credentials-interface';
+import nock from 'nock';
 import {
   initWithPrivateKeySigner,
   ProviderType,
@@ -18,11 +19,15 @@ import {
   IIssuerDefinition,
   IRevokerDefinition,
   RoleCredentialSubject,
+  setLogger,
+  ConsoleLogger,
 } from '../src';
 import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
-import { setLogger } from '../src/config/logger.config';
-import { ConsoleLogger } from '../src/utils/logger';
 import { STATUS_LIST_CREDENTIAL } from './fixtures';
+import {
+  CredentialRevoked,
+  InvalidStatusList,
+} from '@ew-did-registry/revocation';
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 
@@ -31,7 +36,7 @@ const mockRequestClaim = jest.fn();
 const mockIssueClaim = jest.fn();
 const mockGetAllowedRoles = jest.fn();
 const mockGetClaimById = jest.fn();
-const mockInitiateCredentialStatusUpdate = jest.fn();
+const mockCredentialInitiateRevocation = jest.fn();
 const mockGetStatusListCredential = jest.fn();
 
 jest.mock('../src/modules/cache-client/cache-client.service', () => {
@@ -46,7 +51,7 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
         getAllowedRolesByIssuer: mockGetAllowedRoles,
         getClaimById: mockGetClaimById,
         getStatusListCredential: mockGetStatusListCredential,
-        initiateCredentialStatusUpdate: mockInitiateCredentialStatusUpdate,
+        initiateCredentialStatusUpdate: mockCredentialInitiateRevocation,
         persistCredentialStatusUpdate: (credential: unknown) => credential,
         addStatusToCredential: (
           credential: Credential<RoleCredentialSubject>
@@ -57,7 +62,7 @@ jest.mock('../src/modules/cache-client/cache-client.service', () => {
               id: `https://identitycache.org/v1/status-list/${credential.id}`,
               type: StatusListEntryType.Entry2021,
               statusPurpose: CredentialStatusPurpose.REVOCATION,
-              statusListIndex: '1',
+              statusListIndex: '0',
               statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,
             },
           };
@@ -79,6 +84,7 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
 
 describe('Off-chain credential revocation', () => {
   const rootOwner = Wallet.createRandom().connect(provider);
+  const credentialStatusBase = 'https://identitycache.org/v1/status-list';
 
   const initUser = async () => {
     const user = Wallet.createRandom().connect(provider);
@@ -172,12 +178,21 @@ describe('Off-chain credential revocation', () => {
 
     expect(issuedClaim).toBeDefined();
 
-    return {
+    const claimIssuance = {
       ...issuedClaim,
       subject: subject.signerService.did,
       namespace: claimType,
       claimType,
     };
+    const vc = extractCredential(claimIssuance);
+    nock(vc.credentialStatus?.statusListCredential as string)
+      .get('')
+      .reply(200, undefined);
+    expect(await issuer.claimsService.verifyVc(vc)).toEqual({
+      isVerified: true,
+      errors: [],
+    });
+    return claimIssuance;
   };
 
   const extractCredential = (
@@ -194,7 +209,7 @@ describe('Off-chain credential revocation', () => {
   };
 
   const mockCredentialInitiate = (issuerDid: string) => {
-    mockInitiateCredentialStatusUpdate.mockImplementationOnce(
+    mockCredentialInitiateRevocation.mockImplementationOnce(
       (credential: Credential<RoleCredentialSubject>) => {
         return {
           '@context': [
@@ -204,7 +219,7 @@ describe('Off-chain credential revocation', () => {
           id: `https://identitycache.org/v1/status-list/${credential.id}`,
           type: ['VerifiableCredential', 'StatusList2021Credential'],
           credentialSubject: {
-            id: `https://identitycache.org/v1/status-list/${credential.id}`,
+            id: `${credentialStatusBase}/${credential.id}`,
             type: 'StatusList2021',
             statusPurpose: 'revocation',
             encodedList: 'H4sIAAAAAAAAA2MEABvfBaUBAAAA',
@@ -240,17 +255,22 @@ describe('Off-chain credential revocation', () => {
     );
 
     mockGetRoleDefinition.mockImplementation(() => roleDefinition);
-
+    mockCredentialInitiate(issuer.signerService.didHex);
     const claim = await enrolAndIssue(issuer, subject, `${roleName}.${root}`);
     const verifiableCredential = extractCredential(claim);
-
-    mockCredentialInitiate(issuer.signerService.didHex);
-
-    expect(
+    const statusListCredential =
       await issuer.verifiableCredentialsService.revokeCredential(
         verifiableCredential
-      )
-    ).toBeDefined();
+      );
+    expect(statusListCredential).toBeDefined();
+    nock(verifiableCredential.credentialStatus?.statusListCredential as string)
+      .get('')
+      .reply(200, statusListCredential);
+
+    expect(await issuer.claimsService.verifyVc(verifiableCredential)).toEqual({
+      isVerified: false,
+      errors: [new CredentialRevoked().message],
+    });
   });
 
   test('revoke claim, revoke type DID, issuer is not revoker', async () => {
@@ -277,13 +297,21 @@ describe('Off-chain credential revocation', () => {
 
     const verifiableCredential = extractCredential(claim);
 
-    mockCredentialInitiate(issuer.signerService.didHex);
+    mockCredentialInitiate(revoker.signerService.didHex);
 
-    expect(
+    const statusListCredential =
       await revoker.verifiableCredentialsService.revokeCredential(
         verifiableCredential
-      )
-    ).toBeDefined();
+      );
+    expect(statusListCredential).toBeDefined();
+    nock(verifiableCredential.credentialStatus?.statusListCredential as string)
+      .get('')
+      .reply(200, statusListCredential);
+
+    expect(await issuer.claimsService.verifyVc(verifiableCredential)).toEqual({
+      isVerified: false,
+      errors: [new CredentialRevoked().message],
+    });
   });
 
   test('throw an error when revoker is not authorized', async () => {
@@ -310,15 +338,25 @@ describe('Off-chain credential revocation', () => {
 
     const verifiableCredential = extractCredential(claim);
 
-    mockInitiateCredentialStatusUpdate.mockRejectedValueOnce(
-      new Error('Revoker unauthorized')
-    );
+    mockCredentialInitiate(issuer.signerService.didHex);
 
-    await expect(
-      revoker.verifiableCredentialsService.revokeCredential(
+    const statusListCredential =
+      await revoker.verifiableCredentialsService.revokeCredential(
         verifiableCredential
-      )
-    ).rejects.toThrowError();
+      );
+    expect(statusListCredential).toBeDefined();
+    nock(verifiableCredential.credentialStatus?.statusListCredential as string)
+      .get('')
+      .reply(200, statusListCredential);
+
+    expect(await issuer.claimsService.verifyVc(verifiableCredential)).toEqual(
+      expect.objectContaining({
+        isVerified: false,
+        errors: expect.arrayContaining([
+          expect.stringContaining(new InvalidStatusList(['']).message),
+        ]),
+      })
+    );
   });
 
   test('revocation details should match data', async () => {
@@ -402,10 +440,20 @@ describe('Off-chain credential revocation', () => {
 
     mockCredentialInitiate(revoker.signerService.didHex);
 
-    expect(
+    const statusListCredential =
       await revoker.verifiableCredentialsService.revokeCredential(
         verifiableCredential
-      )
-    ).toBeDefined();
+      );
+    expect(statusListCredential).toBeDefined();
+    nock(verifiableCredential.credentialStatus?.statusListCredential as string)
+      .get('')
+      .reply(200, statusListCredential);
+
+    expect(await issuer.claimsService.verifyVc(verifiableCredential)).toEqual(
+      expect.objectContaining({
+        isVerified: false,
+        errors: [new CredentialRevoked().message],
+      })
+    );
   });
 });

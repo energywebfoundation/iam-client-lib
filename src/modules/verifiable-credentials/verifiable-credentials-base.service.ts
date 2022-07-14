@@ -129,7 +129,7 @@ export abstract class VerifiableCredentialsServiceBase {
   ): Promise<string>;
   constructor(
     protected readonly _signerService: SignerService,
-    protected readonly _cacheClient: CacheClient,
+    protected readonly _cacheClient: CacheClient
   ) {}
 
   // * Should be overridden by the implementation
@@ -137,7 +137,7 @@ export abstract class VerifiableCredentialsServiceBase {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     signerService: SignerService,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cacheClient: CacheClient,
+    cacheClient: CacheClient
   ): Promise<VerifiableCredentialsServiceBase> {
     throw new Error('Not implemented');
   }
@@ -444,17 +444,12 @@ export abstract class VerifiableCredentialsServiceBase {
     options?: ProofOptions
   ): Promise<boolean> {
     let verifyFunc: (vp: string, proof_options: string) => Promise<string>;
-    switch (vp.type.includes(CredentialType.VerifiablePresentation)) {
-      case true:
-        verifyFunc = this.verifyPresentation;
-        break;
-      case false:
-        verifyFunc = this.verifyCredential;
-        break;
-      default:
-        throw new Error(
-          'Unsupported verifiable credential or presentation type'
-        );
+    if (vp.type.includes(CredentialType.VerifiablePresentation)) {
+      verifyFunc = this.verifyPresentation;
+    } else if (vp.type.includes(CredentialType.VerifiableCredential)) {
+      verifyFunc = this.verifyCredential;
+    } else {
+      throw new Error('Unsupported verifiable credential or presentation type');
     }
 
     const verifyResultsString = await verifyFunc(
