@@ -1,3 +1,10 @@
+## [6.0.0-alpha.31](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.30...v6.0.0-alpha.31) (2022-07-15)
+
+
+### Features
+
+* **claims:** verify credential status ([b5da79f](https://github.com/energywebfoundation/iam-client-lib/commit/b5da79f74a1f1c86243799c3b42ef60fc6a36b2f))
+
 ## [6.0.0-alpha.30](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.29...v6.0.0-alpha.30) (2022-07-15)
 
 ## [6.0.0-alpha.29](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.28...v6.0.0-alpha.29) (2022-07-13)
