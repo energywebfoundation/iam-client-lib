@@ -77,6 +77,7 @@ import { ClaimData } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
+import { StatusListEntryVerification } from '@ew-did-registry/revocation';
 
 const {
   id,
@@ -105,6 +106,8 @@ export class ClaimsService {
   private _vcIssuerVerifier: VCIssuerVerification;
   private _issuerResolver: EthersProviderIssuerResolver;
   private _credentialResolver: CredentialResolver;
+  private _statusVerifier: StatusListEntryVerification;
+
   constructor(
     private _signerService: SignerService,
     private _domainsService: DomainsService,
@@ -114,6 +117,7 @@ export class ClaimsService {
   ) {
     this._signerService.onInit(this.init.bind(this));
     this._setClaimIssuerVerifier();
+    this._setStatusVerifier();
   }
 
   static async create(
@@ -1418,6 +1422,7 @@ export class ClaimsService {
    * Verifies:
    * - That credential proof is valid
    * - That credential was issued by authorized issuer
+   * - That credential was not revoked
    *
    * @param {VerifiableCredential<RoleCredentialSubject} vc to be verified
    * @return Boolean indicating if verified and array of error messages
@@ -1427,10 +1432,12 @@ export class ClaimsService {
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
+
     const proofVerified = await this._verifiableCredentialService.verify(vc);
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
+
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
@@ -1438,6 +1445,15 @@ export class ClaimsService {
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
+    }
+
+    if (vc.credentialStatus) {
+      try {
+        await this._statusVerifier.verifyCredentialStatus(vc.credentialStatus);
+      } catch (e) {
+        issuerVerified = false;
+        errors.push((e as Error).message);
+      }
     }
     return {
       errors,
@@ -1536,6 +1552,17 @@ export class ClaimsService {
           JSON.parse(proofOptions)
         )
     );
+  }
+
+  private _setStatusVerifier() {
+    this._statusVerifier = new StatusListEntryVerification(async (vc) => {
+      try {
+        await this._verifiableCredentialService.verify(JSON.parse(vc));
+      } catch (e) {
+        return JSON.stringify({ errors: [(e as Error).message] });
+      }
+      return JSON.stringify({ errors: [] });
+    });
   }
 
   /**
