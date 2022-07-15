@@ -826,17 +826,12 @@ describe('Сlaim tests', () => {
         expirationDate,
       });
     };
-    describe('Verify off-chain claim and credential', () => {
+    describe('Verify off-chain claim (EIP191JWT) and credential', () => {
       test('verifyVc should verify a VC with no errors if the issuer is authorized', async () => {
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
-        await domainsService.createRole({
-          roleName: verifyVcRole,
-          namespace,
-          data: roles[`${verifyVcRole}.${root}`],
-          returnSteps: false,
-        });
+        const issuerFields = [];
         const vc = await createExampleSignedCredential(
-          [],
+          issuerFields,
           `${verifyVcRole}.${root}`
         );
         nock(vc.credentialStatus?.statusListCredential as string)
