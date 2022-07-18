@@ -546,6 +546,7 @@ ___
 ▸ **issueClaim**(`options`): `Promise`<`undefined` \| `string`\>
 
 Issue claim without previous request. Option available for issuers only.
+If `credentialStatus` is not overridden then status from ssi-hub will be set.
 
 ```typescript
 claimsService.issueClaim({
@@ -579,6 +580,7 @@ ___
 
 Issue a claim request by signing both off-chain and on-chain request and persisting result to the cache-server.
 Optionally, issue on-chain role can be submitted to the ClaimManager contract as well.
+If `credentialStatus` is not overridden then status from ssi-hub will be set.
 
 ```typescript
 const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');

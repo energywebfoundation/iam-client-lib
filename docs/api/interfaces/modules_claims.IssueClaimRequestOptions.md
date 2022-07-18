@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [credentialStatus](modules_claims.IssueClaimRequestOptions.md#credentialstatus)
+- [credentialStatusOverride](modules_claims.IssueClaimRequestOptions.md#credentialstatusoverride)
 - [expirationTimestamp](modules_claims.IssueClaimRequestOptions.md#expirationtimestamp)
 - [id](modules_claims.IssueClaimRequestOptions.md#id)
 - [issuerFields](modules_claims.IssueClaimRequestOptions.md#issuerfields)
@@ -18,9 +18,9 @@
 
 ## Properties
 
-### credentialStatus
+### credentialStatusOverride
 
-• `Optional` **credentialStatus**: `StatusList2021Entry`
+• `Optional` **credentialStatusOverride**: `StatusList2021Entry`
 
 ___
 
