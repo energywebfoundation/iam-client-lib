@@ -4,6 +4,7 @@ import {
   PEX,
   SelectResults,
 } from '@sphereon/pex';
+import { InputDescriptorV1, InputDescriptorV2 } from '@sphereon/pex-models';
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
 import {
@@ -37,6 +38,7 @@ import {
 import { ERROR_MESSAGES } from '../../errors';
 import { CacheClient } from '../cache-client';
 import { KEY_TYPE } from './verifiable-credentials.const';
+import { Claim } from '../claims/claims.types';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
@@ -517,24 +519,17 @@ export abstract class VerifiableCredentialsServiceBase {
         isAccepted: true,
       }
     );
+
+    const claimWithVp = (
+      claim: Claim
+    ): claim is Claim & { vp: VerifiablePresentation } => !!claim.vp;
+
     const vc = claims
-      .filter((claim) => claim.vp)
-      .flatMap((claim) => claim.vp!.verifiableCredential);
+      .filter(claimWithVp)
+      .flatMap((claim) => claim.vp.verifiableCredential);
 
     const pex = new PEX();
     return pex.selectFrom(presentationDefinition, vc);
-  }
-  /*
-   * We have observed that pex may have bugs when dealing with subject_is_issuer credentials
-   * and when handling a presentation definition with more than one input descriptor.
-   * This could be related to these issues:
-   *    - https://github.com/Sphereon-Opensource/pex/issues/96
-   *    - https://github.com/Sphereon-Opensource/pex/issues/91
-   * We are therefore trying to simplify the input to pex so remove the possibility of it generating incorrect results.
-   * Once the above issues are fixed, pex can be updated and perhaps this filtering will not needed.
-   */
-  private filterSelfSignDescriptors(descriptors) {
-    return descriptors?.filter((desc) => !desc?.constraints?.subject_is_issuer);
   }
 
   /**
@@ -701,5 +696,23 @@ export abstract class VerifiableCredentialsServiceBase {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * We have observed that pex may have bugs when dealing with subject_is_issuer credentials
+   * and when handling a presentation definition with more than one input descriptor.
+   * This could be related to these issues:
+   *    - https://github.com/Sphereon-Opensource/pex/issues/96
+   *    - https://github.com/Sphereon-Opensource/pex/issues/91
+   * We are therefore trying to simplify the input to pex so remove the possibility of it generating incorrect results.
+   * Once the above issues are fixed, pex can be updated and perhaps this filtering will not needed.
+   *
+   * @param {InputDescriptorV1 | InputDescriptorV2} descriptors input descriptors
+   * @returns filtered input descriptors
+   */
+  private filterSelfSignDescriptors(
+    descriptors: Array<InputDescriptorV1 | InputDescriptorV2>
+  ): Array<InputDescriptorV1 | InputDescriptorV2> {
+    return descriptors?.filter((desc) => !desc?.constraints?.subject_is_issuer);
   }
 }

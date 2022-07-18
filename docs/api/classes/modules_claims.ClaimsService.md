@@ -821,6 +821,7 @@ ___
 Verifies:
 - That credential proof is valid
 - That credential was issued by authorized issuer
+- That credential was not revoked
 
 #### Parameters
 
