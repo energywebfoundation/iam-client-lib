@@ -479,6 +479,7 @@ export class ClaimsService {
           ...strippedClaimData,
           ...(issuerFields && { issuerFields }),
         },
+        //credentialStatus: credentialStatus
       };
       const [issuedToken, vp] = await Promise.all([
         this._didRegistry.issuePublicClaim({
