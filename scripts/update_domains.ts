@@ -2,8 +2,10 @@ import { EWC_CHAIN_ID } from '@energyweb/credential-governance';
 import { Wallet } from 'ethers';
 import { updateLegacyDomains } from '../src/utils/domains';
 import { domains, ewcPrivateKey } from './data';
+import { getLogger } from '../src/config/logger.config';
 
 (async function () {
+  const logger = getLogger();
   try {
     for await (const rootDomain of domains) {
       await updateLegacyDomains({
@@ -13,8 +15,8 @@ import { domains, ewcPrivateKey } from './data';
         dryRun: true,
       });
     }
-    console.log('Domains are updated');
+    logger.info('Domains are updated');
   } catch (e) {
-    console.error('Error updating domains:', e);
+    logger.error(`Error updating domains: ${e}`);
   }
 })();
