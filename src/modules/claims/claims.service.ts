@@ -7,7 +7,9 @@ import {
   PreconditionType,
   RoleCredentialSubject,
 } from '@energyweb/credential-governance';
-import { VerifiableCredential } from '@ew-did-registry/credentials-interface';
+import {
+  VerifiableCredential,
+} from '@ew-did-registry/credentials-interface';
 import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
@@ -383,6 +385,7 @@ export class ClaimsService {
   /**
    * Issue a claim request by signing both off-chain and on-chain request and persisting result to the cache-server.
    * Optionally, issue on-chain role can be submitted to the ClaimManager contract as well.
+   * If `credentialStatus` is not overridden then status from ssi-hub will be set.
    *
    * ```typescript
    * const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
@@ -407,7 +410,7 @@ export class ClaimsService {
     registrationTypes,
     issuerFields,
     publishOnChain = true,
-    credentialStatus,
+    credentialStatusOverride,
     expirationTimestamp,
   }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
@@ -487,7 +490,7 @@ export class ClaimsService {
           namespace: role,
           version: version.toString(),
           issuerFields,
-          credentialStatus,
+          credentialStatus: credentialStatusOverride,
           expirationTimestamp: claimExpirationTimestamp,
         }),
       ]);
@@ -609,6 +612,7 @@ export class ClaimsService {
 
   /**
    * Issue claim without previous request. Option available for issuers only.
+   * If `credentialStatus` is not overridden then status from ssi-hub will be set.
    *
    * ```typescript
    * claimsService.issueClaim({
@@ -629,7 +633,7 @@ export class ClaimsService {
     subject,
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
-    credentialStatus,
+    credentialStatusOverride,
     expirationTimestamp,
   }: IssueClaimOptions): Promise<string | undefined> {
     const roleDefinition = await this._domainsService.getDefinition({
@@ -673,7 +677,7 @@ export class ClaimsService {
           namespace: claim.claimType,
           version: claim.claimTypeVersion.toString(),
           issuerFields: claim.issuerFields,
-          credentialStatus,
+          credentialStatus: credentialStatusOverride,
           expirationTimestamp: claimExpirationTimestamp,
         }),
       ]);
