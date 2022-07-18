@@ -13,6 +13,7 @@
     "prebuild": "rimraf dist ethers",
     "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist",
     "build:node": "bili --format cjs",
+    "build:docker": "docker build -f docker/Dockerfile -t iam-lib .",
     "build:front_end": "bili --format esm",
     "build:patches": "copyfiles \"patches/**/*.patch\" dist && node scripts/patches-build.js",
     "build:ts": "npm run build:front_end && npm run build:node",
@@ -40,7 +41,8 @@
     "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\"",
     "updateDomains": "npx ts-node scripts/update_domains",
     "transferDomains": "npx ts-node scripts/transfer_domains",
-    "bench": "node benchmarks/runner"
+    "bench": "node benchmarks/runner",
+    "bench:container": "docker run --memory 256m iam-lib npm run bench"
   },
   "keywords": [
     "decentralized",
