@@ -826,7 +826,74 @@ describe('Сlaim tests', () => {
         expirationDate,
       });
     };
-    describe('Verify off-chain claim (EIP191JWT) and credential', () => {
+    describe('Verification tests', () => {
+      describe('resolveCredentialAndVerify tests', () => {
+        test('resolveCredentialAndVerify should resolve and verify a Verifiable Credential', async () => {
+          const roleName = `${resolveVC}.${root}`;
+          const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+            subjectDID: rootOwnerDID,
+            claimType: roleName,
+            registrationTypes: [
+              RegistrationTypes.OnChain,
+              RegistrationTypes.OffChain,
+            ],
+            publishOnChain: true,
+            issuerFields: [],
+          });
+          await signerService.connect(rootOwner, ProviderType.PrivateKey);
+          const subjectDoc = await didRegistry.getDidDocument({
+            did: rootOwnerDID,
+            includeClaims: true,
+          });
+          mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+          await claimsService.publishPublicClaim({
+            claim: { token: issuedToken },
+          });
+          const result = await claimsService.resolveCredentialAndVerify(
+            rootOwnerDID,
+            roleName
+          );
+          expect(result.errors).toHaveLength(0);
+          expect(result.isVerified).toBe(true);
+        });
+
+        test('resolveCredentialAndVerify should resolve and verify an EIP191JWT', async () => {
+          const roleName = `${verifyOffChainClaimRole}.${root}`;
+          // await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+          const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+            subjectDID: rootOwnerDID,
+            claimType: roleName,
+            registrationTypes: [
+              RegistrationTypes.OnChain,
+              RegistrationTypes.OffChain,
+            ],
+            publishOnChain: true,
+            issuerFields: [],
+          });
+          await signerService.connect(rootOwner, ProviderType.PrivateKey);
+          await claimsService.publishPublicClaim({
+            claim: { token: issuedToken },
+          });
+          const result = await claimsService.resolveCredentialAndVerify(
+            rootOwnerDID,
+            roleName
+          );
+          expect(result.errors).toHaveLength(0);
+          expect(result.isVerified).toBe(true);
+        });
+        test('resolveCredentialAndVerify should return a "No claim found" error if no credential and no claim is resolved', async () => {
+          const roleName = `${resolveVC}.${root}`;
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+          const result = await claimsService.resolveCredentialAndVerify(
+            staticIssuerDID,
+            roleName
+          );
+          expect(result.errors).toContain(
+            'No claim found for given DID and role'
+          );
+          expect(result.isVerified).toBe(false);
+        });
+      });
       test('verifyVc should verify a VC with no errors if the issuer is authorized', async () => {
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
         const issuerFields = [];
@@ -840,70 +907,6 @@ describe('Сlaim tests', () => {
         const result = await claimsService.verifyVc(vc);
         expect(result.errors).toHaveLength(0);
         expect(result.isVerified).toBe(true);
-      });
-      test('resolveCredentialAndVerify should resolve and verify a Verifiable Credential', async () => {
-        const roleName = `${resolveVC}.${root}`;
-        const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
-          subjectDID: rootOwnerDID,
-          claimType: roleName,
-          registrationTypes: [
-            RegistrationTypes.OnChain,
-            RegistrationTypes.OffChain,
-          ],
-          publishOnChain: true,
-          issuerFields: [],
-        });
-        await signerService.connect(rootOwner, ProviderType.PrivateKey);
-        const subjectDoc = await didRegistry.getDidDocument({
-          did: rootOwnerDID,
-          includeClaims: true,
-        });
-        mockCachedDocument.mockResolvedValueOnce(subjectDoc);
-        await claimsService.publishPublicClaim({
-          claim: { token: issuedToken },
-        });
-        const result = await claimsService.resolveCredentialAndVerify(
-          rootOwnerDID,
-          roleName
-        );
-        expect(result.errors).toHaveLength(0);
-        expect(result.isVerified).toBe(true)
-      });
-      test('resolveCredentialAndVerify should resolve and verify an EIP191JWT', async () => {
-        const roleName = `${verifyOffChainClaimRole}.${root}`;
-        // await signerService.connect(staticIssuer, ProviderType.PrivateKey);
-        const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
-          subjectDID: rootOwnerDID,
-          claimType: roleName,
-          registrationTypes: [
-            RegistrationTypes.OnChain,
-            RegistrationTypes.OffChain,
-          ],
-          publishOnChain: true,
-          issuerFields: [],
-        });
-        await signerService.connect(rootOwner, ProviderType.PrivateKey);
-        await claimsService.publishPublicClaim({
-          claim: { token: issuedToken },
-        });
-        const result = await claimsService.resolveCredentialAndVerify(
-          rootOwnerDID,
-          roleName
-        );
-        expect(result.errors).toHaveLength(0);
-        expect(result.isVerified).toBe(true);
-      });
-      test('resolveCredentialAndVerify should return a "No claim found" error if no credential and no claim is resolved', async () => {
-        const roleName = `${resolveVC}.${root}`;
-        await signerService.connect(staticIssuer, ProviderType.PrivateKey);
-        const result = await claimsService.resolveCredentialAndVerify(
-          staticIssuerDID,
-          roleName
-        );
-        expect(result.errors).toContain(
-          'No claim found for given DID and role'
-        );
-        expect(result.isVerified).toBe(false);
       });
     });
   });
