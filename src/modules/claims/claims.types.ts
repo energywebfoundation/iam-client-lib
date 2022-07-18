@@ -201,7 +201,7 @@ export interface IssueClaimRequestOptions {
    * Indicates credential status (such as revocation status)
    * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
    */
-  credentialStatus?: StatusList2021Entry;
+  credentialStatusOverride?: StatusList2021Entry;
 
   /** Defines how long the claim is valid. */
   expirationTimestamp?: number;
@@ -272,7 +272,7 @@ export interface IssueClaimOptions {
    * Indicates credential status (such as revocation status)
    * https://w3c-ccg.github.io/vc-status-list-2021/#statuslist2021entry
    */
-  credentialStatus?: StatusList2021Entry;
+  credentialStatusOverride?: StatusList2021Entry;
 
   /** Defines how long the claim is valid. */
   expirationTimestamp?: number;
