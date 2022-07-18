@@ -3,7 +3,6 @@ import {
   changeResolver,
   ChangeResolverParams,
 } from '../src/utils/changeResolver';
-import { getLogger } from '../src/config/logger.config';
 
 const askParams = async (): Promise<ChangeResolverParams> => {
   const questions = [
@@ -85,8 +84,8 @@ const askParams = async (): Promise<ChangeResolverParams> => {
 
 askParams()
   .then((params) => {
-    getLogger().info(`params: ${params}`);
+    console.log('params:', params);
     return changeResolver(params);
   })
-  .then(() => getLogger().info('Resolver successfuly replaced'))
-  .catch((e) => getLogger().error(`Error replacing resolver: ${e}`));
+  .then(() => console.log('Resolver successfuly replaced'))
+  .catch((e) => console.error('Error replacing resolver:', e));

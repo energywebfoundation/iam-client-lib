@@ -7,7 +7,6 @@ import {
   ewOwnerKey,
   CHAIN_ID,
 } from './constants';
-import { getLogger } from '../../src/config/logger.config';
 
 const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
 
@@ -19,7 +18,6 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
  * Before running this script and `transferEW.ts` values for root domain of energyweb and private key of its owner should be set in `./constants.ts`
  */
 (async function () {
-  const logger = getLogger();
   const { connectToCacheServer } = await initWithPrivateKeySigner(
     ewOwnerKey,
     rpcUrl
@@ -32,7 +30,7 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
     namespace: `${AUTH_EWC}`,
     data: { orgName: ENERGYWEB, websiteUrl: 'https://www.energyweb.org/' },
   });
-  logger.info(`>>> ${ENERGYWEB_AUTH_EWC} is created`);
+  console.log(`>>> ${ENERGYWEB_AUTH_EWC} is created`);
 
   const stakingApp = 'staking';
   await domainsService.createApplication({
@@ -40,7 +38,7 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
     namespace: `apps.${ENERGYWEB_AUTH_EWC}`,
     data: { appName: stakingApp, websiteUrl: 'http://stake-ewt.io/' },
   });
-  logger.info(`>>> Application ${stakingApp} is created`);
+  console.log(`>>> Application ${stakingApp} is created`);
   const stakingOwnerRole = 'owner';
   await domainsService.createRole({
     roleName: stakingOwnerRole,
@@ -55,7 +53,7 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
       issuer: { issuerType: 'DID', did: [ENERGYWEB_OWNER] },
     },
   });
-  logger.info(`>>> Role ${stakingOwnerRole} is created`);
+  console.log(`>>> Role ${stakingOwnerRole} is created`);
 
   const verificationApp = 'verification';
   await domainsService.createApplication({
@@ -63,7 +61,7 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
     namespace: `apps.${ENERGYWEB_AUTH_EWC}`,
     data: { appName: verificationApp },
   });
-  logger.info(`>>> Application ${verificationApp} is created`);
+  console.log(`>>> Application ${verificationApp} is created`);
   const emailRole = 'email';
   await domainsService.createRole({
     roleName: emailRole,
@@ -78,5 +76,5 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
       issuer: { issuerType: 'DID', did: [KYC_OWNER] },
     },
   });
-  logger.info(`>>> Role ${emailRole} is created`);
+  console.log(`>>> Role ${emailRole} is created`);
 })();
