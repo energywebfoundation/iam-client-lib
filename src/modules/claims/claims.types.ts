@@ -10,6 +10,7 @@ import {
   IOrganizationDefinition,
   IRoleDefinition,
   IRoleDefinitionV2,
+  IssuerFields,
 } from '@energyweb/credential-governance';
 
 export interface IClaimRequest extends IMessage {
@@ -192,7 +193,7 @@ export interface IssueClaimRequestOptions {
   registrationTypes: RegistrationTypes[];
 
   /** Issuer fields that role is requiring */
-  issuerFields?: { key: string; value: string | number }[];
+  issuerFields?: IssuerFields[];
 
   /** Indicates whether to publish role on-chain or not (default: false) */
   publishOnChain?: boolean;
@@ -265,7 +266,7 @@ export interface IssueClaimOptions {
     claimTypeVersion: number;
 
     /** Issuers fields that role is requiring */
-    issuerFields?: { key: string; value: string | number }[];
+    issuerFields?: IssuerFields[];
   };
 
   /*
@@ -334,7 +335,7 @@ export interface IssueVerifiablePresentationOptions {
   version: string;
 
   /** Issuers fields that role is requiring */
-  issuerFields?: { key: string; value: string | number }[];
+  issuerFields?: IssuerFields[];
 
   /*
    * Indicates credential status (such as revocation status)

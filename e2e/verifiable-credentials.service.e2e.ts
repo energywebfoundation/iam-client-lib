@@ -11,13 +11,15 @@ import {
   claimsBySubject,
 } from './fixtures';
 import { replenish, rpcUrl, setupENS } from './utils/setup-contracts';
-import { CacheClient, fromPrivateKey } from '../src';
 import {
+  CacheClient,
+  fromPrivateKey,
+  InterfaceNotSatisfied,
   getVerifiableCredentialsService,
   IssuerFields,
   RoleCredentialSubject,
   VerifiableCredentialsServiceBase,
-} from '../src/modules/verifiable-credentials';
+} from '../src/';
 import {
   VC_API_EXCHANGE,
   VerifiableCredential,
@@ -155,6 +157,12 @@ describe('Verifiable credentials tests', () => {
 
       const result = await verifiableCredentialsService.verify(vc);
       expect(result).toBe(true);
+    });
+
+    test('should not create VC with invalid issuer fields', async () => {
+      return expect(
+        createExampleSignedCredential([{ key: 'foo' } as IssuerFields])
+      ).rejects.toBeInstanceOf(InterfaceNotSatisfied);
     });
 
     test('should throw an error for invalid VC during verification', async () => {

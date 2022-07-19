@@ -34,6 +34,7 @@ import {
   StatusList2021Credential,
   statusList2021CredentialEIP712Types,
   CredentialRevocationDetailsResult,
+  validateRoleCredentialSubject,
 } from './types';
 import { ERROR_MESSAGES } from '../../errors';
 import { CacheClient } from '../cache-client';
@@ -551,6 +552,7 @@ export abstract class VerifiableCredentialsServiceBase {
   public createCredential(
     params: RoleCredentialSubjectParams
   ): Credential<RoleCredentialSubject> {
+    validateRoleCredentialSubject(params);
     const credential: Credential<RoleCredentialSubject> = {
       // TODO: Host EWF VC Context and Vocabulary
       '@context': ['https://www.w3.org/2018/credentials/v1'],
