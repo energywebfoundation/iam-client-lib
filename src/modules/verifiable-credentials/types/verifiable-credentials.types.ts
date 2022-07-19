@@ -1,6 +1,7 @@
+import { IssuerFields } from '@energyweb/credential-governance';
 import { StatusList2021Entry } from '@ew-did-registry/credentials-interface';
 import { IPresentationDefinition, SelectResults } from '@sphereon/pex';
-import { IssuerFields } from './role-credential.types';
+import { InterfaceNotSatisfied } from '../../../errors/interface-not-satisfied';
 
 /*
  * Parameters required to construct the subject for a role credential
@@ -28,6 +29,19 @@ export interface RoleCredentialSubjectParams {
   /** Indicates if credential is actual of time of verification */
   credentialStatus?: StatusList2021Entry;
 }
+export const validateRoleCredentialSubject = (
+  subject: RoleCredentialSubjectParams
+) => {
+  const invalidField = subject.issuerFields?.find(
+    (field) => !['string', 'number'].includes(typeof field.value)
+  );
+  if (invalidField) {
+    throw new InterfaceNotSatisfied(
+      'RoleCredentialSubjectParam',
+      `IssuerFields invalid: ${invalidField.key} is not string or number`
+    );
+  }
+};
 
 export interface ProofOptions {
   /* Proof verification method */
