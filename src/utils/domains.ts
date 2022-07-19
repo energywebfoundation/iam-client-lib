@@ -19,6 +19,7 @@ import { isValidDID } from './did';
 import { namehash, labelhash } from './ens-hash';
 import { ENSRegistry__factory } from '../../ethers/factories/ENSRegistry__factory';
 import { DomainNotifier__factory } from '../../ethers/factories/DomainNotifier__factory';
+import { getLogger } from '../config/logger.config';
 
 const { JsonRpcProvider } = providers;
 
@@ -37,6 +38,7 @@ export const updateLegacyDomains = async ({
   chainId: ChainId;
   dryRun?: boolean;
 }) => {
+  const logger = getLogger();
   const {
     transactionFactory,
     chainName,
@@ -57,7 +59,7 @@ export const updateLegacyDomains = async ({
       def = await domainReader.read({ node: domainHash });
     } catch (e) {
       // 'apps' and 'roles'
-      console.log(`Unable to read ${domain}`, (<Error>e).message);
+      logger.warn(`Unable to read ${domain}: ${(<Error>e).message}`);
       if (
         !(
           domain.startsWith(NamespaceType.Application) ||
@@ -65,7 +67,7 @@ export const updateLegacyDomains = async ({
           domain.startsWith(NamespaceType.Organization)
         )
       ) {
-        console.log(`deleting malformed ${domain}...`);
+        logger.info(`deleting malformed ${domain}...`);
         await (
           await ensRegistry.setRecord(
             domainHash,
@@ -135,7 +137,7 @@ export const updateLegacyDomains = async ({
           .connect(provider)
           .sendTransaction(transactionFactory.setDomainNameTx({ domain }))
       ).wait();
-      console.log(`set name ${await domainReader.readName(domainHash)}`);
+      logger.info(`set name ${await domainReader.readName(domainHash)}`);
     }
 
     const subnodes = await domainHierarchy.getSubdomainsUsingResolver({
@@ -153,7 +155,7 @@ export const updateLegacyDomains = async ({
         subnodes.push(`apps.${domain}`);
       }
     }
-    console.log(`subnodes of ${domain} are`, subnodes);
+    logger.info(`subnodes of ${domain} are: ${subnodes}`);
     for await (const nodeName of subnodes) {
       console.group();
       const label = nodeName.split('.')[0];
@@ -197,13 +199,14 @@ export const transferDomain = async ({
   chainId: ChainId;
   dryRun?: boolean;
 }) => {
+  const logger = getLogger();
   const { domainHierarchy, domainReader, ensRegistry } = await initDomains(
     signer,
     chainId
   );
   const transferred: Record<string, unknown>[] = [];
   const transfer = async (domain: string) => {
-    console.log(`> transferring ${domain}`);
+    logger.info(`> transferring ${domain}`);
     const domainHash = namehash(domain);
 
     let def;
@@ -211,7 +214,7 @@ export const transferDomain = async ({
       def = await domainReader.read({ node: domainHash });
     } catch (e) {
       // 'apps' and 'roles'
-      console.log(`Unable to read ${domain}`, (<Error>e).message);
+      logger.warn(`Unable to read ${domain}: ${(<Error>e).message}`);
     }
 
     const subnodes = await domainHierarchy.getSubdomainsUsingResolver({
@@ -232,7 +235,7 @@ export const transferDomain = async ({
         subnodes.push(`orgs.${domain}`);
       }
     }
-    console.log(`subnodes of ${domain} are`, subnodes);
+    logger.info(`subnodes of ${domain} are ${subnodes}`);
     for await (const nodeName of subnodes) {
       console.group();
       const label = nodeName.split('.')[0];
