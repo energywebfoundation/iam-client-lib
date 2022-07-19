@@ -381,24 +381,23 @@ describe('Authentication tests', () => {
       expect(nockScope.isDone()).toBe(true);
     });
 
-    it.each([408, 411, 412, 425, 426])(
-      'should retry %i error',
-      async (statusCode) => {
-        const nockScope = getNockScope()
-          .get(MOCK_REQUEST_PATH)
-          .reply(statusCode)
-          .get(MOCK_REQUEST_PATH)
-          .reply(200, {
-            success: true,
-          });
+    it.each([
+      408, 411, 412, 425, 426, 500, 501, 502, 503, 504, 505, 506, 510, 511,
+    ])('should retry %i error', async (statusCode) => {
+      const nockScope = getNockScope()
+        .get(MOCK_REQUEST_PATH)
+        .reply(statusCode)
+        .get(MOCK_REQUEST_PATH)
+        .reply(200, {
+          success: true,
+        });
 
-        const data = await cacheClient['makeRetryRequest'](mockRequest);
+      const data = await cacheClient['makeRetryRequest'](mockRequest);
 
-        expect(data).toEqual({ success: true });
-        expect(mockRequest).toHaveBeenCalledTimes(2);
-        expect(nockScope.isDone()).toBe(true);
-      }
-    );
+      expect(data).toEqual({ success: true });
+      expect(mockRequest).toHaveBeenCalledTimes(2);
+      expect(nockScope.isDone()).toBe(true);
+    });
 
     it.each([
       400, 402, 404, 405, 406, 409, 410, 413, 414, 415, 416, 417, 422, 428, 429,
