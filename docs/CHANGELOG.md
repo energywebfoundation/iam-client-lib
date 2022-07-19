@@ -1,3 +1,10 @@
+## [6.0.0-alpha.37](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.36...v6.0.0-alpha.37) (2022-07-19)
+
+
+### Bug Fixes
+
+* **verifiable-credentials:** filter invalid issuer fields ([8c8b0c3](https://github.com/energywebfoundation/iam-client-lib/commit/8c8b0c3196077b0e1fcf8266c84803d38741cdd2))
+
 ## [6.0.0-alpha.36](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.35...v6.0.0-alpha.36) (2022-07-19)
 
 ## [6.0.0-alpha.35](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.34...v6.0.0-alpha.35) (2022-07-19)
