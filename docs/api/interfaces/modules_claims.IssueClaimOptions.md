@@ -7,7 +7,7 @@
 ### Properties
 
 - [claim](modules_claims.IssueClaimOptions.md#claim)
-- [credentialStatus](modules_claims.IssueClaimOptions.md#credentialstatus)
+- [credentialStatusOverride](modules_claims.IssueClaimOptions.md#credentialstatusoverride)
 - [expirationTimestamp](modules_claims.IssueClaimOptions.md#expirationtimestamp)
 - [registrationTypes](modules_claims.IssueClaimOptions.md#registrationtypes)
 - [subject](modules_claims.IssueClaimOptions.md#subject)
@@ -30,9 +30,9 @@ Claim params
 
 ___
 
-### credentialStatus
+### credentialStatusOverride
 
-• `Optional` **credentialStatus**: `StatusList2021Entry`
+• `Optional` **credentialStatusOverride**: `StatusList2021Entry`
 
 ___
 
