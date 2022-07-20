@@ -31,7 +31,7 @@ ___
 
 ### issuerFields
 
-• `Optional` **issuerFields**: { `key`: `string` ; `value`: `string` \| `number`  }[]
+• `Optional` **issuerFields**: `IssuerFields`[]
 
 Issuers fields that role is requiring
 

@@ -57,6 +57,7 @@ import {
   UpdatePublicKey,
 } from './did-registry.validation';
 import { getLogger } from '../../config/logger.config';
+import { isVerifiableCredential } from '@ew-did-registry/credentials-interface';
 
 const { JsonRpcProvider } = providers;
 
@@ -606,16 +607,44 @@ export class DidRegistry {
           return { serviceEndpoint, ...rest };
         }
 
-        const data = await this._ipfsStore.get(serviceEndpoint);
-        const { claimData, ...claimRest } = this._jwt?.decode(data) as {
-          claimData: ClaimData;
-        };
-        return {
-          serviceEndpoint,
-          ...rest,
-          ...claimData,
-          ...claimRest,
-        } as IServiceEndpoint & ClaimData;
+        const tokenOrVc = await this._ipfsStore.get(serviceEndpoint);
+
+        if (/(^[\w-]*\.[\w-]*\.[\w-]*$)/.test(tokenOrVc)) {
+          const decodedData = this._jwt?.decode(tokenOrVc) as {
+            claimData: ClaimData;
+          };
+
+          if (!decodedData) {
+            return { serviceEndpoint, ...rest };
+          }
+
+          const { claimData, ...claimRest } = decodedData;
+
+          return {
+            serviceEndpoint,
+            ...rest,
+            ...claimData,
+            ...claimRest,
+          };
+        }
+
+        try {
+          const data = JSON.parse(tokenOrVc);
+          if (isVerifiableCredential(data)) {
+            return {
+              serviceEndpoint,
+              ...rest,
+              verifiableCredentials: data,
+            };
+          }
+          return {
+            serviceEndpoint,
+            ...rest,
+            ...data,
+          };
+        } catch {
+          return { serviceEndpoint, ...rest };
+        }
       })
     );
   }
