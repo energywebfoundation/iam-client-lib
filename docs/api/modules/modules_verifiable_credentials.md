@@ -34,6 +34,7 @@
 
 - [getVerifiableCredentialsService](modules_verifiable_credentials.md#getverifiablecredentialsservice)
 - [isRoleCredential](modules_verifiable_credentials.md#isrolecredential)
+- [validateRoleCredentialSubject](modules_verifiable_credentials.md#validaterolecredentialsubject)
 
 ## Type Aliases
 
@@ -144,3 +145,19 @@ ___
 #### Returns
 
 credential is VerifiableCredential<RoleCredentialSubject\>
+
+___
+
+### validateRoleCredentialSubject
+
+▸ **validateRoleCredentialSubject**(`subject`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `subject` | [`RoleCredentialSubjectParams`](../interfaces/modules_verifiable_credentials.RoleCredentialSubjectParams.md) |
+
+#### Returns
+
+`void`
