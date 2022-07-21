@@ -76,13 +76,8 @@ export const readyToBeRegisteredOnchain = (
 ): claim is Required<
   Pick<
     Claim,
-    | 'claimType'
-    | 'claimTypeVersion'
-    | 'subject'
-    | 'onChainProof'
-    | 'acceptedBy'
-    | 'subjectAgreement'
-  > & { expirationTimestamp?: number }
+    'claimType' | 'claimTypeVersion' | 'subject' | 'onChainProof' | 'acceptedBy'
+  > & { expirationTimestamp?: number; subjectAgreement?: string }
 > => {
   if (!claim) return false;
   if (typeof claim !== 'object') return false;
@@ -92,7 +87,6 @@ export const readyToBeRegisteredOnchain = (
     'subject',
     'onChainProof',
     'acceptedBy',
-    'subjectAgreement',
   ];
   const claimProps = Object.keys(claim);
 
