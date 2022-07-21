@@ -127,6 +127,8 @@ export class CacheClient implements ICacheClient {
           this.isAuthenticating = true;
           await this.authenticate();
         } catch {
+          console.log('Error while authenticating');
+          console.log(error);
           return Promise.reject(error);
         } finally {
           this.isAuthenticating = false;
