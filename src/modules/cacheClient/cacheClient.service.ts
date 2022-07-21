@@ -123,9 +123,14 @@ export class CacheClient implements ICacheClient {
         });
       });
       if (!this.isAuthenticating) {
-        this.isAuthenticating = true;
-        await this.authenticate();
-        this.isAuthenticating = false;
+        try {
+          this.isAuthenticating = true;
+          await this.authenticate();
+        } catch {
+          return Promise.reject(error);
+        } finally {
+          this.isAuthenticating = false;
+        }
       }
       return retryOriginalRequest;
     }
