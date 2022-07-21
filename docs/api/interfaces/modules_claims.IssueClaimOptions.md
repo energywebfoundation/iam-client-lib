@@ -26,7 +26,7 @@ Claim params
 | :------ | :------ | :------ |
 | `claimType` | `string` | Role namespace |
 | `claimTypeVersion` | `number` | Version of the role |
-| `issuerFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] | Issuers fields that role is requiring |
+| `issuerFields?` | `IssuerFields`[] | Issuers fields that role is requiring |
 
 ___
 
