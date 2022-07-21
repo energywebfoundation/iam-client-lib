@@ -7,7 +7,10 @@ import {
   PreconditionType,
   RoleCredentialSubject,
 } from '@energyweb/credential-governance';
-import { VerifiableCredential } from '@ew-did-registry/credentials-interface';
+import {
+  VerifiableCredential,
+  VerifiablePresentation,
+} from '@ew-did-registry/credentials-interface';
 import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
@@ -471,6 +474,16 @@ export class ClaimsService {
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       await this.verifyIssuer(claimData.claimType);
+      const vp = await this.issueVerifiablePresentation({
+        subject: sub,
+        namespace: role,
+        version: version.toString(),
+        issuerFields,
+        credentialStatus: credentialStatusOverride,
+        expirationTimestamp: claimExpirationTimestamp,
+      });
+      const vpCredentialStatus = vp?.verifiableCredential[0]?.credentialStatus;
+      const credentialStatus = credentialStatusOverride || vpCredentialStatus;
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
@@ -478,24 +491,14 @@ export class ClaimsService {
           ...strippedClaimData,
           ...(issuerFields && { issuerFields }),
         },
-        //credentialStatus: credentialStatus
+        ...(credentialStatus && { credentialStatus }),
       };
-      const [issuedToken, vp] = await Promise.all([
-        this._didRegistry.issuePublicClaim({
-          publicClaim,
-          expirationTimestamp: claimExpirationTimestamp,
-        }),
-        this.issueVerifiablePresentation({
-          subject: sub,
-          namespace: role,
-          version: version.toString(),
-          issuerFields,
-          credentialStatus: credentialStatusOverride,
-          expirationTimestamp: claimExpirationTimestamp,
-        }),
-      ]);
+      const issuedToken = await this._didRegistry.issuePublicClaim({
+        publicClaim,
+        expirationTimestamp: claimExpirationTimestamp,
+      });
       message.issuedToken = issuedToken;
-      message.vp = vp;
+      message.vp = JSON.stringify(vp);
     }
 
     await this._cacheClient.issueClaim(this._signerService.did, message);
@@ -662,28 +665,28 @@ export class ClaimsService {
     };
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      const vp = await this.issueVerifiablePresentation({
+        subject,
+        namespace: claim.claimType,
+        version: claim.claimTypeVersion.toString(),
+        issuerFields: claim.issuerFields,
+        credentialStatus: credentialStatusOverride,
+        expirationTimestamp: claimExpirationTimestamp,
+      });
+      const vpCredentialStatus = vp?.verifiableCredential[0]?.credentialStatus;
+      const credentialStatus = credentialStatusOverride || vpCredentialStatus;
       const publicClaim: IPublicClaim = {
         did: subject,
         signer: this._signerService.did,
         claimData: claim,
+        ...(credentialStatus && { credentialStatus }),
       };
-      const [issuedToken, vp] = await Promise.all([
-        this._didRegistry.issuePublicClaim({
-          publicClaim,
-          expirationTimestamp: claimExpirationTimestamp,
-        }),
-        this.issueVerifiablePresentation({
-          subject,
-          namespace: claim.claimType,
-          version: claim.claimTypeVersion.toString(),
-          issuerFields: claim.issuerFields,
-          credentialStatus: credentialStatusOverride,
-          expirationTimestamp: claimExpirationTimestamp,
-        }),
-      ]);
-
+      const issuedToken = await this._didRegistry.issuePublicClaim({
+        publicClaim,
+        expirationTimestamp: claimExpirationTimestamp,
+      });
       message.issuedToken = issuedToken;
-      message.vp = vp;
+      message.vp = JSON.stringify(vp);
     }
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
@@ -1276,7 +1279,7 @@ export class ClaimsService {
    */
   private async issueVerifiablePresentation(
     options: IssueVerifiablePresentationOptions
-  ): Promise<string> {
+  ): Promise<VerifiablePresentation> {
     const vc = await this._verifiableCredentialService.createRoleVC({
       id: options.subject,
       namespace: options.namespace,
@@ -1287,11 +1290,9 @@ export class ClaimsService {
         ? new Date(options.expirationTimestamp)
         : undefined,
     });
-    const vp =
-      await this._verifiableCredentialService.createVerifiablePresentation([
-        vc,
-      ]);
-    return JSON.stringify(vp);
+    return await this._verifiableCredentialService.createVerifiablePresentation(
+      [vc]
+    );
   }
 
   /**
