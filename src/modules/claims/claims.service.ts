@@ -7,9 +7,7 @@ import {
   PreconditionType,
   RoleCredentialSubject,
 } from '@energyweb/credential-governance';
-import {
-  VerifiableCredential,
-} from '@ew-did-registry/credentials-interface';
+import { VerifiableCredential } from '@ew-did-registry/credentials-interface';
 import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
@@ -69,9 +67,10 @@ import {
 import {
   CredentialResolver,
   EthersProviderIssuerResolver,
+  EthersProviderRevokerResolver,
   IpfsCredentialResolver,
-  VCIssuerVerification,
-  ClaimIssuerVerification,
+  IssuerVerification,
+  RevocationVerification,
   RoleEIP191JWT,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
@@ -105,7 +104,7 @@ export class ClaimsService {
   private _claimManager: string;
   private _claimManagerInterface = ClaimManager__factory.createInterface();
   private _claimRevocation: ClaimRevocation;
-  private _vcIssuerVerifier: VCIssuerVerification;
+  private _issuerVerification: IssuerVerification;
   private _issuerResolver: EthersProviderIssuerResolver;
   private _credentialResolver: CredentialResolver;
   private _statusVerifier: StatusListEntryVerification;
@@ -118,7 +117,7 @@ export class ClaimsService {
     private _verifiableCredentialService: VerifiableCredentialsServiceBase
   ) {
     this._signerService.onInit(this.init.bind(this));
-    this._setClaimIssuerVerifier();
+    this._setIssuerVerifier();
     this._setStatusVerifier();
   }
 
@@ -1225,7 +1224,7 @@ export class ClaimsService {
    * @param {String} role Registration types of the claim
    */
   private async verifyIssuer(role: string): Promise<void> {
-    await this._vcIssuerVerifier.verifyIssuer(this._signerService.did, role);
+    await this._issuerVerification.verifyIssuer(this._signerService.did, role);
   }
 
   /**
@@ -1446,7 +1445,7 @@ export class ClaimsService {
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
-      await this._vcIssuerVerifier.verifyIssuer(issuerDID, role);
+      await this._issuerVerification.verifyIssuer(issuerDID, role);
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
@@ -1480,13 +1479,7 @@ export class ClaimsService {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    const claimIssuerVerifier = new ClaimIssuerVerification(
-      this._signerService.provider,
-      this._didRegistry.registrySettings,
-      this._credentialResolver,
-      this._issuerResolver
-    );
-    const issuerVerified = await claimIssuerVerifier.verifyIssuer(
+    const issuerVerified = await this._issuerVerification.verifyIssuer(
       issuerDID,
       payload?.claimData?.claimType
     );
@@ -1540,7 +1533,7 @@ export class ClaimsService {
    * Set the Verifier for Claim Issuance.
    *
    */
-  private _setClaimIssuerVerifier() {
+  private _setIssuerVerifier() {
     this._credentialResolver = new IpfsCredentialResolver(
       this._signerService.provider,
       this._didRegistry.registrySettings,
@@ -1548,14 +1541,27 @@ export class ClaimsService {
     );
     const domainReader = this._domainsService.domainReader;
     this._issuerResolver = new EthersProviderIssuerResolver(domainReader);
-    this._vcIssuerVerifier = new VCIssuerVerification(
+    const revokerResolver = new EthersProviderRevokerResolver(domainReader);
+    const verifyProof = (vc: string, proofOptions: string) =>
+      this._verifiableCredentialService.verify(
+        JSON.parse(vc),
+        JSON.parse(proofOptions)
+      );
+    const revocationVerification = new RevocationVerification(
+      revokerResolver,
       this._issuerResolver,
       this._credentialResolver,
-      (vc: string, proofOptions: string) =>
-        this._verifiableCredentialService.verify(
-          JSON.parse(vc),
-          JSON.parse(proofOptions)
-        )
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      verifyProof
+    );
+    this._issuerVerification = new IssuerVerification(
+      this._issuerResolver,
+      this._credentialResolver,
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      revocationVerification,
+      verifyProof
     );
   }
 
