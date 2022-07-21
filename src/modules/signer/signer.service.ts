@@ -244,9 +244,7 @@ export class SignerService {
   }
 
   async publicKeyAndIdentityToken(): Promise<IPubKeyAndIdentityToken> {
-    if (!this._publicKey || !this._identityToken) {
-      await this._calculatePubKeyAndIdentityToken();
-    }
+    await this._calculatePubKeyAndIdentityToken();
     return {
       publicKey: this._publicKey,
       identityToken: this._identityToken,
