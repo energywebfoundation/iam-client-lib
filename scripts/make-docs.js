@@ -11,6 +11,13 @@ const cleanDocs = () => {
   }
 
   try {
+    fs.unlinkSync('./docs/LICENSE');
+    console.log(`[Info] license file deleted`);
+  } catch (error) {
+    console.warn(`[Warn] cleaning docs: ${error?.message}`);
+  }
+
+  try {
     fs.rmSync('./docs/api', { recursive: true });
     console.log(`[Info] api directory deleted`);
   } catch (error) {
@@ -20,10 +27,14 @@ const cleanDocs = () => {
   console.log(`[Info] docs cleaned`);
 };
 
-const copyReadmeToDocs = () => {
+const copyToDocs = () => {
   console.log(`[Info] copying readme to docs`);
   fs.copyFileSync('./README.md', './docs/index.md');
   console.log(`[Info] readme copied`);
+
+  console.log(`[Info] copying license to docs`);
+  fs.copyFileSync('./LICENSE', './docs/LICENSE');
+  console.log(`[Info] license copied`);
 };
 
 const adjustDocsIndex = () => {
@@ -47,7 +58,7 @@ const bootstrapDocs = () => {
   console.log(`[Info] bootstrapping docs`);
 
   cleanDocs();
-  copyReadmeToDocs();
+  copyToDocs();
   adjustDocsIndex();
 
   console.log(`[Info] docs bootstrapped`);
