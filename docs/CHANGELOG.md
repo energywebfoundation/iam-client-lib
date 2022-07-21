@@ -1,3 +1,10 @@
+## [6.0.0-alpha.40](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.39...v6.0.0-alpha.40) (2022-07-21)
+
+
+### Features
+
+* **revocation:** add credentialStatus to EIP191JWT ([52fec66](https://github.com/energywebfoundation/iam-client-lib/commit/52fec660c53ac04dbaf5f9aee07004c6ee786064))
+
 ## [6.0.0-alpha.39](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.38...v6.0.0-alpha.39) (2022-07-21)
 
 ## [6.0.0-alpha.38](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.37...v6.0.0-alpha.38) (2022-07-21)
