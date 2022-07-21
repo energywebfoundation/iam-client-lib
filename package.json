@@ -16,7 +16,7 @@
     "build:front_end": "bili --format esm",
     "build:patches": "copyfiles \"patches/**/*.patch\" dist && node scripts/patches-build.js",
     "build:ts": "npm run build:front_end && npm run build:node",
-    "build:api_docs": "typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && rm docs/api/README.md",
+    "build:api_docs": "node scripts/make-docs.js && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && rm docs/api/README.md && git add -A docs/",
     "build:contracts": "npm run build:typechain:ens && npm run build:typechain:did && npm run build:typechain:roles && npm run build:typechain:staking",
     "build:typechain:ens": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@ensdomains/ens/build/contracts/ENSRegistry.json\"",
     "build:typechain:did": "npm run build:typechain:offerableIdentity && npm run build:typechain:identityManager",
@@ -162,7 +162,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && rm -rf docs/api && cp README.md docs/index.md && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && git add -A docs/api/"
+      "pre-commit": "lint-staged && npm run build:api_docs"
     }
   },
   "lint-staged": {

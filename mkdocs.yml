@@ -3,6 +3,9 @@ nav:
   - Introduction:
       - Overview: intro/overview.md
       - 'Domain Hierarchy': intro/domainhierarchy.md
+  - Setup:
+      - Initialization: setup/initialization.md
+      - Logging: setup/logging.md
   - Guides:
       - Application: guides/application.md
       - Asset: guides/asset.md
