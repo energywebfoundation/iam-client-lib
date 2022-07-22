@@ -594,7 +594,20 @@ export class CacheClient implements ICacheClient {
       return false;
     }
 
-    getLogger().debug(`[CACHE CLIENT] axios error: ${error.message}`);
+    const errorDetails = {
+      message: error.message,
+      url: error.config.url,
+      method: error.config.method,
+      requestHeaders: {
+        ...error.config.headers,
+        Authorization: error.config.headers?.Authorization ? '***' : undefined,
+      },
+      responseHeaders: error.response?.headers,
+    };
+
+    getLogger().debug(
+      `[CACHE CLIENT] axios error: ${JSON.stringify(errorDetails)}`
+    );
     const { config, response } = error;
 
     if (!response) {
