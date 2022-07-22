@@ -1,3 +1,10 @@
+## [6.0.0-alpha.41](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.40...v6.0.0-alpha.41) (2022-07-22)
+
+
+### Features
+
+* adding more details to error log line when http request fails ([#617](https://github.com/energywebfoundation/iam-client-lib/issues/617)) ([e99ceda](https://github.com/energywebfoundation/iam-client-lib/commit/e99cedac0e1ebc66369cfbfced39dce07822aab3))
+
 ## [6.0.0-alpha.40](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.39...v6.0.0-alpha.40) (2022-07-21)
 
 
