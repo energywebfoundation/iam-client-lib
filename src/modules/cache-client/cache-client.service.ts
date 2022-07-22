@@ -602,6 +602,8 @@ export class CacheClient implements ICacheClient {
         ...error.config.headers,
         Authorization: error.config.headers?.Authorization ? '***' : undefined,
       },
+      status: error.response?.status,
+      statusText: error.response?.statusText,
       responseHeaders: error.response?.headers,
     };
 
