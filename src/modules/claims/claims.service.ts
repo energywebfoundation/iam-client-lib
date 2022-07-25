@@ -1455,7 +1455,7 @@ export class ClaimsService {
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
-      await this._issuerVerification.verifyIssuer(issuerDID, role); //CRED EXP CHECKED HERE
+      await this._issuerVerification.verifyIssuer(issuerDID, role);
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
