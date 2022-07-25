@@ -1,3 +1,10 @@
+## [6.0.0-alpha.43](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.42...v6.0.0-alpha.43) (2022-07-25)
+
+
+### Bug Fixes
+
+* **claims:** dont reregister onchain claim ([ebd46c0](https://github.com/energywebfoundation/iam-client-lib/commit/ebd46c0b7fbe5f30f1f945891ab90ba1aba57caf))
+
 ## [6.0.0-alpha.42](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.41...v6.0.0-alpha.42) (2022-07-25)
 
 
