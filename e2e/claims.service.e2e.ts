@@ -11,6 +11,7 @@ import {
   VerifiablePresentation,
   Credential,
   StatusListEntryType,
+  StatusList2021Entry,
 } from '@ew-did-registry/credentials-interface';
 import { BigNumber, providers, utils, Wallet } from 'ethers';
 import nock from 'nock';
@@ -345,7 +346,6 @@ describe('Сlaim tests', () => {
             : []
         )
       );
-
       const {
         issuedToken,
         requester,
@@ -360,6 +360,11 @@ describe('Сlaim tests', () => {
 
       if (registrationTypes.includes(RegistrationTypes.OffChain)) {
         expect(issuedToken).toBeDefined();
+        const { credentialStatus } = (await didRegistry.decodeJWTToken({
+          token: issuedToken,
+        })) as { [key: string]: StatusList2021Entry };
+        expect(credentialStatus).toBeDefined;
+        expect(credentialStatus.type).toEqual(StatusListEntryType.Entry2021);
         expect(vp).toBeDefined();
 
         const vpObject = JSON.parse(vp) as VerifiablePresentation;

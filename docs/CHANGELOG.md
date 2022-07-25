@@ -1,3 +1,26 @@
+## [6.0.0-alpha.42](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.41...v6.0.0-alpha.42) (2022-07-25)
+
+
+### Bug Fixes
+
+* set check ethr signer for node clients ([#618](https://github.com/energywebfoundation/iam-client-lib/issues/618)) ([c198dc7](https://github.com/energywebfoundation/iam-client-lib/commit/c198dc73c5b7a6a2f092ad2719506a88a062da39))
+
+## [6.0.0-alpha.41](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.40...v6.0.0-alpha.41) (2022-07-22)
+
+
+### Features
+
+* adding more details to error log line when http request fails ([#617](https://github.com/energywebfoundation/iam-client-lib/issues/617)) ([e99ceda](https://github.com/energywebfoundation/iam-client-lib/commit/e99cedac0e1ebc66369cfbfced39dce07822aab3))
+
+## [6.0.0-alpha.40](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.39...v6.0.0-alpha.40) (2022-07-21)
+
+
+### Features
+
+* **revocation:** add credentialStatus to EIP191JWT ([52fec66](https://github.com/energywebfoundation/iam-client-lib/commit/52fec660c53ac04dbaf5f9aee07004c6ee786064))
+
+## [6.0.0-alpha.39](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.38...v6.0.0-alpha.39) (2022-07-21)
+
 ## [6.0.0-alpha.38](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.37...v6.0.0-alpha.38) (2022-07-21)
 
 
