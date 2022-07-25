@@ -376,7 +376,7 @@ describe('Сlaim tests', () => {
             namespace: claimType,
             version: version.toString(),
           },
-          issuerFields,
+          issuerFields: issuerFields || [],
         });
         expect(vpObject.verifiableCredential[0].issuer).toEqual(
           signerService.didHex
@@ -420,7 +420,9 @@ describe('Сlaim tests', () => {
       expect(requester).toEqual(requesterDID);
       expect(claimIssuer).toEqual([issuerDID]);
 
-      if (registrationTypes.includes(RegistrationTypes.OnChain)) {
+      if (
+        registrationTypes.includes(RegistrationTypes.OnChain)
+      ) {
         expect(onChainProof).toHaveLength(132);
 
         if (expirationTimestamp || roleDefinitionValidityPeriod) {
@@ -696,8 +698,6 @@ describe('Сlaim tests', () => {
       };
 
       test('should be able to issue and publish onchain', async () => {
-        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
-
         await enrolAndIssue(rootOwner, staticIssuer, {
           subjectDID: rootOwnerDID,
           claimType,
@@ -746,6 +746,46 @@ describe('Сlaim tests', () => {
           subjectDID: rootOwnerDID,
           claimType,
           registrationTypes,
+          publishOnChain: false,
+        });
+        expect(
+          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+        ).toBe(false);
+      });
+
+      test('should be able to issue when role registered onchain', async () => {
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
+          publishOnChain: true,
+        });
+        expect(
+          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+        ).toBe(true);
+
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
+          publishOnChain: true,
+        });
+      });
+
+      test('should be able to issue without publishing onchain', async () => {
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
           publishOnChain: false,
         });
         expect(

@@ -82,6 +82,7 @@ import { compareDID, isValidDID } from '../../utils/did';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
 import { StatusListEntryVerification } from '@ew-did-registry/revocation';
+import { getLogger } from '../../config';
 
 const {
   id,
@@ -455,13 +456,13 @@ export class ClaimsService {
         expiry,
         sub
       );
-      if (!subjectAgreement) {
-        throw new Error(
-          ERROR_MESSAGES.ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED
-        );
-      }
       message.onChainProof = onChainProof;
       if (publishOnChain) {
+        if (!subjectAgreement) {
+          throw new Error(
+            ERROR_MESSAGES.ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED
+          );
+        }
         await this.registerOnchain({
           token,
           subjectAgreement,
@@ -526,20 +527,6 @@ export class ClaimsService {
     if (claim.token) {
       claim = { ...claim, ...this.extractClaimRequest(claim.token) };
     }
-
-    if (
-      !claim.subjectAgreement &&
-      claim.subject === this._signerService.did &&
-      claim.claimType &&
-      claim.claimTypeVersion
-    ) {
-      claim.subjectAgreement = await this.approveRolePublishing({
-        subject: this._signerService.did,
-        role: claim.claimType as string,
-        version: +claim.claimTypeVersion,
-      });
-    }
-
     if (!readyToBeRegisteredOnchain(claim)) {
       throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
     }
@@ -548,10 +535,26 @@ export class ClaimsService {
       claimTypeVersion,
       claimType,
       acceptedBy,
-      subjectAgreement,
       onChainProof,
       expirationTimestamp,
     } = claim;
+    let { subjectAgreement } = claim;
+
+    if (await this.hasOnChainRole(subject, claimType, +claimTypeVersion)) {
+      getLogger().warn(
+        `[ClaimsService]: ${claimType} already registered for ${subject}`
+      );
+      return;
+    }
+
+    if (!subjectAgreement && subject === this._signerService.did) {
+      subjectAgreement = await this.approveRolePublishing({
+        subject: this._signerService.did,
+        role: claimType,
+        version: +claimTypeVersion,
+      });
+    }
+
     const expiry = expirationTimestamp || eternityTimestamp;
     const data = this._claimManagerInterface.encodeFunctionData('register', [
       addressOf(subject),
