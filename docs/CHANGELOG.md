@@ -1,3 +1,10 @@
+## [6.0.0-alpha.42](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.41...v6.0.0-alpha.42) (2022-07-25)
+
+
+### Bug Fixes
+
+* set check ethr signer for node clients ([#618](https://github.com/energywebfoundation/iam-client-lib/issues/618)) ([c198dc7](https://github.com/energywebfoundation/iam-client-lib/commit/c198dc73c5b7a6a2f092ad2719506a88a062da39))
+
 ## [6.0.0-alpha.41](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.40...v6.0.0-alpha.41) (2022-07-22)
 
 
