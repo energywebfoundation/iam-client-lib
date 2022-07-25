@@ -85,7 +85,10 @@ export class SignerService {
       } else if (isEthSigner === 'false') {
         this._isEthSigner = false;
       }
+    } else {
+      this._setIsEthrSigner();
     }
+
     /**
      * @todo provide general way to initialize with previously saved key
      */
@@ -501,5 +504,30 @@ export class SignerService {
     this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(
       sig
     )}`;
+  }
+
+  /**
+   * Set `_isEthSigner` value based on a signed message.
+   * Generates a test message and signs it.
+   */
+  private async _setIsEthrSigner() {
+    // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
+    // keccak256 hash is applied for Metamask to display a coherent hex value when signing
+    const message = arrayify(keccak256('0x'));
+    // Computation of the digest in order to recover the public key under the assumption
+    // that signature was performed as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
+    const digest = arrayify(hashMessage(message));
+    const sig = await this._signer.signMessage(message);
+    const keyFromMessage = recoverPublicKey(message, sig);
+    const keyFromDigest = recoverPublicKey(digest, sig);
+    if (getAddress(this._address) === computeAddress(keyFromMessage)) {
+      this._publicKey = keyFromMessage;
+      this._isEthSigner = false;
+    } else if (getAddress(this._address) === computeAddress(keyFromDigest)) {
+      this._publicKey = keyFromDigest;
+      this._isEthSigner = true;
+    } else {
+      throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
+    }
   }
 }
