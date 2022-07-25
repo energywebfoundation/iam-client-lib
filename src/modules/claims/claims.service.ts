@@ -1422,6 +1422,9 @@ export class ClaimsService {
       await this._signerService.signMessage(arrayify(proofHash))
     );
   }
+  claimIsExpired(date: number): boolean {
+    return !!date && date < Date.now();
+  }
 
   /**
    * Verifies:
@@ -1438,15 +1441,21 @@ export class ClaimsService {
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
 
-    const proofVerified = await this._verifiableCredentialService.verify(vc);
+    let proofVerified;
+    try {
+      proofVerified = await this._verifiableCredentialService.verify(vc);
+    } catch (e) {
+      proofVerified = false;
+      errors.push((e as Error).message);
+    }
+
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
-
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
-      await this._issuerVerification.verifyIssuer(issuerDID, role);
+      await this._issuerVerification.verifyIssuer(issuerDID, role); //CRED EXP CHECKED HERE
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
@@ -1480,12 +1489,14 @@ export class ClaimsService {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    const issuerVerified = await this._issuerVerification.verifyIssuer(
+    let issuerVerified = true;
+    const { status, error } = await this._issuerVerification.verifyIssuer(
       issuerDID,
       payload?.claimData?.claimType
     );
-    if (!issuerVerified) {
-      errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED);
+    if (!status && error) {
+      issuerVerified = false;
+      errors.push(error);
     }
     const proofVerified = await this._didRegistry.verifyPublicClaim(
       eip191Jwt,
@@ -1494,10 +1505,30 @@ export class ClaimsService {
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
+    let isExpired = false;
+    if (payload?.exp) {
+      if (this.claimIsExpired(payload.exp)) {
+        isExpired = true;
+        errors.push(ERROR_MESSAGES.CLAIM_EXPIRED);
+      }
+    }
     return {
       errors: errors,
-      isVerified: !!proofVerified && !!issuerVerified,
+      isVerified: !!proofVerified && !!issuerVerified && !isExpired,
     };
+  }
+
+  async fetchCredential(
+    subjectDID: string,
+    roleNamespace: string
+  ): Promise<
+    VerifiableCredential<RoleCredentialSubject> | RoleEIP191JWT | undefined
+  > {
+    const resolvedCredential = await this._credentialResolver.getCredential(
+      subjectDID,
+      roleNamespace
+    );
+    return resolvedCredential;
   }
 
   /**

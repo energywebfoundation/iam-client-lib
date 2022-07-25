@@ -35,4 +35,5 @@ export enum ERROR_MESSAGES {
   PROOF_NOT_VERIFIED = 'Proof not verified',
   OFFCHAIN_ISSUER_NOT_AUTHORIZED = 'Issuer of OffChain Claim is not authorized',
   NO_CLAIM_RESOLVED = 'No claim found for given DID and role',
+  CLAIM_EXPIRED = 'Credential Expired',
 }

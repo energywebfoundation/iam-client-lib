@@ -20,12 +20,14 @@ claimsService.getClaimById(claim.id);
 
 ### Methods
 
+- [claimIsExpired](modules_claims.ClaimsService.md#claimisexpired)
 - [claimRevocationDetails](modules_claims.ClaimsService.md#claimrevocationdetails)
 - [createClaimRequest](modules_claims.ClaimsService.md#createclaimrequest)
 - [createDelegateProof](modules_claims.ClaimsService.md#createdelegateproof)
 - [createIdentityProof](modules_claims.ClaimsService.md#createidentityproof)
 - [createSelfSignedClaim](modules_claims.ClaimsService.md#createselfsignedclaim)
 - [deleteClaim](modules_claims.ClaimsService.md#deleteclaim)
+- [fetchCredential](modules_claims.ClaimsService.md#fetchcredential)
 - [getClaimById](modules_claims.ClaimsService.md#getclaimbyid)
 - [getClaimId](modules_claims.ClaimsService.md#getclaimid)
 - [getClaimsByIssuer](modules_claims.ClaimsService.md#getclaimsbyissuer)
@@ -67,6 +69,22 @@ claimsService.getClaimById(claim.id);
 | `_verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md) |
 
 ## Methods
+
+### claimIsExpired
+
+▸ **claimIsExpired**(`date`): `boolean`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `date` | `number` |
+
+#### Returns
+
+`boolean`
+
+___
 
 ### claimRevocationDetails
 
@@ -238,6 +256,23 @@ claimsService.deleteClaim({
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### fetchCredential
+
+▸ **fetchCredential**(`subjectDID`, `roleNamespace`): `Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `subjectDID` | `string` |
+| `roleNamespace` | `string` |
+
+#### Returns
+
+`Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
 
 ___
 

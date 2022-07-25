@@ -443,20 +443,20 @@ export abstract class VerifiableCredentialsServiceBase {
    * @returns true if the proof is valid
    */
   public async verify<T extends ICredentialSubject>(
-    vp: VerifiablePresentation | VerifiableCredential<T>,
+    vcOrVp: VerifiablePresentation | VerifiableCredential<T>,
     options?: ProofOptions
   ): Promise<boolean> {
     let verifyFunc: (vp: string, proof_options: string) => Promise<string>;
-    if (vp.type.includes(CredentialType.VerifiablePresentation)) {
+    if (vcOrVp.type.includes(CredentialType.VerifiablePresentation)) {
       verifyFunc = this.verifyPresentation;
-    } else if (vp.type.includes(CredentialType.VerifiableCredential)) {
+    } else if (vcOrVp.type.includes(CredentialType.VerifiableCredential)) {
       verifyFunc = this.verifyCredential;
     } else {
       throw new Error('Unsupported verifiable credential or presentation type');
     }
 
     const verifyResultsString = await verifyFunc(
-      JSON.stringify(vp),
+      JSON.stringify(vcOrVp),
       JSON.stringify(options || {})
     );
 
@@ -473,11 +473,11 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     if (
-      vp.type.includes(CredentialType.VerifiableCredential) &&
-      'expirationDate' in vp &&
-      vp.expirationDate
+      vcOrVp.type.includes(CredentialType.VerifiableCredential) &&
+      'expirationDate' in vcOrVp &&
+      vcOrVp.expirationDate
     ) {
-      const expirationDate = new Date(vp.expirationDate).getTime();
+      const expirationDate = new Date(vcOrVp.expirationDate).getTime();
       const currentDate = Date.now();
 
       if (expirationDate < currentDate) {
@@ -486,13 +486,13 @@ export abstract class VerifiableCredentialsServiceBase {
     }
 
     if (
-      vp.type.includes(CredentialType.VerifiablePresentation) &&
-      'verifiableCredential' in vp &&
-      vp.verifiableCredential &&
-      Array.isArray(vp.verifiableCredential)
+      vcOrVp.type.includes(CredentialType.VerifiablePresentation) &&
+      'verifiableCredential' in vcOrVp &&
+      vcOrVp.verifiableCredential &&
+      Array.isArray(vcOrVp.verifiableCredential)
     ) {
       const vcsVerification = await Promise.all([
-        ...vp.verifiableCredential.map((vc) => this.verify(vc)),
+        ...vcOrVp.verifiableCredential.map((vc) => this.verify(vc)),
       ]);
 
       return vcsVerification.every(Boolean);
