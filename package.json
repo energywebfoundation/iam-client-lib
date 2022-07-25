@@ -1,6 +1,6 @@
 {
   "name": "iam-client-lib",
-  "version": "6.0.0-alpha.37",
+  "version": "6.0.0-alpha.38",
   "description": "Library for Decentralized Identity and Access Management",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -138,6 +138,7 @@
     "coveralls": "^3.1.0",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-prettier": "^3.4.0",
     "ganache-cli": "^6.12.2",
     "husky": "^4.3.8",

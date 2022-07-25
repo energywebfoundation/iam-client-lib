@@ -37,7 +37,7 @@ ___
 
 ### issuerFields
 
-• `Optional` **issuerFields**: [`IssuerFields`](modules_verifiable_credentials.IssuerFields.md)[]
+• `Optional` **issuerFields**: `IssuerFields`[]
 
 ___
 

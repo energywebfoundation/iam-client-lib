@@ -1,3 +1,10 @@
+## [6.0.0-alpha.38](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.37...v6.0.0-alpha.38) (2022-07-21)
+
+
+### Features
+
+* handle unexpected did service endpoint ([#610](https://github.com/energywebfoundation/iam-client-lib/issues/610)) ([a360e93](https://github.com/energywebfoundation/iam-client-lib/commit/a360e936bae152b336611a9105dea638af60349d))
+
 ## [6.0.0-alpha.37](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.36...v6.0.0-alpha.37) (2022-07-19)
 
 
