@@ -20,7 +20,6 @@ claimsService.getClaimById(claim.id);
 
 ### Methods
 
-- [claimIsExpired](modules_claims.ClaimsService.md#claimisexpired)
 - [claimRevocationDetails](modules_claims.ClaimsService.md#claimrevocationdetails)
 - [createClaimRequest](modules_claims.ClaimsService.md#createclaimrequest)
 - [createDelegateProof](modules_claims.ClaimsService.md#createdelegateproof)
@@ -69,26 +68,6 @@ claimsService.getClaimById(claim.id);
 | `_verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md) |
 
 ## Methods
-
-### claimIsExpired
-
-▸ **claimIsExpired**(`date`): `boolean`
-
-Verifies if a date is expired (occurs before given date)
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `date` | `number` | to be verified |
-
-#### Returns
-
-`boolean`
-
-Boolean indicating if a date is expired
-
-___
 
 ### claimRevocationDetails
 
@@ -280,7 +259,7 @@ Fetch a credential from storage
 
 `Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
 
-Resolved Credetiantial of type VerifiableCredential<RoleCredentialSubject> || RoleEIP191JWT or undefined
+credential if available or undefined if not
 
 ___
 

@@ -948,7 +948,7 @@ describe('Сlaim tests', () => {
             ],
             publishOnChain: true,
             issuerFields: [],
-            expirationTimestamp: Date.now() + 10000,
+            expirationTimestamp: Date.now() + 7000,
           });
           await signerService.connect(rootOwner, ProviderType.PrivateKey);
           const subjectDoc = await didRegistry.getDidDocument({
@@ -960,7 +960,7 @@ describe('Сlaim tests', () => {
             claim: { token: issuedToken },
           });
           const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-          await delay(9000);
+          await delay(8000);
           await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const result = await claimsService.resolveCredentialAndVerify(
             rootOwnerDID,
@@ -990,13 +990,13 @@ describe('Сlaim tests', () => {
         const vc = await createExampleSignedCredential(
           issuerFields,
           `${vcExpired}.${root}`,
-          new Date(Date.now() + 10000)
+          new Date(Date.now() + 8000)
         );
         nock(vc.credentialStatus?.statusListCredential as string)
           .get('')
           .reply(200, undefined);
         const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-        await delay(11000);
+        await delay(8000);
         const result = await claimsService.verifyVc(vc);
         expect(result.errors).toContain('Verifiable Credential is expired.');
         expect(result.isVerified).toBe(false);
@@ -1012,7 +1012,7 @@ describe('Сlaim tests', () => {
           ],
           publishOnChain: true,
           issuerFields: [],
-          expirationTimestamp: Date.now() + 10000,
+          expirationTimestamp: Date.now() + 7000,
         });
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
         const subjectDoc = await didRegistry.getDidDocument({
@@ -1024,7 +1024,7 @@ describe('Сlaim tests', () => {
           claim: { token: issuedToken },
         });
         const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-        await delay(11000);
+        await delay(8000);
         await signerService.connect(staticIssuer, ProviderType.PrivateKey);
         const credential = await claimsService.fetchCredential(
           rootOwnerDID,

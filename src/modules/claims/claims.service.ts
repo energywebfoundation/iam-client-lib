@@ -1424,16 +1424,6 @@ export class ClaimsService {
   }
 
   /**
-   * Verifies if a date is expired (occurs before given date)
-   * @param {Number} date to be verified
-   * @return Boolean indicating if a date is expired
-   *
-   */
-  claimIsExpired(date: number): boolean {
-    return !!date && date < Date.now();
-  }
-
-  /**
    * Verifies:
    * - That credential proof is valid
    * - That credential was issued by authorized issuer
@@ -1511,12 +1501,10 @@ export class ClaimsService {
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
-    const isExpired = payload?.exp && this.claimIsExpired(payload.exp);
-    if (payload?.exp) {
+    const isExpired = payload?.exp && (payload?.exp * 1000) < Date.now();
       if (isExpired) {
         errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
       }
-    }
     return {
       errors: errors,
       isVerified: !!proofVerified && !!issuerVerified && !isExpired,
@@ -1528,7 +1516,7 @@ export class ClaimsService {
    *
    * @param subjectDID The DID to try to resolve a credential for
    * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
-   * @return Resolved Credetiantial of type VerifiableCredential<RoleCredentialSubject> || RoleEIP191JWT or undefined
+   * @return credential if available or undefined if not
    */
   async fetchCredential(
     subjectDID: string,
