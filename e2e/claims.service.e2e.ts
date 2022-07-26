@@ -62,8 +62,8 @@ const verifyVcRole = 'verifyVcRole';
 const verifyVcRole2 = 'verifyVcRole2';
 const verifyOffChainClaimRole = 'verifyOnChain';
 const resolveVC = 'resolvevc';
-const verifyVcExpired = 'vcExpired';
-const eipExpired = 'eipExpired';
+const verifyResolvedVcExpired = 'vcResolvedExpired';
+const eip191JwtExpired = 'eip191JwtExpired';
 const vcExpired = 'vcExpired';
 const namespace = root;
 const version = 1;
@@ -119,9 +119,9 @@ const roles: Record<string, IRoleDefinitionV2> = {
     roleName: verifyOffChainClaimRole,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
-  [`${verifyVcExpired}.${root}`]: {
+  [`${verifyResolvedVcExpired}.${root}`]: {
     ...baseRoleDef,
-    roleName: verifyVcExpired,
+    roleName: verifyResolvedVcExpired,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
   [`${vcExpired}.${root}`]: {
@@ -129,9 +129,9 @@ const roles: Record<string, IRoleDefinitionV2> = {
     roleName: vcExpired,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
-  [`${eipExpired}.${root}`]: {
+  [`${eip191JwtExpired}.${root}`]: {
     ...baseRoleDef,
-    roleName: eipExpired,
+    roleName: eip191JwtExpired,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
 };
@@ -275,9 +275,9 @@ describe('Сlaim tests', () => {
       returnSteps: false,
     });
     await domainsService.createRole({
-      roleName: verifyVcExpired,
+      roleName: verifyResolvedVcExpired,
       namespace,
-      data: roles[`${verifyVcExpired}.${root}`],
+      data: roles[`${verifyResolvedVcExpired}.${root}`],
       returnSteps: false,
     });
     await domainsService.createRole({
@@ -287,9 +287,9 @@ describe('Сlaim tests', () => {
       returnSteps: false,
     });
     await domainsService.createRole({
-      roleName: eipExpired,
+      roleName: eip191JwtExpired,
       namespace,
-      data: roles[`${eipExpired}.${root}`],
+      data: roles[`${eip191JwtExpired}.${root}`],
       returnSteps: false,
     });
     ({ didRegistry, claimsService } = await connectToDidRegistry());
@@ -938,7 +938,7 @@ describe('Сlaim tests', () => {
         });
 
         test('resolveCredentialAndVerify should return an expiration error if the credential is expired', async () => {
-          const roleName = `${verifyVcExpired}.${root}`;
+          const roleName = `${verifyResolvedVcExpired}.${root}`;
           const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
             subjectDID: rootOwnerDID,
             claimType: roleName,
@@ -1002,7 +1002,7 @@ describe('Сlaim tests', () => {
         expect(result.isVerified).toBe(false);
       });
       test('verifyEIP should return an expiration error if the credential is expired', async () => {
-        const roleName = `${eipExpired}.${root}`;
+        const roleName = `${eip191JwtExpired}.${root}`;
         const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
           subjectDID: rootOwnerDID,
           claimType: roleName,

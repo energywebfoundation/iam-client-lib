@@ -74,15 +74,19 @@ claimsService.getClaimById(claim.id);
 
 ▸ **claimIsExpired**(`date`): `boolean`
 
+Verifies if a date is expired (occurs before given date)
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `date` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `date` | `number` | to be verified |
 
 #### Returns
 
 `boolean`
+
+Boolean indicating if a date is expired
 
 ___
 
@@ -263,16 +267,20 @@ ___
 
 ▸ **fetchCredential**(`subjectDID`, `roleNamespace`): `Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
 
+Fetch a credential from storage
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subjectDID` | `string` |
-| `roleNamespace` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjectDID` | `string` | The DID to try to resolve a credential for |
+| `roleNamespace` | `string` | - |
 
 #### Returns
 
 `Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
+
+Resolved Credetiantial of type VerifiableCredential<RoleCredentialSubject> || RoleEIP191JWT or undefined
 
 ___
 

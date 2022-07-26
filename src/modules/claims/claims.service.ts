@@ -1422,6 +1422,13 @@ export class ClaimsService {
       await this._signerService.signMessage(arrayify(proofHash))
     );
   }
+
+  /**
+   * Verifies if a date is expired (occurs before given date)
+   * @param {Number} date to be verified
+   * @return Boolean indicating if a date is expired
+   *
+   */
   claimIsExpired(date: number): boolean {
     return !!date && date < Date.now();
   }
@@ -1489,13 +1496,12 @@ export class ClaimsService {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    let issuerVerified = true;
-    const { status, error } = await this._issuerVerification.verifyIssuer(
-      issuerDID,
-      payload?.claimData?.claimType
-    );
-    if (!status && error) {
-      issuerVerified = false;
+    const { status: issuerVerified, error } =
+      await this._issuerVerification.verifyIssuer(
+        issuerDID,
+        payload?.claimData?.claimType
+      );
+    if (!issuerVerified && error) {
       errors.push(error);
     }
     const proofVerified = await this._didRegistry.verifyPublicClaim(
@@ -1505,11 +1511,10 @@ export class ClaimsService {
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
-    let isExpired = false;
+    const isExpired = payload?.exp && this.claimIsExpired(payload.exp);
     if (payload?.exp) {
-      if (this.claimIsExpired(payload.exp)) {
-        isExpired = true;
-        errors.push(ERROR_MESSAGES.CLAIM_EXPIRED);
+      if (isExpired) {
+        errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
       }
     }
     return {
@@ -1518,17 +1523,23 @@ export class ClaimsService {
     };
   }
 
+  /**
+   * Fetch a credential from storage
+   *
+   * @param subjectDID The DID to try to resolve a credential for
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
+   * @return Resolved Credetiantial of type VerifiableCredential<RoleCredentialSubject> || RoleEIP191JWT or undefined
+   */
   async fetchCredential(
     subjectDID: string,
     roleNamespace: string
   ): Promise<
     VerifiableCredential<RoleCredentialSubject> | RoleEIP191JWT | undefined
   > {
-    const resolvedCredential = await this._credentialResolver.getCredential(
+    return await this._credentialResolver.getCredential(
       subjectDID,
       roleNamespace
     );
-    return resolvedCredential;
   }
 
   /**
