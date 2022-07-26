@@ -1501,10 +1501,10 @@ export class ClaimsService {
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
-    const isExpired = payload?.exp && (payload?.exp * 1000) < Date.now();
-      if (isExpired) {
-        errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
-      }
+    const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
+    if (isExpired) {
+      errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
+    }
     return {
       errors: errors,
       isVerified: !!proofVerified && !!issuerVerified && !isExpired,
