@@ -1501,6 +1501,7 @@ export class ClaimsService {
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
+    // Date.now() and JWT expiration time both identify the time elapsed since January 1, 1970 00:00:00 UTC
     const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
     if (isExpired) {
       errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
