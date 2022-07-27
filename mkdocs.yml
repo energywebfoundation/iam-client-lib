@@ -6,6 +6,7 @@ nav:
   - Setup:
       - Initialization: setup/initialization.md
       - Logging: setup/logging.md
+      - Using in browser: setup/using_in_browser.md
   - Guides:
       - Application: guides/application.md
       - Asset: guides/asset.md
