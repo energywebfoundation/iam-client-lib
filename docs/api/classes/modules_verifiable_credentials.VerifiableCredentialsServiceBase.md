@@ -290,7 +290,7 @@ ___
 
 ### verify
 
-▸ **verify**<`T`\>(`vp`, `options?`): `Promise`<`boolean`\>
+▸ **verify**<`T`\>(`vcOrVp`, `options?`): `Promise`<`boolean`\>
 
 Verify a given credential or presentation. Throws an error if the credential or presentation proof is not valid.
 
@@ -309,7 +309,7 @@ await verifiableCredentialsService.verify(presentation);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `vp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> | verifiable presentation or credential |
+| `vcOrVp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> | - |
 | `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
 
 #### Returns

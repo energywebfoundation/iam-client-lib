@@ -42,6 +42,7 @@ import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
 import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
+import { RoleEIP191JWT } from '@energyweb/vc-verification';
 
 const { namehash, id } = utils;
 
@@ -61,6 +62,9 @@ const verifyVcRole = 'verifyVcRole';
 const verifyVcRole2 = 'verifyVcRole2';
 const verifyOffChainClaimRole = 'verifyOnChain';
 const resolveVC = 'resolvevc';
+const verifyResolvedVcExpired = 'vcResolvedExpired';
+const eip191JwtExpired = 'eip191JwtExpired';
+const vcExpired = 'vcExpired';
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -113,6 +117,21 @@ const roles: Record<string, IRoleDefinitionV2> = {
   [`${verifyOffChainClaimRole}.${root}`]: {
     ...baseRoleDef,
     roleName: verifyOffChainClaimRole,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${verifyResolvedVcExpired}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyResolvedVcExpired,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${vcExpired}.${root}`]: {
+    ...baseRoleDef,
+    roleName: vcExpired,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${eip191JwtExpired}.${root}`]: {
+    ...baseRoleDef,
+    roleName: eip191JwtExpired,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
 };
@@ -253,6 +272,24 @@ describe('Сlaim tests', () => {
       roleName: resolveVC,
       namespace,
       data: roles[`${resolveVC}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: verifyResolvedVcExpired,
+      namespace,
+      data: roles[`${verifyResolvedVcExpired}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: vcExpired,
+      namespace,
+      data: roles[`${vcExpired}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: eip191JwtExpired,
+      namespace,
+      data: roles[`${eip191JwtExpired}.${root}`],
       returnSteps: false,
     });
     ({ didRegistry, claimsService } = await connectToDidRegistry());
@@ -894,6 +931,7 @@ describe('Сlaim tests', () => {
           await claimsService.publishPublicClaim({
             claim: { token: issuedToken },
           });
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const result = await claimsService.resolveCredentialAndVerify(
             rootOwnerDID,
             roleName
@@ -904,7 +942,6 @@ describe('Сlaim tests', () => {
 
         test('resolveCredentialAndVerify should resolve and verify an EIP191JWT', async () => {
           const roleName = `${verifyOffChainClaimRole}.${root}`;
-          // await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
             subjectDID: rootOwnerDID,
             claimType: roleName,
@@ -919,6 +956,7 @@ describe('Сlaim tests', () => {
           await claimsService.publishPublicClaim({
             claim: { token: issuedToken },
           });
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const result = await claimsService.resolveCredentialAndVerify(
             rootOwnerDID,
             roleName
@@ -938,6 +976,39 @@ describe('Сlaim tests', () => {
           );
           expect(result.isVerified).toBe(false);
         });
+
+        test('resolveCredentialAndVerify should return an expiration error if the credential is expired', async () => {
+          const roleName = `${verifyResolvedVcExpired}.${root}`;
+          const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+            subjectDID: rootOwnerDID,
+            claimType: roleName,
+            registrationTypes: [
+              RegistrationTypes.OnChain,
+              RegistrationTypes.OffChain,
+            ],
+            publishOnChain: true,
+            issuerFields: [],
+            expirationTimestamp: Date.now() + 7000,
+          });
+          await signerService.connect(rootOwner, ProviderType.PrivateKey);
+          const subjectDoc = await didRegistry.getDidDocument({
+            did: rootOwnerDID,
+            includeClaims: true,
+          });
+          mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+          await claimsService.publishPublicClaim({
+            claim: { token: issuedToken },
+          });
+          const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+          await delay(8000);
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+          const result = await claimsService.resolveCredentialAndVerify(
+            rootOwnerDID,
+            roleName
+          );
+          expect(result.errors).toContain('Credential Expired');
+          expect(result.isVerified).toBe(false);
+        });
       });
       test('verifyVc should verify a VC with no errors if the issuer is authorized', async () => {
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
@@ -952,6 +1023,58 @@ describe('Сlaim tests', () => {
         const result = await claimsService.verifyVc(vc);
         expect(result.errors).toHaveLength(0);
         expect(result.isVerified).toBe(true);
+      });
+      test('verifyVc should return a credential expired error if credential is expired', async () => {
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const issuerFields = [];
+        const vc = await createExampleSignedCredential(
+          issuerFields,
+          `${vcExpired}.${root}`,
+          new Date(Date.now() + 8000)
+        );
+        nock(vc.credentialStatus?.statusListCredential as string)
+          .get('')
+          .reply(200, undefined);
+        const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+        await delay(8000);
+        const result = await claimsService.verifyVc(vc);
+        expect(result.errors).toContain('Verifiable Credential is expired.');
+        expect(result.isVerified).toBe(false);
+      });
+      test('verifyEIP should return an expiration error if the credential is expired', async () => {
+        const roleName = `${eip191JwtExpired}.${root}`;
+        const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType: roleName,
+          registrationTypes: [
+            RegistrationTypes.OnChain,
+            RegistrationTypes.OffChain,
+          ],
+          publishOnChain: true,
+          issuerFields: [],
+          expirationTimestamp: Date.now() + 7000,
+        });
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const subjectDoc = await didRegistry.getDidDocument({
+          did: rootOwnerDID,
+          includeClaims: true,
+        });
+        mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+        await claimsService.publishPublicClaim({
+          claim: { token: issuedToken },
+        });
+        const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+        await delay(8000);
+        await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+        const credential = await claimsService.fetchCredential(
+          rootOwnerDID,
+          roleName
+        );
+        const result = await claimsService.verifyRoleEIP191JWT(
+          credential as RoleEIP191JWT
+        );
+        expect(result.errors).toContain('Credential Expired');
+        expect(result.isVerified).toBe(false);
       });
     });
   });

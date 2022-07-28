@@ -1441,11 +1441,17 @@ export class ClaimsService {
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
 
-    const proofVerified = await this._verifiableCredentialService.verify(vc);
+    let proofVerified;
+    try {
+      proofVerified = await this._verifiableCredentialService.verify(vc);
+    } catch (e) {
+      proofVerified = false;
+      errors.push((e as Error).message);
+    }
+
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
-
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
@@ -1483,12 +1489,13 @@ export class ClaimsService {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    const issuerVerified = await this._issuerVerification.verifyIssuer(
-      issuerDID,
-      payload?.claimData?.claimType
-    );
-    if (!issuerVerified) {
-      errors.push(ERROR_MESSAGES.OFFCHAIN_ISSUER_NOT_AUTHORIZED);
+    const { status: issuerVerified, error } =
+      await this._issuerVerification.verifyIssuer(
+        issuerDID,
+        payload?.claimData?.claimType
+      );
+    if (!issuerVerified && error) {
+      errors.push(error);
     }
     const proofVerified = await this._didRegistry.verifyPublicClaim(
       eip191Jwt,
@@ -1497,10 +1504,34 @@ export class ClaimsService {
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
+    // Date.now() and JWT expiration time both identify the time elapsed since January 1, 1970 00:00:00 UTC
+    const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
+    if (isExpired) {
+      errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
+    }
     return {
       errors: errors,
-      isVerified: !!proofVerified && !!issuerVerified,
+      isVerified: !!proofVerified && issuerVerified && !isExpired,
     };
+  }
+
+  /**
+   * Fetch a credential from storage
+   *
+   * @param subjectDID The DID to try to resolve a credential for
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
+   * @return credential if available or undefined if not
+   */
+  async fetchCredential(
+    subjectDID: string,
+    roleNamespace: string
+  ): Promise<
+    VerifiableCredential<RoleCredentialSubject> | RoleEIP191JWT | undefined
+  > {
+    return await this._credentialResolver.getCredential(
+      subjectDID,
+      roleNamespace
+    );
   }
 
   /**

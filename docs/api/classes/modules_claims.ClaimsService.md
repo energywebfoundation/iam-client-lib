@@ -26,6 +26,7 @@ claimsService.getClaimById(claim.id);
 - [createIdentityProof](modules_claims.ClaimsService.md#createidentityproof)
 - [createSelfSignedClaim](modules_claims.ClaimsService.md#createselfsignedclaim)
 - [deleteClaim](modules_claims.ClaimsService.md#deleteclaim)
+- [fetchCredential](modules_claims.ClaimsService.md#fetchcredential)
 - [getClaimById](modules_claims.ClaimsService.md#getclaimbyid)
 - [getClaimId](modules_claims.ClaimsService.md#getclaimid)
 - [getClaimsByIssuer](modules_claims.ClaimsService.md#getclaimsbyissuer)
@@ -238,6 +239,27 @@ claimsService.deleteClaim({
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### fetchCredential
+
+▸ **fetchCredential**(`subjectDID`, `roleNamespace`): `Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
+
+Fetch a credential from storage
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subjectDID` | `string` | The DID to try to resolve a credential for |
+| `roleNamespace` | `string` | - |
+
+#### Returns
+
+`Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
+
+credential if available or undefined if not
 
 ___
 
