@@ -1508,7 +1508,7 @@ export class ClaimsService {
     }
     return {
       errors: errors,
-      isVerified: !!proofVerified && !!issuerVerified && !isExpired,
+      isVerified: !!proofVerified && issuerVerified && !isExpired,
     };
   }
 
