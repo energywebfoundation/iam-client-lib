@@ -1,3 +1,16 @@
+## [6.0.0-alpha.44](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.43...v6.0.0-alpha.44) (2022-07-28)
+
+
+### Features
+
+* **exp:** add explainer for expiration ([5441a4f](https://github.com/energywebfoundation/iam-client-lib/commit/5441a4f3164c87feb85bb8dce3023211c37eccff))
+* **exp:** apply prettier formatting ([7261112](https://github.com/energywebfoundation/iam-client-lib/commit/72611120383a4b0ea94cd57ad27c9bde0d9052df))
+* **exp:** fix issuerVerified as boolean ([d82eeeb](https://github.com/energywebfoundation/iam-client-lib/commit/d82eeebd1c36105fbf2156b0b04e7ec7487328e4))
+* **exp:** remove method for expiration check; decrease test await ([9ae092c](https://github.com/energywebfoundation/iam-client-lib/commit/9ae092cf228862d6886a70ed96c543eeb5128e87))
+* **verifyExp:** add documentation; address PR comments ([e7a50a5](https://github.com/energywebfoundation/iam-client-lib/commit/e7a50a5ca4ef7861d63184930be2fcac76b6c089))
+* **verifyExp:** add exp verification method and tests for EIP and VP ([7099c09](https://github.com/energywebfoundation/iam-client-lib/commit/7099c0909d785a5c3eb0637542a1644cd5b3ab7d))
+* **verifyExp:** remove comment ([1d96490](https://github.com/energywebfoundation/iam-client-lib/commit/1d964906d94637e041d10a1c540a5dfde47d769d))
+
 ## [6.0.0-alpha.43](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.42...v6.0.0-alpha.43) (2022-07-25)
 
 
