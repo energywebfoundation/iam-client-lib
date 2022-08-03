@@ -461,8 +461,6 @@ describe('Сlaim tests', () => {
         expect(onChainProof).toHaveLength(132);
 
         if (expirationTimestamp || roleDefinitionValidityPeriod) {
-          console.log(expirationTimestamp, 'EXP TIMESTAMP');
-          console.log(roleDefinitionValidityPeriod, 'VALIDITY PERIOD');
           const filter = claimManager.filters.RoleRegistered();
           const logs = await claimManager.queryFilter(filter);
 
