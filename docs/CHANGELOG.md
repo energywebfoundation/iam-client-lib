@@ -1,3 +1,10 @@
+## [6.0.0-alpha.46](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.45...v6.0.0-alpha.46) (2022-08-04)
+
+
+### Features
+
+* add documentation comments in dist ([cc34e96](https://github.com/energywebfoundation/iam-client-lib/commit/cc34e963e52342259277e2643ac8dc5819df47f8))
+
 ## [6.0.0-alpha.45](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.44...v6.0.0-alpha.45) (2022-07-29)
 
 ## [6.0.0-alpha.44](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.43...v6.0.0-alpha.44) (2022-07-28)
