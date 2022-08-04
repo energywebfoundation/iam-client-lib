@@ -1,3 +1,10 @@
+## [6.0.0-alpha.47](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.46...v6.0.0-alpha.47) (2022-08-04)
+
+
+### Bug Fixes
+
+* **exp:** do not use dflt validity period to calculate timestamp if n… ([#623](https://github.com/energywebfoundation/iam-client-lib/issues/623)) ([9ce524d](https://github.com/energywebfoundation/iam-client-lib/commit/9ce524da24ab41df0e0fdaf253abf723fa6f2d89))
+
 ## [6.0.0-alpha.46](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.45...v6.0.0-alpha.46) (2022-08-04)
 
 
