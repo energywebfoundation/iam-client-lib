@@ -457,9 +457,7 @@ describe('Сlaim tests', () => {
       expect(requester).toEqual(requesterDID);
       expect(claimIssuer).toEqual([issuerDID]);
 
-      if (
-        registrationTypes.includes(RegistrationTypes.OnChain)
-      ) {
+      if (registrationTypes.includes(RegistrationTypes.OnChain)) {
         expect(onChainProof).toHaveLength(132);
 
         if (expirationTimestamp || roleDefinitionValidityPeriod) {
@@ -482,12 +480,6 @@ describe('Сlaim tests', () => {
             ) {
               expirationTimestamp &&
                 expect(args.expiry.toNumber()).toEqual(expirationTimestamp);
-
-              !expirationTimestamp &&
-                roleDefinitionValidityPeriod &&
-                expect(args.expiry.toNumber()).toBeLessThanOrEqual(
-                  Date.now() + roleDefinitionValidityPeriod
-                );
             }
           });
         }
