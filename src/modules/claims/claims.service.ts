@@ -700,7 +700,11 @@ export class ClaimsService {
     return message.issuedToken;
   }
 
-  // TODO: create docs annotations
+  /**
+   * Generates claim id or returns id of existing claim with same data
+   * @param {ClaimData} param.claimData - claim data 
+   * @returns claim identifier
+   */
   async getClaimId({ claimData }: { claimData: ClaimData }) {
     const services = await this._didRegistry.getServices();
     const service = services.find(

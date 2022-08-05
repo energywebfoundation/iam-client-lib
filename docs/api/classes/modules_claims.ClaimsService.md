@@ -292,6 +292,8 @@ ___
 
 ▸ **getClaimId**(`__namedParameters`): `Promise`<`string`\>
 
+Generates claim id or returns id of existing claim with same data
+
 #### Parameters
 
 | Name | Type |
@@ -302,6 +304,8 @@ ___
 #### Returns
 
 `Promise`<`string`\>
+
+claim identifier
 
 ___
 
