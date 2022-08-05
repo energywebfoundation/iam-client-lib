@@ -1,3 +1,5 @@
+## [6.0.0-alpha.48](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.47...v6.0.0-alpha.48) (2022-08-05)
+
 ## [6.0.0-alpha.47](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.46...v6.0.0-alpha.47) (2022-08-04)
 
 
