@@ -1,3 +1,10 @@
+## [6.0.0-alpha.50](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.49...v6.0.0-alpha.50) (2022-08-08)
+
+
+### Documentation
+
+* document iam initialization ([1552965](https://github.com/energywebfoundation/iam-client-lib/commit/15529659f004e8695adc48ed8fbfd5254b0737f7))
+
 ## [6.0.0-alpha.49](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.48...v6.0.0-alpha.49) (2022-08-08)
 
 
