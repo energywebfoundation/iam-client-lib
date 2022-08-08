@@ -1,3 +1,10 @@
+## [6.0.0-alpha.49](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.48...v6.0.0-alpha.49) (2022-08-08)
+
+
+### Bug Fixes
+
+* **did-registry:** optional encoding and algo of public key ([26a239f](https://github.com/energywebfoundation/iam-client-lib/commit/26a239f460363120305c37e8acfcc04a7cee13f1))
+
 ## [6.0.0-alpha.48](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.47...v6.0.0-alpha.48) (2022-08-05)
 
 ## [6.0.0-alpha.47](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.46...v6.0.0-alpha.47) (2022-08-04)
