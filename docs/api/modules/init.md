@@ -18,11 +18,13 @@
 
 ▸ **init**(`signerService`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](../classes/modules_assets.AssetsService.md) ; `cacheClient`: [`CacheClient`](../classes/modules_cache_client.CacheClient.md) ; `connectToDidRegistry`: (`ipfsStore?`: `string`) => `Promise`<{ `claimsService`: [`ClaimsService`](../classes/modules_claims.ClaimsService.md) ; `didRegistry`: [`DidRegistry`](../classes/modules_did_registry.DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](../classes/modules_domains.DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](../classes/modules_staking.StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](../classes/modules_messaging.MessagingService.md) ; `signerService`: [`SignerService`](../classes/modules_signer.SignerService.md)  }\>
 
+Initializes messaging service and creates initializer of cache client
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `signerService` | [`SignerService`](../classes/modules_signer.SignerService.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `signerService` | [`SignerService`](../classes/modules_signer.SignerService.md) | initialized instance of signer service |
 
 #### Returns
 

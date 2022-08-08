@@ -60,6 +60,11 @@ export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
   return init(signerService);
 }
 
+/**
+ * Initializes messaging service and creates initializer of cache client
+ * 
+ * @param signerService initialized instance of signer service
+ */
 export async function init(signerService: SignerService) {
   const messagingService = await MessagingService.create(signerService);
 
