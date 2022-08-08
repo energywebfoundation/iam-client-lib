@@ -4,7 +4,7 @@ import {
   PubKeyType,
 } from '@ew-did-registry/did-resolver-interface';
 import { KeyType } from '@ew-did-registry/keys';
-import { createCheckers, iface, enumtype } from 'ts-interface-checker';
+import { createCheckers, iface, enumtype, opt } from 'ts-interface-checker';
 
 const IS_REQ_STRING = 'string';
 export const { UpdateServicePoint, UpdateDelegate, UpdatePublicKey } =
@@ -41,8 +41,8 @@ export const { UpdateServicePoint, UpdateDelegate, UpdatePublicKey } =
       didAttribute: enumtype({ PublicKey: DIDAttribute.PublicKey }),
       data: iface([], {
         type: enumtype(PubKeyType),
-        algo: enumtype(KeyType),
-        encoding: enumtype(Encoding),
+        algo: opt(enumtype(KeyType)),
+        encoding: opt(enumtype(Encoding)),
         value: iface([], {
           publicKey: IS_REQ_STRING,
           tag: IS_REQ_STRING,
