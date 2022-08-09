@@ -1255,21 +1255,21 @@ export class ClaimsService {
     const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
 
     if (!enrolmentPreconditions || enrolmentPreconditions.length === 0) return;
-
-    const enroledRoles = new Set(
-      (await this.getClaimsBySubject({ did: subject, isAccepted: true })).map(
-        ({ claimType }) => claimType
-      )
+    const requiredRoles = enrolmentPreconditions
+      .filter(({ type }) => type === PreconditionType.Role)
+      .map(({ conditions }) => conditions)
+      .reduce((all, cur) => all.concat(cur), []);
+    await Promise.all(
+      requiredRoles.map(async (role) => {
+        const verificationResult = await this.resolveCredentialAndVerify(
+          subject,
+          role
+        );
+        if (!verificationResult.isVerified) {
+          throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
+        }
+      })
     );
-    const requiredRoles = new Set(
-      enrolmentPreconditions
-        .filter(({ type }) => type === PreconditionType.Role)
-        .map(({ conditions }) => conditions)
-        .reduce((all, cur) => all.concat(cur), [])
-    );
-    if (Array.from(requiredRoles).some((role) => !enroledRoles.has(role))) {
-      throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
-    }
   }
 
   /**
@@ -1437,7 +1437,7 @@ export class ClaimsService {
     vc: VerifiableCredential<RoleCredentialSubject>
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
-    const issuerDID = this._signerService.did;
+    const issuerDID = vc.issuer;
 
     let proofVerified;
     try {
@@ -1453,7 +1453,7 @@ export class ClaimsService {
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
-      await this._issuerVerification.verifyIssuer(issuerDID, role);
+      await this._issuerVerification.verifyIssuer(issuerDID as string, role);
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
@@ -1486,10 +1486,10 @@ export class ClaimsService {
   ): Promise<CredentialVerificationResult> {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
-    const issuerDID = this._signerService.did;
-    const { verified: issuerVerified, error } =
+    const issuerDID = roleEIP191JWT.payload.iss;
+    const { status: issuerVerified, error } =
       await this._issuerVerification.verifyIssuer(
-        issuerDID,
+        issuerDID as string,
         payload?.claimData?.claimType
       );
     if (!issuerVerified && error) {
