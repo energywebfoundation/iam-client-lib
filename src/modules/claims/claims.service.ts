@@ -1438,6 +1438,9 @@ export class ClaimsService {
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
     const issuerDID = vc.issuer;
+    if (!issuerDID) {
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
+    }
 
     let proofVerified;
     try {
@@ -1486,10 +1489,13 @@ export class ClaimsService {
   ): Promise<CredentialVerificationResult> {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
-    const issuerDID = roleEIP191JWT.payload.iss;
+    const issuerDID = roleEIP191JWT.payload?.iss;
+    if (!issuerDID) {
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
+    }
     const { status: issuerVerified, error } =
       await this._issuerVerification.verifyIssuer(
-        issuerDID as string,
+        issuerDID,
         payload?.claimData?.claimType
       );
     if (!issuerVerified && error) {
