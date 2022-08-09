@@ -740,7 +740,7 @@ mockGetAllowedRoles.mockImplementation(async (issuer) => {
       ).toBe(true);
     });
     test('should enrol when prerequisite role is met and the issuer is not the issuer of the prerequisite role', async () => {
-      //Root Owner enrols to 'electrician' role
+      //Root Owner enrols to 'Electrician' role
       const enrolToElectrician = await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${electrician}.${root}`,
@@ -756,7 +756,7 @@ mockGetAllowedRoles.mockImplementation(async (issuer) => {
         claim: { token: enrolToElectrician.issuedToken },
       });
 
-      //Project Installer Candidate Enrols to Project Installer role
+      //Project Installer Candidate enrols to 'Project Installer' role
       const enrolToProjectInstaller = await enrolAndIssue(
         projectInstallerCandidate,
         staticIssuer,
@@ -779,7 +779,7 @@ mockGetAllowedRoles.mockImplementation(async (issuer) => {
         claim: { token: enrolToProjectInstaller.issuedToken },
       });
 
-      //Root Owner enrols to 'Project Electrician' role. 'Electrician' is pre-requisite role; Project Installer is issuer
+      //Root Owner enrols to 'Project Electrician' role. 'Electrician' is pre-requisite role; Project Installer is issuer of 'Project Electrician' role, not issuer of 'Electrician' role
       const enrolToProjectElectrician = await enrolAndIssue(
         rootOwner,
         projectInstallerCandidate,
