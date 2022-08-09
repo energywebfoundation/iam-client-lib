@@ -659,14 +659,34 @@ describe('Сlaim tests', () => {
         returnSteps: false,
       });
 
-      await enrolAndIssue(rootOwner, staticIssuer, {
+      const roleOneIssuance = await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${roleName1}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain,
+        ],
+        publishOnChain: true,
+        issuerFields: [],
+      });
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await claimsService.publishPublicClaim({
+        claim: { token: roleOneIssuance.issuedToken },
       });
 
-      await enrolAndIssue(rootOwner, staticIssuer, {
+      const roleTwoIssuance = await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${roleName3}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain,
+        ],
+        publishOnChain: true,
+        issuerFields: [],
+      });
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await claimsService.publishPublicClaim({
+        claim: { token: roleTwoIssuance.issuedToken },
       });
       return expect(
         await claimsService.hasOnChainRole(
