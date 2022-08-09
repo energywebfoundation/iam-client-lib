@@ -30,12 +30,10 @@ didRegistry.getDidDocument();
 - [createDocument](modules_did_registry.DidRegistry.md#createdocument)
 - [createPublicClaim](modules_did_registry.DidRegistry.md#createpublicclaim)
 - [decodeJWTToken](modules_did_registry.DidRegistry.md#decodejwttoken)
-- [downloadClaims](modules_did_registry.DidRegistry.md#downloadclaims)
 - [getDidDelegates](modules_did_registry.DidRegistry.md#getdiddelegates)
 - [getDidDocument](modules_did_registry.DidRegistry.md#getdiddocument)
 - [getDidPublicKeys](modules_did_registry.DidRegistry.md#getdidpublickeys)
 - [getServices](modules_did_registry.DidRegistry.md#getservices)
-- [getVcOrClaim](modules_did_registry.DidRegistry.md#getvcorclaim)
 - [init](modules_did_registry.DidRegistry.md#init)
 - [issuePublicClaim](modules_did_registry.DidRegistry.md#issuepublicclaim)
 - [revokeDidDocument](modules_did_registry.DidRegistry.md#revokediddocument)
@@ -176,31 +174,6 @@ payload of the JWT token
 
 ___
 
-### downloadClaims
-
-▸ **downloadClaims**(`options`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
-
-Download document claims from IPFS
-
-```typescript
-const document = await didRegistry.getDidDocument();
-didRegistry.downloadClaims(document.services);
-```
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `options` | [`DownloadClaimsOptions`](../interfaces/modules_did_registry.DownloadClaimsOptions.md) | object with options |
-
-#### Returns
-
-`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
-
-resolved claims
-
-___
-
 ### getDidDelegates
 
 ▸ **getDidDelegates**(`options?`): `Promise`<`undefined` \| `string`[]\>
@@ -304,22 +277,6 @@ didRegistry.getServices({
 `Promise`<`IServiceEndpoint`[]\>
 
 list of claims
-
-___
-
-### getVcOrClaim
-
-▸ **getVcOrClaim**(`serviceEndpoint`): `Promise`<`string`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `serviceEndpoint` | `any` |
-
-#### Returns
-
-`Promise`<`string`\>
 
 ___
 
