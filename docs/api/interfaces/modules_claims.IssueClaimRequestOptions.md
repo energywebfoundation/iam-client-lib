@@ -28,7 +28,7 @@ ___
 
 • `Optional` **expirationTimestamp**: `number`
 
-Defines how long the claim is valid.
+A Unix timestamp expressed in milliseconds of when the claim expires.
 
 ___
 

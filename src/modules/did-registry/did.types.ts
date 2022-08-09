@@ -75,7 +75,7 @@ export interface IssuePublicClaimOptions {
   /* Public claim data object */
   publicClaim?: IPublicClaim;
 
-  /** Defines how long the claim is valid. */
+  /** A Unix timestamp expressed in milliseconds of when the claim expires. */
   expirationTimestamp?: number;
 }
 
