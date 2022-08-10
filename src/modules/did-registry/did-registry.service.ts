@@ -206,7 +206,7 @@ export class DidRegistry {
   async getDidPublicKeys({
     did = this._signerService.did,
   }: GetDidPublicKeysOptions = {}): Promise<IPublicKey[]> {
-    const didDocument = await this.getDidDocument({ did });
+    const didDocument = await this.getDidDocument({ did }); //add comment
     return didDocument?.publicKey;
   }
 
