@@ -1493,7 +1493,7 @@ export class ClaimsService {
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
-    const { status: issuerVerified, error } =
+    const { verified: issuerVerified, error } =
       await this._issuerVerification.verifyIssuer(
         issuerDID,
         payload?.claimData?.claimType
