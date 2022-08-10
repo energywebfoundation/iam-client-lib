@@ -2,7 +2,7 @@ import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
-  IRoleDefinition,
+  IRoleDefinitionV2,
   PreconditionType,
   RoleCredentialSubject,
 } from '@energyweb/credential-governance';
@@ -1252,7 +1252,7 @@ export class ClaimsService {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
     }
 
-    const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
+    const { enrolmentPreconditions } = roleDefinition as IRoleDefinitionV2;
 
     if (!enrolmentPreconditions || enrolmentPreconditions.length === 0) return;
     const requiredRoles = enrolmentPreconditions
@@ -1437,7 +1437,7 @@ export class ClaimsService {
     vc: VerifiableCredential<RoleCredentialSubject>
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
-    const issuerDID = vc.issuer;
+    const issuerDID = vc.issuer
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
