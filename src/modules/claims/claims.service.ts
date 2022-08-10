@@ -443,7 +443,9 @@ export class ClaimsService {
     };
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const expiry = expirationTimestamp || eternityTimestamp;
+      const expiry = expirationTimestamp
+        ? Math.floor(expirationTimestamp / 1000)
+        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -683,7 +685,9 @@ export class ClaimsService {
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
-      const expiry = expirationTimestamp || eternityTimestamp;
+      const expiry = expirationTimestamp
+        ? Math.floor(expirationTimestamp / 1000)
+        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -702,7 +706,7 @@ export class ClaimsService {
 
   /**
    * Generates claim id or returns id of existing claim with same data
-   * @param {ClaimData} param.claimData - claim data 
+   * @param {ClaimData} param.claimData - claim data
    * @returns claim identifier
    */
   async getClaimId({ claimData }: { claimData: ClaimData }) {
@@ -771,12 +775,13 @@ export class ClaimsService {
       if (!claimData) {
         throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
       }
+      const expirationTimestamp = claimData.expirationTimestamp
+        ? Math.floor(+claimData.expirationTimestamp / 1000)
+        : undefined;
 
       await this.registerOnchain({
         ...claimData,
-        expirationTimestamp: claimData.expirationTimestamp
-          ? +claimData.expirationTimestamp
-          : undefined,
+        expirationTimestamp,
         onChainProof: claimData.onChainProof as string,
         acceptedBy: claimData.acceptedBy as string,
       });
@@ -1366,7 +1371,7 @@ export class ClaimsService {
    *
    * @param {String} role role claim type
    * @param {Number} version role version
-   * @param {Number} expiry time when the claim expires
+   * @param {Number} expiry time in seconds when the claim expires
    * @param {String} subject DID of the subject
    *
    * @return on-chain proof signature
@@ -1482,7 +1487,7 @@ export class ClaimsService {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    const { status: issuerVerified, error } =
+    const { verified: issuerVerified, error } =
       await this._issuerVerification.verifyIssuer(
         issuerDID,
         payload?.claimData?.claimType

@@ -1,3 +1,4 @@
+import jsonwebtoken from 'jsonwebtoken';
 import {
   IRoleDefinitionV2,
   IssuerFields,
@@ -43,6 +44,7 @@ import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory
 import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
 import { RoleEIP191JWT } from '@energyweb/vc-verification';
+import { JwtPayload } from '@ew-did-registry/jwt';
 
 const { namehash, id } = utils;
 
@@ -479,7 +481,9 @@ describe('Сlaim tests', () => {
               args.role === namehash(claimType)
             ) {
               expirationTimestamp &&
-                expect(args.expiry.toNumber()).toEqual(expirationTimestamp);
+                expect(args.expiry.toNumber()).toEqual(
+                  Math.floor(expirationTimestamp / 1000)
+                );
             }
           });
         }
@@ -820,6 +824,38 @@ describe('Сlaim tests', () => {
         expect(
           await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
         ).toBe(false);
+      });
+
+      test('should be able to set expiry', async () => {
+        const expirationTimestamp = new Date().getTime() + 60_1000;
+        const waitForRegister = new Promise((resolve) =>
+          claimManager.once(
+            'RoleRegistered',
+            (subject, role, version, expiry: BigNumber, issuer) =>
+              resolve(expiry.toNumber())
+          )
+        );
+        const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          expirationTimestamp,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
+          publishOnChain: true,
+        });
+        const payload = jsonwebtoken.decode(issuedToken) as JwtPayload;
+        const exp = payload.exp as number;
+        expect(exp).not.toBeUndefined;
+
+        const expiry = await waitForRegister;
+
+        expect(
+          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+        ).toBe(true);
+        expect(expiry).toBe(Math.floor(expirationTimestamp / 1000));
+        expect(expiry).toBe(exp);
       });
     });
 

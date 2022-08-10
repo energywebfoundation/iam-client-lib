@@ -224,7 +224,7 @@ export interface RegisterOnchainOptions {
   /** DID of the claim subject */
   subject?: string;
 
-  /** Defines how long the claim is valid. */
+  /** Defines how long the claim is valid (seconds). */
   expirationTimestamp?: number;
 }
 
@@ -269,7 +269,7 @@ export interface IssueClaimOptions {
    */
   credentialStatusOverride?: StatusList2021Entry;
 
-  /** Defines how long the claim is valid. */
+  /** Defines how long the claim is valid (millisecons) */
   expirationTimestamp?: number;
 }
 
