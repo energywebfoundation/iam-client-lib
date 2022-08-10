@@ -702,7 +702,7 @@ export class ClaimsService {
 
   /**
    * Generates claim id or returns id of existing claim with same data
-   * @param {ClaimData} param.claimData - claim data 
+   * @param {ClaimData} param.claimData - claim data
    * @returns claim identifier
    */
   async getClaimId({ claimData }: { claimData: ClaimData }) {
@@ -1482,7 +1482,7 @@ export class ClaimsService {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
     const issuerDID = this._signerService.did;
-    const { status: issuerVerified, error } =
+    const { verified: issuerVerified, error } =
       await this._issuerVerification.verifyIssuer(
         issuerDID,
         payload?.claimData?.claimType
