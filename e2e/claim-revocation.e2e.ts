@@ -21,7 +21,7 @@ import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { setLogger } from '../src/config/logger.config';
 import { ConsoleLogger } from '../src/utils/logger';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
-import { getE2eIpfsConfig } from './utils/setup-ipfs';
+import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
 const { id } = utils;
 
@@ -86,7 +86,7 @@ describe('On-chain claim revocation', () => {
     const { connectToDidRegistry, domainsService, assetsService } =
       await connectToCacheServer();
     const { didRegistry, claimsService } = await connectToDidRegistry(
-      getE2eIpfsConfig()
+      await spawnIpfsDaemon()
     );
 
     await signerService.publicKeyAndIdentityToken();
@@ -178,6 +178,10 @@ describe('On-chain claim revocation', () => {
     jest.clearAllMocks();
     await setupENS(await rootOwner.getAddress());
     setLogger(new ConsoleLogger());
+  });
+
+  afterEach(async () => {
+    await shutDownIpfsDaemon();
   });
 
   test('revoke claim, revoke type DID, issuer is revoker', async () => {
