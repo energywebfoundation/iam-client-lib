@@ -45,7 +45,7 @@ ___
 
 • `Optional` **expirationTimestamp**: `number`
 
-Defines how long the claim is valid.
+Defines how long the claim is valid (seconds).
 
 ___
 

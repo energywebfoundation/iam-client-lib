@@ -1437,7 +1437,7 @@ export class ClaimsService {
     vc: VerifiableCredential<RoleCredentialSubject>
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
-    const issuerDID = vc.issuer
+    const issuerDID = vc.issuer;
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
