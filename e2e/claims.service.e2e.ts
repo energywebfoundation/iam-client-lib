@@ -338,10 +338,10 @@ describe('Сlaim tests', () => {
       returnSteps: false,
     });
 
-({ didRegistry, claimsService } = await connectToDidRegistry(
-  await spawnIpfsDaemon()
-));
-mockGetAllowedRoles.mockImplementation(async (issuer) => {
+    ({ didRegistry, claimsService } = await connectToDidRegistry(
+      await spawnIpfsDaemon()
+    ));
+    mockGetAllowedRoles.mockImplementation(async (issuer) => {
       const roleDefs = Object.values(roles);
       const isRoleIssuerOfRole = await Promise.all(
         roleDefs.map(

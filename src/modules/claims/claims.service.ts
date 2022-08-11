@@ -1437,7 +1437,7 @@ export class ClaimsService {
     vc: VerifiableCredential<RoleCredentialSubject>
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
-    const issuerDID = vc.issuer
+    const issuerDID = vc.issuer;
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
@@ -1456,7 +1456,12 @@ export class ClaimsService {
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
-      await this._issuerVerification.verifyIssuer(issuerDID as string, role);
+      if (typeof issuerDID === 'string') {
+        await this._issuerVerification.verifyIssuer(issuerDID, role);
+      }
+      else {
+        await this._issuerVerification.verifyIssuer(issuerDID.id, role);
+      }
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
