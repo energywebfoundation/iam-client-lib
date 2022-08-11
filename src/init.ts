@@ -10,7 +10,7 @@ import {
   SignerService,
 } from './modules/signer';
 import { StakingFactoryService } from './modules/staking';
-import { DidRegistry } from './modules/did-registry';
+import { DidRegistry, IpfsConfig } from './modules/did-registry';
 import { MessagingService } from './modules/messaging';
 import { CacheClient } from './modules/cache-client';
 import { DomainsService } from './modules/domains';
@@ -62,7 +62,7 @@ export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
 
 /**
  * Initializes messaging service and creates initializer of cache client
- * 
+ *
  * @param signerService initialized instance of signer service
  */
 export async function init(signerService: SignerService) {
@@ -98,13 +98,13 @@ export async function init(signerService: SignerService) {
     );
 
     async function connectToDidRegistry(
-      ipfsStore?: string
+      ipfsConfig: IpfsConfig
     ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
       const didRegistry = await DidRegistry.connect(
         signerService,
         cacheClient,
         assetsService,
-        ipfsStore
+        ipfsConfig
       );
       const claimsService = await ClaimsService.create(
         signerService,
