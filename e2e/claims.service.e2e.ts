@@ -45,6 +45,7 @@ import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
 import { RoleEIP191JWT } from '@energyweb/vc-verification';
 import { JwtPayload } from '@ew-did-registry/jwt';
+import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
 const { namehash, id } = utils;
 
@@ -294,7 +295,9 @@ describe('Сlaim tests', () => {
       data: roles[`${eip191JwtExpired}.${root}`],
       returnSteps: false,
     });
-    ({ didRegistry, claimsService } = await connectToDidRegistry());
+    ({ didRegistry, claimsService } = await connectToDidRegistry(
+      await spawnIpfsDaemon()
+    ));
     mockGetAllowedRoles.mockImplementation(async (issuer) => {
       const roleDefs = Object.values(roles);
       const isRoleIssuerOfRole = await Promise.all(
@@ -322,6 +325,10 @@ describe('Сlaim tests', () => {
       signerService,
       cacheClient
     );
+  });
+
+  afterEach(async () => {
+    await shutDownIpfsDaemon();
   });
 
   describe('Role claim tests', () => {

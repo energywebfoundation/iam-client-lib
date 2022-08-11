@@ -269,7 +269,7 @@ export interface IssueClaimOptions {
    */
   credentialStatusOverride?: StatusList2021Entry;
 
-  /** Defines how long the claim is valid (millisecons) */
+  /** Defines how long the claim is valid (milliseconds) */
   expirationTimestamp?: number;
 }
 
