@@ -1,6 +1,7 @@
 import Ctl from 'ipfsd-ctl';
 import path from 'path';
 import ipfsHttpModule from 'ipfs-http-client';
+import { IpfsConfig } from '../../src';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let ipfsd: any;
@@ -27,7 +28,7 @@ export async function shutDownIpfsDaemon(): Promise<void> {
   return ipfsd && ipfsd.stop();
 }
 
-export function getE2eIpfsConfig() {
+export function getE2eIpfsConfig(): IpfsConfig {
   const projectId = '2DD5GcJRpMeuqMoKsgT95AQ8OI3';
   const projectSecret = '842995992aa1edd763196b30d727a45d';
   const auth =
