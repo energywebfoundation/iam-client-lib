@@ -1,4 +1,5 @@
 import { initWithPrivateKeySigner, setCacheConfig } from '../src';
+import { getE2eIpfsConfig } from './utils/setup-ipfs';
 
 const rpcUrl = 'https://volta-rpc.energyweb.org';
 const privateKey = '';
@@ -18,21 +19,8 @@ describe.skip('Cache client', () => {
     );
     const { connectToDidRegistry, assetsService } =
       await connectToCacheServer();
-    const projectId = '2DCe3TNAHzzmoSBrcPyWx4NOyrv';
-    const projectSecret = 'ef64ce66962c5de8146a841529abd14c';
-    const auth =
-      'Basic ' +
-      Buffer.from(projectId + ':' + projectSecret).toString('base64');
-    const ipfsClientConfig = {
-      host: 'ipfs.infura.io',
-      port: 5001,
-      protocol: 'https',
-      headers: {
-        authorization: auth,
-      },
-    };
     const { claimsService, didRegistry } = await connectToDidRegistry(
-      ipfsClientConfig
+      getE2eIpfsConfig()
     );
 
     const assetAddress = await assetsService.registerAsset();

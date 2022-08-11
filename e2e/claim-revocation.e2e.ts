@@ -21,6 +21,7 @@ import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { setLogger } from '../src/config/logger.config';
 import { ConsoleLogger } from '../src/utils/logger';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
+import { getE2eIpfsConfig } from './utils/setup-ipfs';
 
 const { id } = utils;
 
@@ -84,21 +85,8 @@ describe('On-chain claim revocation', () => {
       await initWithPrivateKeySigner(user.privateKey, rpcUrl);
     const { connectToDidRegistry, domainsService, assetsService } =
       await connectToCacheServer();
-    const projectId = '2DCe3TNAHzzmoSBrcPyWx4NOyrv';
-    const projectSecret = 'ef64ce66962c5de8146a841529abd14c';
-    const auth =
-      'Basic ' +
-      Buffer.from(projectId + ':' + projectSecret).toString('base64');
-    const ipfsClientConfig = {
-      host: 'ipfs.infura.io',
-      port: 5001,
-      protocol: 'https',
-      headers: {
-        authorization: auth,
-      },
-    };
     const { didRegistry, claimsService } = await connectToDidRegistry(
-      ipfsClientConfig
+      getE2eIpfsConfig()
     );
 
     await signerService.publicKeyAndIdentityToken();

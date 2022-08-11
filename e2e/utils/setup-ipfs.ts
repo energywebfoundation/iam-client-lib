@@ -26,3 +26,18 @@ export async function spawnIpfsDaemon(): Promise<any> {
 export async function shutDownIpfsDaemon(): Promise<void> {
   return ipfsd && ipfsd.stop();
 }
+
+export function getE2eIpfsConfig() {
+  const projectId = '2DD5GcJRpMeuqMoKsgT95AQ8OI3';
+  const projectSecret = '842995992aa1edd763196b30d727a45d';
+  const auth =
+    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+  return {
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    headers: {
+      authorization: auth,
+    },
+  };
+}
