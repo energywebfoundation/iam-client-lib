@@ -98,7 +98,22 @@ describe('Off-chain credential revocation', () => {
       assetsService,
       verifiableCredentialsService,
     } = await connectToCacheServer();
-    const { didRegistry, claimsService } = await connectToDidRegistry();
+    const projectId = '2DCe3TNAHzzmoSBrcPyWx4NOyrv';
+    const projectSecret = 'ef64ce66962c5de8146a841529abd14c';
+    const auth =
+      'Basic ' +
+      Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    const ipfsClientConfig = {
+      host: 'ipfs.infura.io',
+      port: 5001,
+      protocol: 'https',
+      headers: {
+        authorization: auth,
+      },
+    };
+    const { didRegistry, claimsService } = await connectToDidRegistry(
+      ipfsClientConfig
+    );
 
     await signerService.publicKeyAndIdentityToken();
 

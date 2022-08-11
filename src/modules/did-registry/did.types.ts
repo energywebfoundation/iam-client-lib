@@ -12,6 +12,13 @@ export interface AssetProfile {
   icon?: string;
 }
 
+export interface IpfsConfig {
+  host: string;
+  port?: number;
+  protocol?: string;
+  headers?: Record<string, any>;
+}
+
 export interface AssetProfiles {
   [key: string]: AssetProfile;
 }

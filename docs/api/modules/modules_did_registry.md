@@ -18,6 +18,7 @@
 - [GetDidDelegatesOptions](../interfaces/modules_did_registry.GetDidDelegatesOptions.md)
 - [GetDidPublicKeysOptions](../interfaces/modules_did_registry.GetDidPublicKeysOptions.md)
 - [GetServicesOptions](../interfaces/modules_did_registry.GetServicesOptions.md)
+- [IpfsConfig](../interfaces/modules_did_registry.IpfsConfig.md)
 - [IssuePublicClaimOptions](../interfaces/modules_did_registry.IssuePublicClaimOptions.md)
 - [Profile](../interfaces/modules_did_registry.Profile.md)
 - [UpdateDocumentOptions](../interfaces/modules_did_registry.UpdateDocumentOptions.md)

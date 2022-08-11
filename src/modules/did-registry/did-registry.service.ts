@@ -43,6 +43,7 @@ import {
   GetDIDDocumentOptions,
   GetDidPublicKeysOptions,
   GetServicesOptions,
+  IpfsConfig,
   IssuePublicClaimOptions,
   UpdateDocumentOptions,
   UpdateSignedDidDelegateOptions,
@@ -86,7 +87,7 @@ export class DidRegistry {
     private _signerService: SignerService,
     private _cacheClient: CacheClient,
     private _assetsService: AssetsService,
-    private _ipfsUrl = 'https://ipfs.infura.io:5001/api/v0/'
+    private _ipfsConfig: IpfsConfig
   ) {
     this._signerService.onInit(this.init.bind(this));
   }
@@ -95,13 +96,13 @@ export class DidRegistry {
     signerService: SignerService,
     cacheClient: CacheClient,
     assetsService: AssetsService,
-    ipfsUrl?: string
+    ipfsConfig: IpfsConfig
   ) {
     const registry = new DidRegistry(
       signerService,
       cacheClient,
       assetsService,
-      ipfsUrl
+      ipfsConfig
     );
     await registry.init();
     return registry;
@@ -121,7 +122,7 @@ export class DidRegistry {
   }
 
   async init() {
-    this._ipfsStore = new DidStore(this._ipfsUrl);
+    this._ipfsStore = new DidStore(this._ipfsConfig);
     await this._setOperator();
     this.setJWT();
     await this._setDocument();
