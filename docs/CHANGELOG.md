@@ -1,3 +1,26 @@
+## [6.0.0-alpha.51](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.50...v6.0.0-alpha.51) (2022-08-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* **infura:** Requiring object instead of string for IPFS config
+
+* fix(infura): allow DID reg to take in Infura config
+
+* fix(infura): create helper method for ipfs config for tests
+
+* fix(infura): add return type
+
+* fix(infura): use IFPS daemon for tests
+
+* fix(infura): use ipfs config for initUser methods
+
+* fix(infura): replace config with ipfs daemon for initUser methods
+
+### Features
+
+* **infura:** allow DID reg to take in Infura config ([#638](https://github.com/energywebfoundation/iam-client-lib/issues/638)) ([ad2ed1a](https://github.com/energywebfoundation/iam-client-lib/commit/ad2ed1abdaa94ca9ed40c21ab549bdc0921a326c))
+
 ## [6.0.0-alpha.50](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.49...v6.0.0-alpha.50) (2022-08-08)
 
 
