@@ -47,16 +47,16 @@ didRegistry.getDidDocument();
 
 ### constructor
 
-• **new DidRegistry**(`_signerService`, `_cacheClient`, `_assetsService`, `_ipfsUrl?`)
+• **new DidRegistry**(`_signerService`, `_cacheClient`, `_assetsService`, `_ipfsConfig`)
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `_signerService` | [`SignerService`](modules_signer.SignerService.md) | `undefined` |
-| `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) | `undefined` |
-| `_assetsService` | [`AssetsService`](modules_assets.AssetsService.md) | `undefined` |
-| `_ipfsUrl` | `string` | `'https://ipfs.infura.io:5001/api/v0/'` |
+| Name | Type |
+| :------ | :------ |
+| `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
+| `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
+| `_assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
+| `_ipfsConfig` | [`IpfsConfig`](../interfaces/modules_did_registry.IpfsConfig.md) |
 
 ## Accessors
 
@@ -462,7 +462,7 @@ ___
 
 ### connect
 
-▸ `Static` **connect**(`signerService`, `cacheClient`, `assetsService`, `ipfsUrl?`): `Promise`<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
+▸ `Static` **connect**(`signerService`, `cacheClient`, `assetsService`, `ipfsConfig`): `Promise`<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
 
 #### Parameters
 
@@ -471,7 +471,7 @@ ___
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 | `assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
-| `ipfsUrl?` | `string` |
+| `ipfsConfig` | [`IpfsConfig`](../interfaces/modules_did_registry.IpfsConfig.md) |
 
 #### Returns
 

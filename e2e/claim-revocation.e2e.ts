@@ -21,6 +21,7 @@ import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { setLogger } from '../src/config/logger.config';
 import { ConsoleLogger } from '../src/utils/logger';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
+import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
 const { id } = utils;
 
@@ -73,10 +74,14 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
   };
 });
 
+afterEach(async () => {
+  await shutDownIpfsDaemon();
+});
+
 describe('On-chain claim revocation', () => {
   const rootOwner = Wallet.createRandom().connect(provider);
 
-  const initUser = async () => {
+  const initUser = async (ipfs) => {
     const user = Wallet.createRandom().connect(provider);
     await replenish(user.address);
 
@@ -84,7 +89,7 @@ describe('On-chain claim revocation', () => {
       await initWithPrivateKeySigner(user.privateKey, rpcUrl);
     const { connectToDidRegistry, domainsService, assetsService } =
       await connectToCacheServer();
-    const { didRegistry, claimsService } = await connectToDidRegistry();
+    const { didRegistry, claimsService } = await connectToDidRegistry(ipfs);
 
     await signerService.publicKeyAndIdentityToken();
 
@@ -178,8 +183,9 @@ describe('On-chain claim revocation', () => {
   });
 
   test('revoke claim, revoke type DID, issuer is revoker', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -219,9 +225,10 @@ describe('On-chain claim revocation', () => {
   });
 
   test('revoke claim, revoke type DID, issuer is not revoker', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
-    const revoker = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
+    const revoker = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -261,9 +268,10 @@ describe('On-chain claim revocation', () => {
   });
 
   test('throw an error when revoker is not authorized', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
-    const revoker = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
+    const revoker = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -299,8 +307,9 @@ describe('On-chain claim revocation', () => {
   });
 
   test('throw an error when claim not found', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
 
     await createRole(
@@ -324,8 +333,9 @@ describe('On-chain claim revocation', () => {
   });
 
   test('revoke claim, revoke type DID, claim id', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -370,8 +380,9 @@ describe('On-chain claim revocation', () => {
   });
 
   test('should throw an error when claim id not found', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -404,8 +415,13 @@ describe('On-chain claim revocation', () => {
   });
 
   test('revoke multiple claim, revoke type DID', async () => {
-    const issuer = await initUser();
-    const subjects = [await initUser(), await initUser(), await initUser()];
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subjects = [
+      await initUser(ipfs),
+      await initUser(ipfs),
+      await initUser(ipfs),
+    ];
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -474,8 +490,13 @@ describe('On-chain claim revocation', () => {
   });
 
   test('revoke multiple claim, revoke type DID, claim id', async () => {
-    const issuer = await initUser();
-    const subjects = [await initUser(), await initUser(), await initUser()];
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subjects = [
+      await initUser(ipfs),
+      await initUser(ipfs),
+      await initUser(ipfs),
+    ];
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -527,8 +548,9 @@ describe('On-chain claim revocation', () => {
   });
 
   test('revocation details should match data', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -568,7 +590,8 @@ describe('On-chain claim revocation', () => {
   });
 
   test('should result with undefined when claim was not revoked', async () => {
-    const issuer = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
     const roleName = 'test1';
 
     await createRole(
@@ -594,9 +617,10 @@ describe('On-chain claim revocation', () => {
   });
 
   test('revoke claim, revoke type ROLE, issuer is revoker', async () => {
-    const issuer = await initUser();
-    const revoker = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const revoker = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
     const revokerRoleName = 'test1';
 
@@ -639,7 +663,8 @@ describe('On-chain claim revocation', () => {
   });
 
   test('should throw an error when two params missing', async () => {
-    const revoker = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const revoker = await initUser(ipfs);
     await expect(revoker.claimsService.revokeClaim({})).rejects.toThrow();
   });
 });
