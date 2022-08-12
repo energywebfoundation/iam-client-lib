@@ -28,7 +28,7 @@ import {
   CredentialRevoked,
   InvalidStatusList,
 } from '@ew-did-registry/revocation';
-import { getE2eIpfsConfig } from './utils/setup-ipfs';
+import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 
@@ -83,10 +83,14 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
   };
 });
 
+afterEach(async () => {
+  await shutDownIpfsDaemon();
+});
+
 describe('Off-chain credential revocation', () => {
   const rootOwner = Wallet.createRandom().connect(provider);
   const credentialStatusBase = 'https://identitycache.org/v1/status-list';
-  const initUser = async () => {
+  const initUser = async (ipfs) => {
     const user = Wallet.createRandom().connect(provider);
     await replenish(user.address);
 
@@ -98,9 +102,7 @@ describe('Off-chain credential revocation', () => {
       assetsService,
       verifiableCredentialsService,
     } = await connectToCacheServer();
-    const { didRegistry, claimsService } = await connectToDidRegistry(
-      getE2eIpfsConfig()
-    );
+    const { didRegistry, claimsService } = await connectToDidRegistry(ipfs);
 
     await signerService.publicKeyAndIdentityToken();
 
@@ -240,8 +242,9 @@ describe('Off-chain credential revocation', () => {
   });
 
   test('revoke claim, revoke type DID, issuer is revoker', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -276,9 +279,10 @@ describe('Off-chain credential revocation', () => {
   });
 
   test('revoke claim, revoke type DID, issuer is not revoker', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
-    const revoker = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
+    const revoker = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -317,9 +321,10 @@ describe('Off-chain credential revocation', () => {
   });
 
   test('throw an error when revoker is not authorized', async () => {
-    const issuer = await initUser();
-    const subject = await initUser();
-    const revoker = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const subject = await initUser(ipfs);
+    const revoker = await initUser(ipfs);
     const roleName = 'test1';
 
     const { roleDefinition } = await createRole(
@@ -362,7 +367,8 @@ describe('Off-chain credential revocation', () => {
   });
 
   test('revocation details should match data', async () => {
-    const issuer = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
 
     mockGetStatusListCredential.mockResolvedValueOnce(STATUS_LIST_CREDENTIAL);
 
@@ -378,7 +384,8 @@ describe('Off-chain credential revocation', () => {
   });
 
   test('credentials should be revoked', async () => {
-    const issuer = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
 
     mockGetStatusListCredential.mockResolvedValueOnce(STATUS_LIST_CREDENTIAL);
 
@@ -391,7 +398,8 @@ describe('Off-chain credential revocation', () => {
   });
 
   test('credentials should not be revoked', async () => {
-    const issuer = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
 
     mockGetStatusListCredential.mockResolvedValueOnce(null);
 
@@ -404,9 +412,10 @@ describe('Off-chain credential revocation', () => {
   });
 
   test('revoke claim, revoke type ROLE, issuer is revoker', async () => {
-    const issuer = await initUser();
-    const revoker = await initUser();
-    const subject = await initUser();
+    const ipfs = await spawnIpfsDaemon();
+    const issuer = await initUser(ipfs);
+    const revoker = await initUser(ipfs);
+    const subject = await initUser(ipfs);
     const roleName = 'test1';
     const revokerRoleName = 'test1';
 
