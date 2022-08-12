@@ -28,7 +28,7 @@ import {
   CredentialRevoked,
   InvalidStatusList,
 } from '@ew-did-registry/revocation';
-import { spawnIpfsDaemon, shutDownIpfsDaemon } from './utils/setup-ipfs';
+import { getE2eIpfsConfig } from './utils/setup-ipfs';
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 
@@ -83,14 +83,9 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
   };
 });
 
-afterEach(async () => {
-  await shutDownIpfsDaemon();
-});
-
 describe('Off-chain credential revocation', () => {
   const rootOwner = Wallet.createRandom().connect(provider);
   const credentialStatusBase = 'https://identitycache.org/v1/status-list';
-
   const initUser = async () => {
     const user = Wallet.createRandom().connect(provider);
     await replenish(user.address);
@@ -104,7 +99,7 @@ describe('Off-chain credential revocation', () => {
       verifiableCredentialsService,
     } = await connectToCacheServer();
     const { didRegistry, claimsService } = await connectToDidRegistry(
-      await spawnIpfsDaemon()
+      getE2eIpfsConfig()
     );
 
     await signerService.publicKeyAndIdentityToken();
