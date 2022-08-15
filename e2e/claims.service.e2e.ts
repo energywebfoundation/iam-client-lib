@@ -838,7 +838,7 @@ describe('Сlaim tests', () => {
         const waitForRegister = new Promise((resolve) =>
           claimManager.once(
             'RoleRegistered',
-            (subject, role, version, expiry: BigNumber, issuer) =>
+            (subject, role, version, expiry: BigNumber) =>
               resolve(expiry.toNumber())
           )
         );

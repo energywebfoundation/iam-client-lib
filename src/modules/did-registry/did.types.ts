@@ -16,6 +16,7 @@ export interface IpfsConfig {
   host: string;
   port?: number;
   protocol?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headers?: Record<string, any>;
 }
 
@@ -75,7 +76,7 @@ export interface IssuePublicClaimOptions {
   /* Public claim data object */
   publicClaim?: IPublicClaim;
 
-  /** Defines how long the claim is valid. */
+  /** A Unix timestamp expressed in milliseconds of when the claim expires. */
   expirationTimestamp?: number;
 }
 
