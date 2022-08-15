@@ -1,3 +1,162 @@
+## [6.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0...v6.0.0) (2022-08-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **infura:** Requiring object instead of string for IPFS config
+
+* fix(infura): allow DID reg to take in Infura config
+
+* fix(infura): create helper method for ipfs config for tests
+
+* fix(infura): add return type
+
+* fix(infura): use IFPS daemon for tests
+
+* fix(infura): use ipfs config for initUser methods
+
+* fix(infura): replace config with ipfs daemon for initUser methods
+* `VerifiableCredentialsService` is initialized earlier.
+
+### Features
+
+* add claim revocation ([2ab1d93](https://github.com/energywebfoundation/iam-client-lib/commit/2ab1d936e7afcc17ac2165272ccb8603412ed1fc))
+* add createdAt property to Claim interface ([c71344d](https://github.com/energywebfoundation/iam-client-lib/commit/c71344d24ba3f99373306ba56cdcd94ed713d59f))
+* add credential revocation ([1f8f028](https://github.com/energywebfoundation/iam-client-lib/commit/1f8f0282a38853d3bc6fbbce3e02a028f68749ff))
+* add documentation ([543494f](https://github.com/energywebfoundation/iam-client-lib/commit/543494fb0a7caa0fe57fd0880cefb13090ea086d))
+* add documentation comments in dist ([cc34e96](https://github.com/energywebfoundation/iam-client-lib/commit/cc34e963e52342259277e2643ac8dc5819df47f8))
+* add logs for axios errors ([2fa44c6](https://github.com/energywebfoundation/iam-client-lib/commit/2fa44c627ed2d11b79b566d90986a8c8e7d4d20c))
+* add method to get claims by revoker to cache client interface ([e24b506](https://github.com/energywebfoundation/iam-client-lib/commit/e24b506a929f5c7ff17df99b6d23dd7b31440efe))
+* adding more details to error log line when http request fails ([#617](https://github.com/energywebfoundation/iam-client-lib/issues/617)) ([e99ceda](https://github.com/energywebfoundation/iam-client-lib/commit/e99cedac0e1ebc66369cfbfced39dce07822aab3))
+* **addStatusToClaim:** add cred status to claim object ([f1f6328](https://github.com/energywebfoundation/iam-client-lib/commit/f1f6328e762b7d48dbf6a2a5dbdd4cca069090c0))
+* apply prettier formatting ([abc5154](https://github.com/energywebfoundation/iam-client-lib/commit/abc5154b1cd9e509fc7f30d8115e9eaf243d94fd))
+* **assets:** fix assets service interfaces ([c9c6a87](https://github.com/energywebfoundation/iam-client-lib/commit/c9c6a8742c4389653a6b593261fab784c27b5ff2))
+* **assets:** get asset owner ([1eb4832](https://github.com/energywebfoundation/iam-client-lib/commit/1eb48322b2736f0819366eef07a6fabb6cf8ff11))
+* authorize issuer ([7e8b864](https://github.com/energywebfoundation/iam-client-lib/commit/7e8b86480b81cc0d0f76588146c28271552ad589))
+* claim expieration ([#567](https://github.com/energywebfoundation/iam-client-lib/issues/567)) ([757de5a](https://github.com/energywebfoundation/iam-client-lib/commit/757de5a4458b0864d621cbb41c44f764c87b3b5c))
+* **claim:** issue VC when approving role request ([a3eefbc](https://github.com/energywebfoundation/iam-client-lib/commit/a3eefbc243f39f5392f7918b1cdb4e782faf8001))
+* **claims:** add status to vc ([28c556f](https://github.com/energywebfoundation/iam-client-lib/commit/28c556ffa0a9d53561507fdce95817a6672e43f3))
+* **claims:** verify credential status ([b5da79f](https://github.com/energywebfoundation/iam-client-lib/commit/b5da79f74a1f1c86243799c3b42ef60fc6a36b2f))
+* **claims:** verify role vc ([b318dbd](https://github.com/energywebfoundation/iam-client-lib/commit/b318dbdc2771165b8bbc215abb02d3f14f2020f1))
+* continue credentials exchange ([fd07ba0](https://github.com/energywebfoundation/iam-client-lib/commit/fd07ba0a67611b36f4b5e53ed054bf491e9d0375))
+* **docs:** quick start ([cd85c17](https://github.com/energywebfoundation/iam-client-lib/commit/cd85c1718a372509594db944fe6eb9d3beba667b))
+* **domain-reader:** refactor domainreader initialisation ([9f7ea6e](https://github.com/energywebfoundation/iam-client-lib/commit/9f7ea6ed79acbb58f95773d1d17272c61312184f))
+* **domains:** add MulticallTx type ([3be1e6f](https://github.com/energywebfoundation/iam-client-lib/commit/3be1e6fb7435d3fc6a76c3772c668f7fe4ee5eca))
+* ens scripts ([d7f0df3](https://github.com/energywebfoundation/iam-client-lib/commit/d7f0df38c5eb0ff1d7b44159b6a83ec606927790))
+* **exp:** add explainer for expiration ([5441a4f](https://github.com/energywebfoundation/iam-client-lib/commit/5441a4f3164c87feb85bb8dce3023211c37eccff))
+* **exp:** apply prettier formatting ([7261112](https://github.com/energywebfoundation/iam-client-lib/commit/72611120383a4b0ea94cd57ad27c9bde0d9052df))
+* **exp:** fix issuerVerified as boolean ([d82eeeb](https://github.com/energywebfoundation/iam-client-lib/commit/d82eeebd1c36105fbf2156b0b04e7ec7487328e4))
+* export logger ([819e67c](https://github.com/energywebfoundation/iam-client-lib/commit/819e67c8f5ab64a137ffdeb2405684c972b0b1c2))
+* **exp:** remove method for expiration check; decrease test await ([9ae092c](https://github.com/energywebfoundation/iam-client-lib/commit/9ae092cf228862d6886a70ed96c543eeb5128e87))
+* handle unexpected did service endpoint ([#610](https://github.com/energywebfoundation/iam-client-lib/issues/610)) ([a360e93](https://github.com/energywebfoundation/iam-client-lib/commit/a360e936bae152b336611a9105dea638af60349d))
+* **infura:** allow DID reg to take in Infura config ([#638](https://github.com/energywebfoundation/iam-client-lib/issues/638)) ([ad2ed1a](https://github.com/energywebfoundation/iam-client-lib/commit/ad2ed1abdaa94ca9ed40c21ab549bdc0921a326c))
+* initiate credential exchange ([099eb64](https://github.com/energywebfoundation/iam-client-lib/commit/099eb64b4087d5f3a9b486b5794452410673ee99))
+* remove verifiable credentials storage ([9501481](https://github.com/energywebfoundation/iam-client-lib/commit/9501481acd4fc1f11819e3f3564caf82d2f432ce))
+* **revocation:** add credentialStatus to EIP191JWT ([52fec66](https://github.com/energywebfoundation/iam-client-lib/commit/52fec660c53ac04dbaf5f9aee07004c6ee786064))
+* **RevokeClaim:** add endpoint to fetch claims by revoker (current user) ([80cf934](https://github.com/energywebfoundation/iam-client-lib/commit/80cf93485d7f53460ab5df78b37f40fe5eedb4c7))
+* **revokeClaim:** make did param required ([b6648d6](https://github.com/energywebfoundation/iam-client-lib/commit/b6648d6549b569fb6a74ccaba8b5c5b970ce7806))
+* types in claims service (EthersProviderIssuerResolver) ([11ac865](https://github.com/energywebfoundation/iam-client-lib/commit/11ac8656440c958df1c8216f7917e6ffce696e26))
+* update claim revocation registry address ([effe1d8](https://github.com/energywebfoundation/iam-client-lib/commit/effe1d899d8316005759a2c0050ec4d4c3513d0b))
+* update types and interfaces from ew-credentials ([0ed9855](https://github.com/energywebfoundation/iam-client-lib/commit/0ed98552c3fb98ac08b9a9389cf35d4c3cac2196))
+* **vc:** add verifiable credential expiration date ([e76c66b](https://github.com/energywebfoundation/iam-client-lib/commit/e76c66b1c26b50a7854c3971042fe29ee1224e2e))
+* verifiable credential poc ([a7f8df7](https://github.com/energywebfoundation/iam-client-lib/commit/a7f8df759f1bae954b19ac80c526aa3608551079))
+* verifiable presentation poc ([a4732e3](https://github.com/energywebfoundation/iam-client-lib/commit/a4732e36ee9b4034a0986d0d99f550c4166eb98d))
+* **verifiable-credentials:** add credential status eip712 type ([d9db01f](https://github.com/energywebfoundation/iam-client-lib/commit/d9db01ffe8cdaec5c7192f2ac134a7941e952555))
+* **verifiable-credentials:** get credentials by definition ([5f2e7a8](https://github.com/energywebfoundation/iam-client-lib/commit/5f2e7a82d6c61432609f00dc972cc9441f432fcd))
+* **verifyExp:** add documentation; address PR comments ([e7a50a5](https://github.com/energywebfoundation/iam-client-lib/commit/e7a50a5ca4ef7861d63184930be2fcac76b6c089))
+* **verifyExp:** add exp verification method and tests for EIP and VP ([7099c09](https://github.com/energywebfoundation/iam-client-lib/commit/7099c0909d785a5c3eb0637542a1644cd5b3ab7d))
+* **verifyExp:** remove comment ([1d96490](https://github.com/energywebfoundation/iam-client-lib/commit/1d964906d94637e041d10a1c540a5dfde47d769d))
+* **verifyVc:** add jsonwebtoken and update package-lock ([81ff25d](https://github.com/energywebfoundation/iam-client-lib/commit/81ff25d6d8af124c5fedd2aa9de29978cfb61626))
+* **verifyVc:** add unit tests ([c4390b1](https://github.com/energywebfoundation/iam-client-lib/commit/c4390b1c41ceca5970231ada1618803a290338b2))
+* **verifyVC:** add verifyVC method to VC Base Service ([3187e5e](https://github.com/energywebfoundation/iam-client-lib/commit/3187e5e66253f429b9769e20a306ece5255325b5))
+* **verifyVC:** make proof private; add error and return types ([0da3229](https://github.com/energywebfoundation/iam-client-lib/commit/0da322967191a75f6d2c57446c1df37ff1c743c4))
+* **verifyVc:** remove comments and update test case descriptions ([04f9c9f](https://github.com/energywebfoundation/iam-client-lib/commit/04f9c9f4baebe79903cd0a782c1906f33b0a3bf8))
+* **verifyVc:** resolve conflicts and add formatting ([b24f328](https://github.com/energywebfoundation/iam-client-lib/commit/b24f32830e77e582e5a5aa3b436eaa00b1decdfb))
+* **verifyVC:** update ew-credentials ([877fad6](https://github.com/energywebfoundation/iam-client-lib/commit/877fad6af609df1baebf17cc9661c862af1095c8))
+* **verifyVc:** update ew-credentials version and use to resolve credentials ([cd77eb0](https://github.com/energywebfoundation/iam-client-lib/commit/cd77eb05c526628a582306ecc9affab05461373d))
+* **verifyVc:** update method and params ([9800557](https://github.com/energywebfoundation/iam-client-lib/commit/9800557e5ff96e341de069d97c6ee5804ee8a422))
+* **verifyVc:** update method documentation ([86e47e1](https://github.com/energywebfoundation/iam-client-lib/commit/86e47e13b5864981284aedc61c90ea4c2008bb46))
+* **verifyVc:** update resolve method and add method for offchain verify ([800c903](https://github.com/energywebfoundation/iam-client-lib/commit/800c903339c2cbc3908879816385731d37edef74))
+* **verifyVc:** update unit tests ([9d5e7ba](https://github.com/energywebfoundation/iam-client-lib/commit/9d5e7ba7c1c3f2298b083f4d35195a06823075ff))
+* **verifyVc:** update unit tests ([eb0c7e0](https://github.com/energywebfoundation/iam-client-lib/commit/eb0c7e07e9872e82b6d4cf431640297d2646ab53))
+* **verifyVc:** update verify method name ([e5733c6](https://github.com/energywebfoundation/iam-client-lib/commit/e5733c64a6e3775d88c57cd5dc756912925dcc32))
+* **verifyVc:** update verifyOffChainClaim method to accept Claim interface ([3034101](https://github.com/energywebfoundation/iam-client-lib/commit/3034101f37cdbd1d3b64b3fc0540d8996effa589))
+
+
+### Bug Fixes
+
+* add checking if service endpoint is a CID ([a0b5d1a](https://github.com/energywebfoundation/iam-client-lib/commit/a0b5d1ab44fdbe4551a4c18e1d96fec831676b9b))
+* add vp request to return of initiate exchange ([ddecbaf](https://github.com/energywebfoundation/iam-client-lib/commit/ddecbafe973c19b0acb17abb94fec062bacc5c62))
+* **addVcVerifier:** add VerifyVCIssuer method ([6052d41](https://github.com/energywebfoundation/iam-client-lib/commit/6052d41bd7fb7d22fbd16910d20d04c3a14381e1))
+* **addVcVerifier:** return instance of domain reader ([ce037f4](https://github.com/energywebfoundation/iam-client-lib/commit/ce037f449ef0960129f4cf1f59f1460076f1c9ed))
+* **addVcVerifier:** return type for Domain Reader ([84ba78f](https://github.com/energywebfoundation/iam-client-lib/commit/84ba78f82d5bfb6deedb0de366206cd49bd34ef6))
+* **addVcVerifier:** update package-lock version ([9eb00ac](https://github.com/energywebfoundation/iam-client-lib/commit/9eb00ac0744acd88f275a9593c37c5ecdddf069e))
+* avoid refreshing undefined token ([86bed3c](https://github.com/energywebfoundation/iam-client-lib/commit/86bed3c3bbe3a4ddc10dcc5cbb6f17ae0c21ba2a))
+* cache client authentication ([619845d](https://github.com/energywebfoundation/iam-client-lib/commit/619845d320833e9adbc330bde5c35f15d735e57d))
+* cache-client token refresh ([05e9f1a](https://github.com/energywebfoundation/iam-client-lib/commit/05e9f1a216f091d412319f8ce2590d5183080e46))
+* **claim:** fix claim service issuance interfaces ([4c32a26](https://github.com/energywebfoundation/iam-client-lib/commit/4c32a265f602a10704d70bf7bf51263e8cb14d7b))
+* **claim:** fix public claim publishing ([d77df34](https://github.com/energywebfoundation/iam-client-lib/commit/d77df340c4a1b204ee9fe23c2d71ea4b17074391))
+* **claims:** dont reregister onchain claim ([ebd46c0](https://github.com/energywebfoundation/iam-client-lib/commit/ebd46c0b7fbe5f30f1f945891ab90ba1aba57caf))
+* **did-registry:** optional encoding and algo of public key ([26a239f](https://github.com/energywebfoundation/iam-client-lib/commit/26a239f460363120305c37e8acfcc04a7cee13f1))
+* **docs:** architecture ([f7daa96](https://github.com/energywebfoundation/iam-client-lib/commit/f7daa9688360350b2c797170328dbb1ed0b130e7))
+* **docs:** guides ([627bc88](https://github.com/energywebfoundation/iam-client-lib/commit/627bc887dc7186ff531932a6619ed4020bb0d725))
+* **domain:** fix domain service interfaces ([50a014e](https://github.com/energywebfoundation/iam-client-lib/commit/50a014ecf8244b9f70cf530f0ea67281b8fd5cee))
+* don't remove deploy badge ([c216ed8](https://github.com/energywebfoundation/iam-client-lib/commit/c216ed81305bebff6d911850c01d1c537cda9f33))
+* exchange credential tests grouping ([2b1e674](https://github.com/energywebfoundation/iam-client-lib/commit/2b1e6746169b05756125d37595c5744aea12b8ee))
+* **exp:** do not use dflt validity period to calculate timestamp if n… ([#623](https://github.com/energywebfoundation/iam-client-lib/issues/623)) ([9ce524d](https://github.com/energywebfoundation/iam-client-lib/commit/9ce524da24ab41df0e0fdaf253abf723fa6f2d89))
+* filter self-signed credential from presDef before sending to PEX ([6d43aeb](https://github.com/energywebfoundation/iam-client-lib/commit/6d43aeb5d7b530461ec92be663b30626e641c9db))
+* fix backward compatibility for did registry interface ([a24a91c](https://github.com/energywebfoundation/iam-client-lib/commit/a24a91c15f487f48267bf410021d0778e18fdc27))
+* fix delegate token payload ([56bfb1d](https://github.com/energywebfoundation/iam-client-lib/commit/56bfb1dac6d23b3146fee723a1245041701a9928))
+* on-chain claim revocation ([df9eeea](https://github.com/energywebfoundation/iam-client-lib/commit/df9eeea62ed6b05fb13dfec074d52267c5efa335))
+* retry failed requests on token refresh ([434e262](https://github.com/energywebfoundation/iam-client-lib/commit/434e2621a34bec16e51722e8454e9852ed5daed5))
+* set check ethr signer for node clients ([#618](https://github.com/energywebfoundation/iam-client-lib/issues/618)) ([c198dc7](https://github.com/energywebfoundation/iam-client-lib/commit/c198dc73c5b7a6a2f092ad2719506a88a062da39))
+* set index page for readthedocs ([f6b4a49](https://github.com/energywebfoundation/iam-client-lib/commit/f6b4a498e1af22d731f6a5636a808d7b196d2c27))
+* throw an error when a did document update failed ([e7c1ae9](https://github.com/energywebfoundation/iam-client-lib/commit/e7c1ae9b892b9fbfafca6bdbe4c375d40317f1f8))
+* **verifiable-credentials:** check errors in exchange initiating ([1bc8626](https://github.com/energywebfoundation/iam-client-lib/commit/1bc8626f0e97404c7f3edf222955c8c4399adfa8))
+* **verifiable-credentials:** check errors on initiating exchange ([bce85a8](https://github.com/energywebfoundation/iam-client-lib/commit/bce85a8eca2a6abc2e89b93c13c44d63fa64bf02))
+* **verifiable-credentials:** filter invalid issuer fields ([8c8b0c3](https://github.com/energywebfoundation/iam-client-lib/commit/8c8b0c3196077b0e1fcf8266c84803d38741cdd2))
+
+
+### Refactoring
+
+* apply naming convention ([cc41154](https://github.com/energywebfoundation/iam-client-lib/commit/cc41154a60091632e86b2b4f6304050b60f876d3))
+* cleanup credential exchange code ([#602](https://github.com/energywebfoundation/iam-client-lib/issues/602)) ([56444c6](https://github.com/energywebfoundation/iam-client-lib/commit/56444c6657a4e83357f4f46c054c2487040df5e2))
+* rename issuer credential status ([6c55143](https://github.com/energywebfoundation/iam-client-lib/commit/6c55143dbacf09c24a2e7c156e942ded09098a40))
+
+
+### Documentation
+
+* add changes in index.md ([0d5626a](https://github.com/energywebfoundation/iam-client-lib/commit/0d5626abd474d3f1bb7fd729de85866b524f9d37))
+* add new index.md ([5da81dc](https://github.com/energywebfoundation/iam-client-lib/commit/5da81dc6dbb4519b5deb0a04f72234072ab0fc5e))
+* **asset:** improve asset service documentation ([eada9b8](https://github.com/energywebfoundation/iam-client-lib/commit/eada9b858550fe64a4c2c621e78c4f537a1ef217))
+* browser session management ([762a42e](https://github.com/energywebfoundation/iam-client-lib/commit/762a42ec905798bed29a6ec4a4d8234fdc94183a))
+* **claim.md:** fix more links ([92b7f14](https://github.com/energywebfoundation/iam-client-lib/commit/92b7f1440fda12680da4a3a7d69fd8e41a967b28))
+* **claim:** improve claim service documentation ([fa89229](https://github.com/energywebfoundation/iam-client-lib/commit/fa89229de9c9764acd37561076e1711bd5474583))
+* **claims:** getClaimId ([affaef7](https://github.com/energywebfoundation/iam-client-lib/commit/affaef7c0c3c47b2536c95581cec1d1468ebb784))
+* copy README to docs index.md and remove QUICKSTART file (not used anywhere) ([3ac8fbf](https://github.com/energywebfoundation/iam-client-lib/commit/3ac8fbf2e4ebaa83c5bcdb16be39e892675f08ab))
+* **did-registry:** improve DID registry service documentation ([b0bbf6f](https://github.com/energywebfoundation/iam-client-lib/commit/b0bbf6fa9291b1a615eef41db901affb2eea54e8))
+* document iam initialization ([1552965](https://github.com/energywebfoundation/iam-client-lib/commit/15529659f004e8695adc48ed8fbfd5254b0737f7))
+* **domains:** improve domain service documentation ([861fbfd](https://github.com/energywebfoundation/iam-client-lib/commit/861fbfd37d5af256e2b9540bcd3b486126bfeed7))
+* fix api links in guides files ([6934d4a](https://github.com/energywebfoundation/iam-client-lib/commit/6934d4aad092d46f22f2a242aee3db84113dcbb2))
+* improve read the docs ([#613](https://github.com/energywebfoundation/iam-client-lib/issues/613)) ([ccc2358](https://github.com/energywebfoundation/iam-client-lib/commit/ccc235865c16a26fb139eacfa4dee01c57140689))
+* **index.md:** remove out of date sections ([5874ed4](https://github.com/energywebfoundation/iam-client-lib/commit/5874ed49606923fc6c5b5837f11682694ccdbef3))
+* install in browser application ([488106f](https://github.com/energywebfoundation/iam-client-lib/commit/488106f580ab8d254e909803a0716de441b32cbd))
+* **messaging:** improve messaging service documentation ([509e201](https://github.com/energywebfoundation/iam-client-lib/commit/509e2014840758f8dee5698f85bd44b7f7909855))
+* organize api by modules ([aae1c23](https://github.com/energywebfoundation/iam-client-lib/commit/aae1c2339bf9eaf5286a4603a8b9ef98b0e16b8f))
+* **README.md:** update active maintainers ([1cb98c2](https://github.com/energywebfoundation/iam-client-lib/commit/1cb98c213ec431e5a67cdeb99a0f9858036ab8e5))
+* **README:** fix link to read the docs ([8858048](https://github.com/energywebfoundation/iam-client-lib/commit/88580482564f71daea79c64501ddc5d9496b92f0))
+* **README:** fix names of "set" methods ([37126ae](https://github.com/energywebfoundation/iam-client-lib/commit/37126ae5805fda3182a5e4bd7368b37270f89982))
+* remove architecture intro section ([f8da541](https://github.com/energywebfoundation/iam-client-lib/commit/f8da54190fc32a07f581f24d60fced5ce1eb083d))
+* remove quickstart from mkdocs structure ([b9919e1](https://github.com/energywebfoundation/iam-client-lib/commit/b9919e18e29584175505faff817021334d9bcfea))
+* remove README from api ([78bc3a0](https://github.com/energywebfoundation/iam-client-lib/commit/78bc3a0b5911bf711cf3caad37d3eebb6da193c0))
+* remove trailing spaces ([3ffb6af](https://github.com/energywebfoundation/iam-client-lib/commit/3ffb6af6f873127b1355deac3fd35dc66b110998))
+* **signer:** improve signer service documentation ([7a8048d](https://github.com/energywebfoundation/iam-client-lib/commit/7a8048df2172f92a3a4e8ebf2a7221701b1f3202))
+* update examples role objects ([99066bf](https://github.com/energywebfoundation/iam-client-lib/commit/99066bfd17e6379e540a6cb99fb36f886f51b169))
+* update path to logo to be relative ([4fc7413](https://github.com/energywebfoundation/iam-client-lib/commit/4fc7413e992c98925bd534ac0c36598a76ce4060))
+* update README template and add quick start documentation ([25b85c9](https://github.com/energywebfoundation/iam-client-lib/commit/25b85c9749894cc3409a3213e1e88578dc59a786))
+* update verifiable credentials documentation ([a1d5a5e](https://github.com/energywebfoundation/iam-client-lib/commit/a1d5a5e09fc623f9a03e4c54cc310b805c1c9050))
+* **vc:** improve verifiable credential service documentation ([f7191f1](https://github.com/energywebfoundation/iam-client-lib/commit/f7191f13a925d5b90b97ddeb19bcd1e56d13078a))
+
 ## [6.0.0-alpha.51](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0-alpha.50...v6.0.0-alpha.51) (2022-08-12)
 
 
