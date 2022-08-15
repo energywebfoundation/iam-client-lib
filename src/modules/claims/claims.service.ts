@@ -1,21 +1,32 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { utils, Wallet } from 'ethers';
+import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
-import { IRoleDefinition, PreconditionType } from '@energyweb/iam-contracts';
+import {
+  IRoleDefinition,
+  PreconditionType,
+  RoleCredentialSubject,
+} from '@energyweb/credential-governance';
+import {
+  VerifiableCredential,
+  VerifiablePresentation,
+} from '@ew-did-registry/credentials-interface';
+import { ClaimRevocation } from '@energyweb/onchain-claims';
 import { Methods } from '@ew-did-registry/did';
 import { Algorithms } from '@ew-did-registry/jwt';
-import { addressOf } from '@ew-did-registry/did-ethr-resolver';
+import { addressOf, EwSigner } from '@ew-did-registry/did-ethr-resolver';
 import { hashes, IPublicClaim } from '@ew-did-registry/claims';
 import {
   DIDAttribute,
   IServiceEndpoint,
+  ProviderTypes,
 } from '@ew-did-registry/did-resolver-interface';
+import { JWT } from '@ew-did-registry/jwt';
+import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { ClaimManager__factory } from '../../../ethers/factories/ClaimManager__factory';
 import { ERROR_MESSAGES } from '../../errors';
 import { emptyAddress } from '../../utils/constants';
 import { canonizeSig } from '../../utils/enrollment';
-import { CacheClient } from '../cacheClient/cacheClient.service';
+import { CacheClient } from '../cache-client/cache-client.service';
 import { DomainsService } from '../domains/domains.service';
 import { NamespaceType } from '../domains/domains.types';
 import { SignerService } from '../signer/signer.service';
@@ -25,17 +36,52 @@ import {
   IClaimRejection,
   IClaimRequest,
   RegistrationTypes,
-  defaultClaimExpiry,
+  eternityTimestamp,
   erc712_type_hash,
   proof_type_hash,
   typedMsgPrefix,
+  Claim,
+  GetClaimsByRequesterOptions,
+  GetClaimsByIssuerOptions,
+  GetClaimsBySubjectOptions,
+  CreateClaimRequestOptions,
+  IssueClaimRequestOptions,
+  RegisterOnchainOptions,
+  RejectClaimRequestOptions,
+  DeleteClaimOptions,
+  IssueClaimOptions,
+  PublishPublicClaimOptions,
+  CreateSelfSignedClaimOptions,
+  GetUserClaimsOptions,
+  VerifyEnrolmentPrerequisitesOptions,
+  IssueVerifiablePresentationOptions,
+  ApproveRolePublishingOptions,
+  RevokeClaimOptions,
+  RevokeMultipleClaimOptions,
+  IsClaimRevokedOptions,
+  ClaimRevocationDetailsOptions,
+  GetRevocationClaimDetailsOptions,
+  GetRevocationClaimDetailsResult,
+  ClaimRevocationDetailsResult,
+  GetClaimsByRevokerOptions,
+  CredentialVerificationResult,
 } from './claims.types';
-import { DidRegistry } from '../didRegistry/didRegistry.service';
-import { ClaimData } from '../didRegistry/did.types';
+import {
+  CredentialResolver,
+  EthersProviderIssuerResolver,
+  EthersProviderRevokerResolver,
+  IpfsCredentialResolver,
+  IssuerVerification,
+  RevocationVerification,
+  RoleEIP191JWT,
+} from '@energyweb/vc-verification';
+import { DidRegistry } from '../did-registry/did-registry.service';
+import { ClaimData } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
-import { JWT } from '@ew-did-registry/jwt';
-import { privToPem, KeyType } from '@ew-did-registry/keys';
 import { readyToBeRegisteredOnchain } from './claims.types';
+import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
+import { StatusListEntryVerification } from '@ew-did-registry/revocation';
+import { getLogger } from '../../config';
 
 const {
   id,
@@ -46,30 +92,51 @@ const {
   arrayify,
 } = utils;
 
+/**
+ * Service responsible for handling the request and issuance of claims.
+ * See more information about claims in IAM stack [here](../../../docs/guides/claim.md).
+ *
+ * ```typescript
+ * const { connectToCacheServer } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * const { connectToDidRegistry } = await connectToCacheServer();
+ * const { claimsService } = await connectToDidRegistry();
+ * claimsService.getClaimById(claim.id);
+ * ```
+ */
 export class ClaimsService {
   private _claimManager: string;
   private _claimManagerInterface = ClaimManager__factory.createInterface();
+  private _claimRevocation: ClaimRevocation;
+  private _issuerVerification: IssuerVerification;
+  private _issuerResolver: EthersProviderIssuerResolver;
+  private _credentialResolver: CredentialResolver;
+  private _statusVerifier: StatusListEntryVerification;
 
   constructor(
     private _signerService: SignerService,
     private _domainsService: DomainsService,
     private _cacheClient: CacheClient,
-    private _didRegistry: DidRegistry
+    private _didRegistry: DidRegistry,
+    private _verifiableCredentialService: VerifiableCredentialsServiceBase
   ) {
     this._signerService.onInit(this.init.bind(this));
+    this._setIssuerVerifier();
+    this._setStatusVerifier();
   }
 
   static async create(
     signerService: SignerService,
     domainsService: DomainsService,
     cacheClient: CacheClient,
-    didRegistry: DidRegistry
+    didRegistry: DidRegistry,
+    verifiableCredentialService: VerifiableCredentialsServiceBase
   ) {
     const service = new ClaimsService(
       signerService,
       domainsService,
       cacheClient,
-      didRegistry
+      didRegistry,
+      verifiableCredentialService
     );
     await service.init();
     return service;
@@ -78,21 +145,50 @@ export class ClaimsService {
   async init() {
     const chainId = this._signerService.chainId;
     this._claimManager = chainConfigs()[chainId].claimManagerAddress;
+
+    const signer = this._signerService.signer;
+    const provider = signer.provider;
+    const publicKey = await this._signerService.publicKey();
+    let ewSigner: EwSigner;
+    if (
+      signer instanceof Wallet &&
+      provider instanceof providers.JsonRpcProvider
+    ) {
+      ewSigner = EwSigner.fromPrivateKey(signer.privateKey, {
+        type: ProviderTypes.HTTP,
+        uriOrInfo: provider.connection.url,
+      });
+    } else if (provider instanceof providers.JsonRpcProvider) {
+      ewSigner = EwSigner.fromEthersSigner(signer, publicKey);
+    } else {
+      /** @todo from EIP1193Provider */
+      throw new Error(ERROR_MESSAGES.UNKNOWN_PROVIDER);
+    }
+
+    this._claimRevocation = new ClaimRevocation(
+      ewSigner,
+      chainConfigs()[chainId].claimsRevocationRegistryAddress
+    );
   }
 
   /**
-   * A utility function to check the blockchain directly if a DID has a role
-   * TODO: fail if the DID chain ID doesn't match the configured signer network connect
-   * @param did The ethr DID to check
-   * @param role The role to check (the full namespace)
-   * @param version The version to check
-   * @returns true if DID has role at the version. false if not.
+   * A utility function to check the blockchain directly if a DID has a role.
+   *
+   * ```typescript
+   * claimsService.hasOnChainRole('did:ethr:ewc:0x00...0', 'email.roles.iam.ewc', 1);
+   * ```
+   *
+   * @param {string} did The ethr DID to check
+   * @param {string} role The role to check (the full namespace)
+   * @param {number} version The version to check
+   * @return `true` if DID has role at the version. `false` if not.
    */
   async hasOnChainRole(
     did: string,
     role: string,
     version: number
   ): Promise<boolean> {
+    // TODO: fail if the DID chain ID doesn't match the configured signer network connection
     const data = this._claimManagerInterface.encodeFunctionData('hasRole', [
       addressOf(did),
       namehash(role),
@@ -109,22 +205,39 @@ export class ClaimsService {
     return Boolean(intFromHexString);
   }
 
-  async getClaimsBySubjects(subjects: string[]) {
+  /**
+   * Retrieve claims related to a given subjects.
+   *
+   * ```typescript
+   * claimsService.getClaimsBySubjects(['did:ethr:0x00...0', 'did:ethr:0x00...1', ...]);
+   * ```
+   *
+   * @param {Array<string>} subjects list of subjects
+   * @returns list of claims
+   */
+  async getClaimsBySubjects(subjects: string[]): Promise<Claim[]> {
     return this._cacheClient.getClaimsBySubjects(subjects);
   }
 
   /**
-   * @description - Returns claims for given requester. Allows filtering by status and parent namespace
+   * Retrieve claims requested by a given requester with allowing filter by status and parent namespace.
+   *
+   * ```typescript
+   * claimsService.getClaimsByRequester({
+   *     did: 'did:ethr:0x00...0',
+   *     isAccepted: false,
+   *     namespace: 'energyweb.iam.ewc',
+   * });
+   * ```
+   *
+   * @param {GetClaimsByRequesterOptions} options object containing options
+   * @returns list of claims
    */
   async getClaimsByRequester({
     did,
     isAccepted,
     namespace,
-  }: {
-    did: string;
-    isAccepted?: boolean;
-    namespace?: string;
-  }) {
+  }: GetClaimsByRequesterOptions): Promise<Claim[]> {
     return this._cacheClient.getClaimsByRequester(did, {
       isAccepted,
       namespace,
@@ -132,59 +245,106 @@ export class ClaimsService {
   }
 
   /**
-   * @description - Returns claims for given issuer. Allows filtering by status and parent namespace
+   * Retrieve claims issued by a given issuer with allowing filter by status and parent namespace.
+   *
+   * ```typescript
+   * claimsService.getClaimsByIssuer({
+   *     did: 'did:ethr:0x00...0',
+   *     isAccepted: false,
+   *     namespace: 'energyweb.iam.ewc',
+   * });
+   * ```
+   *
+   * @param {GetClaimsByIssuerOptions} options object containing options
+   * @returns list of claims
    */
   async getClaimsByIssuer({
     did,
     isAccepted,
     namespace,
-  }: {
-    did: string;
-    isAccepted?: boolean;
-    namespace?: string;
-  }) {
+  }: GetClaimsByIssuerOptions): Promise<Claim[]> {
     return this._cacheClient.getClaimsByIssuer(did, { isAccepted, namespace });
   }
 
   /**
-   * @description - Returns claims for given subject. Allows filtering by status and parent namespace
+   * Retrieve claims for given subject with allowing filter by status and parent namespace.
+   *
+   * ```typescript
+   * claimsService.getClaimsBySubject({
+   *     did: 'did:ethr:0x00...0',
+   *     isAccepted: false,
+   *     namespace: 'energyweb.iam.ewc',
+   * });
+   * ```
+   *
+   * @param {GetClaimsBySubjectOptions} options object containing options
+   * @returns list of claims
    */
   async getClaimsBySubject({
     did,
     isAccepted,
     namespace,
-  }: {
-    did: string;
-    isAccepted?: boolean;
-    namespace?: string;
-  }) {
+  }: GetClaimsBySubjectOptions): Promise<Claim[]> {
     return this._cacheClient.getClaimsBySubject(did, { isAccepted, namespace });
   }
 
   /**
-   * @description - Returns claim with the given Id or null if claim does not exist
+   * Retrieve all claims that a user can revoke. Allow to filter by namespace
+   *
+   * ```typescript
+   * claimsService.getClaimsByRevoker({
+   *  did: 'did:ethr:0x00...0',
+   *  namespace: 'energyweb.iam.ewc',
+   * });
+   * ```
+   *
+   * @param {GetClaimsByRevokerOptions} options
+   * @return list of claims
    */
-  async getClaimById(claimId: string) {
+  async getClaimsByRevoker({
+    did,
+    namespace,
+  }: GetClaimsByRevokerOptions): Promise<Claim[]> {
+    return this._cacheClient.getClaimsByRevoker(did, { namespace });
+  }
+
+  /**
+   * Retrieve claim with given id.
+   *
+   * ```typescript
+   * const claimId = '7281a130-e2b1-430d-8c14-201010eae901';
+   * claimsService.getClaimById(claimId);
+   * ```
+   *
+   * @param {string} claimId claim id
+   * @return claim with given id
+   */
+  async getClaimById(claimId: string): Promise<Claim | undefined> {
     return this._cacheClient.getClaimById(claimId);
   }
 
   /**
-   * @description allows subject to request for credential
+   * Allows subject to request for credential by creating and sending a claim request to claim issuer.
+   *
+   * ```typescript
+   * claimsService.createClaimRequest({
+   *     claim: {
+   *          claimType: 'email.roles.energyweb.iam.ewc',
+   *          claimTypeVersion: 1,
+   *          requestorFields: [{key: 'foo', value: 'bar'}],
+   *     };
+   *     subject: 'did:ethr:0x00...0',
+   *     registrationTypes: [RegistrationTypes.OnChain, RegistrationTypes.OffChain]
+   * });
+   * ```
+   *
+   * @param {CreateClaimRequestOptions} options object containing options
    */
   async createClaimRequest({
     claim,
     subject = this._signerService.did,
     registrationTypes = [RegistrationTypes.OffChain],
-  }: {
-    claim: {
-      claimType: string;
-      claimTypeVersion: number;
-      requestorFields?: { key: string; value: string | number }[];
-      issuerFields?: { key: string; value: string | number }[];
-    };
-    subject?: string;
-    registrationTypes?: RegistrationTypes[];
-  }) {
+  }: CreateClaimRequestOptions): Promise<void> {
     const { claimType: role, claimTypeVersion: version } = claim;
     const token = await this._didRegistry.createPublicClaim({
       data: claim,
@@ -227,7 +387,22 @@ export class ClaimsService {
   /**
    * Issue a claim request by signing both off-chain and on-chain request and persisting result to the cache-server.
    * Optionally, issue on-chain role can be submitted to the ClaimManager contract as well.
-   * @param params.publishOnChain If issuing an on-chain role, then if true then will submit role to chain (incurring tx cost). Default is true
+   * If `credentialStatus` is not overridden then status from ssi-hub will be set.
+   *
+   * ```typescript
+   * const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+   * claimsService.issueClaimRequest({
+   *     requester: claim.requester,
+   *     token: claim.token,
+   *     id: claim.id,
+   *     subjectAgreement: claim.subjectAgreement,
+   *     registrationTypes: claim.registrationTypes;
+   *     issuerFields: [{key: 'foo', value: 'bar'}],
+   *     publishOnChain: false,
+   * });
+   * ```
+   *
+   * @param {IssueClaimRequestOptions} options object containing options
    */
   async issueClaimRequest({
     requester,
@@ -237,36 +412,40 @@ export class ClaimsService {
     registrationTypes,
     issuerFields,
     publishOnChain = true,
-  }: {
-    requester: string;
-    token: string;
-    id: string;
-    subjectAgreement: string;
-    registrationTypes: RegistrationTypes[];
-    issuerFields?: { key: string; value: string | number }[];
-    publishOnChain?: boolean;
-  }) {
+    credentialStatusOverride,
+    expirationTimestamp,
+  }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
       claimData: { claimType: string; claimTypeVersion: number };
       sub: string;
     };
 
+    const roleDefinition = await this._domainsService.getDefinition({
+      type: NamespaceType.Role,
+      namespace: claimData.claimType,
+    });
+
     await this.verifyEnrolmentPrerequisites({
       subject: sub,
       role: claimData.claimType,
+      roleDefinition,
     });
+
+    const strippedClaimData = this.stripClaimData(claimData);
+    const { claimType: role, claimTypeVersion: version } = claimData;
 
     const message: IClaimIssuance = {
       id,
       requester,
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
+      expirationTimestamp,
     };
-    const strippedClaimData = this.stripClaimData(claimData);
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const { claimType: role, claimTypeVersion: version } = claimData;
-      const expiry = defaultClaimExpiry;
+      const expiry = expirationTimestamp
+        ? Math.floor(expirationTimestamp / 1000)
+        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -275,16 +454,33 @@ export class ClaimsService {
       );
       message.onChainProof = onChainProof;
       if (publishOnChain) {
+        if (!subjectAgreement) {
+          throw new Error(
+            ERROR_MESSAGES.ONCHAIN_ROLE_SUBJECT_AGREEMENT_NOT_SPECIFIED
+          );
+        }
         await this.registerOnchain({
           token,
           subjectAgreement,
           onChainProof,
           acceptedBy: this._signerService.did,
+          expirationTimestamp: expiry,
         });
       }
     }
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      await this.verifyIssuer(claimData.claimType);
+      const vp = await this.issueVerifiablePresentation({
+        subject: sub,
+        namespace: role,
+        version: version.toString(),
+        issuerFields,
+        credentialStatus: credentialStatusOverride,
+        expirationTimestamp,
+      });
+      const vpCredentialStatus = vp?.verifiableCredential[0]?.credentialStatus;
+      const credentialStatus = credentialStatusOverride || vpCredentialStatus;
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
@@ -292,60 +488,41 @@ export class ClaimsService {
           ...strippedClaimData,
           ...(issuerFields && { issuerFields }),
         },
+        ...(credentialStatus && { credentialStatus }),
       };
-      message.issuedToken = await this._didRegistry.issuePublicClaim({
+      const issuedToken = await this._didRegistry.issuePublicClaim({
         publicClaim,
+        expirationTimestamp,
       });
+      message.issuedToken = issuedToken;
+      message.vp = JSON.stringify(vp);
     }
 
     await this._cacheClient.issueClaim(this._signerService.did, message);
   }
 
   /**
+   * Register issued on-chain claim on Claim Manager contract.
    *
-   * @param token optional token containing claimType, version and subject
-   * @returns claim params obtained from token
-   */
-  private extractClaimRequest(token: string) {
-    const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
-      claimData: { claimType: string; claimTypeVersion: string };
-      sub: string;
-    };
-    return { ...claimData, subject: sub };
-  }
-
-  /**
-   * @description Registers issued onchain claim with Claim manager
+   * ```typescript
+   * const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+   * claimsService.registerOnchain({
+   *     claimType: claim.claimType,
+   *     claimTypeVersion: claim.claimTypeVersion,
+   *     subjectAgreement: claim.subjectAgreement,
+   *     onChainProof: claim.onChainProof,
+   *     acceptedBy: claim.acceptedBy;
+   *     subject: claim.subject,
+   * });
+   * ```
    *
-   * @param claim - id of signed onchain claim.
-   * @param token - @deprecated use subject, claimType, claimTypeVersion instead. Token should get removed and subject, claimType, claimTypeVersion should be required.
+   * @param {RegisterOnchainOptions} claim object containing options
    */
-  async registerOnchain(claim: {
-    claimType?: string;
-    claimTypeVersion?: string;
-    token?: string;
-    subjectAgreement?: string;
-    onChainProof: string;
-    acceptedBy: string;
-    subject?: string;
-  }) {
+  async registerOnchain(claim: RegisterOnchainOptions): Promise<void> {
     // backward compatibility with token
-    if (claim.token)
+    if (claim.token) {
       claim = { ...claim, ...this.extractClaimRequest(claim.token) };
-
-    if (
-      !claim.subjectAgreement &&
-      claim.subject === this._signerService.did &&
-      claim.claimType &&
-      claim.claimTypeVersion
-    ) {
-      claim.subjectAgreement = await this.approveRolePublishing({
-        subject: this._signerService.did,
-        role: claim.claimType as string,
-        version: +claim.claimTypeVersion,
-      });
     }
-
     if (!readyToBeRegisteredOnchain(claim)) {
       throw new Error(ERROR_MESSAGES.CLAIM_WAS_NOT_ISSUED);
     }
@@ -354,11 +531,27 @@ export class ClaimsService {
       claimTypeVersion,
       claimType,
       acceptedBy,
-      subjectAgreement,
       onChainProof,
+      expirationTimestamp,
     } = claim;
-    const expiry = defaultClaimExpiry;
+    let { subjectAgreement } = claim;
 
+    if (await this.hasOnChainRole(subject, claimType, +claimTypeVersion)) {
+      getLogger().warn(
+        `[ClaimsService]: ${claimType} already registered for ${subject}`
+      );
+      return;
+    }
+
+    if (!subjectAgreement && subject === this._signerService.did) {
+      subjectAgreement = await this.approveRolePublishing({
+        subject: this._signerService.did,
+        role: claimType,
+        version: +claimTypeVersion,
+      });
+    }
+
+    const expiry = expirationTimestamp || eternityTimestamp;
     const data = this._claimManagerInterface.encodeFunctionData('register', [
       addressOf(subject),
       namehash(claimType),
@@ -374,15 +567,25 @@ export class ClaimsService {
     });
   }
 
+  /**
+   * Reject claim request.
+   *
+   * ```typescript
+   * const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+   * claimsService.rejectClaimRequest({
+   *     id: claim.id,
+   *     requesterDID: claim.requester,
+   *     rejectionReason: 'some reason',
+   * });
+   * ```
+   *
+   * @param {RejectClaimRequestOptions} options object containing options
+   */
   async rejectClaimRequest({
     id,
     requesterDID,
     rejectionReason,
-  }: {
-    id: string;
-    requesterDID: string;
-    rejectionReason?: string;
-  }) {
+  }: RejectClaimRequestOptions): Promise<void> {
     const message: IClaimRejection = {
       id,
       requester: requesterDID,
@@ -394,46 +597,97 @@ export class ClaimsService {
     return this._cacheClient.rejectClaim(this._signerService.did, message);
   }
 
-  async deleteClaim({ id }: { id: string }) {
+  /**
+   * Delete claim request. Works only for pending claims (not issued or rejected).
+   *
+   * ```typescript
+   * claimsService.deleteClaim({
+   *     id: '7281a130-e2b1-430d-8c14-201010eae901',
+   * });
+   * ```
+   *
+   * @param {DeleteClaimOptions} options object containing options
+   */
+  async deleteClaim({ id }: DeleteClaimOptions): Promise<void> {
     await this._cacheClient.deleteClaim(id);
   }
 
+  /**
+   * Issue claim without previous request. Option available for issuers only.
+   * If `credentialStatus` is not overridden then status from ssi-hub will be set.
+   *
+   * ```typescript
+   * claimsService.issueClaim({
+   *     claim: {
+   *          claimType: 'email.roles.energyweb.iam.ewc',
+   *          claimTypeVersion: 1,
+   *          issuerFields: [{key: 'foo', value: 'bar'}],
+   *     };
+   *     subject: 'did:ethr:0x00...0',
+   *     registrationTypes: [RegistrationTypes.OnChain, RegistrationTypes.OffChain]
+   * });
+   * ```
+   *
+   * @param {IssueClaimOptions} options object containing options
+   * @return Issued token if registrationTypes includes RegistrationTypes.OffChain
+   */
   async issueClaim({
     subject,
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
-  }: {
-    subject: string;
-    registrationTypes: RegistrationTypes[];
-    claim: {
-      claimType: string;
-      claimTypeVersion: number;
-      issuerFields: { key: string; value: string | number }[];
-    };
-  }) {
-    await this.verifyEnrolmentPrerequisites({ subject, role: claim.claimType });
+    credentialStatusOverride,
+    expirationTimestamp,
+  }: IssueClaimOptions): Promise<string | undefined> {
+    const roleDefinition = await this._domainsService.getDefinition({
+      type: NamespaceType.Role,
+      namespace: claim.claimType,
+    });
+
+    await this.verifyIssuer(claim.claimType);
+    await this.verifyEnrolmentPrerequisites({
+      subject,
+      role: claim.claimType,
+      roleDefinition,
+    });
 
     const message: IClaimIssuance = {
       id: v4(),
       requester: subject,
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
+      expirationTimestamp,
     };
+
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      const vp = await this.issueVerifiablePresentation({
+        subject,
+        namespace: claim.claimType,
+        version: claim.claimTypeVersion.toString(),
+        issuerFields: claim.issuerFields,
+        credentialStatus: credentialStatusOverride,
+        expirationTimestamp,
+      });
+      const vpCredentialStatus = vp?.verifiableCredential[0]?.credentialStatus;
+      const credentialStatus = credentialStatusOverride || vpCredentialStatus;
       const publicClaim: IPublicClaim = {
         did: subject,
         signer: this._signerService.did,
         claimData: claim,
+        ...(credentialStatus && { credentialStatus }),
       };
-
-      message.issuedToken = await this._didRegistry.issuePublicClaim({
+      const issuedToken = await this._didRegistry.issuePublicClaim({
         publicClaim,
+        expirationTimestamp,
       });
+      message.issuedToken = issuedToken;
+      message.vp = JSON.stringify(vp);
     }
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
-      const expiry = defaultClaimExpiry;
+      const expiry = expirationTimestamp
+        ? Math.floor(expirationTimestamp / 1000)
+        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -449,87 +703,85 @@ export class ClaimsService {
 
     return message.issuedToken;
   }
-  async getClaimId({ claimData }: { claimData: ClaimData }) {
-    const { service = [] } = await this._didRegistry.getDidDocument();
-    const { id, claimTypeVersion } =
-      service.find(
-        ({ profile, claimType, claimTypeVersion }) =>
-          Boolean(profile) ||
-          (claimType === claimData.claimType &&
-            claimTypeVersion === claimData.claimTypeVersion)
-      ) || {};
 
-    if (claimData.profile && id) {
-      return id;
+  /**
+   * Generates claim id or returns id of existing claim with same data
+   * @param {ClaimData} param.claimData - claim data
+   * @returns claim identifier
+   */
+  async getClaimId({ claimData }: { claimData: ClaimData }) {
+    const services = await this._didRegistry.getServices();
+    const service = services.find(
+      ({ profile, claimType, claimTypeVersion }) =>
+        Boolean(profile) ||
+        (claimType === claimData.claimType &&
+          claimTypeVersion === claimData.claimTypeVersion)
+    );
+
+    if (!service) return v4();
+
+    if (claimData.profile && service.id) {
+      return service.id;
     }
 
     if (
       claimData.claimType &&
-      id &&
-      claimData.claimTypeVersion === claimTypeVersion
+      service.id &&
+      claimData.claimTypeVersion === service.claimTypeVersion
     ) {
-      return id;
+      return service.id;
     }
     return v4();
   }
 
   /**
+   * Register role to claim manager contract if registrationTypes includes RegistrationTypes.OnChain
+   * Publish role to IPFS and add DID document service if registrationTypes includes RegistrationTypes.OffChain
    *
-   * @description validates publish public claim parameters depending on off or on chain registration type. Throws relevant error on invalid data.
+   * ```typescript
+   * const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
+   * claimsService.publishPublicClaim({
+   *     claim: {
+   *          token: claim.token,
+   *          claimType: claim.claimType,
+   *     };
+   *     registrationTypes: claim.registrationTypes,
+   * });
+   * ```
    *
-   */
-  private validatePublishPublicClaimRequest(
-    registrationTypes: RegistrationTypes[],
-    claim: { token?: string; claimType?: string }
-  ) {
-    if (
-      registrationTypes.includes(RegistrationTypes.OnChain) &&
-      !claim.claimType
-    ) {
-      throw new Error(
-        ERROR_MESSAGES.CLAIM_TYPE_REQUIRED_FOR_ON_CHAIN_REGISTRATION
-      );
-    }
-    if (
-      registrationTypes.includes(RegistrationTypes.OffChain) &&
-      !claim.token
-    ) {
-      throw new Error(ERROR_MESSAGES.TOKEN_REQUIRED_FOR_OFF_CHAIN_REGISTRATION);
-    }
-  }
-
-  /**
-   *
-   * @description publishes claim off-chain (by storing claim data in ipfs and save url to DID document services) or registering on-chain depending on registrationTypes values.
-   * @returns ulr to ipfs
-   * @param token - @deprecated - use claim with claimType instead
-   *
+   * @param {PublishPublicClaimOptions} options object containing options
+   * @return URl to IPFS if registrationTypes includes RegistrationTypes.OffChain
    */
   async publishPublicClaim({
     token, // backward compatibility
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
-  }: {
-    token?: string;
-    registrationTypes?: RegistrationTypes[];
-    claim: { token?: string; claimType?: string };
-  }) {
+  }: PublishPublicClaimOptions): Promise<string | undefined> {
     claim.token = claim.token || token;
     this.validatePublishPublicClaimRequest(registrationTypes, claim);
     let url: string | undefined = undefined;
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const claims = await this.getClaimsBySubject({
-        did: this._signerService.did,
-        namespace: claim.claimType,
-        isAccepted: true,
-      });
-      if (claims.length < 1) {
-        throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
+      if (!claim.claimType) {
+        throw new Error(ERROR_MESSAGES.CLAIM_TYPE_MISSING);
       }
 
-      const claimData = claims[0];
+      const claims = await this.getClaimsBySubject({
+        did: this._signerService.did,
+        namespace: this.getNamespaceFromClaimType(claim.claimType),
+        isAccepted: true,
+      });
+      const claimData = claims.find((c) => c.claimType === claim.claimType);
+
+      if (!claimData) {
+        throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
+      }
+      const expirationTimestamp = claimData.expirationTimestamp
+        ? Math.floor(+claimData.expirationTimestamp / 1000)
+        : undefined;
+
       await this.registerOnchain({
         ...claimData,
+        expirationTimestamp,
         onChainProof: claimData.onChainProof as string,
         acceptedBy: claimData.acceptedBy as string,
       });
@@ -565,72 +817,436 @@ export class ClaimsService {
           hashAlg: 'SHA256',
         },
       };
-      await this._didRegistry.updateDocument({
+      const isDocUpdated = await this._didRegistry.updateDocument({
         didAttribute: DIDAttribute.ServicePoint,
         data,
         did: sub,
       });
+
+      if (!isDocUpdated) {
+        throw new Error(ERROR_MESSAGES.DID_DOCUMENT_NOT_UPDATED);
+      }
     }
     return url;
   }
 
   /**
-   * @description Creates claim with `data` and adds it to `subject` document. Signer must own or control subject
+   * Creates self signed off-chain claim with `data` and adds it to `subject` document. Signer must own or control subject.
    *
-   * @param data claim payload
-   * @param subject DID of claim subject
+   * ```typescript
+   * claimsService.createSelfSignedClaim({
+   *     data: {
+   *          claimType: 'email.roles.energyweb.iam.ewc',
+   *          claimTypeVersion: 1,
+   *          issuerFields: [{key: 'foo', value: 'bar'}],
+   *          profile: {
+   *              name: 'John Doe',
+   *              birthdate: '1990-01-01',
+   *              address: '123 Main St',
+   *          },
+   *     },
+   *     subject: 'did:ethr:volta:0x00...0',
+   * });
+   * ```
    *
-   * @returns claim url
+   * @param {CreateSelfSignedClaimOptions} options object containing options
+   * @return URl to IPFS
    */
   async createSelfSignedClaim({
     data,
     subject,
-  }: {
-    data: ClaimData;
-    subject?: string;
-  }) {
+  }: CreateSelfSignedClaimOptions): Promise<string> {
     const token = await this._didRegistry.createPublicClaim({ data, subject });
     return (await this.publishPublicClaim({ claim: { token } })) as string;
   }
 
   /**
-   * getUserClaims
+   * Get published off-chain claims of the given subject.
    *
-   * @description get published offchain claims
+   * ```typescript
+   * claimsService.getUserClaims({
+   *     did: 'did:ethr:0x00...0',
+   * });
+   * ```
    *
+   * @param {GetUserClaimsOptions} options object containing options
+   * @returns Claims containing DID document service endpoints
    */
   async getUserClaims({
     did = this._signerService.did,
-  }: { did?: string } | undefined = {}): Promise<
-    (IServiceEndpoint & ClaimData)[]
-  > {
-    const { service } = await this._didRegistry.getDidDocument({ did });
-    const issuedClaims = await this.getClaimsBySubject({
-      did,
-      isAccepted: true,
-    });
-    if (service.length === 0 || issuedClaims.length === 0) return [];
+  }: GetUserClaimsOptions): Promise<(IServiceEndpoint & ClaimData)[]> {
+    const [services, issuedClaims] = await Promise.all([
+      this._didRegistry.getServices({ did }),
+      this.getClaimsBySubject({
+        did,
+        isAccepted: true,
+      }),
+    ]);
+
+    if (services.length === 0 || issuedClaims.length === 0) return [];
 
     const issuedClaimsTypes = issuedClaims
       .filter((c) => c.registrationTypes.includes(RegistrationTypes.OffChain))
       .map(({ claimType }) => claimType);
 
-    return service.filter(
-      ({ claimType }) => claimType && issuedClaimsTypes.includes(claimType)
+    return services.filter(
+      ({ claimType }) =>
+        claimType &&
+        typeof claimType === 'string' &&
+        issuedClaimsTypes.includes(claimType)
     );
   }
 
+  /**
+   * Create a public claim to prove identity.
+   *
+   * ```typescript
+   * claimsService.createIdentityProof();
+   * ```
+   *
+   * @return JWT token of created identity
+   */
+  async createIdentityProof(): Promise<string> {
+    const blockNumber = await this._signerService.provider.getBlockNumber();
+    return this._didRegistry.createPublicClaim({
+      data: {
+        blockNumber,
+      },
+    });
+  }
+
+  /**
+   * Create a public claim to prove identity.
+   *
+   * ```typescript
+   * claimsService.createDelegateProof(
+   *     '245a40a9...776071ca57cec',
+   *     'did:ethr:0x00...0',
+   *     Algorithms.EIP191,
+   * );
+   * ```
+   *
+   * @param {String} delegateKey Private key of the delegate in hexadecimal format
+   * @param {String} identity DID of the delegate
+   * @param {String} algorithm Algorithm used to sign the delegate (EIP191 and ES256 available)
+   *
+   * @return JWT token of delegate
+   */
+  async createDelegateProof(
+    delegateKey: string,
+    identity: string,
+    algorithm: Algorithms = Algorithms.EIP191
+  ): Promise<string> {
+    const provider = this._signerService.provider;
+    const blockNumber = (await provider.getBlockNumber()).toString();
+
+    const payload = {
+      iss: identity,
+      claimData: {
+        blockNumber,
+      },
+    };
+    if (algorithm === Algorithms.EIP191) {
+      return new JWT(new Wallet(delegateKey)).sign(payload, {
+        issuer: identity,
+      });
+    } else if (algorithm === Algorithms.ES256) {
+      /** @todo move to @ew-did-registry/jwt */
+      return jsonwebtoken.sign(
+        payload,
+        privToPem(delegateKey, KeyType.Secp256r1),
+        {
+          issuer: identity,
+        }
+      );
+    } else {
+      throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Get `namespace` from claim type.
+   *
+   * ```typescript
+   * claimsService.getNamespaceFromClaimType(
+   *     'email.roles.energyweb.iam.ewc'
+   * );
+   * ```
+   *
+   * @param {String} claimType Private key of the delegate in hexadecimal format
+   *
+   * @return Namespace of given claim type
+   */
+  getNamespaceFromClaimType(claimType: string): string {
+    return claimType.split('.roles.')[1];
+  }
+
+  /**
+   * Revoke On-Chain issued claim by `claimId` or given `namespace` and `subject`. Required `claimId` or `claim` parameters.
+   *
+   * ```typescript
+   * claimsService.revokeClaim({
+   *     claim: {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *     },
+   *     registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.revokeClaim({
+   *     claimId: claim.id,
+   *     registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+   * });
+   * ```
+   *
+   * @param {RevokeClaimOptions} options object containing options
+   * @return true if claim was revoked
+   */
+  async revokeClaim(options: RevokeClaimOptions): Promise<boolean> {
+    const revoker = this._signerService.did;
+    const { namespace, subject } = await this.getRevocationClaimDetails(
+      options
+    );
+
+    return await this._claimRevocation.revokeClaim(namespace, subject, revoker);
+  }
+
+  /**
+   * Revoke On-Chain issued claims of the given namespace for multiple subjects. Namespace must be the same for all subjects.
+   * Specify `claims` or `claimIds` parameters.
+   *
+   * ```typescript
+   * claimsService.revokeMultipleClaim({
+   *     claims: [{
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *         registrationTypes = [RegistrationTypes.OnChain, RegistrationTypes.OffChain],
+   *     },
+   *     {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...1',
+   *         registrationTypes = [RegistrationTypes.OnChain],
+   *     }],
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.revokeMultipleClaim({
+   *     claimIds: ['245a40a9...776071ca57cec', '245a40a9...776071ca57cec'],
+   * });
+   * ```
+   *
+   * @param {RevokeMultipleClaimOptions} options object containing options
+   */
+  async revokeMultipleClaim({
+    claimIds,
+    claims,
+  }: RevokeMultipleClaimOptions): Promise<void> {
+    if (!claimIds && !claims) {
+      throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_MISSING_PARAMETERS);
+    }
+
+    const revoker = this._signerService.did;
+    let claimsDetailsToRevoke: RevokeMultipleClaimOptions['claims'] = [
+      ...(claims || []),
+    ];
+    let namespace = claims?.[0]?.namespace || '';
+
+    if (claimIds) {
+      const claimsDetails = await Promise.all([
+        ...claimIds.map(async (claimId) => {
+          const claim = await this.getClaimById(claimId);
+          if (!claim) return undefined;
+          return {
+            namespace: claim.claimType,
+            subject: claim.subject,
+          };
+        }),
+      ]);
+      claimsDetailsToRevoke = [
+        ...(claimsDetails.filter((claim) => !!claim) as Claim[]),
+      ];
+      namespace = claimsDetailsToRevoke[0]?.namespace;
+    }
+
+    await this._claimRevocation.revokeClaimforDIDs(
+      namespace,
+      claimsDetailsToRevoke.map((claim) => claim.subject),
+      revoker
+    );
+  }
+
+  /**
+   * Check if On-Chain claim is revoked.
+   *
+   * ```typescript
+   * claimsService.isClaimRevoked({
+   *     claim: {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *     },
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.isClaimRevoked({
+   *     claimId: claim.id,
+   * });
+   * ```
+   *
+   * @param {IsClaimRevokedOptions} options object containing options
+   * @return true if claim is revoked
+   */
+  async isClaimRevoked(options: IsClaimRevokedOptions): Promise<boolean> {
+    const { namespace, subject } = await this.getRevocationClaimDetails(
+      options
+    );
+
+    return this._claimRevocation.isClaimRevoked(namespace, subject);
+  }
+
+  /**
+   * Get the revocation details for a subject's On-Chain claim. Returns the revoker and revocationTimeStamp for the revocation.
+   *
+   * ```typescript
+   * claimsService.claimRevocationDetails({
+   *     claim: {
+   *         namespace: 'root.roles.energyweb.iam.ewc',
+   *         subject: 'did:ethr:volta:0x00...0',
+   *     },
+   * });
+   * ```
+   * or
+   * ```typescript
+   * claimsService.claimRevocationDetails({
+   *     claimId: claim.id,
+   * });
+   * ```
+   *
+   * @param {ClaimRevocationDetailsOptions} options object containing options
+   * @return revocation details
+   */
+  async claimRevocationDetails(
+    options: ClaimRevocationDetailsOptions
+  ): Promise<ClaimRevocationDetailsResult | undefined> {
+    const { namespace, subject } = await this.getRevocationClaimDetails(
+      options
+    );
+
+    const { 0: revoker, 1: timestamp } =
+      await this._claimRevocation.getRevocationDetail(namespace, subject);
+
+    if (revoker === emptyAddress) {
+      return undefined;
+    }
+
+    return {
+      revoker,
+      timestamp: parseInt(timestamp, 10),
+    };
+  }
+
+  /**
+   * Pick up the claim from the params and return the claim data.
+   * Choose `claimId` first, then `claim`. Throw an error if both are missing.
+   *
+   * @param {GetRevocationClaimDetailsOptions} data claim data or claim id
+   * @return claim data
+   */
+  private async getRevocationClaimDetails({
+    claimId,
+    claim,
+  }: GetRevocationClaimDetailsOptions): Promise<GetRevocationClaimDetailsResult> {
+    if (!claimId && !claim) {
+      throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_MISSING_PARAMETERS);
+    }
+
+    let namespace: string | undefined = claim?.namespace || '';
+    let subject: string | undefined = claim?.subject || '';
+
+    if (claimId) {
+      const claimData = await this.getClaimById(claimId);
+
+      if (!claimData) {
+        throw new Error(ERROR_MESSAGES.REVOKE_CLAIM_NOT_FOUND);
+      }
+
+      namespace = claimData.claimType;
+      subject = claimData.subject;
+    }
+
+    return {
+      namespace,
+      subject,
+    };
+  }
+
+  /**
+   * Remove `fields` from claim data.
+   *
+   * @param {ClaimData} data Claim data to remove fields from
+   * @return Claim data without fields
+   */
+  private stripClaimData(data: ClaimData): ClaimData {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { fields, ...claimData } = data;
+
+    return claimData;
+  }
+
+  /**
+   * Validates publish public claim parameters depending on off-chain or on-chain registration type. Throws relevant error on invalid data.
+   *
+   * @param {Array<RegistrationTypes>} registrationTypes Registration types of the claim
+   * @param {Object} claim `token` and `claimType` of the claim
+   */
+  private validatePublishPublicClaimRequest(
+    registrationTypes: RegistrationTypes[],
+    claim: { token?: string; claimType?: string }
+  ): void {
+    if (
+      registrationTypes.includes(RegistrationTypes.OnChain) &&
+      !claim.claimType
+    ) {
+      throw new Error(
+        ERROR_MESSAGES.CLAIM_TYPE_REQUIRED_FOR_ON_CHAIN_REGISTRATION
+      );
+    }
+    if (
+      registrationTypes.includes(RegistrationTypes.OffChain) &&
+      !claim.token
+    ) {
+      throw new Error(ERROR_MESSAGES.TOKEN_REQUIRED_FOR_OFF_CHAIN_REGISTRATION);
+    }
+  }
+
+  /**
+   * Verify if the user is an authorized issuer of a role
+   *
+   * @param {String} role Registration types of the claim
+   */
+  private async verifyIssuer(role: string): Promise<void> {
+    await this._issuerVerification.verifyIssuer(this._signerService.did, role);
+  }
+
+  /**
+   * Verify claim request prerequisites for given role and subject. Throws relevant error on invalid data.
+   *
+   * @param {VerifyEnrolmentPrerequisitesOptions} options object containing options
+   */
   private async verifyEnrolmentPrerequisites({
     subject,
     role,
-  }: {
-    subject: string;
-    role: string;
-  }) {
-    const roleDefinition = await this._domainsService.getDefinition({
-      type: NamespaceType.Role,
-      namespace: role,
-    });
+    roleDefinition: cachedRoleDefinition,
+  }: VerifyEnrolmentPrerequisitesOptions): Promise<void> {
+    const roleDefinition =
+      cachedRoleDefinition ||
+      (await this._domainsService.getDefinition({
+        type: NamespaceType.Role,
+        namespace: role,
+      }));
 
     if (!roleDefinition) {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
@@ -656,6 +1272,110 @@ export class ClaimsService {
     }
   }
 
+  /**
+   * Create verifiable credential and wrap it into verifiable presentation.
+   *
+   * @param {VerifyEnrolmentPrerequisitesOptions} options object containing options
+   * @return JSON representation of verifiable presentation
+   */
+  private async issueVerifiablePresentation(
+    options: IssueVerifiablePresentationOptions
+  ): Promise<VerifiablePresentation> {
+    const vc = await this._verifiableCredentialService.createRoleVC({
+      id: options.subject,
+      namespace: options.namespace,
+      version: options.version,
+      issuerFields: options.issuerFields,
+      credentialStatus: options.credentialStatus,
+      expirationDate: options.expirationTimestamp
+        ? new Date(options.expirationTimestamp)
+        : undefined,
+    });
+    return await this._verifiableCredentialService.createVerifiablePresentation(
+      [vc]
+    );
+  }
+
+  /**
+   * Extract data from claim token.
+   *
+   * @param {String} token JWT token containing claimType, version and subject
+   * @return Claim data
+   */
+  private extractClaimRequest(token: string) {
+    const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
+      claimData: { claimType: string; claimTypeVersion: string };
+      sub: string;
+    };
+    return {
+      ...claimData,
+      subject: sub,
+    };
+  }
+
+  /**
+   * Create subject agreement signature.
+   *
+   * @param {ApproveRolePublishingOptions} options object containing options
+   * @return subject agreement signature
+   */
+  private async approveRolePublishing({
+    subject,
+    role,
+    version,
+  }: ApproveRolePublishingOptions): Promise<string> {
+    const erc712_type_hash = id(
+      'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
+    );
+    const agreement_type_hash = id(
+      'Agreement(address subject,bytes32 role,uint256 version)'
+    );
+
+    const chainId = this._signerService.chainId;
+    const domainSeparator = keccak256(
+      defaultAbiCoder.encode(
+        ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
+        [
+          erc712_type_hash,
+          id('Claim Manager'),
+          id('1.0'),
+          chainId,
+          this._claimManager,
+        ]
+      )
+    );
+
+    const messageId = Buffer.from(typedMsgPrefix, 'hex');
+
+    const agreementHash = solidityKeccak256(
+      ['bytes', 'bytes32', 'bytes32'],
+      [
+        messageId,
+        domainSeparator,
+        keccak256(
+          defaultAbiCoder.encode(
+            ['bytes32', 'address', 'bytes32', 'uint256'],
+            [agreement_type_hash, addressOf(subject), namehash(role), version]
+          )
+        ),
+      ]
+    );
+
+    return canonizeSig(
+      await this._signerService.signMessage(arrayify(agreementHash))
+    );
+  }
+
+  /**
+   * Create on-chain proof signature.
+   *
+   * @param {String} role role claim type
+   * @param {Number} version role version
+   * @param {Number} expiry time in seconds when the claim expires
+   * @param {String} subject DID of the subject
+   *
+   * @return on-chain proof signature
+   */
   private async createOnChainProof(
     role: string,
     version: number,
@@ -704,113 +1424,188 @@ export class ClaimsService {
     );
   }
 
-  private async approveRolePublishing({
-    subject,
-    role,
-    version,
-  }: {
-    subject: string;
-    role: string;
-    version: number;
-  }) {
-    const erc712_type_hash = id(
-      'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
-    );
-    const agreement_type_hash = id(
-      'Agreement(address subject,bytes32 role,uint256 version)'
-    );
-
-    const chainId = this._signerService.chainId;
-    const domainSeparator = keccak256(
-      defaultAbiCoder.encode(
-        ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-        [
-          erc712_type_hash,
-          id('Claim Manager'),
-          id('1.0'),
-          chainId,
-          this._claimManager,
-        ]
-      )
-    );
-
-    const messageId = Buffer.from(typedMsgPrefix, 'hex');
-
-    const agreementHash = solidityKeccak256(
-      ['bytes', 'bytes32', 'bytes32'],
-      [
-        messageId,
-        domainSeparator,
-        keccak256(
-          defaultAbiCoder.encode(
-            ['bytes32', 'address', 'bytes32', 'uint256'],
-            [agreement_type_hash, addressOf(subject), namehash(role), version]
-          )
-        ),
-      ]
-    );
-
-    return canonizeSig(
-      await this._signerService.signMessage(arrayify(agreementHash))
-    );
-  }
-
   /**
-   * @description create a public claim to prove identity
-   * @returns JWT token of created identity
+   * Verifies:
+   * - That credential proof is valid
+   * - That credential was issued by authorized issuer
+   * - That credential was not revoked
+   *
+   * @param {VerifiableCredential<RoleCredentialSubject} vc to be verified
+   * @return Boolean indicating if verified and array of error messages
    */
-  async createIdentityProof() {
-    const blockNumber = await this._signerService.provider.getBlockNumber();
-    return this._didRegistry.createPublicClaim({
-      data: {
-        blockNumber,
-      },
-    });
-  }
+  async verifyVc(
+    vc: VerifiableCredential<RoleCredentialSubject>
+  ): Promise<CredentialVerificationResult> {
+    const errors: string[] = [];
+    const issuerDID = this._signerService.did;
 
-  /**
-   * @description create a proof of identity delegate
-   * @param delegateKey private key of the delegate in hexadecimal format
-   * @param rpcUrl the url of the blockchain provider
-   * @param identity Did of the delegate
-   * @returns token of delegate
-   */
-  async createDelegateProof(
-    delegateKey: string,
-    identity: string,
-    algorithm: Algorithms = Algorithms.EIP191
-  ): Promise<string> {
-    const provider = this._signerService.provider;
-    const blockNumber = (await provider.getBlockNumber()).toString();
-
-    const payload = {
-      iss: identity,
-      claimData: {
-        blockNumber,
-      },
-    };
-    if (algorithm === Algorithms.EIP191) {
-      return new JWT(new Wallet(delegateKey)).sign(payload, {
-        issuer: identity,
-      });
-    } else if (algorithm === Algorithms.ES256) {
-      /** @todo move to @ew-did-registry/jwt */
-      return jsonwebtoken.sign(
-        payload,
-        privToPem(delegateKey, KeyType.Secp256r1),
-        {
-          issuer: identity,
-        }
-      );
-    } else {
-      throw new Error(ERROR_MESSAGES.JWT_ALGORITHM_NOT_SUPPORTED);
+    let proofVerified;
+    try {
+      proofVerified = await this._verifiableCredentialService.verify(vc);
+    } catch (e) {
+      proofVerified = false;
+      errors.push((e as Error).message);
     }
+
+    if (!proofVerified) {
+      errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
+    }
+    const role = vc.credentialSubject.role.namespace;
+    let issuerVerified = true;
+    try {
+      await this._issuerVerification.verifyIssuer(issuerDID, role);
+    } catch (e) {
+      issuerVerified = false;
+      errors.push((e as Error).message);
+    }
+
+    if (vc.credentialStatus) {
+      try {
+        await this._statusVerifier.verifyCredentialStatus(vc.credentialStatus);
+      } catch (e) {
+        issuerVerified = false;
+        errors.push((e as Error).message);
+      }
+    }
+    return {
+      errors,
+      isVerified: proofVerified && issuerVerified,
+    };
   }
 
-  private stripClaimData(data: ClaimData): ClaimData {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { fields, ...claimData } = data;
+  /**
+   * Verifies:
+   * - That off-chain claim was issued by authorized issuer
+   * - That off-chain claim proof is valid
+   *
+   * @param {OffChainClaim} off chain claim to verify
+   * @return Boolean indicating if verified and array of error messages
+   */
+  async verifyRoleEIP191JWT(
+    roleEIP191JWT: RoleEIP191JWT
+  ): Promise<CredentialVerificationResult> {
+    const { payload, eip191Jwt } = roleEIP191JWT;
+    const errors: string[] = [];
+    const issuerDID = this._signerService.did;
+    const { verified: issuerVerified, error } =
+      await this._issuerVerification.verifyIssuer(
+        issuerDID,
+        payload?.claimData?.claimType
+      );
+    if (!issuerVerified && error) {
+      errors.push(error);
+    }
+    const proofVerified = await this._didRegistry.verifyPublicClaim(
+      eip191Jwt,
+      payload?.iss as string
+    );
+    if (!proofVerified) {
+      errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
+    }
+    // Date.now() and JWT expiration time both identify the time elapsed since January 1, 1970 00:00:00 UTC
+    const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
+    if (isExpired) {
+      errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
+    }
+    return {
+      errors: errors,
+      isVerified: !!proofVerified && issuerVerified && !isExpired,
+    };
+  }
 
-    return claimData;
+  /**
+   * Fetch a credential from storage
+   *
+   * @param subjectDID The DID to try to resolve a credential for
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
+   * @return credential if available or undefined if not
+   */
+  async fetchCredential(
+    subjectDID: string,
+    roleNamespace: string
+  ): Promise<
+    VerifiableCredential<RoleCredentialSubject> | RoleEIP191JWT | undefined
+  > {
+    return await this._credentialResolver.getCredential(
+      subjectDID,
+      roleNamespace
+    );
+  }
+
+  /**
+   * Resolve a credential from storage and verify its proof/signature and its issuer's authority
+   *
+   * @param subjectDID The DID to try to resolve a credential for
+   * @param roleNamesapce The role to try to get a credential for. Should be a full role namespace (for example, "myrole.roles.myorg.auth.ewc")
+   * @return void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
+   */
+  async resolveCredentialAndVerify(
+    subjectDID: string,
+    roleNamespace: string
+  ): Promise<CredentialVerificationResult> {
+    const resolvedCredential = await this._credentialResolver.getCredential(
+      subjectDID,
+      roleNamespace
+    );
+    if (!resolvedCredential) {
+      return {
+        isVerified: false,
+        errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED],
+      };
+    }
+    const credentialIsOffChain = resolvedCredential.eip191Jwt;
+    return credentialIsOffChain
+      ? this.verifyRoleEIP191JWT(resolvedCredential as RoleEIP191JWT)
+      : this.verifyVc(
+          resolvedCredential as VerifiableCredential<RoleCredentialSubject>
+        );
+  }
+
+  /**
+   *
+   * Set the Verifier for Claim Issuance.
+   *
+   */
+  private _setIssuerVerifier() {
+    this._credentialResolver = new IpfsCredentialResolver(
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      this._didRegistry.ipfsStore
+    );
+    const domainReader = this._domainsService.domainReader;
+    this._issuerResolver = new EthersProviderIssuerResolver(domainReader);
+    const revokerResolver = new EthersProviderRevokerResolver(domainReader);
+    const verifyProof = (vc: string, proofOptions: string) =>
+      this._verifiableCredentialService.verify(
+        JSON.parse(vc),
+        JSON.parse(proofOptions)
+      );
+    const revocationVerification = new RevocationVerification(
+      revokerResolver,
+      this._issuerResolver,
+      this._credentialResolver,
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      verifyProof
+    );
+    this._issuerVerification = new IssuerVerification(
+      this._issuerResolver,
+      this._credentialResolver,
+      this._signerService.provider,
+      this._didRegistry.registrySettings,
+      revocationVerification,
+      verifyProof
+    );
+  }
+
+  private _setStatusVerifier() {
+    this._statusVerifier = new StatusListEntryVerification(async (vc) => {
+      try {
+        await this._verifiableCredentialService.verify(JSON.parse(vc));
+      } catch (e) {
+        return JSON.stringify({ errors: [(e as Error).message] });
+      }
+      return JSON.stringify({ errors: [] });
+    });
   }
 }

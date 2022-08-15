@@ -1,13 +1,17 @@
-import { BigNumber, providers, utils, Wallet, ethers, Signer } from 'ethers';
+import { BigNumber, providers, utils, Wallet } from 'ethers';
 import base64url from 'base64url';
+import {
+  TypedDataDomain,
+  TypedDataField,
+} from '@ethersproject/abstract-signer';
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { Methods } from '@ew-did-registry/did';
-import { ERROR_MESSAGES } from '../../errors/ErrorMessages';
+import { ERROR_MESSAGES } from '../../errors/error-messages';
 import { chainConfigs } from '../../config/chain.config';
 import {
   ExecutionEnvironment,
   executionEnvironment,
-} from '../../utils/detectEnvironment';
+} from '../../utils/detect-environment';
 import {
   IPubKeyAndIdentityToken,
   ProviderType,
@@ -15,8 +19,9 @@ import {
   AccountInfo,
   PUBLIC_KEY,
   IS_ETH_SIGNER,
+  SignerT,
 } from './signer.types';
-import { EkcSigner } from './ekcSigner';
+import { EkcSigner } from './ekc.signer';
 import { computeAddress } from 'ethers/lib/utils';
 import { getLogger } from '../../config/logger.config';
 
@@ -29,6 +34,15 @@ const {
   verifyMessage,
 } = utils;
 export type ServiceInitializer = () => Promise<void>;
+
+/**
+ * Service responsible for signing messages and sending transactions to the blockchain
+ *
+ * ```typescript
+ * const { signerService } = await initWithPrivateKeySigner(privateKey, rpcUrl);
+ * signerService.signMessage(...);
+ * ```
+ */
 export class SignerService {
   private _publicKey: string;
   private _isEthSigner: boolean;
@@ -46,7 +60,7 @@ export class SignerService {
     [];
 
   constructor(
-    private _signer: Required<Signer>,
+    private _signer: Required<SignerT>,
     private _providerType: ProviderType
   ) {}
 
@@ -71,7 +85,10 @@ export class SignerService {
       } else if (isEthSigner === 'false') {
         this._isEthSigner = false;
       }
+    } else {
+      this._setIsEthrSigner();
     }
+
     /**
      * @todo provide general way to initialize with previously saved key
      */
@@ -121,18 +138,60 @@ export class SignerService {
     }
   }
 
+  async connect(signer: Required<SignerT>, providerType: ProviderType) {
+    this._signer = signer;
+    this._providerType = providerType;
+    await this.init();
+  }
+
+  /**
+   * The instance of the `ether` library signer in use by the service
+   *
+   * ```typescript
+   * signerService.signer;
+   * ```
+   *
+   * @return signer
+   */
   get signer() {
     return this._signer;
   }
 
+  /**
+   * If signer is EIP-191 compliant https://eips.ethereum.org/EIPS/eip-191.
+   *
+   * ```typescript
+   * signerService.isEthSigner;
+   * ```
+   *
+   * @return true if the signer is EIP-191 compliant.
+   */
   get isEthSigner() {
     return this._isEthSigner;
   }
 
+  /**
+   * Get user address.
+   *
+   * ```typescript
+   * signerService.address;
+   * ```
+   *
+   * @return user address
+   */
   get address() {
     return this._address;
   }
 
+  /**
+   * Get account info, including chain id, chain name and user address.
+   *
+   * ```typescript
+   * signerService.accountInfo;
+   * ```
+   *
+   * @return account info
+   */
   get accountInfo(): AccountInfo {
     return {
       account: this._account,
@@ -141,26 +200,99 @@ export class SignerService {
     };
   }
 
+  /**
+   * Get connection provider.
+   *
+   * ```typescript
+   * signerService.provider;
+   * ```
+   *
+   * @return connection provider
+   */
   get provider() {
     return this._signer.provider;
   }
 
+  /**
+   * Get current connection chain id.
+   *
+   * ```typescript
+   * signerService.chainId;
+   * ```
+   *
+   * @return chain id
+   */
   get chainId() {
     return this._chainId;
   }
 
-  async balance() {
-    return this.signer.getBalance();
-  }
-
+  /**
+   * Get provider type of current signer connection.
+   *
+   * ```typescript
+   * signerService.providerType;
+   * ```
+   *
+   * @return provider type
+   */
   get providerType() {
     return this._providerType;
   }
 
+  /**
+   * Get current user DID
+   *
+   * ```typescript
+   * signerService.did;
+   * ```
+   *
+   * @return DID
+   */
   get did() {
     return `did:${Methods.Erc1056}:${this.chainName()}:${this._address}`;
   }
 
+  /**
+   * Get current user DID address with hex representation of the chain id.
+   *
+   * ```typescript
+   * signerService.didHex;
+   * ```
+   *
+   * @return DID address
+   */
+  get didHex() {
+    return `did:${Methods.Erc1056}:${`0x${this.chainId.toString(
+      16
+    )}`}:${this._address.toLowerCase()}`;
+  }
+
+  /**
+   * Get current user balance.
+   *
+   * ```typescript
+   * signerService.getBalance();
+   * ```
+   *
+   * @return user balance
+   */
+  async balance() {
+    return this.signer.getBalance();
+  }
+
+  /**
+   * Send transaction to the blockchain.
+   *
+   * ```typescript
+   * signerService.send({
+   *     to: ':0x00...0',
+   *     data: contract.interface.encodeFunctionData(...)
+   * });
+   * ```
+   *
+   * @param {TransactionRequest} options object with options
+   * @return transaction receipt
+   */
   async send({
     to,
     data,
@@ -177,11 +309,18 @@ export class SignerService {
   }
 
   /**
-   * Makes a (readonly) call to a smart contract
+   * Makes a (readonly) call to a smart contract.
    * https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
-   * @param params.to adddress of contract
-   * @param params.data call data
-   * @returns The result of the call
+   *
+   * ```typescript
+   * signerService.call({
+   *     to: ':0x00...0',
+   *     data: contract.interface.encodeFunctionData(...)
+   * });
+   * ```
+   *
+   * @param {TransactionRequest} options object with options
+   * @return the result of the call
    */
   async call({ to, data }: providers.TransactionRequest): Promise<string> {
     const tx = { to, from: this.address, data };
@@ -190,13 +329,18 @@ export class SignerService {
   }
 
   /**
-   * @description Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign)
-   * Whether or not to hash the message prior to signature is determined by signature performed during login.
-   * When running in browser `isEthSigner` variable should be stored in local storage
+   * Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign).
+   * Whether or not to hash the message prior to signature is depends on whether is signer EIP-191 compliant.
+   * When running in browser `isEthSigner` variable should be stored in local storage.
    *
-   * @param message The message to be signed. The message should have binary representation to avoid confusion of text with hexadecimal binary data
+   * ```typescript
+   * signerService.signMessage(arrayify('Hello World'));
+   * ```
+   *
+   * @param {Uint8Array} message The message to be signed. The message should have binary representation to avoid confusion of text with hexadecimal binary data
+   * @return the signature
    */
-  async signMessage(message: Uint8Array) {
+  async signMessage(message: Uint8Array): Promise<string> {
     if (this._isEthSigner === undefined) {
       throw new Error(ERROR_MESSAGES.IS_ETH_SIGNER_NOT_SET);
     }
@@ -210,13 +354,45 @@ export class SignerService {
     return sig;
   }
 
-  async connect(signer: Required<ethers.Signer>, providerType: ProviderType) {
-    this._signer = signer;
-    this._providerType = providerType;
-    await this.init();
+  /**
+   * Tries to create conformant EIP-712 signature (https://eips.ethereum.org/EIPS/eip-712).
+   *
+   * ```typescript
+   * signerService.signTypedData(
+   *     { name: 'MyToken', version: '1.0' },
+   *     { Model: [{ name: 'name', type: 'string' }, { name: 'type', type: 'string' }] },
+   *     { name: 'MyToken', type: 'erc721' },
+   * );
+   * ```
+   *
+   * @param {TypedDataDomain} domain EIP-712 domain object
+   * @param {Record<string, Array<TypedDataField>>} types EIP-712 types object
+   * @param {Record<string, unknown>} message EIP-712 message object
+   * @return the signature
+   */
+  async signTypedData(
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    message: Record<string, unknown>
+  ): Promise<string> {
+    if (!this.signer?._signTypedData) {
+      throw new Error(ERROR_MESSAGES.SIGN_TYPED_DATA_NOT_SUPPORTED);
+    }
+
+    delete types['EIP712Domain'];
+    return await this.signer._signTypedData(domain, types, message);
   }
 
-  async closeConnection() {
+  /**
+   * Close connection with the signer wallet.
+   *
+   * ```typescript
+   * signerService.closeConnection();
+   * ```
+   *
+   * @return true if connection was closed
+   */
+  async closeConnection(): Promise<boolean> {
     if (this._signer instanceof WalletConnectProvider) {
       await this._signer.disconnect();
     } else if (this._signer instanceof EkcSigner) {
@@ -230,7 +406,16 @@ export class SignerService {
     return true;
   }
 
-  async publicKey() {
+  /**
+   * Get current user public key.
+   *
+   * ```typescript
+   * signerService.publicKey();
+   * ```
+   *
+   * @return public key
+   */
+  async publicKey(): Promise<string> {
     if (this._publicKey) return this._publicKey;
     else if (this._signer instanceof Wallet) {
       this._publicKey = this._signer.publicKey;
@@ -240,12 +425,32 @@ export class SignerService {
     return this._publicKey;
   }
 
-  chainName() {
+  /**
+   * Get current chain name.
+   *
+   * ```typescript
+   * signerService.chainName();
+   * ```
+   *
+   * @return chain name
+   */
+  chainName(): string {
     return this._chainName;
   }
 
-  async publicKeyAndIdentityToken(): Promise<IPubKeyAndIdentityToken> {
-    if (!this._publicKey || !this._identityToken) {
+  /**
+   * Generate public key and identity token for authentication purposes.
+   *
+   * ```typescript
+   * signerService.publicKeyAndIdentityToken();
+   * ```
+   * @param force when true recalculates token even if it is already present
+   * @return object with public key and identity token
+   */
+  async publicKeyAndIdentityToken(
+    force = false
+  ): Promise<IPubKeyAndIdentityToken> {
+    if (!this._publicKey || !this._identityToken || force) {
       await this._calculatePubKeyAndIdentityToken();
     }
     return {
@@ -254,6 +459,11 @@ export class SignerService {
     };
   }
 
+  /**
+   * Generate public key and identity token for authentication purposes.
+   *
+   * @return object with public key and identity token
+   */
   private async _calculatePubKeyAndIdentityToken() {
     const header = {
       alg: 'ES256',
@@ -294,5 +504,30 @@ export class SignerService {
     this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(
       sig
     )}`;
+  }
+
+  /**
+   * Set `_isEthSigner` value based on a signed message.
+   * Generates a test message and signs it.
+   */
+  private async _setIsEthrSigner() {
+    // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
+    // keccak256 hash is applied for Metamask to display a coherent hex value when signing
+    const message = arrayify(keccak256('0x'));
+    // Computation of the digest in order to recover the public key under the assumption
+    // that signature was performed as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
+    const digest = arrayify(hashMessage(message));
+    const sig = await this._signer.signMessage(message);
+    const keyFromMessage = recoverPublicKey(message, sig);
+    const keyFromDigest = recoverPublicKey(digest, sig);
+    if (getAddress(this._address) === computeAddress(keyFromMessage)) {
+      this._publicKey = keyFromMessage;
+      this._isEthSigner = false;
+    } else if (getAddress(this._address) === computeAddress(keyFromDigest)) {
+      this._publicKey = keyFromDigest;
+      this._isEthSigner = true;
+    } else {
+      throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
+    }
   }
 }

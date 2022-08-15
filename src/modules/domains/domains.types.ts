@@ -1,10 +1,13 @@
 import {
+  EncodedCall,
   IAppDefinition,
   IOrganizationDefinition,
   IRevokerDefinition,
   IRoleDefinition,
   IRoleDefinitionV2,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';
+import { TransactionReceipt } from '@energyweb/ekc';
+import { providers } from 'ethers';
 
 export enum NamespaceType {
   Role = 'roles',
@@ -17,7 +20,7 @@ export interface IRole {
   name: string;
   namespace: string;
   owner: string;
-  definition: IRoleDefinition;
+  definition: IRoleDefinition | IRoleDefinitionV2;
   isOwnedByCurrentUser?: boolean;
 }
 
@@ -60,3 +63,188 @@ export function castToV2(
     return <IRoleDefinitionV2>roleDef;
   }
 }
+
+export interface ReturnStep {
+  next: () => Promise<void>;
+  tx: EncodedCall;
+  info: string;
+}
+
+export interface ReturnStepWithRetryCheck {
+  next: (opt?: {
+    retryCheck?: boolean;
+  }) => Promise<TransactionReceipt | undefined>;
+  tx: EncodedCall;
+  info: string;
+}
+
+export type MulticallTx = {
+  tx: EncodedCall;
+  next: (opts?: {
+    retryCheck?: boolean;
+  }) => Promise<providers.TransactionReceipt | undefined>;
+  info: string;
+}[];
+
+export interface SetRoleDefinitionOptions {
+  /** The domain to update */
+  domain: string;
+
+  /** New domain definition */
+  data: IAppDefinition | IOrganizationDefinition | IRoleDefinitionV2;
+}
+
+export interface CreateOrganizationOptions {
+  /** Organization name */
+  orgName: string;
+
+  /** Organization domain definition */
+  data: IOrganizationDefinition;
+
+  /** Parent namespace */
+  namespace: string;
+
+  /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
+  returnSteps?: boolean;
+}
+
+export interface CreateApplicationOptions {
+  /** Parent namespace */
+  namespace: string;
+
+  /** Application name */
+  appName: string;
+
+  /** Application domain definition */
+  data: IAppDefinition;
+
+  /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
+  returnSteps?: boolean;
+}
+
+export interface CreateRoleOptions {
+  /** Role name */
+  roleName: string;
+
+  /** Parent namespace */
+  namespace: string;
+
+  /** Role domain definition */
+  data: IRoleDefinitionV2;
+
+  /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
+  returnSteps?: boolean;
+}
+
+export interface ChangeOrgOwnershipOptions {
+  /** Organization domain */
+  namespace: string;
+
+  /** New owner address */
+  newOwner: string;
+
+  /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
+  returnSteps?: boolean;
+
+  /** Indicates whether to change ownership of subdomains or not */
+  withSubdomains?: boolean;
+}
+
+export interface ChangeAppOwnershipOptions {
+  /** Application domain */
+  namespace: string;
+
+  /** New owner address */
+  newOwner: string;
+
+  /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
+  returnSteps?: boolean;
+}
+
+export interface ChangeRoleOwnershipOptions {
+  /** Role domain */
+  namespace: string;
+
+  /** New owner address */
+  newOwner: string;
+}
+
+export interface DeleteOrganizationOptions {
+  /** Organization domain */
+  namespace: string;
+
+  /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
+  returnSteps?: boolean;
+}
+
+export interface DeleteApplicationOptions {
+  /** Application domain */
+  namespace: string;
+
+  /** Indicates whether to run steps immediately (false) or return steps that can be executed later (true) */
+  returnSteps?: boolean;
+}
+
+export interface DeleteRoleOptions {
+  /** Role domain */
+  namespace: string;
+}
+
+export interface GetDefinitionOptions {
+  /** Domain type */
+  type: NamespaceType;
+
+  /** Domain name */
+  namespace: string;
+}
+
+export interface GetRolesByNamespaceOptions {
+  /** Domain type */
+  parentType: NamespaceType.Application | NamespaceType.Organization;
+
+  /** Domain name */
+  namespace: string;
+}
+
+export interface GetENSTypesByOwnerOptions {
+  /** Domain type */
+  type: NamespaceType;
+
+  /** Address of the owner */
+  owner: string;
+
+  /** Indicates whether to include related roles or not */
+  withRelations?: boolean;
+}
+
+export interface GetSubdomainsOptions {
+  domain: string;
+  mode?: 'ALL' | 'FIRSTLEVEL';
+}
+
+export interface CheckExistenceOfDomainOptions {
+  /** Domain namespace */
+  domain: string;
+}
+
+export interface IsOwnerOptions {
+  /** Domain namespace */
+  domain: string;
+
+  /** Address of the owner */
+  user?: string;
+}
+
+export interface ValidateOwnershipOptions {
+  /** Root domain namespace */
+  namespace: string;
+
+  /** Domain type */
+  type: NamespaceType;
+}
+
+export type DomainDefinition =
+  | IAppDefinition
+  | IOrganizationDefinition
+  | IRoleDefinition
+  | IRoleDefinitionV2;

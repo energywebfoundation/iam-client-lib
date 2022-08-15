@@ -1,17 +1,28 @@
 site_name: IAM Client Library
 nav:
-  - Home: index.md
-  - "Introduction":
-      - "Overview": intro/overview.md
-      - "Architecture": intro/architecture.md
-      - "Domain Hierarchy": intro/domainhierarchy.md
-  - "Guides":
-      - "Initialization": guides/initialization.md
-      - "Application": guides/application.md
-      - "Asset": guides/asset.md
-      - "Organization": guides/organization.md
-      - "Claims": guides/claim.md
-  - API: api/modules.md
+  - Introduction:
+      - Overview: intro/overview.md
+      - 'Domain Hierarchy': intro/domainhierarchy.md
+  - Setup:
+      - Initialization: setup/initialization.md
+      - Logging: setup/logging.md
+      - Using in browser: setup/using_in_browser.md
+  - Guides:
+      - Application: guides/application.md
+      - Asset: guides/asset.md
+      - Organization: guides/organization.md
+      - Claims: guides/claim.md
+  - 'API':
+      - Initialization: api/modules/init.md
+      - Assets: api/modules/modules_assets.md
+      - Cache Client: api/modules/modules_cache_client.md
+      - Claims: api/modules/modules_claims.md
+      - 'Did registry': api/modules/modules_did_registry.md
+      - Domains: api/modules/modules_domains.md
+      - Messaging: api/modules/modules_messaging.md
+      - Signer: api/modules/modules_signer.md
+      - Staking: api/modules/modules_staking.md
+      - 'Verifiable credentials': api/modules/modules_verifiable_credentials.md
   - CHANGELOG: CHANGELOG.md
 theme:
   name: material

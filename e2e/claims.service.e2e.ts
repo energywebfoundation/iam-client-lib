@@ -1,8 +1,21 @@
-import { IRoleDefinition, PreconditionType } from '@energyweb/iam-contracts';
+import jsonwebtoken from 'jsonwebtoken';
+import {
+  IRoleDefinitionV2,
+  IssuerFields,
+  PreconditionType,
+} from '@energyweb/credential-governance';
 import { Methods, Chain } from '@ew-did-registry/did';
 import { addressOf } from '@ew-did-registry/did-ethr-resolver';
 import { KeyTags } from '@ew-did-registry/did-resolver-interface';
-import { ethers, providers, utils, Wallet } from 'ethers';
+import {
+  CredentialStatusPurpose,
+  VerifiablePresentation,
+  Credential,
+  StatusListEntryType,
+  StatusList2021Entry,
+} from '@ew-did-registry/credentials-interface';
+import { BigNumber, providers, utils, Wallet } from 'ethers';
+import nock from 'nock';
 import {
   AssetsService,
   ClaimsService,
@@ -16,15 +29,25 @@ import {
   DidRegistry,
   MessagingService,
   IClaimIssuance,
+  SignerT,
+  Claim,
+  RoleCredentialSubject,
+  CacheClient,
+  VerifiableCredentialsServiceBase,
+  getVerifiableCredentialsService,
+  setLogger,
+  ConsoleLogger,
+  LogLevel,
 } from '../src';
-import { replenish, root, rpcUrl, setupENS } from './utils/setup_contracts';
+import { replenish, root, rpcUrl, setupENS } from './utils/setup-contracts';
 import { ClaimManager__factory } from '../ethers/factories/ClaimManager__factory';
 import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
-import { setLogger } from '../src/config/logger.config';
-import { ConsoleLogger, LogLevel } from '../src/utils/logger';
+import { RoleEIP191JWT } from '@energyweb/vc-verification';
+import { JwtPayload } from '@ew-did-registry/jwt';
+import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
-const { namehash } = utils;
+const { namehash, id } = utils;
 
 const provider = new providers.JsonRpcProvider(rpcUrl);
 const staticIssuer = Wallet.createRandom().connect(provider);
@@ -37,6 +60,14 @@ const roleName1 = 'myrole1';
 const roleName2 = 'myrole2';
 const roleName3 = 'myrole3';
 const roleName4 = 'myrole4';
+const roleName5 = 'myrole5';
+const verifyVcRole = 'verifyVcRole';
+const verifyVcRole2 = 'verifyVcRole2';
+const verifyOffChainClaimRole = 'verifyOnChain';
+const resolveVC = 'resolvevc';
+const verifyResolvedVcExpired = 'vcResolvedExpired';
+const eip191JwtExpired = 'eip191JwtExpired';
+const vcExpired = 'vcExpired';
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -47,8 +78,9 @@ const baseRoleDef = {
   issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   version,
   metadata: {},
+  revoker: { revokerType: 'DID', did: [staticIssuerDID] },
 };
-const roles: Record<string, IRoleDefinition> = {
+const roles: Record<string, IRoleDefinitionV2> = {
   [`${roleName1}.${root}`]: { ...baseRoleDef, roleName: roleName1 },
   [`${roleName2}.${root}`]: {
     ...baseRoleDef,
@@ -67,6 +99,44 @@ const roles: Record<string, IRoleDefinition> = {
     roleName: roleName4,
     issuer: { issuerType: 'ROLE', roleName: `${roleName1}.${root}` },
   },
+  [`${roleName5}.${root}`]: {
+    ...baseRoleDef,
+    roleName: roleName5,
+    defaultValidityPeriod: 1000,
+  },
+  [`${verifyVcRole}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyVcRole,
+    issuer: { issuerType: 'DID', did: [rootOwnerDID] },
+  },
+  [`${resolveVC}.${root}`]: {
+    ...baseRoleDef,
+    roleName: resolveVC,
+  },
+  [`${verifyVcRole2}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyVcRole2,
+  },
+  [`${verifyOffChainClaimRole}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyOffChainClaimRole,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${verifyResolvedVcExpired}.${root}`]: {
+    ...baseRoleDef,
+    roleName: verifyResolvedVcExpired,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${vcExpired}.${root}`]: {
+    ...baseRoleDef,
+    roleName: vcExpired,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${eip191JwtExpired}.${root}`]: {
+    ...baseRoleDef,
+    roleName: eip191JwtExpired,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
 };
 const mockGetRoleDefinition = jest
   .fn()
@@ -80,13 +150,16 @@ const mockCachedDocument = jest.fn().mockImplementation((did: string) => {
     ],
   }; // all documents are created
 });
+const getClamsBySubjectInitMock: (did: string) => Partial<Claim>[] = () => [];
+
 const mockGetCachedOwnedAssets = jest.fn();
 const mockGetAssetById = jest.fn();
 const mockGetClaimsBySubject = jest.fn();
 const mockRequestClaim = jest.fn();
 const mockIssueClaim = jest.fn();
 const mockRejectClaim = jest.fn();
-jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
+const mockGetAllowedRoles = jest.fn();
+jest.mock('../src/modules/cache-client/cache-client.service', () => {
   return {
     CacheClient: jest.fn().mockImplementation(() => {
       return {
@@ -100,6 +173,23 @@ jest.mock('../src/modules/cacheClient/cacheClient.service', () => {
         requestClaim: mockRequestClaim,
         issueClaim: mockIssueClaim,
         rejectClaim: mockRejectClaim,
+        getAllowedRolesByIssuer: mockGetAllowedRoles,
+        addStatusToCredential: (
+          credential: Credential<RoleCredentialSubject>
+        ): Credential<RoleCredentialSubject> => {
+          return {
+            ...credential,
+            credentialStatus: {
+              id: `https://energyweb.org/credential/${id(
+                JSON.stringify(credential)
+              )}#list`,
+              type: StatusListEntryType.Entry2021,
+              statusPurpose: CredentialStatusPurpose.REVOCATION,
+              statusListIndex: '1',
+              statusListCredential: `https://identitycache.org/v1/status-list/${credential.id}`,
+            },
+          };
+        },
       };
     }),
   };
@@ -115,17 +205,18 @@ jest.mock('../src/modules/messaging/messaging.service', () => {
   };
 });
 
-describe('Enrollment claim tests', () => {
+describe('Сlaim tests', () => {
   let claimsService: ClaimsService;
   let signerService: SignerService;
   let assetsService: AssetsService;
   let domainsService: DomainsService;
   let claimManager: ClaimManager;
   let didRegistry: DidRegistry;
+  let verifiableCredentialsService: VerifiableCredentialsServiceBase;
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    //mockGetClaimsBySubject.mockReset();
+    mockGetClaimsBySubject.mockImplementation(getClamsBySubjectInitMock);
     await replenish(await staticIssuer.getAddress());
     await replenish(await rootOwner.getAddress());
     await replenish(await dynamicIssuer.getAddress());
@@ -156,34 +247,119 @@ describe('Enrollment claim tests', () => {
       data: roles[`${roleName4}.${root}`],
       returnSteps: false,
     });
-    ({ didRegistry, claimsService } = await connectToDidRegistry());
+    await domainsService.createRole({
+      roleName: roleName5,
+      namespace,
+      data: roles[`${roleName5}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: verifyVcRole,
+      namespace,
+      data: roles[`${verifyVcRole}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: verifyVcRole2,
+      namespace,
+      data: roles[`${verifyVcRole2}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: verifyOffChainClaimRole,
+      namespace,
+      data: roles[`${verifyOffChainClaimRole}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: resolveVC,
+      namespace,
+      data: roles[`${resolveVC}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: verifyResolvedVcExpired,
+      namespace,
+      data: roles[`${verifyResolvedVcExpired}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: vcExpired,
+      namespace,
+      data: roles[`${vcExpired}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: eip191JwtExpired,
+      namespace,
+      data: roles[`${eip191JwtExpired}.${root}`],
+      returnSteps: false,
+    });
+    ({ didRegistry, claimsService } = await connectToDidRegistry(
+      await spawnIpfsDaemon()
+    ));
+    mockGetAllowedRoles.mockImplementation(async (issuer) => {
+      const roleDefs = Object.values(roles);
+      const isRoleIssuerOfRole = await Promise.all(
+        roleDefs.map(
+          (r) =>
+            r.issuer.roleName &&
+            claimsService.hasOnChainRole(issuer, r.issuer.roleName, version)
+        )
+      );
+      const allowedRoles = roleDefs
+        .filter((r, i) => {
+          return (
+            (r.issuer.issuerType === 'DID' && r.issuer.did?.includes(issuer)) ||
+            (r.issuer.issuerType === 'ROLE' && isRoleIssuerOfRole[i])
+          );
+        })
+        .map((r) => ({ ...r, namespace: `${r.roleName}.${root}` }));
+
+      return allowedRoles;
+    });
     Reflect.set(didRegistry, '_cacheClient', undefined);
     setLogger(new ConsoleLogger(LogLevel.warn));
+    const cacheClient = new CacheClient(signerService);
+    verifiableCredentialsService = await getVerifiableCredentialsService(
+      signerService,
+      cacheClient
+    );
   });
 
-  describe('Enrollment tests', () => {
+  afterEach(async () => {
+    await shutDownIpfsDaemon();
+  });
+
+  describe('Role claim tests', () => {
     async function enrolAndIssue(
-      requestSigner: Required<ethers.Signer>,
-      issueSigner: Required<ethers.Signer>,
+      requestSigner: Required<SignerT>,
+      issueSigner: Required<SignerT>,
       {
         subjectDID,
         claimType,
         registrationTypes = [RegistrationTypes.OnChain],
         publishOnChain = true,
         issuerFields,
+        expirationTimestamp,
       }: {
         subjectDID: string;
         claimType: string;
         registrationTypes?: RegistrationTypes[];
         publishOnChain?: boolean;
         issuerFields?: Record<string, string | number>[];
+        expirationTimestamp?: number;
       }
     ) {
       await signerService.connect(requestSigner, ProviderType.PrivateKey);
       const requesterDID = signerService.did;
       const requestorFields = [{ key: 'temperature', value: 36 }];
       await claimsService.createClaimRequest({
-        claim: { claimType, claimTypeVersion: version, requestorFields },
+        claim: {
+          claimType,
+          claimTypeVersion: version,
+          requestorFields,
+        },
         registrationTypes,
         subject: subjectDID,
       });
@@ -194,21 +370,80 @@ describe('Enrollment claim tests', () => {
       await claimsService.issueClaimRequest({
         publishOnChain,
         issuerFields,
+        expirationTimestamp,
         ...message,
       });
       const [, issuedClaim] = <[string, Required<IClaimIssuance>]>(
         mockIssueClaim.mock.calls.pop()
       );
 
-      const { issuedToken, requester, claimIssuer, onChainProof, acceptedBy } =
-        issuedClaim;
+      const currentGetClaimsBySubjectMock =
+        mockGetClaimsBySubject.getMockImplementation() as jest.Mock;
+      mockGetClaimsBySubject.mockImplementation((did) =>
+        [...currentGetClaimsBySubjectMock(did)].concat(
+          did === subjectDID
+            ? [
+                {
+                  claimType,
+                  claimTypeVersion: version,
+                  issuedToken: issuedClaim.issuedToken,
+                },
+              ]
+            : []
+        )
+      );
+      const {
+        issuedToken,
+        requester,
+        claimIssuer,
+        onChainProof,
+        acceptedBy,
+        vp,
+      } = issuedClaim;
+
+      const roleDefinitionValidityPeriod =
+        roles[claimType].defaultValidityPeriod;
 
       if (registrationTypes.includes(RegistrationTypes.OffChain)) {
         expect(issuedToken).toBeDefined();
-
-        const { claimData, signer, did } = (await didRegistry.decodeJWTToken({
+        const { credentialStatus } = (await didRegistry.decodeJWTToken({
           token: issuedToken,
-        })) as { [key: string]: string };
+        })) as { [key: string]: StatusList2021Entry };
+        expect(credentialStatus).toBeDefined;
+        expect(credentialStatus.type).toEqual(StatusListEntryType.Entry2021);
+        expect(vp).toBeDefined();
+
+        const vpObject = JSON.parse(vp) as VerifiablePresentation;
+
+        expect(vpObject.verifiableCredential).toHaveLength(1);
+        expect(vpObject.verifiableCredential[0].credentialSubject).toEqual({
+          id: subjectDID,
+          role: {
+            namespace: claimType,
+            version: version.toString(),
+          },
+          issuerFields: issuerFields || [],
+        });
+        expect(vpObject.verifiableCredential[0].issuer).toEqual(
+          signerService.didHex
+        );
+        expirationTimestamp &&
+          expect(vpObject.verifiableCredential[0].expirationDate).toEqual(
+            new Date(expirationTimestamp).toISOString()
+          );
+
+        if (roleDefinitionValidityPeriod && !expirationTimestamp) {
+          expect(vpObject.verifiableCredential[0].expirationDate).toEqual(
+            new Date(Date.now() + roleDefinitionValidityPeriod).toISOString()
+          );
+        }
+
+        expect(vpObject.holder).toEqual(signerService.didHex);
+
+        const { claimData, signer, did, exp } =
+          (await didRegistry.decodeJWTToken({
+            token: issuedToken,
+          })) as { [key: string]: string };
 
         expect(claimData).toEqual({
           claimType,
@@ -216,6 +451,9 @@ describe('Enrollment claim tests', () => {
           issuerFields,
           requestorFields,
         });
+
+        expirationTimestamp &&
+          expect(exp).toEqual(Math.trunc(expirationTimestamp / 1000));
 
         expect(claimData).not.toContain({
           fields: [{ key: 'temperature', value: 36 }],
@@ -228,8 +466,35 @@ describe('Enrollment claim tests', () => {
       expect(requester).toEqual(requesterDID);
       expect(claimIssuer).toEqual([issuerDID]);
 
-      registrationTypes.includes(RegistrationTypes.OnChain) &&
+      if (registrationTypes.includes(RegistrationTypes.OnChain)) {
         expect(onChainProof).toHaveLength(132);
+
+        if (expirationTimestamp || roleDefinitionValidityPeriod) {
+          const filter = claimManager.filters.RoleRegistered();
+          const logs = await claimManager.queryFilter(filter);
+
+          logs.forEach((log) => {
+            const parsedLog = claimManager.interface.parseLog(log);
+            const args = parsedLog.args as unknown as {
+              subject: string;
+              role: string;
+              version: BigNumber;
+              expiry: BigNumber;
+              issuer: string;
+            };
+
+            if (
+              args.subject === addressOf(subjectDID) &&
+              args.role === namehash(claimType)
+            ) {
+              expirationTimestamp &&
+                expect(args.expiry.toNumber()).toEqual(
+                  Math.floor(expirationTimestamp / 1000)
+                );
+            }
+          });
+        }
+      }
 
       expect(acceptedBy).toBe(issuerDID);
 
@@ -237,7 +502,7 @@ describe('Enrollment claim tests', () => {
     }
 
     async function issueWithoutRequest(
-      issueSigner: Required<ethers.Signer>,
+      issueSigner: Required<SignerT>,
       {
         subjectDID,
         claimType,
@@ -354,10 +619,14 @@ describe('Enrollment claim tests', () => {
         data: roles[`${roleName2}.${root}`],
         returnSteps: false,
       });
-
       await enrolAndIssue(dynamicIssuer, staticIssuer, {
         subjectDID: dynamicIssuerDID,
         claimType: `${roleName1}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain, // role type issuer should have offchain claim
+        ],
+        issuerFields: [],
       });
 
       expect(
@@ -372,7 +641,6 @@ describe('Enrollment claim tests', () => {
         subjectDID: rootOwnerDID,
         claimType: `${roleName2}.${root}`,
       });
-
       return expect(
         await claimsService.hasOnChainRole(
           rootOwnerDID,
@@ -391,16 +659,10 @@ describe('Enrollment claim tests', () => {
         returnSteps: false,
       });
 
-      const role1Claim = {
-        claimType: `${roleName1}.${root}`,
-        isAccepted: true,
-      };
       await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${roleName1}.${root}`,
       });
-      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
-      mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify issuance
 
       await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
@@ -424,14 +686,45 @@ describe('Enrollment claim tests', () => {
         returnSteps: false,
       });
 
-      mockGetClaimsBySubject.mockImplementationOnce(() => []);
-
       return expect(
         enrolAndIssue(rootOwner, staticIssuer, {
           subjectDID: rootOwnerDID,
           claimType: `${roleName3}.${root}`,
         })
       ).rejects.toEqual(new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET));
+    });
+
+    test('enrollment with credential/claim time expiration', async () => {
+      const requester = rootOwner;
+      const issuer = staticIssuer;
+      const subjectDID = rootOwnerDID;
+      const claimType = `${roleName1}.${root}`;
+
+      await enrolAndIssue(requester, issuer, {
+        subjectDID,
+        claimType,
+        expirationTimestamp: Date.now() + 100000,
+      });
+
+      expect(
+        await claimsService.hasOnChainRole(subjectDID, claimType, version)
+      ).toBe(true);
+    });
+
+    test('enrollment with credential/claim default time expiration from role definition', async () => {
+      const requester = rootOwner;
+      const issuer = staticIssuer;
+      const subjectDID = rootOwnerDID;
+      const claimType = `${roleName5}.${root}`;
+
+      await enrolAndIssue(requester, issuer, {
+        subjectDID,
+        claimType,
+      });
+
+      expect(
+        await claimsService.hasOnChainRole(subjectDID, claimType, version)
+      ).toBe(true);
     });
 
     describe('Publishing onchain', () => {
@@ -445,8 +738,6 @@ describe('Enrollment claim tests', () => {
       };
 
       test('should be able to issue and publish onchain', async () => {
-        mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]); // to verify requesting
-
         await enrolAndIssue(rootOwner, staticIssuer, {
           subjectDID: rootOwnerDID,
           claimType,
@@ -501,6 +792,78 @@ describe('Enrollment claim tests', () => {
           await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
         ).toBe(false);
       });
+
+      test('should be able to issue when role registered onchain', async () => {
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
+          publishOnChain: true,
+        });
+        expect(
+          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+        ).toBe(true);
+
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
+          publishOnChain: true,
+        });
+      });
+
+      test('should be able to issue without publishing onchain', async () => {
+        await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
+          publishOnChain: false,
+        });
+        expect(
+          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+        ).toBe(false);
+      });
+
+      test('should be able to set expiry', async () => {
+        const expirationTimestamp = new Date().getTime() + 60_1000;
+        const waitForRegister = new Promise((resolve) =>
+          claimManager.once(
+            'RoleRegistered',
+            (subject, role, version, expiry: BigNumber, issuer) =>
+              resolve(expiry.toNumber())
+          )
+        );
+        const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType,
+          expirationTimestamp,
+          registrationTypes: [
+            RegistrationTypes.OffChain,
+            RegistrationTypes.OnChain,
+          ],
+          publishOnChain: true,
+        });
+        const payload = jsonwebtoken.decode(issuedToken) as JwtPayload;
+        const exp = payload.exp as number;
+        expect(exp).not.toBeUndefined;
+
+        const expiry = await waitForRegister;
+
+        expect(
+          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+        ).toBe(true);
+        expect(expiry).toBe(Math.floor(expirationTimestamp / 1000));
+        expect(expiry).toBe(exp);
+      });
     });
 
     test('should issue claim request with additional issuer fields', async () => {
@@ -516,7 +879,7 @@ describe('Enrollment claim tests', () => {
       await claimsService.createClaimRequest({
         claim: {
           claimType: `${roleName1}.${root}`,
-          claimTypeVersion: 1,
+          claimTypeVersion: version,
           requestorFields: [],
         },
         registrationTypes,
@@ -565,6 +928,189 @@ describe('Enrollment claim tests', () => {
           (s) => s.serviceEndpoint === claimUrl && s.claimType === claimType
         )
       ).toBeDefined();
+    });
+
+    const createExampleSignedCredential = async (
+      issuerFields: IssuerFields[],
+      namespace: string,
+      expirationDate?: Date
+    ) => {
+      return await verifiableCredentialsService.createRoleVC({
+        id: rootOwnerDID,
+        namespace: namespace,
+        version: '1',
+        issuerFields,
+        expirationDate,
+      });
+    };
+    describe('Verification tests', () => {
+      describe('resolveCredentialAndVerify tests', () => {
+        test('resolveCredentialAndVerify should resolve and verify a Verifiable Credential', async () => {
+          const roleName = `${resolveVC}.${root}`;
+          const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+            subjectDID: rootOwnerDID,
+            claimType: roleName,
+            registrationTypes: [
+              RegistrationTypes.OnChain,
+              RegistrationTypes.OffChain,
+            ],
+            publishOnChain: true,
+            issuerFields: [],
+          });
+          await signerService.connect(rootOwner, ProviderType.PrivateKey);
+          const subjectDoc = await didRegistry.getDidDocument({
+            did: rootOwnerDID,
+            includeClaims: true,
+          });
+          mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+          await claimsService.publishPublicClaim({
+            claim: { token: issuedToken },
+          });
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+          const result = await claimsService.resolveCredentialAndVerify(
+            rootOwnerDID,
+            roleName
+          );
+          expect(result.errors).toHaveLength(0);
+          expect(result.isVerified).toBe(true);
+        });
+
+        test('resolveCredentialAndVerify should resolve and verify an EIP191JWT', async () => {
+          const roleName = `${verifyOffChainClaimRole}.${root}`;
+          const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+            subjectDID: rootOwnerDID,
+            claimType: roleName,
+            registrationTypes: [
+              RegistrationTypes.OnChain,
+              RegistrationTypes.OffChain,
+            ],
+            publishOnChain: true,
+            issuerFields: [],
+          });
+          await signerService.connect(rootOwner, ProviderType.PrivateKey);
+          await claimsService.publishPublicClaim({
+            claim: { token: issuedToken },
+          });
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+          const result = await claimsService.resolveCredentialAndVerify(
+            rootOwnerDID,
+            roleName
+          );
+          expect(result.errors).toHaveLength(0);
+          expect(result.isVerified).toBe(true);
+        });
+        test('resolveCredentialAndVerify should return a "No claim found" error if no credential and no claim is resolved', async () => {
+          const roleName = `${resolveVC}.${root}`;
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+          const result = await claimsService.resolveCredentialAndVerify(
+            staticIssuerDID,
+            roleName
+          );
+          expect(result.errors).toContain(
+            'No claim found for given DID and role'
+          );
+          expect(result.isVerified).toBe(false);
+        });
+
+        test('resolveCredentialAndVerify should return an expiration error if the credential is expired', async () => {
+          const roleName = `${verifyResolvedVcExpired}.${root}`;
+          const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+            subjectDID: rootOwnerDID,
+            claimType: roleName,
+            registrationTypes: [
+              RegistrationTypes.OnChain,
+              RegistrationTypes.OffChain,
+            ],
+            publishOnChain: true,
+            issuerFields: [],
+            expirationTimestamp: Date.now() + 7000,
+          });
+          await signerService.connect(rootOwner, ProviderType.PrivateKey);
+          const subjectDoc = await didRegistry.getDidDocument({
+            did: rootOwnerDID,
+            includeClaims: true,
+          });
+          mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+          await claimsService.publishPublicClaim({
+            claim: { token: issuedToken },
+          });
+          const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+          await delay(8000);
+          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+          const result = await claimsService.resolveCredentialAndVerify(
+            rootOwnerDID,
+            roleName
+          );
+          expect(result.errors).toContain('Credential Expired');
+          expect(result.isVerified).toBe(false);
+        });
+      });
+      test('verifyVc should verify a VC with no errors if the issuer is authorized', async () => {
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const issuerFields = [];
+        const vc = await createExampleSignedCredential(
+          issuerFields,
+          `${verifyVcRole}.${root}`
+        );
+        nock(vc.credentialStatus?.statusListCredential as string)
+          .get('')
+          .reply(200, undefined);
+        const result = await claimsService.verifyVc(vc);
+        expect(result.errors).toHaveLength(0);
+        expect(result.isVerified).toBe(true);
+      });
+      test('verifyVc should return a credential expired error if credential is expired', async () => {
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const issuerFields = [];
+        const vc = await createExampleSignedCredential(
+          issuerFields,
+          `${vcExpired}.${root}`,
+          new Date(Date.now() + 8000)
+        );
+        nock(vc.credentialStatus?.statusListCredential as string)
+          .get('')
+          .reply(200, undefined);
+        const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+        await delay(8000);
+        const result = await claimsService.verifyVc(vc);
+        expect(result.errors).toContain('Verifiable Credential is expired.');
+        expect(result.isVerified).toBe(false);
+      });
+      test('verifyEIP should return an expiration error if the credential is expired', async () => {
+        const roleName = `${eip191JwtExpired}.${root}`;
+        const { issuedToken } = await enrolAndIssue(rootOwner, staticIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType: roleName,
+          registrationTypes: [
+            RegistrationTypes.OnChain,
+            RegistrationTypes.OffChain,
+          ],
+          publishOnChain: true,
+          issuerFields: [],
+          expirationTimestamp: Date.now() + 7000,
+        });
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const subjectDoc = await didRegistry.getDidDocument({
+          did: rootOwnerDID,
+          includeClaims: true,
+        });
+        mockCachedDocument.mockResolvedValueOnce(subjectDoc);
+        await claimsService.publishPublicClaim({
+          claim: { token: issuedToken },
+        });
+        const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+        await delay(8000);
+        await signerService.connect(staticIssuer, ProviderType.PrivateKey);
+        const credential = await claimsService.fetchCredential(
+          rootOwnerDID,
+          roleName
+        );
+        const result = await claimsService.verifyRoleEIP191JWT(
+          credential as RoleEIP191JWT
+        );
+        expect(result.errors).toContain('Credential Expired');
+        expect(result.isVerified).toBe(false);
+      });
     });
   });
 

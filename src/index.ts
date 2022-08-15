@@ -16,13 +16,14 @@
 
 export * from './init';
 export * from './modules/assets';
-export * from './modules/cacheClient';
+export * from './modules/cache-client';
 export * from './modules/claims';
-export * from './modules/didRegistry';
+export * from './modules/did-registry';
 export * from './modules/domains';
 export * from './modules/messaging';
 export * from './modules/signer';
 export * from './modules/staking';
+export * from './modules/verifiable-credentials';
 export * from './errors';
 export * from './config';
 export * from './utils';
@@ -42,4 +43,4 @@ export {
   IRevokerDefinition,
   IRoleDefinitionText,
   IRoleDefinitionV2,
-} from '@energyweb/iam-contracts';
+} from '@energyweb/credential-governance';

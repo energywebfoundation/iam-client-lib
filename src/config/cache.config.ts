@@ -1,5 +1,5 @@
-import { EWC_CHAIN_ID, VOLTA_CHAIN_ID } from '@energyweb/iam-contracts';
-import { CacheServerClientOptions } from '../modules/cacheClient/cacheClient.types';
+import { EWC_CHAIN_ID, VOLTA_CHAIN_ID } from '@energyweb/credential-governance';
+import { CacheServerClientOptions } from '../modules/cache-client/cache-client.types';
 
 const cacheConfig: Record<number, CacheServerClientOptions> = {
   [VOLTA_CHAIN_ID]: {

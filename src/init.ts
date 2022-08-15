@@ -10,9 +10,9 @@ import {
   SignerService,
 } from './modules/signer';
 import { StakingFactoryService } from './modules/staking';
-import { DidRegistry } from './modules/didRegistry';
+import { DidRegistry, IpfsConfig } from './modules/did-registry';
 import { MessagingService } from './modules/messaging';
-import { CacheClient } from './modules/cacheClient';
+import { CacheClient } from './modules/cache-client';
 import { DomainsService } from './modules/domains';
 import { AssetsService } from './modules/assets';
 import { ClaimsService } from './modules/claims';
@@ -22,6 +22,7 @@ import {
   defaultKmsServerUrl,
 } from './utils';
 import { chainConfigs } from './config';
+import { getVerifiableCredentialsService } from './modules/verifiable-credentials';
 
 export async function initWithPrivateKeySigner(
   privateKey: string,
@@ -59,6 +60,11 @@ export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
   return init(signerService);
 }
 
+/**
+ * Initializes messaging service and creates initializer of cache client
+ *
+ * @param signerService initialized instance of signer service
+ */
 export async function init(signerService: SignerService) {
   const messagingService = await MessagingService.create(signerService);
 
@@ -70,6 +76,10 @@ export async function init(signerService: SignerService) {
     const cacheClient = new CacheClient(signerService);
     await cacheClient.init();
     await cacheClient.login();
+    const verifiableCredentialsService = await getVerifiableCredentialsService(
+      signerService,
+      cacheClient
+    );
     const domainsService = await DomainsService.create(
       signerService,
       cacheClient
@@ -88,19 +98,20 @@ export async function init(signerService: SignerService) {
     );
 
     async function connectToDidRegistry(
-      ipfsStore?: string
+      ipfsConfig: IpfsConfig
     ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
       const didRegistry = await DidRegistry.connect(
         signerService,
         cacheClient,
         assetsService,
-        ipfsStore
+        ipfsConfig
       );
       const claimsService = await ClaimsService.create(
         signerService,
         domainsService,
         cacheClient,
-        didRegistry
+        didRegistry,
+        verifiableCredentialsService
       );
       return { didRegistry, claimsService };
     }
@@ -110,6 +121,7 @@ export async function init(signerService: SignerService) {
       assetsService,
       connectToDidRegistry,
       stakingPoolService,
+      verifiableCredentialsService,
     };
   }
 
