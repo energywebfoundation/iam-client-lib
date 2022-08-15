@@ -1,3 +1,10 @@
+### [6.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1-alpha.1...v6.0.1-alpha.2) (2022-08-15)
+
+
+### Bug Fixes
+
+* **exp:** document expirationTimestamp ([#631](https://github.com/energywebfoundation/iam-client-lib/issues/631)) ([9595c34](https://github.com/energywebfoundation/iam-client-lib/commit/9595c34bba0021ef75a29b24610d37eac762fc64))
+
 ### [6.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0...v6.0.1-alpha.1) (2022-08-15)
 
 
