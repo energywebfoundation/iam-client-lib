@@ -33,7 +33,7 @@ export const validateRoleCredentialSubject = (
   subject: RoleCredentialSubjectParams
 ) => {
   const invalidField = subject.issuerFields?.find(
-    (field) => !['string', 'number', 'boolean'].includes(typeof field.value)
+    (field) => !['string', 'number'].includes(typeof field.value)
   );
   if (invalidField) {
     throw new InterfaceNotSatisfied(
