@@ -1,3 +1,10 @@
+### [6.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0...v6.0.1-alpha.1) (2022-08-15)
+
+
+### Bug Fixes
+
+* **issue claim:** allow boolean as valid field ([#639](https://github.com/energywebfoundation/iam-client-lib/issues/639)) ([77eb426](https://github.com/energywebfoundation/iam-client-lib/commit/77eb426c5222c312b6cb04fc87155b6300693d97))
+
 ## [6.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0...v6.0.0) (2022-08-15)
 
 
