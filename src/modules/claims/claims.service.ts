@@ -1458,8 +1458,7 @@ export class ClaimsService {
     try {
       if (typeof issuerDID === 'string') {
         await this._issuerVerification.verifyIssuer(issuerDID, role);
-      }
-      else {
+      } else {
         await this._issuerVerification.verifyIssuer(issuerDID.id, role);
       }
     } catch (e) {
@@ -1504,7 +1503,7 @@ export class ClaimsService {
         payload?.claimData?.claimType
       );
     if (!issuerVerified && error) {
-      errors.push(error);
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
     const proofVerified = await this._didRegistry.verifyPublicClaim(
       eip191Jwt,
