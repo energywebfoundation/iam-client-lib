@@ -30,6 +30,7 @@ export interface IClaimIssuance extends IMessage {
   claimTypeVersion?: string;
   acceptedBy: string;
   vp?: string;
+  // a Unix timestamp expressed in milliseconds of when the claim expires
   expirationTimestamp?: number;
 }
 
@@ -198,7 +199,7 @@ export interface IssueClaimRequestOptions {
    */
   credentialStatusOverride?: StatusList2021Entry;
 
-  /** Defines how long the claim is valid. */
+  /** A Unix timestamp expressed in milliseconds of when the claim expires. */
   expirationTimestamp?: number;
 }
 
@@ -224,7 +225,7 @@ export interface RegisterOnchainOptions {
   /** DID of the claim subject */
   subject?: string;
 
-  /** Defines how long the claim is valid (seconds). */
+  /** A Unix timestamp expressed in seconds of when the claim expires. */
   expirationTimestamp?: number;
 }
 
@@ -269,7 +270,7 @@ export interface IssueClaimOptions {
    */
   credentialStatusOverride?: StatusList2021Entry;
 
-  /** Defines how long the claim is valid (milliseconds) */
+  /** A Unix timestamp expressed in milliseconds of when the claim expires. */
   expirationTimestamp?: number;
 }
 
@@ -337,7 +338,7 @@ export interface IssueVerifiablePresentationOptions {
    */
   credentialStatus?: StatusList2021Entry;
 
-  /** Defines how long the claim is valid. */
+  /** A Unix timestamp expressed in milliseconds of when the claim expires. */
   expirationTimestamp?: number;
 }
 
