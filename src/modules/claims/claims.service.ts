@@ -2,7 +2,7 @@ import { providers, utils, Wallet } from 'ethers';
 import jsonwebtoken from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import {
-  IRoleDefinition,
+  IRoleDefinitionV2,
   PreconditionType,
   RoleCredentialSubject,
 } from '@energyweb/credential-governance';
@@ -1252,24 +1252,24 @@ export class ClaimsService {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_EXISTS);
     }
 
-    const { enrolmentPreconditions } = roleDefinition as IRoleDefinition;
+    const { enrolmentPreconditions } = roleDefinition as IRoleDefinitionV2;
 
     if (!enrolmentPreconditions || enrolmentPreconditions.length === 0) return;
-
-    const enroledRoles = new Set(
-      (await this.getClaimsBySubject({ did: subject, isAccepted: true })).map(
-        ({ claimType }) => claimType
-      )
+    const requiredRoles = enrolmentPreconditions
+      .filter(({ type }) => type === PreconditionType.Role)
+      .map(({ conditions }) => conditions)
+      .reduce((all, cur) => all.concat(cur), []);
+    await Promise.all(
+      requiredRoles.map(async (role) => {
+        const verificationResult = await this.resolveCredentialAndVerify(
+          subject,
+          role
+        );
+        if (!verificationResult.isVerified) {
+          throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
+        }
+      })
     );
-    const requiredRoles = new Set(
-      enrolmentPreconditions
-        .filter(({ type }) => type === PreconditionType.Role)
-        .map(({ conditions }) => conditions)
-        .reduce((all, cur) => all.concat(cur), [])
-    );
-    if (Array.from(requiredRoles).some((role) => !enroledRoles.has(role))) {
-      throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
-    }
   }
 
   /**
@@ -1437,7 +1437,10 @@ export class ClaimsService {
     vc: VerifiableCredential<RoleCredentialSubject>
   ): Promise<CredentialVerificationResult> {
     const errors: string[] = [];
-    const issuerDID = this._signerService.did;
+    const issuerDID = vc.issuer;
+    if (!issuerDID) {
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
+    }
 
     let proofVerified;
     try {
@@ -1453,7 +1456,11 @@ export class ClaimsService {
     const role = vc.credentialSubject.role.namespace;
     let issuerVerified = true;
     try {
-      await this._issuerVerification.verifyIssuer(issuerDID, role);
+      if (typeof issuerDID === 'string') {
+        await this._issuerVerification.verifyIssuer(issuerDID, role);
+      } else {
+        await this._issuerVerification.verifyIssuer(issuerDID.id, role);
+      }
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
@@ -1486,14 +1493,17 @@ export class ClaimsService {
   ): Promise<CredentialVerificationResult> {
     const { payload, eip191Jwt } = roleEIP191JWT;
     const errors: string[] = [];
-    const issuerDID = this._signerService.did;
+    const issuerDID = roleEIP191JWT.payload?.iss;
+    if (!issuerDID) {
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
+    }
     const { verified: issuerVerified, error } =
       await this._issuerVerification.verifyIssuer(
         issuerDID,
         payload?.claimData?.claimType
       );
     if (!issuerVerified && error) {
-      errors.push(error);
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
     const proofVerified = await this._didRegistry.verifyPublicClaim(
       eip191Jwt,
