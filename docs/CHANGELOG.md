@@ -1,3 +1,10 @@
+### [6.0.1-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1-alpha.2...v6.0.1-alpha.3) (2022-08-17)
+
+
+### Bug Fixes
+
+* use resolveCredentialAndVerify to verify enrolment prerequisites ([#630](https://github.com/energywebfoundation/iam-client-lib/issues/630)) ([9208ad3](https://github.com/energywebfoundation/iam-client-lib/commit/9208ad36edb91a0aac3cf1b36dc28053b123896f))
+
 ### [6.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1-alpha.1...v6.0.1-alpha.2) (2022-08-15)
 
 
