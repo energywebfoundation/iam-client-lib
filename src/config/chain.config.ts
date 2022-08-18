@@ -78,7 +78,8 @@ const chainConfig: Record<number, ChainConfig> = {
     claimManagerAddress: EWC_CLAIM_MANAGER_ADDRESS,
     stakingPoolFactoryAddress: '', // This is not deployed on EWC
     credentialRevocationRegistryAddress: '', // This is not deployed on EWC
-    claimsRevocationRegistryAddress: '', // This is not deployed on EWC
+    claimsRevocationRegistryAddress:
+      '0xd72B4c8D5B1a1A4C7085259548bDF1A175CFc48D',
   },
 };
 
