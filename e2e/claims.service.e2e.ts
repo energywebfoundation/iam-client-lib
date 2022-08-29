@@ -54,6 +54,8 @@ const staticIssuer = Wallet.createRandom().connect(provider);
 const staticIssuerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${staticIssuer.address}`;
 const dynamicIssuer = Wallet.createRandom().connect(provider);
 const dynamicIssuerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${dynamicIssuer.address}`;
+const projectInstallerCandidate = Wallet.createRandom().connect(provider);
+const projectInstallerCandidateDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${projectInstallerCandidate.address}`;
 const rootOwner = Wallet.createRandom().connect(provider);
 const rootOwnerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${rootOwner.address}`;
 const roleName1 = 'myrole1';
@@ -68,6 +70,9 @@ const resolveVC = 'resolvevc';
 const verifyResolvedVcExpired = 'vcResolvedExpired';
 const eip191JwtExpired = 'eip191JwtExpired';
 const vcExpired = 'vcExpired';
+const electrician = 'electrician';
+const projectElectrician = 'projectElectrician';
+const projectInstaller = 'projectInstaller';
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -135,6 +140,24 @@ const roles: Record<string, IRoleDefinitionV2> = {
   [`${eip191JwtExpired}.${root}`]: {
     ...baseRoleDef,
     roleName: eip191JwtExpired,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${electrician}.${root}`]: {
+    ...baseRoleDef,
+    roleName: electrician,
+    issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${projectElectrician}.${root}`]: {
+    ...baseRoleDef,
+    roleName: projectElectrician,
+    issuer: { issuerType: 'DID', did: [projectInstallerCandidateDID] },
+    enrolmentPreconditions: [
+      { type: PreconditionType.Role, conditions: [`${electrician}.${root}`] },
+    ],
+  },
+  [`${projectInstaller}.${root}`]: {
+    ...baseRoleDef,
+    roleName: projectInstaller,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
 };
@@ -220,6 +243,7 @@ describe('Сlaim tests', () => {
     await replenish(await staticIssuer.getAddress());
     await replenish(await rootOwner.getAddress());
     await replenish(await dynamicIssuer.getAddress());
+    await replenish(await projectInstallerCandidate.getAddress());
 
     await setupENS(await rootOwner.getAddress());
     let connectToCacheServer;
@@ -295,6 +319,25 @@ describe('Сlaim tests', () => {
       data: roles[`${eip191JwtExpired}.${root}`],
       returnSteps: false,
     });
+    await domainsService.createRole({
+      roleName: electrician,
+      namespace,
+      data: roles[`${electrician}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: projectElectrician,
+      namespace,
+      data: roles[`${projectElectrician}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: projectInstaller,
+      namespace,
+      data: roles[`${projectInstaller}.${root}`],
+      returnSteps: false,
+    });
+
     ({ didRegistry, claimsService } = await connectToDidRegistry(
       await spawnIpfsDaemon()
     ));
@@ -659,19 +702,108 @@ describe('Сlaim tests', () => {
         returnSteps: false,
       });
 
-      await enrolAndIssue(rootOwner, staticIssuer, {
+      const roleOneIssuance = await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${roleName1}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain,
+        ],
+        publishOnChain: true,
+        issuerFields: [],
+      });
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await claimsService.publishPublicClaim({
+        claim: { token: roleOneIssuance.issuedToken },
       });
 
-      await enrolAndIssue(rootOwner, staticIssuer, {
+      const roleTwoIssuance = await enrolAndIssue(rootOwner, staticIssuer, {
         subjectDID: rootOwnerDID,
         claimType: `${roleName3}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain,
+        ],
+        publishOnChain: true,
+        issuerFields: [],
+      });
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await claimsService.publishPublicClaim({
+        claim: { token: roleTwoIssuance.issuedToken },
       });
       return expect(
         await claimsService.hasOnChainRole(
           rootOwnerDID,
           `${roleName3}.${root}`,
+          version
+        )
+      ).toBe(true);
+    });
+    test('should enrol when prerequisite role is met and the issuer is not the issuer of the prerequisite role', async () => {
+      //Root Owner enrols to 'Electrician' role
+      const enrolToElectrician = await enrolAndIssue(rootOwner, staticIssuer, {
+        subjectDID: rootOwnerDID,
+        claimType: `${electrician}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain,
+        ],
+        publishOnChain: true,
+        issuerFields: [],
+      });
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await claimsService.publishPublicClaim({
+        claim: { token: enrolToElectrician.issuedToken },
+      });
+
+      //Project Installer Candidate enrols to 'Project Installer' role
+      const enrolToProjectInstaller = await enrolAndIssue(
+        projectInstallerCandidate,
+        staticIssuer,
+        {
+          subjectDID: projectInstallerCandidateDID,
+          claimType: `${projectInstaller}.${root}`,
+          registrationTypes: [
+            RegistrationTypes.OnChain,
+            RegistrationTypes.OffChain,
+          ],
+          publishOnChain: true,
+          issuerFields: [],
+        }
+      );
+      await signerService.connect(
+        projectInstallerCandidate,
+        ProviderType.PrivateKey
+      );
+      await claimsService.publishPublicClaim({
+        claim: { token: enrolToProjectInstaller.issuedToken },
+      });
+
+      //Root Owner enrols to 'Project Electrician' role. 'Electrician' is pre-requisite role; Project Installer is issuer of 'Project Electrician' role, not issuer of 'Electrician' role
+      const enrolToProjectElectrician = await enrolAndIssue(
+        rootOwner,
+        projectInstallerCandidate,
+        {
+          subjectDID: rootOwnerDID,
+          claimType: `${projectElectrician}.${root}`,
+          registrationTypes: [
+            RegistrationTypes.OnChain,
+            RegistrationTypes.OffChain,
+          ],
+          publishOnChain: true,
+          issuerFields: [],
+        }
+      );
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await claimsService.publishPublicClaim({
+        claim: { token: enrolToProjectElectrician.issuedToken },
+      });
+
+      //Expect Root Owner to have role of Project Electrician
+      return expect(
+        await claimsService.hasOnChainRole(
+          rootOwnerDID,
+          `${projectElectrician}.${root}`,
           version
         )
       ).toBe(true);
@@ -966,7 +1098,6 @@ describe('Сlaim tests', () => {
           await claimsService.publishPublicClaim({
             claim: { token: issuedToken },
           });
-          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const result = await claimsService.resolveCredentialAndVerify(
             rootOwnerDID,
             roleName
@@ -991,7 +1122,6 @@ describe('Сlaim tests', () => {
           await claimsService.publishPublicClaim({
             claim: { token: issuedToken },
           });
-          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const result = await claimsService.resolveCredentialAndVerify(
             rootOwnerDID,
             roleName
@@ -1001,7 +1131,6 @@ describe('Сlaim tests', () => {
         });
         test('resolveCredentialAndVerify should return a "No claim found" error if no credential and no claim is resolved', async () => {
           const roleName = `${resolveVC}.${root}`;
-          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const result = await claimsService.resolveCredentialAndVerify(
             staticIssuerDID,
             roleName
@@ -1036,7 +1165,6 @@ describe('Сlaim tests', () => {
           });
           const delay = (ms) => new Promise((res) => setTimeout(res, ms));
           await delay(8000);
-          await signerService.connect(staticIssuer, ProviderType.PrivateKey);
           const result = await claimsService.resolveCredentialAndVerify(
             rootOwnerDID,
             roleName

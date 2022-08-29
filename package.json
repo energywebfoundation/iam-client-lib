@@ -1,6 +1,6 @@
 {
   "name": "iam-client-lib",
-  "version": "6.0.1-alpha.2",
+  "version": "6.0.1-alpha.3",
   "description": "Library for Decentralized Identity and Access Management",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -64,11 +64,11 @@
     "npm": ">= 6.0.0"
   },
   "dependencies": {
-    "@energyweb/credential-governance": "^2.1.0",
+    "@energyweb/credential-governance": "^2.0.1-alpha.275.0",
     "@energyweb/ekc": "^0.6.6",
-    "@energyweb/onchain-claims": "^2.1.0",
+    "@energyweb/onchain-claims": "^2.0.1-alpha.275.0",
     "@energyweb/staking-pool": "^1.0.0-rc.14",
-    "@energyweb/vc-verification": "^2.1.0",
+    "@energyweb/vc-verification": "^2.0.1-alpha.275.0",
     "@ensdomains/ens": "^0.6.2",
     "@ew-did-registry/claims": "^0.7.0",
     "@ew-did-registry/credentials-interface": "^0.7.0",
