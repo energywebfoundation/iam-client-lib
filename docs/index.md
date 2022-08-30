@@ -75,7 +75,11 @@ See source code examples for integrating `iam-client-lib` into client applicatio
 
 ` "browser": { "fs": false, "os": false, "path": false }`
 
-**For React applications:** you must add a `wasm-loader` to your Webpack configuration. If you do not have direct access to your webpack config, you can use [@craco/craco](https://www.npmjs.com/package/@craco/craco) or [react-app-rewired](https://www.npmjs.com/package/react-app-rewired).
+**For React applications:** 
+
+- [Webpack](https://webpack.js.org/) 5 [no longer pollyfills Node.js core modules automatically](https://webpack.js.org/configuration/resolve/#resolvefallback). You must install browser-compatible modules and specify them as [fallbacks](https://webpack.js.org/configuration/resolve/#resolvefallback) for Webpack. If you are using [`create-react-app`](https://create-react-app.dev/) that uses Webpack > 4 to bootstrap your React project, you will need to install [@craco/craco](https://www.npmjs.com/package/@craco/craco) or [react-app-rewired](https://www.npmjs.com/package/react-app-rewired), and specify the fallbacks in the Webpack configuration override file. For an example of how to do this, see the IAM Client Example for React applications [here](https://github.com/energywebfoundation/iam-client-examples/tree/master/client/react-dapp). This application uses Create React App Override (CRACO). 
+
+- You must have a [Webpack resolver](https://webpack.js.org/configuration/resolve/) for [`.wasm ` file extensions](https://fileinfo.com/extension/wasm). If you are using [`create-react-app`](https://create-react-app.dev/) that uses Webpack > 4 to bootstrap your React project, you will need to install [@craco/craco](https://www.npmjs.com/package/@craco/craco) or [react-app-rewired](https://www.npmjs.com/package/react-app-rewired) to add a resolver for `.wasm` file extensions in the Webpack configuration override file. For an example of how to to do this, see IAM Client Examples for React applications [here](https://github.com/energywebfoundation/iam-client-examples/tree/master/client/react-dapp).
 
 ### Install
 
