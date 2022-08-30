@@ -757,7 +757,20 @@ export class ClaimsService {
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
   }: PublishPublicClaimOptions): Promise<string | undefined> {
-    claim.token = claim.token || token;
+    claim.token = claim.token || (token as string);
+    const payload = (await this._didRegistry.decodeJWTToken({
+      token: claim.token,
+    })) as {
+      iss: string;
+      sub: string;
+      claimData: ClaimData;
+    };
+    const { iss, claimData } = payload;
+    let sub = payload?.sub;
+    // Initialy subject was ignored because it was requester
+    if (!sub || sub.length === 0 || !isValidDID(sub)) {
+      sub = this._signerService.did;
+    }
     this.validatePublishPublicClaimRequest(registrationTypes, claim);
     let url: string | undefined = undefined;
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
@@ -766,7 +779,7 @@ export class ClaimsService {
       }
 
       const claims = await this.getClaimsBySubject({
-        did: this._signerService.did,
+        did: sub,
         namespace: this.getNamespaceFromClaimType(claim.claimType),
         isAccepted: true,
       });
@@ -791,18 +804,6 @@ export class ClaimsService {
     // can we break API so that register on chain required only claim type and claim type version and subject
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       const token = claim.token as string;
-      const payload = (await this._didRegistry.decodeJWTToken({ token })) as {
-        iss: string;
-        sub: string;
-
-        claimData: ClaimData;
-      };
-      const { iss, claimData } = payload;
-      let sub = payload.sub;
-      // Initialy subject was ignored because it was requester
-      if (!sub || sub.length === 0 || !isValidDID(sub)) {
-        sub = this._signerService.did;
-      }
       const verifiedDid = await this._didRegistry.verifyPublicClaim(token, iss);
       if (!verifiedDid || !compareDID(verifiedDid, iss)) {
         throw new Error('Incorrect signature');
