@@ -36,4 +36,5 @@ export enum ERROR_MESSAGES {
   OFFCHAIN_ISSUER_NOT_AUTHORIZED = 'Issuer of OffChain Claim is not authorized',
   NO_CLAIM_RESOLVED = 'No claim found for given DID and role',
   CREDENTIAL_EXPIRED = 'Credential Expired',
+  NO_ISSUER_SPECIFIED = 'No issuer specified for credential',
 }

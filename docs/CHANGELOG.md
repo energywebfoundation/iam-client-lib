@@ -1,3 +1,24 @@
+### [6.0.1-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1-alpha.2...v6.0.1-alpha.3) (2022-08-17)
+
+
+### Bug Fixes
+
+* use resolveCredentialAndVerify to verify enrolment prerequisites ([#630](https://github.com/energywebfoundation/iam-client-lib/issues/630)) ([9208ad3](https://github.com/energywebfoundation/iam-client-lib/commit/9208ad36edb91a0aac3cf1b36dc28053b123896f))
+
+### [6.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1-alpha.1...v6.0.1-alpha.2) (2022-08-15)
+
+
+### Bug Fixes
+
+* **exp:** document expirationTimestamp ([#631](https://github.com/energywebfoundation/iam-client-lib/issues/631)) ([9595c34](https://github.com/energywebfoundation/iam-client-lib/commit/9595c34bba0021ef75a29b24610d37eac762fc64))
+
+### [6.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0...v6.0.1-alpha.1) (2022-08-15)
+
+
+### Bug Fixes
+
+* **issue claim:** allow boolean as valid field ([#639](https://github.com/energywebfoundation/iam-client-lib/issues/639)) ([77eb426](https://github.com/energywebfoundation/iam-client-lib/commit/77eb426c5222c312b6cb04fc87155b6300693d97))
+
 ## [6.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v5.0.0...v6.0.0) (2022-08-15)
 
 
