@@ -757,6 +757,9 @@ export class ClaimsService {
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
   }: PublishPublicClaimOptions): Promise<string | undefined> {
+    if (!claim.token || token) {
+      throw new Error(ERROR_MESSAGES.CLAIM_DOES_NOT_CONTAIN_TOKEN);
+    }
     claim.token = claim.token || (token as string);
     const payload = (await this._didRegistry.decodeJWTToken({
       token: claim.token,

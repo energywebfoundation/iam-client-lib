@@ -37,4 +37,5 @@ export enum ERROR_MESSAGES {
   NO_CLAIM_RESOLVED = 'No claim found for given DID and role',
   CREDENTIAL_EXPIRED = 'Credential Expired',
   NO_ISSUER_SPECIFIED = 'No issuer specified for credential',
+  CLAIM_DOES_NOT_CONTAIN_TOKEN = 'Claim does not contain token',
 }
