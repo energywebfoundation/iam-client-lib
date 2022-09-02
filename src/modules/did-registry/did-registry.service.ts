@@ -478,14 +478,15 @@ export class DidRegistry {
    *
    * @return throws Error if validation fails
    */
-  validateJwtPayload(token: Record<string, string | number | object>): void {
-    const { iss, claimData } = token;
+  isClaim(claim: any): claim is {iss: string, sub: string; claimData: unknown}  {
+    const { iss, claimData } = claim;
     if (!iss) {
       throw new Error(`${ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING}: iss`);
     }
     if (!claimData) {
       throw new Error(`${ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING}: claimData`);
     }
+    return true;
   }
 
   /**

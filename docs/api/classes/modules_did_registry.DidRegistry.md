@@ -35,12 +35,12 @@ didRegistry.getDidDocument();
 - [getDidPublicKeys](modules_did_registry.DidRegistry.md#getdidpublickeys)
 - [getServices](modules_did_registry.DidRegistry.md#getservices)
 - [init](modules_did_registry.DidRegistry.md#init)
+- [isClaim](modules_did_registry.DidRegistry.md#isclaim)
 - [issuePublicClaim](modules_did_registry.DidRegistry.md#issuepublicclaim)
 - [revokeDidDocument](modules_did_registry.DidRegistry.md#revokediddocument)
 - [updateDocument](modules_did_registry.DidRegistry.md#updatedocument)
 - [updateSignedDidDelegate](modules_did_registry.DidRegistry.md#updatesigneddiddelegate)
 - [updateSignedDidPublicKey](modules_did_registry.DidRegistry.md#updatesigneddidpublickey)
-- [validateJwtPayload](modules_did_registry.DidRegistry.md#validatejwtpayload)
 - [verifyPublicClaim](modules_did_registry.DidRegistry.md#verifypublicclaim)
 - [connect](modules_did_registry.DidRegistry.md#connect)
 
@@ -291,6 +291,30 @@ ___
 
 ___
 
+### isClaim
+
+▸ **isClaim**(`claim`): claim is Object
+
+Validate that JWT payload of public claim contains issuer and claimData.
+
+```typescript
+didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claim` | `any` |
+
+#### Returns
+
+claim is Object
+
+throws Error if validation fails
+
+___
+
 ### issuePublicClaim
 
 ▸ **issuePublicClaim**(`options`): `Promise`<`string`\>
@@ -430,30 +454,6 @@ didRegistry.updateSignedDidPublicKey({
 #### Returns
 
 `Promise`<`boolean`\>
-
-___
-
-### validateJwtPayload
-
-▸ **validateJwtPayload**(`token`): `void`
-
-Validate that JWT payload of public claim contains issuer and claimData.
-
-```typescript
-didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
-```
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `token` | `Record`<`string`, `string` \| `number` \| `object`\> |
-
-#### Returns
-
-`void`
-
-throws Error if validation fails
 
 ___
 

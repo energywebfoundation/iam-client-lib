@@ -806,7 +806,7 @@ export class ClaimsService {
       if (!claim.token) {
         throw new Error(ERROR_MESSAGES.CLAIM_DOES_NOT_CONTAIN_TOKEN);
       }
-      this._didRegistry.validateJwtPayload(payload);
+      this._didRegistry.isClaim(payload);
       const token = claim.token as string;
       const verifiedDid = await this._didRegistry.verifyPublicClaim(
         token,
