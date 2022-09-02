@@ -74,6 +74,8 @@ import {
   IssuerVerification,
   RevocationVerification,
   RoleEIP191JWT,
+  isEIP191Jwt,
+  VerificationResult,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -470,7 +472,12 @@ export class ClaimsService {
     }
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      await this.verifyIssuer(claimData.claimType);
+      const issuerVerificationRes = await this.verifyIssuer(
+        claimData.claimType
+      );
+      if (!issuerVerificationRes.verified) {
+        throw new Error(issuerVerificationRes.error);
+      }
       const vp = await this.issueVerifiablePresentation({
         subject: sub,
         namespace: role,
@@ -484,6 +491,7 @@ export class ClaimsService {
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
+        exp: expirationTimestamp,
         claimData: {
           ...strippedClaimData,
           ...(issuerFields && { issuerFields }),
@@ -1227,8 +1235,11 @@ export class ClaimsService {
    *
    * @param {String} role Registration types of the claim
    */
-  private async verifyIssuer(role: string): Promise<void> {
-    await this._issuerVerification.verifyIssuer(this._signerService.did, role);
+  private async verifyIssuer(role: string): Promise<VerificationResult> {
+    return await this._issuerVerification.verifyIssuer(
+      this._signerService.did,
+      role
+    );
   }
 
   /**
@@ -1513,7 +1524,7 @@ export class ClaimsService {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
     // Date.now() and JWT expiration time both identify the time elapsed since January 1, 1970 00:00:00 UTC
-    const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
+    const isExpired = payload?.exp && payload?.exp < Date.now();
     if (isExpired) {
       errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
     }
@@ -1563,9 +1574,9 @@ export class ClaimsService {
         errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED],
       };
     }
-    const credentialIsOffChain = resolvedCredential.eip191Jwt;
+    const credentialIsOffChain = isEIP191Jwt(resolvedCredential);
     return credentialIsOffChain
-      ? this.verifyRoleEIP191JWT(resolvedCredential as RoleEIP191JWT)
+      ? this.verifyRoleEIP191JWT(resolvedCredential)
       : this.verifyVc(
           resolvedCredential as VerifiableCredential<RoleCredentialSubject>
         );
