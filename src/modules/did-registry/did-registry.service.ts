@@ -470,6 +470,25 @@ export class DidRegistry {
   }
 
   /**
+   * Validate that JWT payload of public claim contains issuer and claimData.
+   *
+   * ```typescript
+   * didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
+   * ```
+   *
+   * @return throws Error if validation fails
+   */
+  validateJwtPayload(token: Record<string, string | number | object>): void {
+    const { iss, claimData } = token;
+    if (!iss) {
+      throw new Error(`${ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING}: iss`);
+    }
+    if (!claimData) {
+      throw new Error(`${ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING}: claimData`);
+    }
+  }
+
+  /**
    * Decode JWT token of the public claim.
    *
    * ```typescript

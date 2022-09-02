@@ -757,9 +757,6 @@ export class ClaimsService {
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
   }: PublishPublicClaimOptions): Promise<string | undefined> {
-    if (!claim.token && !token) {
-      throw new Error(ERROR_MESSAGES.CLAIM_DOES_NOT_CONTAIN_TOKEN);
-    }
     claim.token = claim.token || (token as string);
     const payload = (await this._didRegistry.decodeJWTToken({
       token: claim.token,
@@ -769,7 +766,7 @@ export class ClaimsService {
       claimData: ClaimData;
     };
     const { iss, claimData } = payload;
-    let sub = payload?.sub;
+    let sub = payload?.sub as string;
     // Initialy subject was ignored because it was requester
     if (!sub || sub.length === 0 || !isValidDID(sub)) {
       sub = this._signerService.did;
@@ -806,16 +803,23 @@ export class ClaimsService {
     // add scenario for offchain without request based on claimType instead of token
     // can we break API so that register on chain required only claim type and claim type version and subject
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
+      if (!claim.token) {
+        throw new Error(ERROR_MESSAGES.CLAIM_DOES_NOT_CONTAIN_TOKEN);
+      }
+      this._didRegistry.validateJwtPayload(payload);
       const token = claim.token as string;
-      const verifiedDid = await this._didRegistry.verifyPublicClaim(token, iss);
-      if (!verifiedDid || !compareDID(verifiedDid, iss)) {
+      const verifiedDid = await this._didRegistry.verifyPublicClaim(
+        token,
+        iss as string
+      );
+      if (!verifiedDid || !compareDID(verifiedDid, iss as string)) {
         throw new Error('Incorrect signature');
       }
       url = await this._didRegistry.ipfsStore.save(token);
       const data = {
         type: DIDAttribute.ServicePoint,
         value: {
-          id: await this.getClaimId({ claimData }),
+          id: await this.getClaimId({ claimData: claimData as ClaimData }),
           serviceEndpoint: url,
           hash: hashes.SHA256(token),
           hashAlg: 'SHA256',

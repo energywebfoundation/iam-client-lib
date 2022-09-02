@@ -38,4 +38,5 @@ export enum ERROR_MESSAGES {
   CREDENTIAL_EXPIRED = 'Credential Expired',
   NO_ISSUER_SPECIFIED = 'No issuer specified for credential',
   CLAIM_DOES_NOT_CONTAIN_TOKEN = 'Claim does not contain token',
+  CLAIM_TOKEN_DATA_MISSING = `Claim token payload missing required key`,
 }

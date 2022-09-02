@@ -40,6 +40,7 @@ didRegistry.getDidDocument();
 - [updateDocument](modules_did_registry.DidRegistry.md#updatedocument)
 - [updateSignedDidDelegate](modules_did_registry.DidRegistry.md#updatesigneddiddelegate)
 - [updateSignedDidPublicKey](modules_did_registry.DidRegistry.md#updatesigneddidpublickey)
+- [validateJwtPayload](modules_did_registry.DidRegistry.md#validatejwtpayload)
 - [verifyPublicClaim](modules_did_registry.DidRegistry.md#verifypublicclaim)
 - [connect](modules_did_registry.DidRegistry.md#connect)
 
@@ -429,6 +430,30 @@ didRegistry.updateSignedDidPublicKey({
 #### Returns
 
 `Promise`<`boolean`\>
+
+___
+
+### validateJwtPayload
+
+▸ **validateJwtPayload**(`token`): `void`
+
+Validate that JWT payload of public claim contains issuer and claimData.
+
+```typescript
+didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `token` | `Record`<`string`, `string` \| `number` \| `object`\> |
+
+#### Returns
+
+`void`
+
+throws Error if validation fails
 
 ___
 
