@@ -476,7 +476,7 @@ export class DidRegistry {
    * didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
    * ```
    *
-   * @return throws Error if validation fails
+   * @return true if validated; throw Error if validation fails
    */
   isClaim(
     claim: any

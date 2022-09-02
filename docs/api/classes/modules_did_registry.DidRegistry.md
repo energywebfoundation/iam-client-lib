@@ -311,7 +311,7 @@ didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
 
 claim is Object
 
-throws Error if validation fails
+true if validated; throw Error if validation fails
 
 ___
 
