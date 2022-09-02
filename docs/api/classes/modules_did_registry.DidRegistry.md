@@ -298,7 +298,7 @@ ___
 Validate that claim contains issuer and claimData.
 
 ```typescript
-didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
+didRegistry.isClaim(token: Record<string, string | number | object>);
 ```
 
 #### Parameters
@@ -311,7 +311,7 @@ didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
 
 claim is Object
 
-true if validated; throw Error if validation fails
+boolean
 
 ___
 

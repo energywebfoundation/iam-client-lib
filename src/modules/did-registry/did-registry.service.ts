@@ -473,22 +473,16 @@ export class DidRegistry {
    * Validate that claim contains issuer and claimData.
    *
    * ```typescript
-   * didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
+   * didRegistry.isClaim(token: Record<string, string | number | object>);
    * ```
    *
-   * @return true if validated; throw Error if validation fails
+   * @return boolean
    */
   isClaim(
     claim: any
   ): claim is { iss: string; sub: string; claimData: unknown } {
     const { iss, claimData } = claim;
-    if (!iss) {
-      throw new Error(`${ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING}: iss`);
-    }
-    if (!claimData) {
-      throw new Error(`${ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING}: claimData`);
-    }
-    return true;
+    return !!iss && !!claimData;
   }
 
   /**
