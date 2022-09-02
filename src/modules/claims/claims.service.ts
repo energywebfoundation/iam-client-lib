@@ -75,7 +75,6 @@ import {
   RevocationVerification,
   RoleEIP191JWT,
   isEIP191Jwt,
-  VerificationResult,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -472,12 +471,7 @@ export class ClaimsService {
     }
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      const issuerVerificationRes = await this.verifyIssuer(
-        claimData.claimType
-      );
-      if (!issuerVerificationRes.verified) {
-        throw new Error(issuerVerificationRes.error);
-      }
+      await this.verifyIssuer(claimData.claimType);
       const vp = await this.issueVerifiablePresentation({
         subject: sub,
         namespace: role,
@@ -1235,11 +1229,14 @@ export class ClaimsService {
    *
    * @param {String} role Registration types of the claim
    */
-  private async verifyIssuer(role: string): Promise<VerificationResult> {
-    return await this._issuerVerification.verifyIssuer(
+  private async verifyIssuer(role: string): Promise<void> {
+    const verificationResult = await this._issuerVerification.verifyIssuer(
       this._signerService.did,
       role
     );
+    if (!verificationResult.verified) {
+      throw new Error(verificationResult.error);
+    }
   }
 
   /**
@@ -1574,8 +1571,7 @@ export class ClaimsService {
         errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED],
       };
     }
-    const credentialIsOffChain = isEIP191Jwt(resolvedCredential);
-    return credentialIsOffChain
+    return isEIP191Jwt(resolvedCredential)
       ? this.verifyRoleEIP191JWT(resolvedCredential)
       : this.verifyVc(
           resolvedCredential as VerifiableCredential<RoleCredentialSubject>
