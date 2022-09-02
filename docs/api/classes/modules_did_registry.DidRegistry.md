@@ -295,7 +295,7 @@ ___
 
 ▸ **isClaim**(`claim`): claim is Object
 
-Validate that JWT payload of public claim contains issuer and claimData.
+Validate that claim contains issuer and claimData.
 
 ```typescript
 didRegistry.validateJwtPayload(token: Record<string, string | number | object>);
