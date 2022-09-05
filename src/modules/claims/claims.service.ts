@@ -807,7 +807,7 @@ export class ClaimsService {
         throw new Error(ERROR_MESSAGES.CLAIM_DOES_NOT_CONTAIN_TOKEN);
       }
       if (!this._didRegistry.isClaim(payload)) {
-        throw new Error(`${ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING}`);
+        throw new Error(ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING);
       }
       const token = claim.token as string;
       const verifiedDid = await this._didRegistry.verifyPublicClaim(
