@@ -1,3 +1,15 @@
+## [6.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1...v6.1.0) (2022-09-05)
+
+
+### Features
+
+* verification code refactoring ([fefb6e2](https://github.com/energywebfoundation/iam-client-lib/commit/fefb6e289b458d6989b8e6a2c10796c1d8228989))
+
+
+### Bug Fixes
+
+* validate issuer verification ([14fe517](https://github.com/energywebfoundation/iam-client-lib/commit/14fe51721f7b00c7972d1501f397b6fae74b4af0))
+
 ## [6.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1...v6.1.0-alpha.1) (2022-09-02)
 
 
