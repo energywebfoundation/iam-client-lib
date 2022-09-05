@@ -16,6 +16,8 @@ import {
   EWC_PUBLIC_RESOLVER_ADDRESS,
   EWC_RESOLVER_V2_ADDRESS,
   VOLTA_RESOLVER_V2_ADDRESS,
+  VOLTA_CLAIMS_REVOCATION_REG_ADDR,
+  EWC_CLAIMS_REVOCATION_REG_ADDR,
 } from '@energyweb/credential-governance';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 
@@ -61,8 +63,7 @@ const chainConfig: Record<number, ChainConfig> = {
     // TODO: add addresses to @energyweb/credential-governance
     credentialRevocationRegistryAddress:
       '0x018Ae0454a3e2f77048a455dD731bB669a218959',
-    claimsRevocationRegistryAddress:
-      '0x9876d992D124f8E05e3eB35132226a819aaC840A',
+    claimsRevocationRegistryAddress: VOLTA_CLAIMS_REVOCATION_REG_ADDR,
   },
   [EWC_CHAIN_ID]: {
     chainName: Chain.EWC,
@@ -78,7 +79,7 @@ const chainConfig: Record<number, ChainConfig> = {
     claimManagerAddress: EWC_CLAIM_MANAGER_ADDRESS,
     stakingPoolFactoryAddress: '', // This is not deployed on EWC
     credentialRevocationRegistryAddress: '', // This is not deployed on EWC
-    claimsRevocationRegistryAddress: '', // This is not deployed on EWC
+    claimsRevocationRegistryAddress: EWC_CLAIMS_REVOCATION_REG_ADDR,
   },
 };
 
