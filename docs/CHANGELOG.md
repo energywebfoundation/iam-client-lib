@@ -1,3 +1,10 @@
+## [6.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.1.0...v6.2.0-alpha.1) (2022-09-06)
+
+
+### Features
+
+* set roleeip191jwt expiration in seconds ([270778c](https://github.com/energywebfoundation/iam-client-lib/commit/270778cf3b462c6304c9fa401a0b3b344f2077e0))
+
 ## [6.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1...v6.1.0) (2022-09-05)
 
 

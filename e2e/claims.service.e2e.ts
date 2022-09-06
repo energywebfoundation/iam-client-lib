@@ -495,7 +495,7 @@ describe('Сlaim tests', () => {
           requestorFields,
         });
 
-        expirationTimestamp && expect(exp).toEqual(expirationTimestamp);
+        expirationTimestamp && expect(exp).toEqual(Math.floor(expirationTimestamp / 1000));
 
         expect(claimData).not.toContain({
           fields: [{ key: 'temperature', value: 36 }],
@@ -1030,7 +1030,7 @@ describe('Сlaim tests', () => {
           await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
         ).toBe(true);
         expect(expiry).toBe(Math.floor(expirationTimestamp / 1000));
-        expect(expiry).toBe(Math.floor(exp / 1000));
+        expect(expiry).toBe(exp);
       });
     });
 
