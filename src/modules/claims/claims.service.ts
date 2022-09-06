@@ -442,11 +442,11 @@ export class ClaimsService {
       acceptedBy: this._signerService.did,
       expirationTimestamp,
     };
+    const expiry = expirationTimestamp
+      ? Math.floor(expirationTimestamp / 1000)
+      : eternityTimestamp;
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const expiry = expirationTimestamp
-        ? Math.floor(expirationTimestamp / 1000)
-        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -485,7 +485,7 @@ export class ClaimsService {
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
-        exp: expirationTimestamp,
+        exp: expiry,
         claimData: {
           ...strippedClaimData,
           ...(issuerFields && { issuerFields }),
@@ -659,6 +659,9 @@ export class ClaimsService {
       acceptedBy: this._signerService.did,
       expirationTimestamp,
     };
+    const expiry = expirationTimestamp
+      ? Math.floor(expirationTimestamp / 1000)
+      : eternityTimestamp;
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       const vp = await this.issueVerifiablePresentation({
@@ -673,13 +676,13 @@ export class ClaimsService {
       const credentialStatus = credentialStatusOverride || vpCredentialStatus;
       const publicClaim: IPublicClaim = {
         did: subject,
+        exp: expiry,
         signer: this._signerService.did,
         claimData: claim,
         ...(credentialStatus && { credentialStatus }),
       };
       const issuedToken = await this._didRegistry.issuePublicClaim({
         publicClaim,
-        expirationTimestamp,
       });
       message.issuedToken = issuedToken;
       message.vp = JSON.stringify(vp);
@@ -687,9 +690,6 @@ export class ClaimsService {
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
-      const expiry = expirationTimestamp
-        ? Math.floor(expirationTimestamp / 1000)
-        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -1531,7 +1531,7 @@ export class ClaimsService {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
     // Date.now() and JWT expiration time both identify the time elapsed since January 1, 1970 00:00:00 UTC
-    const isExpired = payload?.exp && payload?.exp < Date.now();
+    const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
     if (isExpired) {
       errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
     }
