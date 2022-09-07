@@ -1,3 +1,50 @@
+## [6.2.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.1.0...v6.2.0) (2022-09-06)
+
+
+### Features
+
+* set roleeip191jwt expiration in seconds ([270778c](https://github.com/energywebfoundation/iam-client-lib/commit/270778cf3b462c6304c9fa401a0b3b344f2077e0))
+
+## [6.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.1.0...v6.2.0-alpha.1) (2022-09-06)
+
+
+### Features
+
+* set roleeip191jwt expiration in seconds ([270778c](https://github.com/energywebfoundation/iam-client-lib/commit/270778cf3b462c6304c9fa401a0b3b344f2077e0))
+
+## [6.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1...v6.1.0) (2022-09-05)
+
+
+### Features
+
+* verification code refactoring ([fefb6e2](https://github.com/energywebfoundation/iam-client-lib/commit/fefb6e289b458d6989b8e6a2c10796c1d8228989))
+
+
+### Bug Fixes
+
+* validate issuer verification ([14fe517](https://github.com/energywebfoundation/iam-client-lib/commit/14fe51721f7b00c7972d1501f397b6fae74b4af0))
+
+## [6.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1...v6.1.0-alpha.1) (2022-09-02)
+
+
+### Features
+
+* verification code refactoring ([fefb6e2](https://github.com/energywebfoundation/iam-client-lib/commit/fefb6e289b458d6989b8e6a2c10796c1d8228989))
+
+
+### Bug Fixes
+
+* validate issuer verification ([14fe517](https://github.com/energywebfoundation/iam-client-lib/commit/14fe51721f7b00c7972d1501f397b6fae74b4af0))
+
+### [6.0.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.0...v6.0.1) (2022-08-31)
+
+
+### Bug Fixes
+
+* **exp:** document expirationTimestamp ([#631](https://github.com/energywebfoundation/iam-client-lib/issues/631)) ([9595c34](https://github.com/energywebfoundation/iam-client-lib/commit/9595c34bba0021ef75a29b24610d37eac762fc64))
+* **issue claim:** allow boolean as valid field ([#639](https://github.com/energywebfoundation/iam-client-lib/issues/639)) ([77eb426](https://github.com/energywebfoundation/iam-client-lib/commit/77eb426c5222c312b6cb04fc87155b6300693d97))
+* use resolveCredentialAndVerify to verify enrolment prerequisites ([#630](https://github.com/energywebfoundation/iam-client-lib/issues/630)) ([9208ad3](https://github.com/energywebfoundation/iam-client-lib/commit/9208ad36edb91a0aac3cf1b36dc28053b123896f))
+
 ### [6.0.1-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v6.0.1-alpha.2...v6.0.1-alpha.3) (2022-08-17)
 
 

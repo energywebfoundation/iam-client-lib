@@ -282,11 +282,10 @@ export class DidRegistry {
   async issuePublicClaim({
     token,
     publicClaim,
-    expirationTimestamp,
   }: IssuePublicClaimOptions): Promise<string> {
     const params = publicClaim || token;
     if (params) {
-      return this._issuerClaims.issuePublicClaim(params, expirationTimestamp);
+      return this._issuerClaims.issuePublicClaim(params);
     }
 
     throw new Error(
@@ -467,6 +466,22 @@ export class DidRegistry {
   async revokeDidDocument(): Promise<boolean> {
     await this._document.deactivate();
     return true;
+  }
+
+  /**
+   * Validate that claim contains issuer and claimData.
+   *
+   * ```typescript
+   * didRegistry.isClaim(token: Record<string, string | number | object>);
+   * ```
+   *
+   * @return boolean
+   */
+  isClaim(
+    claim: any
+  ): claim is { iss: string; sub: string; claimData: unknown } {
+    const { iss, claimData } = claim;
+    return !!iss && !!claimData;
   }
 
   /**

@@ -495,8 +495,7 @@ describe('Сlaim tests', () => {
           requestorFields,
         });
 
-        expirationTimestamp &&
-          expect(exp).toEqual(Math.trunc(expirationTimestamp / 1000));
+        expirationTimestamp && expect(exp).toEqual(Math.floor(expirationTimestamp / 1000));
 
         expect(claimData).not.toContain({
           fields: [{ key: 'temperature', value: 36 }],
@@ -841,6 +840,43 @@ describe('Сlaim tests', () => {
       expect(
         await claimsService.hasOnChainRole(subjectDID, claimType, version)
       ).toBe(true);
+    });
+
+    test('enrolment should fail if issuer authoritative credential has expired', async () => {
+      await signerService.connect(rootOwner, ProviderType.PrivateKey);
+      await domainsService.createRole({
+        roleName: roleName2,
+        namespace,
+        data: roles[`${roleName2}.${root}`],
+        returnSteps: false,
+      });
+      const res = await enrolAndIssue(dynamicIssuer, staticIssuer, {
+        subjectDID: dynamicIssuerDID,
+        claimType: `${roleName1}.${root}`,
+        registrationTypes: [
+          RegistrationTypes.OnChain,
+          RegistrationTypes.OffChain, // role type issuer should have offchain claim
+        ],
+        issuerFields: [],
+        expirationTimestamp: Date.now() + 7000,
+      });
+
+      await signerService.connect(dynamicIssuer, ProviderType.PrivateKey);
+      await claimsService.publishPublicClaim({
+        claim: { token: res.issuedToken },
+      });
+
+      const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+      await delay(8000);
+
+      return expect(
+        enrolAndIssue(rootOwner, dynamicIssuer, {
+          subjectDID: rootOwnerDID,
+          claimType: `${roleName2}.${root}`,
+          expirationTimestamp: Date.now() + 100000,
+          registrationTypes: [RegistrationTypes.OffChain],
+        })
+      ).rejects.toEqual(new Error('Issuer credential has expired'));
     });
 
     test('enrollment with credential/claim default time expiration from role definition', async () => {

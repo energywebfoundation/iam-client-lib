@@ -35,6 +35,7 @@ didRegistry.getDidDocument();
 - [getDidPublicKeys](modules_did_registry.DidRegistry.md#getdidpublickeys)
 - [getServices](modules_did_registry.DidRegistry.md#getservices)
 - [init](modules_did_registry.DidRegistry.md#init)
+- [isClaim](modules_did_registry.DidRegistry.md#isclaim)
 - [issuePublicClaim](modules_did_registry.DidRegistry.md#issuepublicclaim)
 - [revokeDidDocument](modules_did_registry.DidRegistry.md#revokediddocument)
 - [updateDocument](modules_did_registry.DidRegistry.md#updatedocument)
@@ -287,6 +288,30 @@ ___
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### isClaim
+
+▸ **isClaim**(`claim`): claim is Object
+
+Validate that claim contains issuer and claimData.
+
+```typescript
+didRegistry.isClaim(token: Record<string, string | number | object>);
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `claim` | `any` |
+
+#### Returns
+
+claim is Object
+
+boolean
 
 ___
 

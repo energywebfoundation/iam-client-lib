@@ -74,6 +74,7 @@ import {
   IssuerVerification,
   RevocationVerification,
   RoleEIP191JWT,
+  isEIP191Jwt,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData } from '../did-registry/did.types';
@@ -441,11 +442,11 @@ export class ClaimsService {
       acceptedBy: this._signerService.did,
       expirationTimestamp,
     };
+    const expiry = expirationTimestamp
+      ? Math.floor(expirationTimestamp / 1000)
+      : eternityTimestamp;
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
-      const expiry = expirationTimestamp
-        ? Math.floor(expirationTimestamp / 1000)
-        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -484,6 +485,7 @@ export class ClaimsService {
       const publicClaim: IPublicClaim = {
         did: sub,
         signer: this._signerService.did,
+        exp: expiry,
         claimData: {
           ...strippedClaimData,
           ...(issuerFields && { issuerFields }),
@@ -657,6 +659,9 @@ export class ClaimsService {
       acceptedBy: this._signerService.did,
       expirationTimestamp,
     };
+    const expiry = expirationTimestamp
+      ? Math.floor(expirationTimestamp / 1000)
+      : eternityTimestamp;
 
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
       const vp = await this.issueVerifiablePresentation({
@@ -671,13 +676,13 @@ export class ClaimsService {
       const credentialStatus = credentialStatusOverride || vpCredentialStatus;
       const publicClaim: IPublicClaim = {
         did: subject,
+        exp: expiry,
         signer: this._signerService.did,
         claimData: claim,
         ...(credentialStatus && { credentialStatus }),
       };
       const issuedToken = await this._didRegistry.issuePublicClaim({
         publicClaim,
-        expirationTimestamp,
       });
       message.issuedToken = issuedToken;
       message.vp = JSON.stringify(vp);
@@ -685,9 +690,6 @@ export class ClaimsService {
 
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
       const { claimType: role, claimTypeVersion: version } = claim;
-      const expiry = expirationTimestamp
-        ? Math.floor(expirationTimestamp / 1000)
-        : eternityTimestamp;
       const onChainProof = await this.createOnChainProof(
         role,
         version,
@@ -757,7 +759,20 @@ export class ClaimsService {
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
   }: PublishPublicClaimOptions): Promise<string | undefined> {
-    claim.token = claim.token || token;
+    claim.token = claim.token || (token as string);
+    const payload = (await this._didRegistry.decodeJWTToken({
+      token: claim.token,
+    })) as {
+      iss: string;
+      sub: string;
+      claimData: ClaimData;
+    };
+    const { iss, claimData } = payload;
+    let sub = payload?.sub as string;
+    // Initialy subject was ignored because it was requester
+    if (!sub || sub.length === 0 || !isValidDID(sub)) {
+      sub = this._signerService.did;
+    }
     this.validatePublishPublicClaimRequest(registrationTypes, claim);
     let url: string | undefined = undefined;
     if (registrationTypes.includes(RegistrationTypes.OnChain)) {
@@ -766,7 +781,7 @@ export class ClaimsService {
       }
 
       const claims = await this.getClaimsBySubject({
-        did: this._signerService.did,
+        did: sub,
         namespace: this.getNamespaceFromClaimType(claim.claimType),
         isAccepted: true,
       });
@@ -790,28 +805,25 @@ export class ClaimsService {
     // add scenario for offchain without request based on claimType instead of token
     // can we break API so that register on chain required only claim type and claim type version and subject
     if (registrationTypes.includes(RegistrationTypes.OffChain)) {
-      const token = claim.token as string;
-      const payload = (await this._didRegistry.decodeJWTToken({ token })) as {
-        iss: string;
-        sub: string;
-
-        claimData: ClaimData;
-      };
-      const { iss, claimData } = payload;
-      let sub = payload.sub;
-      // Initialy subject was ignored because it was requester
-      if (!sub || sub.length === 0 || !isValidDID(sub)) {
-        sub = this._signerService.did;
+      if (!claim.token) {
+        throw new Error(ERROR_MESSAGES.CLAIM_DOES_NOT_CONTAIN_TOKEN);
       }
-      const verifiedDid = await this._didRegistry.verifyPublicClaim(token, iss);
-      if (!verifiedDid || !compareDID(verifiedDid, iss)) {
+      if (!this._didRegistry.isClaim(payload)) {
+        throw new Error(ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING);
+      }
+      const token = claim.token as string;
+      const verifiedDid = await this._didRegistry.verifyPublicClaim(
+        token,
+        iss as string
+      );
+      if (!verifiedDid || !compareDID(verifiedDid, iss as string)) {
         throw new Error('Incorrect signature');
       }
       url = await this._didRegistry.ipfsStore.save(token);
       const data = {
         type: DIDAttribute.ServicePoint,
         value: {
-          id: await this.getClaimId({ claimData }),
+          id: await this.getClaimId({ claimData: claimData as ClaimData }),
           serviceEndpoint: url,
           hash: hashes.SHA256(token),
           hashAlg: 'SHA256',
@@ -1228,7 +1240,13 @@ export class ClaimsService {
    * @param {String} role Registration types of the claim
    */
   private async verifyIssuer(role: string): Promise<void> {
-    await this._issuerVerification.verifyIssuer(this._signerService.did, role);
+    const verificationResult = await this._issuerVerification.verifyIssuer(
+      this._signerService.did,
+      role
+    );
+    if (!verificationResult.verified) {
+      throw new Error(verificationResult.error);
+    }
   }
 
   /**
@@ -1563,9 +1581,8 @@ export class ClaimsService {
         errors: [ERROR_MESSAGES.NO_CLAIM_RESOLVED],
       };
     }
-    const credentialIsOffChain = resolvedCredential.eip191Jwt;
-    return credentialIsOffChain
-      ? this.verifyRoleEIP191JWT(resolvedCredential as RoleEIP191JWT)
+    return isEIP191Jwt(resolvedCredential)
+      ? this.verifyRoleEIP191JWT(resolvedCredential)
       : this.verifyVc(
           resolvedCredential as VerifiableCredential<RoleCredentialSubject>
         );
