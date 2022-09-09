@@ -1459,20 +1459,27 @@ export class ClaimsService {
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
-
     let proofVerified;
+    let issuerVerified = true;
+
     try {
       proofVerified = await this._verifiableCredentialService.verify(vc);
     } catch (e) {
       proofVerified = false;
       errors.push((e as Error).message);
     }
-
+    if (vc.credentialStatus) {
+      try {
+        await this._statusVerifier.verifyCredentialStatus(vc.credentialStatus);
+      } catch (e) {
+        issuerVerified = false;
+        errors.push((e as Error).message);
+      }
+    }
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
     const role = vc.credentialSubject.role.namespace;
-    let issuerVerified = true;
     try {
       if (typeof issuerDID === 'string') {
         await this._issuerVerification.verifyIssuer(issuerDID, role);
@@ -1482,15 +1489,6 @@ export class ClaimsService {
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
-    }
-
-    if (vc.credentialStatus) {
-      try {
-        await this._statusVerifier.verifyCredentialStatus(vc.credentialStatus);
-      } catch (e) {
-        issuerVerified = false;
-        errors.push((e as Error).message);
-      }
     }
     return {
       errors,
@@ -1515,14 +1513,6 @@ export class ClaimsService {
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
-    const { verified: issuerVerified, error } =
-      await this._issuerVerification.verifyIssuer(
-        issuerDID,
-        payload?.claimData?.claimType
-      );
-    if (!issuerVerified && error) {
-      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
-    }
     const proofVerified = await this._didRegistry.verifyPublicClaim(
       eip191Jwt,
       payload?.iss as string
@@ -1534,6 +1524,14 @@ export class ClaimsService {
     const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
     if (isExpired) {
       errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
+    }
+    const { verified: issuerVerified, error } =
+      await this._issuerVerification.verifyIssuer(
+        issuerDID,
+        payload?.claimData?.claimType
+      );
+    if (!issuerVerified && error) {
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
     return {
       errors: errors,
