@@ -1,3 +1,10 @@
+### [6.2.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.0...v6.2.1-alpha.1) (2022-09-09)
+
+
+### Bug Fixes
+
+* verify credential before issuer verification ([111923b](https://github.com/energywebfoundation/iam-client-lib/commit/111923bae56da5977a814e9b280be57747345c94))
+
 ## [6.2.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.1.0...v6.2.0) (2022-09-06)
 
 
