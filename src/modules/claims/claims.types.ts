@@ -153,16 +153,7 @@ export interface GetClaimsByRevokerOptions {
 
 export interface CreateClaimRequestOptions {
   /** Claim request params */
-  claim: {
-    /** Role namespace */
-    claimType: string;
-
-    /** Version of the role */
-    claimTypeVersion: number;
-
-    /** Requestor fields that role is requiring */
-    requestorFields?: { key: string; value: string | number }[];
-  };
+  claim: ClaimData;
 
   /** DID of the subject */
   subject?: string;

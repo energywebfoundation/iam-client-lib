@@ -77,7 +77,7 @@ import {
   isEIP191Jwt,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
-import { ClaimData } from '../did-registry/did.types';
+import { ClaimData, isClaimService } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
@@ -417,7 +417,7 @@ export class ClaimsService {
     expirationTimestamp,
   }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
-      claimData: { claimType: string; claimTypeVersion: number };
+      claimData: ClaimData;
       sub: string;
     };
 
@@ -886,7 +886,9 @@ export class ClaimsService {
    */
   async getUserClaims({
     did = this._signerService.did,
-  }: GetUserClaimsOptions): Promise<(IServiceEndpoint & ClaimData)[]> {
+  }: GetUserClaimsOptions): Promise<
+    (IServiceEndpoint & Pick<ClaimData, 'claimType' | 'claimTypeVersion'>)[]
+  > {
     const [services, issuedClaims] = await Promise.all([
       this._didRegistry.getServices({ did }),
       this.getClaimsBySubject({
@@ -901,12 +903,9 @@ export class ClaimsService {
       .filter((c) => c.registrationTypes.includes(RegistrationTypes.OffChain))
       .map(({ claimType }) => claimType);
 
-    return services.filter(
-      ({ claimType }) =>
-        claimType &&
-        typeof claimType === 'string' &&
-        issuedClaimsTypes.includes(claimType)
-    );
+    return services
+      .filter(isClaimService)
+      .filter(({ claimType }) => issuedClaimsTypes.includes(claimType));
   }
 
   /**
@@ -1201,7 +1200,7 @@ export class ClaimsService {
    * @param {ClaimData} data Claim data to remove fields from
    * @return Claim data without fields
    */
-  private stripClaimData(data: ClaimData): ClaimData {
+  private stripClaimData(data: ClaimData): Omit<ClaimData, 'requestorFields'> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { fields, ...claimData } = data;
 

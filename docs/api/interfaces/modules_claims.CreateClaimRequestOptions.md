@@ -6,25 +6,17 @@
 
 ### Properties
 
-- [claim](modules_claims.CreateClaimRequestOptions.md#claim)
+- [claimData](modules_claims.CreateClaimRequestOptions.md#claimdata)
 - [registrationTypes](modules_claims.CreateClaimRequestOptions.md#registrationtypes)
 - [subject](modules_claims.CreateClaimRequestOptions.md#subject)
 
 ## Properties
 
-### claim
+### claimData
 
-• **claim**: `Object`
+• **claimData**: `ClaimData`
 
 Claim request params
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `claimType` | `string` | Role namespace |
-| `claimTypeVersion` | `number` | Version of the role |
-| `requestorFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] | Requestor fields that role is requiring |
 
 ___
 
