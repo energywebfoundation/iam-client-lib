@@ -1,3 +1,10 @@
+### [6.2.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.1-alpha.1...v6.2.1-alpha.2) (2022-09-12)
+
+
+### Refactoring
+
+* **claims:** merge ClaimData with vc-verification ([0e1fafa](https://github.com/energywebfoundation/iam-client-lib/commit/0e1fafa417addaa3aba725224772f38e8212a063))
+
 ### [6.2.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.0...v6.2.1-alpha.1) (2022-09-09)
 
 
