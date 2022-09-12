@@ -495,7 +495,8 @@ describe('Сlaim tests', () => {
           requestorFields,
         });
 
-        expirationTimestamp && expect(exp).toEqual(Math.floor(expirationTimestamp / 1000));
+        expirationTimestamp &&
+          expect(exp).toEqual(Math.floor(expirationTimestamp / 1000));
 
         expect(claimData).not.toContain({
           fields: [{ key: 'temperature', value: 36 }],
@@ -1048,7 +1049,6 @@ describe('Сlaim tests', () => {
         claim: {
           claimType: `${roleName1}.${root}`,
           claimTypeVersion: version,
-          requestorFields: [],
         },
         registrationTypes,
       });
@@ -1281,7 +1281,10 @@ describe('Сlaim tests', () => {
   describe('Selfsigned claim tests', () => {
     test('Selfsigned claim should be verified', async () => {
       const claimUrl = await claimsService.createSelfSignedClaim({
-        data: { claimType: roleName1 },
+        data: {
+          claimType: roleName1,
+          claimTypeVersion: 1,
+        },
         subject: rootOwnerDID,
       });
       const claim = await didRegistry.ipfsStore.get(claimUrl);
@@ -1304,7 +1307,7 @@ describe('Сlaim tests', () => {
       ]);
       const claimType = 'test claim';
       const claimUrl = await claimsService.createSelfSignedClaim({
-        data: { claimType },
+        data: { claimType, claimTypeVersion: 1 },
         subject: assetDID,
       });
       const claim = await didRegistry.ipfsStore.get(claimUrl);

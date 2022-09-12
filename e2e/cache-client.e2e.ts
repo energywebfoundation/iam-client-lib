@@ -1,4 +1,4 @@
-import { initWithPrivateKeySigner, setCacheConfig } from '../src';
+import { ClaimData, initWithPrivateKeySigner, setCacheConfig } from '../src';
 import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
 const rpcUrl = 'https://volta-rpc.energyweb.org';
@@ -11,7 +11,10 @@ describe.skip('Cache client', () => {
       cacheServerSupportsAuth: true,
     });
 
-    const metadata = { meterId: 'SolarM' };
+    const metadata: ClaimData = {
+      claimType: 'SolarM',
+      claimTypeVersion: 1,
+    };
 
     const { connectToCacheServer } = await initWithPrivateKeySigner(
       privateKey,
