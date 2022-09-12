@@ -25,3 +25,23 @@
 - [UpdateSignedDidDelegateOptions](../interfaces/modules_did_registry.UpdateSignedDidDelegateOptions.md)
 - [UpdateSignedDidPublicKeyOptions](../interfaces/modules_did_registry.UpdateSignedDidPublicKeyOptions.md)
 - [ValidDateUpdateDocumentRequestOptions](../interfaces/modules_did_registry.ValidDateUpdateDocumentRequestOptions.md)
+
+### Functions
+
+- [isClaimService](modules_did_registry.md#isclaimservice)
+
+## Functions
+
+### isClaimService
+
+▸ **isClaimService**(`service`): service is IServiceEndpoint & Pick<ClaimData, "claimType" \| "claimTypeVersion"\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `service` | `IServiceEndpoint` |
+
+#### Returns
+
+service is IServiceEndpoint & Pick<ClaimData, "claimType" \| "claimTypeVersion"\>

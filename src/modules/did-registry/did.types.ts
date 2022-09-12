@@ -6,6 +6,8 @@ import {
   PubKeyType,
 } from '@ew-did-registry/did-resolver-interface';
 import { KeyType } from '@ew-did-registry/keys';
+import { type ClaimData } from '@energyweb/vc-verification';
+import { has } from 'lodash';
 
 export interface AssetProfile {
   name?: string;
@@ -31,12 +33,13 @@ export interface Profile {
   assetProfiles?: AssetProfiles;
 }
 
-export interface ClaimData extends Record<string, unknown> {
-  profile?: Profile;
-  claimType?: string;
-  claimTypeVersion?: number;
-  issuerFields?: { key: string; value: string | number }[];
+declare module '@energyweb/vc-verification' {
+  export interface ClaimData extends Record<string, unknown> {
+    profile?: Profile;
+    issuerFields?: { key: string; value: string | number }[];
+  }
 }
+export { ClaimData };
 
 export interface GetDIDDocumentOptions {
   /* DID of the user */
@@ -63,7 +66,7 @@ export interface GetDidDelegatesOptions {
 
 export interface CreatePublicClaimOptions {
   /* Claim data */
-  data: ClaimData;
+  data: Record<string, unknown>;
 
   /* Subject of the claim */
   subject?: string;
@@ -151,3 +154,10 @@ export interface ValidDateUpdateDocumentRequestOptions {
   /* DID of the document to be updated */
   did: string;
 }
+
+export const isClaimService = (
+  service: IServiceEndpoint
+): service is IServiceEndpoint &
+  Pick<ClaimData, 'claimType' | 'claimTypeVersion'> => {
+  return has(service, 'claimType') && has(service, 'claimTypeVersion');
+};

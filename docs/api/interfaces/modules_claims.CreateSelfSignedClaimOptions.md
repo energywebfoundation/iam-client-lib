@@ -13,7 +13,7 @@
 
 ### data
 
-• **data**: [`ClaimData`](modules_did_registry.ClaimData.md)
+• **data**: `ClaimData`
 
 Claim data
 
