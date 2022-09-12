@@ -545,12 +545,16 @@ export class ClaimsService {
       return;
     }
 
-    if (!subjectAgreement && subject === this._signerService.did) {
+    if (!subjectAgreement) {
+      // If the signer is the subject, use the signer DID. If the signer is not the subject, use the subject DID:
+      const subjectAgreer =
+        subject === this._signerService.did ? this._signerService.did : subject;
       subjectAgreement = await this.approveRolePublishing({
-        subject: this._signerService.did,
+        subject: subjectAgreer,
         role: claimType,
         version: +claimTypeVersion,
       });
+      // }
     }
 
     const expiry = expirationTimestamp || eternityTimestamp;

@@ -58,6 +58,8 @@ const projectInstallerCandidate = Wallet.createRandom().connect(provider);
 const projectInstallerCandidateDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${projectInstallerCandidate.address}`;
 const rootOwner = Wallet.createRandom().connect(provider);
 const rootOwnerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${rootOwner.address}`;
+const myAsset = Wallet.createRandom().connect(provider);
+const myAssetDid = `did:${Methods.Erc1056}:${Chain.VOLTA}:${myAsset.address}`;
 const roleName1 = 'myrole1';
 const roleName2 = 'myrole2';
 const roleName3 = 'myrole3';
@@ -73,6 +75,7 @@ const vcExpired = 'vcExpired';
 const electrician = 'electrician';
 const projectElectrician = 'projectElectrician';
 const projectInstaller = 'projectInstaller';
+const roleForAsset = 'roleForAsset';
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -160,6 +163,11 @@ const roles: Record<string, IRoleDefinitionV2> = {
     roleName: projectInstaller,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
   },
+  [`${roleForAsset}.${root}`]: {
+    ...baseRoleDef,
+    roleName: roleForAsset,
+    issuer: { issuerType: 'DID', did: [rootOwnerDID] },
+  },
 };
 const mockGetRoleDefinition = jest
   .fn()
@@ -244,6 +252,7 @@ describe('Сlaim tests', () => {
     await replenish(await rootOwner.getAddress());
     await replenish(await dynamicIssuer.getAddress());
     await replenish(await projectInstallerCandidate.getAddress());
+    await replenish(await myAsset.getAddress());
 
     await setupENS(await rootOwner.getAddress());
     let connectToCacheServer;
@@ -335,6 +344,12 @@ describe('Сlaim tests', () => {
       roleName: projectInstaller,
       namespace,
       data: roles[`${projectInstaller}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: roleForAsset,
+      namespace,
+      data: roles[`${roleForAsset}.${root}`],
       returnSteps: false,
     });
 
@@ -934,6 +949,36 @@ describe('Сlaim tests', () => {
           claimTypeVersion: version,
           acceptedBy: claim.acceptedBy,
           subject: rootOwnerDID,
+        };
+        mockGetClaimsBySubject
+          .mockReset()
+          .mockImplementationOnce(() => [mockedClaim]);
+
+        await claimsService.publishPublicClaim({
+          claim: { claimType },
+          registrationTypes,
+        });
+        expect(
+          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+        ).toBe(true);
+      });
+
+      test('should be able to issue without request and publish onchain when signer is not subject (i.e. for asset)', async () => {
+        const claimType = `${roleForAsset}.${root}`;
+        const claim = await issueWithoutRequest(rootOwner, {
+          subjectDID: myAssetDid,
+          claimType,
+          registrationTypes,
+        });
+        expect(claim.onChainProof).toHaveLength(132);
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const mockedClaim = {
+          claimType,
+          isApproved: true,
+          onChainProof: claim.onChainProof,
+          claimTypeVersion: version,
+          acceptedBy: claim.acceptedBy,
+          subject: myAssetDid,
         };
         mockGetClaimsBySubject
           .mockReset()
