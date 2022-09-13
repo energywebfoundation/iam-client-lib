@@ -6,6 +6,7 @@ import {
 } from '@ethersproject/abstract-signer';
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { Methods } from '@ew-did-registry/did';
+import { has } from 'lodash';
 import { ERROR_MESSAGES } from '../../errors/error-messages';
 import { chainConfigs } from '../../config/chain.config';
 import {
@@ -22,7 +23,6 @@ import {
   SignerT,
 } from './signer.types';
 import { EkcSigner } from './ekc.signer';
-import { computeAddress } from 'ethers/lib/utils';
 import { getLogger } from '../../config/logger.config';
 
 const {
@@ -32,6 +32,8 @@ const {
   getAddress,
   hashMessage,
   verifyMessage,
+  computeAddress,
+  Logger,
 } = utils;
 export type ServiceInitializer = () => Promise<void>;
 
@@ -347,7 +349,22 @@ export class SignerService {
     const messageHash = this._isEthSigner
       ? message
       : arrayify(hashMessage(message));
-    const sig = await this.signer.signMessage(messageHash);
+    let sig: string;
+    try {
+      sig = await this.signer.signMessage(messageHash);
+    } catch (e) {
+      if (e instanceof Error && typeof e.message === 'string') {
+        throw new Error(e.message);
+        // https://github.com/ethers-io/ethers.js/issues/3356
+      } else if (
+        has(e, 'reason') &&
+        (<any>e).reason === 'user rejected signing'
+      ) {
+        throw new Error(Logger.errors.ACTION_REJECTED);
+      } else {
+        throw new Error(JSON.stringify(e));
+      }
+    }
     if (getAddress(this._address) !== getAddress(verifyMessage(message, sig))) {
       throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
     }
