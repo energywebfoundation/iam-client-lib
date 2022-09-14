@@ -95,7 +95,7 @@
     "didkit-wasm": "^0.1.9",
     "didkit-wasm-node": "^0.1.6",
     "eth-ens-namehash": "^2.0.8",
-    "ethers": "^5.7.0",
+    "ethers": "^5.7.1",
     "js-sha3": "^0.8.0",
     "jsonwebtoken": "^8.5.1",
     "lodash.difference": "^4.5.0",
