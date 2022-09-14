@@ -6,15 +6,15 @@
 
 ### Properties
 
-- [claimData](modules_claims.CreateClaimRequestOptions.md#claimdata)
+- [claim](modules_claims.CreateClaimRequestOptions.md#claim)
 - [registrationTypes](modules_claims.CreateClaimRequestOptions.md#registrationtypes)
 - [subject](modules_claims.CreateClaimRequestOptions.md#subject)
 
 ## Properties
 
-### claimData
+### claim
 
-• **claimData**: `ClaimData`
+• **claim**: `ClaimData`
 
 Claim request params
 

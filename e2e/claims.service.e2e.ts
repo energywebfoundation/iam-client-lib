@@ -59,7 +59,7 @@ const projectInstallerCandidateDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${pr
 const rootOwner = Wallet.createRandom().connect(provider);
 const rootOwnerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${rootOwner.address}`;
 const myAsset = Wallet.createRandom().connect(provider);
-const myAssetDid = `did:${Methods.Erc1056}:${Chain.VOLTA}:${myAsset.address}`;
+//const myAssetDid = `did:${Methods.Erc1056}:${Chain.VOLTA}:${myAsset.address}`;
 const roleName1 = 'myrole1';
 const roleName2 = 'myrole2';
 const roleName3 = 'myrole3';
@@ -964,32 +964,43 @@ describe('Сlaim tests', () => {
       });
 
       test('should be able to issue without request and publish onchain when signer is not subject (i.e. for asset)', async () => {
+       
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
         const claimType = `${roleForAsset}.${root}`;
+        const assetDID = `did:${Methods.Erc1056}:${
+          Chain.VOLTA
+        }:${await assetsService.registerAsset()}`;
+        mockGetCachedOwnedAssets.mockResolvedValueOnce([
+          { document: { id: assetDID }, id: assetDID },
+        ]);
+        console.log(assetDID, "THE ASSET DID")
+      
         const claim = await issueWithoutRequest(rootOwner, {
-          subjectDID: myAssetDid,
+          subjectDID: assetDID,
           claimType,
           registrationTypes,
         });
+        console.log(claim, "THE CLAIM")
         expect(claim.onChainProof).toHaveLength(132);
-        await signerService.connect(rootOwner, ProviderType.PrivateKey);
         const mockedClaim = {
           claimType,
           isApproved: true,
           onChainProof: claim.onChainProof,
           claimTypeVersion: version,
           acceptedBy: claim.acceptedBy,
-          subject: myAssetDid,
+          subject: assetDID,
         };
         mockGetClaimsBySubject
           .mockReset()
           .mockImplementationOnce(() => [mockedClaim]);
-
-        await claimsService.publishPublicClaim({
+        
+       const thePublishedClaim =  await claimsService.publishPublicClaim({
           claim: { claimType },
           registrationTypes,
         });
+        console.log(thePublishedClaim)
         expect(
-          await claimsService.hasOnChainRole(rootOwnerDID, claimType, version)
+          await claimsService.hasOnChainRole(assetDID, claimType, version)
         ).toBe(true);
       });
 
