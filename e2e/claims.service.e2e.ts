@@ -1282,8 +1282,11 @@ describe('Сlaim tests', () => {
     test('Selfsigned claim should be verified', async () => {
       const claimUrl = await claimsService.createSelfSignedClaim({
         data: {
-          claimType: roleName1,
-          claimTypeVersion: 1,
+          profile: {
+            name: 'John Doe',
+            birthdate: '1990-01-01',
+            address: '123 Main St',
+          },
         },
         subject: rootOwnerDID,
       });
