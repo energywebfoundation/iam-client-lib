@@ -963,24 +963,18 @@ describe('Сlaim tests', () => {
         ).toBe(true);
       });
 
-      test('should be able to issue without request and publish onchain when signer is not subject (i.e. for asset)', async () => {
-       
+      test('should be able to issue without request and publish onchain for owned asset', async () => {
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
         const claimType = `${roleForAsset}.${root}`;
         const assetDID = `did:${Methods.Erc1056}:${
           Chain.VOLTA
         }:${await assetsService.registerAsset()}`;
-        mockGetCachedOwnedAssets.mockResolvedValueOnce([
-          { document: { id: assetDID }, id: assetDID },
-        ]);
-        console.log(assetDID, "THE ASSET DID")
-      
+
         const claim = await issueWithoutRequest(rootOwner, {
           subjectDID: assetDID,
           claimType,
           registrationTypes,
         });
-        console.log(claim, "THE CLAIM")
         expect(claim.onChainProof).toHaveLength(132);
         const mockedClaim = {
           claimType,
@@ -993,12 +987,11 @@ describe('Сlaim tests', () => {
         mockGetClaimsBySubject
           .mockReset()
           .mockImplementationOnce(() => [mockedClaim]);
-        
-       const thePublishedClaim =  await claimsService.publishPublicClaim({
+
+        await claimsService.publishPublicClaim({
           claim: { claimType },
           registrationTypes,
         });
-        console.log(thePublishedClaim)
         expect(
           await claimsService.hasOnChainRole(assetDID, claimType, version)
         ).toBe(true);
@@ -1357,7 +1350,9 @@ describe('Сlaim tests', () => {
       const assetDID = `did:${Methods.Erc1056}:${
         Chain.VOLTA
       }:${await assetsService.registerAsset()}`;
-
+      mockGetCachedOwnedAssets.mockResolvedValueOnce([
+        { document: { id: assetDID }, id: assetDID },
+      ]);
       mockGetCachedOwnedAssets.mockResolvedValueOnce([
         { document: { id: assetDID }, id: assetDID },
       ]);
