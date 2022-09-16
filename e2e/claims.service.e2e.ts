@@ -58,8 +58,6 @@ const projectInstallerCandidate = Wallet.createRandom().connect(provider);
 const projectInstallerCandidateDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${projectInstallerCandidate.address}`;
 const rootOwner = Wallet.createRandom().connect(provider);
 const rootOwnerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${rootOwner.address}`;
-const myAsset = Wallet.createRandom().connect(provider);
-//const myAssetDid = `did:${Methods.Erc1056}:${Chain.VOLTA}:${myAsset.address}`;
 const roleName1 = 'myrole1';
 const roleName2 = 'myrole2';
 const roleName3 = 'myrole3';
@@ -252,7 +250,6 @@ describe('Сlaim tests', () => {
     await replenish(await rootOwner.getAddress());
     await replenish(await dynamicIssuer.getAddress());
     await replenish(await projectInstallerCandidate.getAddress());
-    await replenish(await myAsset.getAddress());
 
     await setupENS(await rootOwner.getAddress());
     let connectToCacheServer;
@@ -1350,9 +1347,6 @@ describe('Сlaim tests', () => {
       const assetDID = `did:${Methods.Erc1056}:${
         Chain.VOLTA
       }:${await assetsService.registerAsset()}`;
-      mockGetCachedOwnedAssets.mockResolvedValueOnce([
-        { document: { id: assetDID }, id: assetDID },
-      ]);
       mockGetCachedOwnedAssets.mockResolvedValueOnce([
         { document: { id: assetDID }, id: assetDID },
       ]);
