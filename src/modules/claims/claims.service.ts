@@ -547,7 +547,7 @@ export class ClaimsService {
 
     if (!subjectAgreement) {
       subjectAgreement = await this.approveRolePublishing({
-        subject: subject,
+        subject,
         role: claimType,
         version: +claimTypeVersion,
       });
