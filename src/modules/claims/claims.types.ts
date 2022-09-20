@@ -284,7 +284,7 @@ export interface PublishPublicClaimOptions {
 
 export interface CreateSelfSignedClaimOptions {
   /** Claim data */
-  data: ClaimData;
+  data: Record<string, unknown>;
 
   /** DID of the claim subject */
   subject?: string;

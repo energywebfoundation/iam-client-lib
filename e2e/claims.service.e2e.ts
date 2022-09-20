@@ -73,6 +73,7 @@ const vcExpired = 'vcExpired';
 const electrician = 'electrician';
 const projectElectrician = 'projectElectrician';
 const projectInstaller = 'projectInstaller';
+const roleForAsset = 'roleForAsset';
 const namespace = root;
 const version = 1;
 const baseRoleDef = {
@@ -159,6 +160,11 @@ const roles: Record<string, IRoleDefinitionV2> = {
     ...baseRoleDef,
     roleName: projectInstaller,
     issuer: { issuerType: 'DID', did: [staticIssuerDID] },
+  },
+  [`${roleForAsset}.${root}`]: {
+    ...baseRoleDef,
+    roleName: roleForAsset,
+    issuer: { issuerType: 'DID', did: [rootOwnerDID] },
   },
 };
 const mockGetRoleDefinition = jest
@@ -335,6 +341,12 @@ describe('Сlaim tests', () => {
       roleName: projectInstaller,
       namespace,
       data: roles[`${projectInstaller}.${root}`],
+      returnSteps: false,
+    });
+    await domainsService.createRole({
+      roleName: roleForAsset,
+      namespace,
+      data: roles[`${roleForAsset}.${root}`],
       returnSteps: false,
     });
 
@@ -948,6 +960,40 @@ describe('Сlaim tests', () => {
         ).toBe(true);
       });
 
+      test('should be able to issue without request and publish onchain for owned asset', async () => {
+        await signerService.connect(rootOwner, ProviderType.PrivateKey);
+        const claimType = `${roleForAsset}.${root}`;
+        const assetDID = `did:${Methods.Erc1056}:${
+          Chain.VOLTA
+        }:${await assetsService.registerAsset()}`;
+
+        const claim = await issueWithoutRequest(rootOwner, {
+          subjectDID: assetDID,
+          claimType,
+          registrationTypes,
+        });
+        expect(claim.onChainProof).toHaveLength(132);
+        const mockedClaim = {
+          claimType,
+          isApproved: true,
+          onChainProof: claim.onChainProof,
+          claimTypeVersion: version,
+          acceptedBy: claim.acceptedBy,
+          subject: assetDID,
+        };
+        mockGetClaimsBySubject
+          .mockReset()
+          .mockImplementationOnce(() => [mockedClaim]);
+
+        await claimsService.publishPublicClaim({
+          claim: { claimType },
+          registrationTypes,
+        });
+        expect(
+          await claimsService.hasOnChainRole(assetDID, claimType, version)
+        ).toBe(true);
+      });
+
       test('should be able to issue without publishing onchain', async () => {
         mockGetClaimsBySubject.mockImplementationOnce(() => [role1Claim]);
 
@@ -1282,8 +1328,11 @@ describe('Сlaim tests', () => {
     test('Selfsigned claim should be verified', async () => {
       const claimUrl = await claimsService.createSelfSignedClaim({
         data: {
-          claimType: roleName1,
-          claimTypeVersion: 1,
+          profile: {
+            name: 'John Doe',
+            birthdate: '1990-01-01',
+            address: '123 Main St',
+          },
         },
         subject: rootOwnerDID,
       });
@@ -1301,7 +1350,6 @@ describe('Сlaim tests', () => {
       const assetDID = `did:${Methods.Erc1056}:${
         Chain.VOLTA
       }:${await assetsService.registerAsset()}`;
-
       mockGetCachedOwnedAssets.mockResolvedValueOnce([
         { document: { id: assetDID }, id: assetDID },
       ]);

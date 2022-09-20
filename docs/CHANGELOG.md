@@ -1,3 +1,21 @@
+## [7.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.1-alpha.2...v7.0.0-alpha.1) (2022-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **claims:** Payload of selfsigned claim is arbitrary object
+
+### Bug Fixes
+
+* **claims:** change selfsigned claim to record ([9986876](https://github.com/energywebfoundation/iam-client-lib/commit/9986876984fc523657e98a8a92bdd2b70f2470eb))
+
+### [6.2.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.1-alpha.1...v6.2.1-alpha.2) (2022-09-12)
+
+
+### Refactoring
+
+* **claims:** merge ClaimData with vc-verification ([0e1fafa](https://github.com/energywebfoundation/iam-client-lib/commit/0e1fafa417addaa3aba725224772f38e8212a063))
+
 ### [6.2.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.0...v6.2.1-alpha.1) (2022-09-09)
 
 
