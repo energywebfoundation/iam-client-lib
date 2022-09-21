@@ -669,7 +669,7 @@ ___
 
 ▸ **registerOnchain**(`claim`): `Promise`<`void`\>
 
-Register issued on-chain claim on Claim Manager contract.
+Register issued on-chain claim on Claim Manager contract Can be used by asset owners to register credentials on-chain for their assets.
 
 ```typescript
 const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
