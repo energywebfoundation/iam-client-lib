@@ -1,3 +1,16 @@
+## [7.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0-alpha.1...v7.0.0-alpha.2) (2022-09-21)
+
+
+### Bug Fixes
+
+* commit for 2c0a860 ([45cdac0](https://github.com/energywebfoundation/iam-client-lib/commit/45cdac00210c57db15b84b9a05978325d647f6ce))
+* publish assets on-chain ([#654](https://github.com/energywebfoundation/iam-client-lib/issues/654)) ([2c0a860](https://github.com/energywebfoundation/iam-client-lib/commit/2c0a860c7e11b9fb833ddbed71e2adf51229987b))
+
+
+### Documentation
+
+* add asset credential registration to documentation ([ba6f7ba](https://github.com/energywebfoundation/iam-client-lib/commit/ba6f7ba5bf9f8abe7ae0ba20bd227ab43a727ac5))
+
 ## [7.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.1-alpha.2...v7.0.0-alpha.1) (2022-09-15)
 
 
