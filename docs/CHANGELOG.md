@@ -1,3 +1,10 @@
+## [7.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0-alpha.2...v7.0.0-alpha.3) (2022-09-22)
+
+
+### Bug Fixes
+
+* bump ew-credentials to 2.2.1-alpha.296.0 ([#662](https://github.com/energywebfoundation/iam-client-lib/issues/662)) ([9af689c](https://github.com/energywebfoundation/iam-client-lib/commit/9af689cca1e1e53d5bb452b77586fe473e37fec8))
+
 ## [7.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0-alpha.1...v7.0.0-alpha.2) (2022-09-21)
 
 
