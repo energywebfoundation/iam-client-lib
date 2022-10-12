@@ -410,8 +410,8 @@ export class DomainsService {
     return;
   }
 
-  async readName(namehash: string) {
-    return this._domainDefinitionReader.readName(namehash);
+  async readName(namehashToRead: string) {
+    return this._domainDefinitionReader.readName(namehashToRead);
   }
 
   /**
