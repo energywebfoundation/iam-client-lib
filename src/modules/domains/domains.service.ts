@@ -473,18 +473,18 @@ export class DomainsService {
       );
     }
 
-    const steps = changeOwnerNamespaces.map((namespace) => {
-      const tx = this.changeDomainOwnerTx({ newOwner, namespace });
+    const steps = changeOwnerNamespaces.map((nmspace) => {
+      const tx = this.changeDomainOwnerTx({ newOwner, namespace: nmspace });
       return {
         tx,
         next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
           if (retryCheck) {
-            const owner = await this.getOwner({ namespace });
+            const owner = await this.getOwner({ namespace: nmspace });
             if (owner === newOwner) return;
           }
           return this._signerService.send(tx);
         },
-        info: `Changing ownership of ${namespace}`,
+        info: `Changing ownership of ${nmspace}`,
       };
     });
 
@@ -549,18 +549,18 @@ export class DomainsService {
     }
 
     const steps: ReturnStepWithRetryCheck[] = changeOwnerNamespaces.map(
-      (namespace) => {
-        const tx = this.changeDomainOwnerTx({ newOwner, namespace });
+      (name) => {
+        const tx = this.changeDomainOwnerTx({ newOwner, namespace: name });
         return {
           tx,
           next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
             if (retryCheck) {
-              const owner = await this.getOwner({ namespace });
+              const owner = await this.getOwner({ namespace: name });
               if (owner === newOwner) return;
             }
             return this._signerService.send(tx);
           },
-          info: `Changing ownership of ${namespace}`,
+          info: `Changing ownership of ${name}`,
         };
       }
     );
