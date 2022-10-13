@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['@energyweb'],
   rules: {
-    "@typescript-eslint/no-shadow": ["warn", {"ignoreFunctionTypeParameterNameValueShadow": true}],
+    "@typescript-eslint/no-shadow": "warn",
   },
   env: {
     browser: true,
