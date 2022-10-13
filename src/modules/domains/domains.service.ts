@@ -666,18 +666,18 @@ export class DomainsService {
       getLogger().info(`Already deleted: ${alreadyFinished.join(', ')}`);
     }
 
-    const steps = namespacesToDelete.map((namespace) => {
-      const tx = this.deleteDomainTx({ namespace });
+    const steps = namespacesToDelete.map((n) => {
+      const tx = this.deleteDomainTx({ namespace: n });
       return {
         tx,
         next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
           if (retryCheck) {
-            const owner = await this.getOwner({ namespace });
+            const owner = await this.getOwner({ namespace: n });
             if (owner === emptyAddress) return;
           }
           return this._signerService.send(tx);
         },
-        info: `Deleting ${namespace}`,
+        info: `Deleting ${n}`,
       };
     });
 
@@ -737,18 +737,18 @@ export class DomainsService {
       getLogger().info(`Already deleted: ${alreadyFinished.join(', ')}`);
     }
 
-    const steps = namespacesToDelete.map((namespace) => {
-      const tx = this.deleteDomainTx({ namespace });
+    const steps = namespacesToDelete.map((nspace) => {
+      const tx = this.deleteDomainTx({ namespace: nspace });
       return {
         tx,
         next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
           if (retryCheck) {
-            const owner = await this.getOwner({ namespace });
+            const owner = await this.getOwner({ namespace: nspace });
             if (owner === emptyAddress) return;
           }
           return this._signerService.send(tx);
         },
-        info: `Deleting ${namespace}`,
+        info: `Deleting ${nspace}`,
       };
     });
 
