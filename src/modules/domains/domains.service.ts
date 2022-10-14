@@ -461,8 +461,8 @@ export class DomainsService {
           'You are not able to change ownership of organization with registered apps'
         );
       } else {
-        for await (const { namespace } of apps) {
-          await this.changeAppOwnership({ namespace, newOwner, returnSteps });
+        for await (const { namespace: ns } of apps) {
+          await this.changeAppOwnership({ namespace: ns, newOwner, returnSteps });
         }
       }
     }
