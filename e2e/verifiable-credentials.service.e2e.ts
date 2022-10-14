@@ -452,7 +452,7 @@ describe('Verifiable credentials tests', () => {
        */
       (axios as jest.Mocked<typeof axios>).post.mockImplementation(() => {
         return Promise.resolve({
-          data: { errors: [], bloxmoveVpRequest },
+          data: { errors: [], vpRequest: bloxmoveVpRequest },
         });
       });
       getClaimsBySubject.mockResolvedValue(customerRoleClaim);
