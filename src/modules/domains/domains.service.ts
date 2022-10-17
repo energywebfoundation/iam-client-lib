@@ -462,7 +462,11 @@ export class DomainsService {
         );
       } else {
         for await (const { namespace: ns } of apps) {
-          await this.changeAppOwnership({ namespace: ns, newOwner, returnSteps });
+          await this.changeAppOwnership({
+            namespace: ns,
+            newOwner,
+            returnSteps,
+          });
         }
       }
     }
@@ -1414,6 +1418,6 @@ export class DomainsService {
   }
 
   get domainReader(): DomainReader {
-   return this._domainDefinitionReader;
+    return this._domainDefinitionReader;
   }
 }
