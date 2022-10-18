@@ -408,7 +408,7 @@ export class ClaimsService {
   async issueClaimRequest({
     requester,
     token,
-    id,
+    id: requestId,
     subjectAgreement,
     registrationTypes,
     issuerFields,
@@ -436,7 +436,7 @@ export class ClaimsService {
     const { claimType: role, claimTypeVersion: version } = claimData;
 
     const message: IClaimIssuance = {
-      id,
+      id: requestId,
       requester,
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
@@ -584,12 +584,12 @@ export class ClaimsService {
    * @param {RejectClaimRequestOptions} options object containing options
    */
   async rejectClaimRequest({
-    id,
+    id: rejectClaimRequestId,
     requesterDID,
     rejectionReason,
   }: RejectClaimRequestOptions): Promise<void> {
     const message: IClaimRejection = {
-      id,
+      id: rejectClaimRequestId,
       requester: requesterDID,
       claimIssuer: [this._signerService.did],
       isRejected: true,
@@ -610,8 +610,8 @@ export class ClaimsService {
    *
    * @param {DeleteClaimOptions} options object containing options
    */
-  async deleteClaim({ id }: DeleteClaimOptions): Promise<void> {
-    await this._cacheClient.deleteClaim(id);
+  async deleteClaim({ id: deleteClaimId }: DeleteClaimOptions): Promise<void> {
+    await this._cacheClient.deleteClaim(deleteClaimId);
   }
 
   /**
@@ -754,7 +754,7 @@ export class ClaimsService {
    * @param {PublishPublicClaimOptions} options object containing options
    * @return URl to IPFS if registrationTypes includes RegistrationTypes.OffChain
    */
-  async publishPublicClaim({
+  async publishPublicClaim({ //FIX CLAIM DATA
     token, // backward compatibility
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
@@ -785,20 +785,20 @@ export class ClaimsService {
         namespace: this.getNamespaceFromClaimType(claim.claimType),
         isAccepted: true,
       });
-      const claimData = claims.find((c) => c.claimType === claim.claimType);
+      const claimDataForClaimType = claims.find((c) => c.claimType === claim.claimType);
 
-      if (!claimData) {
+      if (!claimDataForClaimType) {
         throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
       }
-      const expirationTimestamp = claimData.expirationTimestamp
-        ? Math.floor(+claimData.expirationTimestamp / 1000)
+      const expirationTimestamp = claimDataForClaimType.expirationTimestamp
+        ? Math.floor(+claimDataForClaimType.expirationTimestamp / 1000)
         : undefined;
 
       await this.registerOnchain({
-        ...claimData,
+        ...claimDataForClaimType,
         expirationTimestamp,
-        onChainProof: claimData.onChainProof as string,
-        acceptedBy: claimData.acceptedBy as string,
+        onChainProof: claimDataForClaimType.onChainProof as string,
+        acceptedBy: claimDataForClaimType.acceptedBy as string,
       });
     }
 
@@ -811,21 +811,21 @@ export class ClaimsService {
       if (!this._didRegistry.isClaim(payload)) {
         throw new Error(ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING);
       }
-      const token = claim.token as string;
+      const claimToken = claim.token as string;
       const verifiedDid = await this._didRegistry.verifyPublicClaim(
-        token,
+        claimToken,
         iss as string
       );
       if (!verifiedDid || !compareDID(verifiedDid, iss as string)) {
         throw new Error('Incorrect signature');
       }
-      url = await this._didRegistry.ipfsStore.save(token);
+      url = await this._didRegistry.ipfsStore.save(claimToken);
       const data = {
         type: DIDAttribute.ServicePoint,
         value: {
           id: await this.getClaimId({ claimData: claimData as ClaimData }),
           serviceEndpoint: url,
-          hash: hashes.SHA256(token),
+          hash: hashes.SHA256(claimToken),
           hashAlg: 'SHA256',
         },
       };
@@ -1277,10 +1277,10 @@ export class ClaimsService {
       .map(({ conditions }) => conditions)
       .reduce((all, cur) => all.concat(cur), []);
     await Promise.all(
-      requiredRoles.map(async (role) => {
+      requiredRoles.map(async (requiredRole) => {
         const verificationResult = await this.resolveCredentialAndVerify(
           subject,
-          role
+          requiredRole
         );
         if (!verificationResult.isVerified) {
           throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
@@ -1341,7 +1341,7 @@ export class ClaimsService {
     role,
     version,
   }: ApproveRolePublishingOptions): Promise<string> {
-    const erc712_type_hash = id(
+    const erc712TypeHash = id(
       'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
     );
     const agreement_type_hash = id(
@@ -1353,7 +1353,7 @@ export class ClaimsService {
       defaultAbiCoder.encode(
         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
         [
-          erc712_type_hash,
+          erc712TypeHash,
           id('Claim Manager'),
           id('1.0'),
           chainId,

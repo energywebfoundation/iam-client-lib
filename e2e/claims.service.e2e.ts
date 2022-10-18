@@ -169,8 +169,8 @@ const roles: Record<string, IRoleDefinitionV2> = {
 };
 const mockGetRoleDefinition = jest
   .fn()
-  .mockImplementation((namespace: string) => {
-    return roles[namespace];
+  .mockImplementation((roleDefNamespace: string) => {
+    return roles[roleDefNamespace];
   });
 const mockCachedDocument = jest.fn().mockImplementation((did: string) => {
   return {
@@ -597,7 +597,7 @@ describe('Сlaim tests', () => {
       if (registrationTypes.includes(RegistrationTypes.OffChain)) {
         expect(issuedToken).toBeDefined();
 
-        const { claimData, signer, did } = (await didRegistry.decodeJWTToken({
+        const { claimData, signer, did: decodedTokenDid } = (await didRegistry.decodeJWTToken({
           token: issuedToken,
         })) as { [key: string]: string };
 
@@ -609,7 +609,7 @@ describe('Сlaim tests', () => {
         });
 
         expect(signer).toBe(issuerDID);
-        expect(did).toBe(requesterDID);
+        expect(decodedTokenDid).toBe(requesterDID);
       }
 
       expect(requester).toEqual(subjectDID);
@@ -646,8 +646,8 @@ describe('Сlaim tests', () => {
     });
 
     test('asset enrollment by issuer of type DID', async () => {
-      mockGetAssetById.mockImplementationOnce(({ id }: { id: string }) => ({
-        id,
+      mockGetAssetById.mockImplementationOnce(({ id: assetId }: { id: string }) => ({
+        assetId,
       }));
       await signerService.connect(rootOwner, ProviderType.PrivateKey);
       const assetAddress = await assetsService.registerAsset();
@@ -879,7 +879,7 @@ describe('Сlaim tests', () => {
         claim: { token: res.issuedToken },
       });
 
-      const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       await delay(8000);
 
       return expect(
@@ -962,19 +962,19 @@ describe('Сlaim tests', () => {
 
       test('should be able to issue without request and publish onchain for owned asset', async () => {
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
-        const claimType = `${roleForAsset}.${root}`;
+        const assetClaimType = `${roleForAsset}.${root}`;
         const assetDID = `did:${Methods.Erc1056}:${
           Chain.VOLTA
         }:${await assetsService.registerAsset()}`;
 
         const claim = await issueWithoutRequest(rootOwner, {
           subjectDID: assetDID,
-          claimType,
+          claimType: assetClaimType,
           registrationTypes,
         });
         expect(claim.onChainProof).toHaveLength(132);
         const mockedClaim = {
-          claimType,
+          claimType: assetClaimType,
           isApproved: true,
           onChainProof: claim.onChainProof,
           claimTypeVersion: version,
@@ -986,11 +986,11 @@ describe('Сlaim tests', () => {
           .mockImplementationOnce(() => [mockedClaim]);
 
         await claimsService.publishPublicClaim({
-          claim: { claimType },
+          claim: { claimType: assetClaimType },
           registrationTypes,
         });
         expect(
-          await claimsService.hasOnChainRole(assetDID, claimType, version)
+          await claimsService.hasOnChainRole(assetDID, assetClaimType, version)
         ).toBe(true);
       });
 
@@ -1053,7 +1053,7 @@ describe('Сlaim tests', () => {
         const waitForRegister = new Promise((resolve) =>
           claimManager.once(
             'RoleRegistered',
-            (subject, role, version, expiry: BigNumber) =>
+            (subject, role, vers, expiry: BigNumber) =>
               resolve(expiry.toNumber())
           )
         );
@@ -1146,12 +1146,12 @@ describe('Сlaim tests', () => {
 
     const createExampleSignedCredential = async (
       issuerFields: IssuerFields[],
-      namespace: string,
+      signedCredentialNamespace: string,
       expirationDate?: Date
     ) => {
       return await verifiableCredentialsService.createRoleVC({
         id: rootOwnerDID,
-        namespace: namespace,
+        namespace: signedCredentialNamespace,
         version: '1',
         issuerFields,
         expirationDate,

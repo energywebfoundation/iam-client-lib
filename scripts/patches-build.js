@@ -27,8 +27,8 @@ async function updatePatchFile(file) {
     fs.readFile(`./dist/patches/${file}`, 'utf8', (err, data) => {
       if (err) reject(err);
       const newData = data.replaceAll('node_modules', '..');
-      fs.writeFile(`./dist/patches/${file}`, newData, 'utf8', (err) => {
-        if (err) reject(err);
+      fs.writeFile(`./dist/patches/${file}`, newData, 'utf8', (error) => {
+        if (error) reject(error);
         console.log(`Updated ${file}`);
         resolve();
       });

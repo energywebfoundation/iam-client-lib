@@ -713,13 +713,13 @@ ___
 
 ### readName
 
-▸ **readName**(`namehash`): `Promise`<`string`\>
+▸ **readName**(`namehashToRead`): `Promise`<`string`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `namehash` | `string` |
+| `namehashToRead` | `string` |
 
 #### Returns
 
