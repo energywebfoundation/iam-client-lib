@@ -1,3 +1,10 @@
+## [7.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0-alpha.3...v7.0.0-alpha.4) (2022-10-18)
+
+
+### Style changes
+
+* add warn for shadow variables (variables in scope that share s… ([#663](https://github.com/energywebfoundation/iam-client-lib/issues/663)) ([dd28b49](https://github.com/energywebfoundation/iam-client-lib/commit/dd28b4985085b8eab371a2464c8594b09afee93f))
+
 ## [7.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0-alpha.2...v7.0.0-alpha.3) (2022-09-22)
 
 
