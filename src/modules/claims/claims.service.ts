@@ -754,7 +754,7 @@ export class ClaimsService {
    * @param {PublishPublicClaimOptions} options object containing options
    * @return URl to IPFS if registrationTypes includes RegistrationTypes.OffChain
    */
-  async publishPublicClaim({ //FIX CLAIM DATA
+  async publishPublicClaim({
     token, // backward compatibility
     registrationTypes = [RegistrationTypes.OffChain],
     claim,
@@ -785,7 +785,9 @@ export class ClaimsService {
         namespace: this.getNamespaceFromClaimType(claim.claimType),
         isAccepted: true,
       });
-      const claimDataForClaimType = claims.find((c) => c.claimType === claim.claimType);
+      const claimDataForClaimType = claims.find(
+        (c) => c.claimType === claim.claimType
+      );
 
       if (!claimDataForClaimType) {
         throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
