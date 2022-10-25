@@ -597,7 +597,11 @@ describe('Сlaim tests', () => {
       if (registrationTypes.includes(RegistrationTypes.OffChain)) {
         expect(issuedToken).toBeDefined();
 
-        const { claimData, signer, did: decodedTokenDid } = (await didRegistry.decodeJWTToken({
+        const {
+          claimData,
+          signer,
+          did: decodedTokenDid,
+        } = (await didRegistry.decodeJWTToken({
           token: issuedToken,
         })) as { [key: string]: string };
 
@@ -646,9 +650,11 @@ describe('Сlaim tests', () => {
     });
 
     test('asset enrollment by issuer of type DID', async () => {
-      mockGetAssetById.mockImplementationOnce(({ id: assetId }: { id: string }) => ({
-        assetId,
-      }));
+      mockGetAssetById.mockImplementationOnce(
+        ({ id: assetId }: { id: string }) => ({
+          assetId,
+        })
+      );
       await signerService.connect(rootOwner, ProviderType.PrivateKey);
       const assetAddress = await assetsService.registerAsset();
       const assetDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${assetAddress}`;
