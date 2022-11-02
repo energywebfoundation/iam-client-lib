@@ -43,10 +43,7 @@ export class VerifiableCredentialsServiceWeb extends VerifiableCredentialsServic
     proof_options: string
   ) => Promise<string>;
 
-  constructor(
-    _signerService: SignerService,
-    _cacheClient: CacheClient
-  ) {
+  constructor(_signerService: SignerService, _cacheClient: CacheClient) {
     super(_signerService, _cacheClient);
 
     this.completeIssueCredential = completeIssueCredential;
@@ -58,10 +55,7 @@ export class VerifiableCredentialsServiceWeb extends VerifiableCredentialsServic
     this.verifyPresentation = verifyPresentation;
   }
 
-  static async create(
-    signerService: SignerService,
-    cacheClient: CacheClient
-  ) {
+  static async create(signerService: SignerService, cacheClient: CacheClient) {
     const service = new VerifiableCredentialsServiceWeb(
       signerService,
       cacheClient
