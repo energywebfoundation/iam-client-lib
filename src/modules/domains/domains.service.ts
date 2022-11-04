@@ -32,12 +32,10 @@ import {
   MulticallTx,
   SetRoleDefinitionOptions,
   CreateOrganizationOptions,
-  ReturnStep,
   CreateApplicationOptions,
   CreateRoleOptions,
   ChangeOrgOwnershipOptions,
   ChangeAppOwnershipOptions,
-  ReturnStepWithRetryCheck,
   ChangeRoleOwnershipOptions,
   DeleteOrganizationOptions,
   DeleteApplicationOptions,
@@ -58,6 +56,7 @@ import { validateAddress } from '../../utils/address';
 import { UnregisteredResolverError } from '../../errors/unregistered-resolver.error';
 import { castToV2 } from './domains.types';
 import { getLogger } from '../../config/logger.config';
+import { GnosisSigner, ProviderType } from '../signer';
 
 /**
  * Service responsible for handling the request to ENS, creating roles/organizations/applications namespaces.
@@ -190,6 +189,7 @@ export class DomainsService {
   /**
    * Create organization domain with given definition for given namespace.
    * Also includes creating subdomains for roles and applications. (roles.yourOrg.ewc, apps.yourOrg.ewc).
+   * When iam-lib initialized with Gnosis wallet new organization will belong to Safe wallet.
    *
    * ```typescript
    * domainsService.createOrganization({
@@ -210,19 +210,24 @@ export class DomainsService {
     namespace,
     data,
     returnSteps,
-  }: CreateOrganizationOptions): Promise<ReturnStep[] | undefined> {
+  }: CreateOrganizationOptions): Promise<MulticallTx | undefined> {
     const orgDomain = `${orgName}.${namespace}`;
     const rolesDomain = `${NamespaceType.Role}.${orgDomain}`;
     const appsDomain = `${NamespaceType.Application}.${orgDomain}`;
     if (!(await this.isOwner({ domain: namespace, user: this._owner }))) {
       throw new Error(ERROR_MESSAGES.NOT_AUTHORIZED_TO_CHANGE_DOMAIN);
     }
-    const steps: ReturnStep[] = [
+    const owner =
+      this._signerService.providerType === ProviderType.Gnosis
+        ? (this._signerService.signer as GnosisSigner).safeInfo.safeAddress
+        : this._owner;
+
+    const steps: MulticallTx = [
       {
         tx: this.createSubdomainTx({
           domain: namespace,
           nodeName: orgName,
-          owner: this._owner,
+          owner,
         }),
         info: 'Create organization subdomain',
       },
@@ -237,7 +242,7 @@ export class DomainsService {
         tx: this.createSubdomainTx({
           domain: orgDomain,
           nodeName: NamespaceType.Role,
-          owner: this._owner,
+          owner,
         }),
         info: 'Create roles subdomain for organization',
       },
@@ -251,7 +256,7 @@ export class DomainsService {
         tx: this.createSubdomainTx({
           domain: orgDomain,
           nodeName: NamespaceType.Application,
-          owner: this._owner,
+          owner,
         }),
         info: 'Create app subdomain for organization',
       },
@@ -264,7 +269,7 @@ export class DomainsService {
     ].map((step) => ({
       ...step,
       next: async () => {
-        await this._signerService.send({ ...step.tx });
+        return this._signerService.send({ ...step.tx });
       },
     }));
     if (returnSteps) {
@@ -300,10 +305,10 @@ export class DomainsService {
     namespace: domain,
     data,
     returnSteps,
-  }: CreateApplicationOptions): Promise<ReturnStep[] | undefined> {
+  }: CreateApplicationOptions): Promise<MulticallTx | undefined> {
     const appDomain = `${appName}.${domain}`;
     const from = await this.getOwner({ namespace: domain });
-    const steps: ReturnStep[] = [
+    const steps: MulticallTx = [
       {
         tx: this.createSubdomainTx({ domain, nodeName: appName, owner: from }),
         info: 'Set subdomain for application',
@@ -332,7 +337,7 @@ export class DomainsService {
     ].map((step) => ({
       ...step,
       next: async () => {
-        await this._signerService.send(step.tx);
+        return this._signerService.send(step.tx);
       },
     }));
     if (returnSteps) {
@@ -375,11 +380,11 @@ export class DomainsService {
     namespace,
     data,
     returnSteps,
-  }: CreateRoleOptions): Promise<ReturnStep[] | undefined> {
+  }: CreateRoleOptions): Promise<MulticallTx | undefined> {
     const dataV2 = castToV2(data);
     const newDomain = `${roleName}.${namespace}`;
     const from = await this.getOwner({ namespace });
-    const steps: ReturnStep[] = [
+    const steps: MulticallTx = [
       {
         tx: this.createSubdomainTx({
           domain: namespace,
@@ -398,7 +403,7 @@ export class DomainsService {
     ].map((step) => ({
       ...step,
       next: async () => {
-        await this._signerService.send(step.tx);
+        return this._signerService.send(step.tx);
       },
     }));
     if (returnSteps) {
@@ -519,9 +524,7 @@ export class DomainsService {
     namespace,
     newOwner,
     returnSteps,
-  }: ChangeAppOwnershipOptions): Promise<
-    ReturnStepWithRetryCheck[] | undefined
-  > {
+  }: ChangeAppOwnershipOptions): Promise<MulticallTx | undefined> {
     DomainsService.validateOwnerAddress(newOwner);
     const roles = await this.getRolesByNamespace({
       namespace,
@@ -552,22 +555,20 @@ export class DomainsService {
       );
     }
 
-    const steps: ReturnStepWithRetryCheck[] = changeOwnerNamespaces.map(
-      (name) => {
-        const tx = this.changeDomainOwnerTx({ newOwner, namespace: name });
-        return {
-          tx,
-          next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
-            if (retryCheck) {
-              const owner = await this.getOwner({ namespace: name });
-              if (owner === newOwner) return;
-            }
-            return this._signerService.send(tx);
-          },
-          info: `Changing ownership of ${name}`,
-        };
-      }
-    );
+    const steps: MulticallTx = changeOwnerNamespaces.map((name) => {
+      const tx = this.changeDomainOwnerTx({ newOwner, namespace: name });
+      return {
+        tx,
+        next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
+          if (retryCheck) {
+            const owner = await this.getOwner({ namespace: name });
+            if (owner === newOwner) return;
+          }
+          return this._signerService.send(tx);
+        },
+        info: `Changing ownership of ${name}`,
+      };
+    });
 
     if (returnSteps) {
       return steps;
@@ -626,9 +627,7 @@ export class DomainsService {
   async deleteOrganization({
     namespace,
     returnSteps = false,
-  }: DeleteOrganizationOptions): Promise<
-    ReturnStepWithRetryCheck[] | undefined
-  > {
+  }: DeleteOrganizationOptions): Promise<MulticallTx | undefined> {
     const apps = this._cacheClient
       ? await this.getAppsOfOrg(namespace)
       : await this.getSubdomains({
@@ -710,9 +709,7 @@ export class DomainsService {
   async deleteApplication({
     namespace,
     returnSteps = false,
-  }: DeleteApplicationOptions): Promise<
-    ReturnStepWithRetryCheck[] | undefined
-  > {
+  }: DeleteApplicationOptions): Promise<MulticallTx | undefined> {
     const roles = this._cacheClient
       ? await this._cacheClient.getApplicationRoles(namespace)
       : await this.getSubdomains({
