@@ -1610,8 +1610,6 @@ export class ClaimsService {
       revokerResolver,
       this._issuerResolver,
       this._credentialResolver,
-      this._signerService.provider,
-      this._didRegistry.registrySettings,
       verifyProof
     );
     this._issuerVerification = new IssuerVerification(
