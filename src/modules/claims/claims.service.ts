@@ -77,7 +77,7 @@ import {
   isEIP191Jwt,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
-import { ClaimData } from '../did-registry/did.types';
+import { ClaimData, isClaimService } from '../did-registry/did.types';
 import { compareDID, isValidDID } from '../../utils/did';
 import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
@@ -408,7 +408,7 @@ export class ClaimsService {
   async issueClaimRequest({
     requester,
     token,
-    id,
+    id: requestId,
     subjectAgreement,
     registrationTypes,
     issuerFields,
@@ -417,7 +417,7 @@ export class ClaimsService {
     expirationTimestamp,
   }: IssueClaimRequestOptions): Promise<void> {
     const { claimData, sub } = this._didRegistry.jwt.decode(token) as {
-      claimData: { claimType: string; claimTypeVersion: number };
+      claimData: ClaimData;
       sub: string;
     };
 
@@ -436,7 +436,7 @@ export class ClaimsService {
     const { claimType: role, claimTypeVersion: version } = claimData;
 
     const message: IClaimIssuance = {
-      id,
+      id: requestId,
       requester,
       claimIssuer: [this._signerService.did],
       acceptedBy: this._signerService.did,
@@ -504,7 +504,7 @@ export class ClaimsService {
   }
 
   /**
-   * Register issued on-chain claim on Claim Manager contract.
+   * Register issued on-chain claim on Claim Manager contract Can be used by asset owners to register credentials on-chain for their assets.
    *
    * ```typescript
    * const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');
@@ -545,9 +545,9 @@ export class ClaimsService {
       return;
     }
 
-    if (!subjectAgreement && subject === this._signerService.did) {
+    if (!subjectAgreement) {
       subjectAgreement = await this.approveRolePublishing({
-        subject: this._signerService.did,
+        subject,
         role: claimType,
         version: +claimTypeVersion,
       });
@@ -584,12 +584,12 @@ export class ClaimsService {
    * @param {RejectClaimRequestOptions} options object containing options
    */
   async rejectClaimRequest({
-    id,
+    id: rejectClaimRequestId,
     requesterDID,
     rejectionReason,
   }: RejectClaimRequestOptions): Promise<void> {
     const message: IClaimRejection = {
-      id,
+      id: rejectClaimRequestId,
       requester: requesterDID,
       claimIssuer: [this._signerService.did],
       isRejected: true,
@@ -610,8 +610,8 @@ export class ClaimsService {
    *
    * @param {DeleteClaimOptions} options object containing options
    */
-  async deleteClaim({ id }: DeleteClaimOptions): Promise<void> {
-    await this._cacheClient.deleteClaim(id);
+  async deleteClaim({ id: deleteClaimId }: DeleteClaimOptions): Promise<void> {
+    await this._cacheClient.deleteClaim(deleteClaimId);
   }
 
   /**
@@ -785,20 +785,22 @@ export class ClaimsService {
         namespace: this.getNamespaceFromClaimType(claim.claimType),
         isAccepted: true,
       });
-      const claimData = claims.find((c) => c.claimType === claim.claimType);
+      const claimDataForClaimType = claims.find(
+        (c) => c.claimType === claim.claimType
+      );
 
-      if (!claimData) {
+      if (!claimDataForClaimType) {
         throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
       }
-      const expirationTimestamp = claimData.expirationTimestamp
-        ? Math.floor(+claimData.expirationTimestamp / 1000)
+      const expirationTimestamp = claimDataForClaimType.expirationTimestamp
+        ? Math.floor(+claimDataForClaimType.expirationTimestamp / 1000)
         : undefined;
 
       await this.registerOnchain({
-        ...claimData,
+        ...claimDataForClaimType,
         expirationTimestamp,
-        onChainProof: claimData.onChainProof as string,
-        acceptedBy: claimData.acceptedBy as string,
+        onChainProof: claimDataForClaimType.onChainProof as string,
+        acceptedBy: claimDataForClaimType.acceptedBy as string,
       });
     }
 
@@ -811,21 +813,21 @@ export class ClaimsService {
       if (!this._didRegistry.isClaim(payload)) {
         throw new Error(ERROR_MESSAGES.CLAIM_TOKEN_DATA_MISSING);
       }
-      const token = claim.token as string;
+      const claimToken = claim.token as string;
       const verifiedDid = await this._didRegistry.verifyPublicClaim(
-        token,
+        claimToken,
         iss as string
       );
       if (!verifiedDid || !compareDID(verifiedDid, iss as string)) {
         throw new Error('Incorrect signature');
       }
-      url = await this._didRegistry.ipfsStore.save(token);
+      url = await this._didRegistry.ipfsStore.save(claimToken);
       const data = {
         type: DIDAttribute.ServicePoint,
         value: {
           id: await this.getClaimId({ claimData: claimData as ClaimData }),
           serviceEndpoint: url,
-          hash: hashes.SHA256(token),
+          hash: hashes.SHA256(claimToken),
           hashAlg: 'SHA256',
         },
       };
@@ -886,7 +888,9 @@ export class ClaimsService {
    */
   async getUserClaims({
     did = this._signerService.did,
-  }: GetUserClaimsOptions): Promise<(IServiceEndpoint & ClaimData)[]> {
+  }: GetUserClaimsOptions): Promise<
+    (IServiceEndpoint & Pick<ClaimData, 'claimType' | 'claimTypeVersion'>)[]
+  > {
     const [services, issuedClaims] = await Promise.all([
       this._didRegistry.getServices({ did }),
       this.getClaimsBySubject({
@@ -901,12 +905,9 @@ export class ClaimsService {
       .filter((c) => c.registrationTypes.includes(RegistrationTypes.OffChain))
       .map(({ claimType }) => claimType);
 
-    return services.filter(
-      ({ claimType }) =>
-        claimType &&
-        typeof claimType === 'string' &&
-        issuedClaimsTypes.includes(claimType)
-    );
+    return services
+      .filter(isClaimService)
+      .filter(({ claimType }) => issuedClaimsTypes.includes(claimType));
   }
 
   /**
@@ -1201,7 +1202,7 @@ export class ClaimsService {
    * @param {ClaimData} data Claim data to remove fields from
    * @return Claim data without fields
    */
-  private stripClaimData(data: ClaimData): ClaimData {
+  private stripClaimData(data: ClaimData): Omit<ClaimData, 'requestorFields'> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { fields, ...claimData } = data;
 
@@ -1278,10 +1279,10 @@ export class ClaimsService {
       .map(({ conditions }) => conditions)
       .reduce((all, cur) => all.concat(cur), []);
     await Promise.all(
-      requiredRoles.map(async (role) => {
+      requiredRoles.map(async (requiredRole) => {
         const verificationResult = await this.resolveCredentialAndVerify(
           subject,
-          role
+          requiredRole
         );
         if (!verificationResult.isVerified) {
           throw new Error(ERROR_MESSAGES.ROLE_PREREQUISITES_NOT_MET);
@@ -1342,7 +1343,7 @@ export class ClaimsService {
     role,
     version,
   }: ApproveRolePublishingOptions): Promise<string> {
-    const erc712_type_hash = id(
+    const erc712TypeHash = id(
       'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
     );
     const agreement_type_hash = id(
@@ -1354,7 +1355,7 @@ export class ClaimsService {
       defaultAbiCoder.encode(
         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
         [
-          erc712_type_hash,
+          erc712TypeHash,
           id('Claim Manager'),
           id('1.0'),
           chainId,
@@ -1459,20 +1460,27 @@ export class ClaimsService {
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
-
     let proofVerified;
+    let issuerVerified = true;
+
     try {
       proofVerified = await this._verifiableCredentialService.verify(vc);
     } catch (e) {
       proofVerified = false;
       errors.push((e as Error).message);
     }
-
+    if (vc.credentialStatus) {
+      try {
+        await this._statusVerifier.verifyCredentialStatus(vc.credentialStatus);
+      } catch (e) {
+        issuerVerified = false;
+        errors.push((e as Error).message);
+      }
+    }
     if (!proofVerified) {
       errors.push(ERROR_MESSAGES.PROOF_NOT_VERIFIED);
     }
     const role = vc.credentialSubject.role.namespace;
-    let issuerVerified = true;
     try {
       if (typeof issuerDID === 'string') {
         await this._issuerVerification.verifyIssuer(issuerDID, role);
@@ -1482,15 +1490,6 @@ export class ClaimsService {
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
-    }
-
-    if (vc.credentialStatus) {
-      try {
-        await this._statusVerifier.verifyCredentialStatus(vc.credentialStatus);
-      } catch (e) {
-        issuerVerified = false;
-        errors.push((e as Error).message);
-      }
     }
     return {
       errors,
@@ -1515,14 +1514,6 @@ export class ClaimsService {
     if (!issuerDID) {
       throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
-    const { verified: issuerVerified, error } =
-      await this._issuerVerification.verifyIssuer(
-        issuerDID,
-        payload?.claimData?.claimType
-      );
-    if (!issuerVerified && error) {
-      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
-    }
     const proofVerified = await this._didRegistry.verifyPublicClaim(
       eip191Jwt,
       payload?.iss as string
@@ -1534,6 +1525,14 @@ export class ClaimsService {
     const isExpired = payload?.exp && payload?.exp * 1000 < Date.now();
     if (isExpired) {
       errors.push(ERROR_MESSAGES.CREDENTIAL_EXPIRED);
+    }
+    const { verified: issuerVerified, error } =
+      await this._issuerVerification.verifyIssuer(
+        issuerDID,
+        payload?.claimData?.claimType
+      );
+    if (!issuerVerified && error) {
+      throw new Error(ERROR_MESSAGES.NO_ISSUER_SPECIFIED);
     }
     return {
       errors: errors,
@@ -1611,8 +1610,6 @@ export class ClaimsService {
       revokerResolver,
       this._issuerResolver,
       this._credentialResolver,
-      this._signerService.provider,
-      this._didRegistry.registrySettings,
       verifyProof
     );
     this._issuerVerification = new IssuerVerification(

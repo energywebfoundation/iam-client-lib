@@ -1,5 +1,8 @@
 module.exports = {
   extends: ['@energyweb'],
+  rules: {
+    "@typescript-eslint/no-shadow": "warn",
+  },
   env: {
     browser: true,
     es2021: true,

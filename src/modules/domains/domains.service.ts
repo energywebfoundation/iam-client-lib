@@ -410,8 +410,8 @@ export class DomainsService {
     return;
   }
 
-  async readName(namehash: string) {
-    return this._domainDefinitionReader.readName(namehash);
+  async readName(namehashToRead: string) {
+    return this._domainDefinitionReader.readName(namehashToRead);
   }
 
   /**
@@ -461,8 +461,12 @@ export class DomainsService {
           'You are not able to change ownership of organization with registered apps'
         );
       } else {
-        for await (const { namespace } of apps) {
-          await this.changeAppOwnership({ namespace, newOwner, returnSteps });
+        for await (const { namespace: ns } of apps) {
+          await this.changeAppOwnership({
+            namespace: ns,
+            newOwner,
+            returnSteps,
+          });
         }
       }
     }
@@ -473,18 +477,18 @@ export class DomainsService {
       );
     }
 
-    const steps = changeOwnerNamespaces.map((namespace) => {
-      const tx = this.changeDomainOwnerTx({ newOwner, namespace });
+    const steps = changeOwnerNamespaces.map((nmspace) => {
+      const tx = this.changeDomainOwnerTx({ newOwner, namespace: nmspace });
       return {
         tx,
         next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
           if (retryCheck) {
-            const owner = await this.getOwner({ namespace });
+            const owner = await this.getOwner({ namespace: nmspace });
             if (owner === newOwner) return;
           }
           return this._signerService.send(tx);
         },
-        info: `Changing ownership of ${namespace}`,
+        info: `Changing ownership of ${nmspace}`,
       };
     });
 
@@ -549,18 +553,18 @@ export class DomainsService {
     }
 
     const steps: ReturnStepWithRetryCheck[] = changeOwnerNamespaces.map(
-      (namespace) => {
-        const tx = this.changeDomainOwnerTx({ newOwner, namespace });
+      (name) => {
+        const tx = this.changeDomainOwnerTx({ newOwner, namespace: name });
         return {
           tx,
           next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
             if (retryCheck) {
-              const owner = await this.getOwner({ namespace });
+              const owner = await this.getOwner({ namespace: name });
               if (owner === newOwner) return;
             }
             return this._signerService.send(tx);
           },
-          info: `Changing ownership of ${namespace}`,
+          info: `Changing ownership of ${name}`,
         };
       }
     );
@@ -666,18 +670,18 @@ export class DomainsService {
       getLogger().info(`Already deleted: ${alreadyFinished.join(', ')}`);
     }
 
-    const steps = namespacesToDelete.map((namespace) => {
-      const tx = this.deleteDomainTx({ namespace });
+    const steps = namespacesToDelete.map((n) => {
+      const tx = this.deleteDomainTx({ namespace: n });
       return {
         tx,
         next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
           if (retryCheck) {
-            const owner = await this.getOwner({ namespace });
+            const owner = await this.getOwner({ namespace: n });
             if (owner === emptyAddress) return;
           }
           return this._signerService.send(tx);
         },
-        info: `Deleting ${namespace}`,
+        info: `Deleting ${n}`,
       };
     });
 
@@ -737,18 +741,18 @@ export class DomainsService {
       getLogger().info(`Already deleted: ${alreadyFinished.join(', ')}`);
     }
 
-    const steps = namespacesToDelete.map((namespace) => {
-      const tx = this.deleteDomainTx({ namespace });
+    const steps = namespacesToDelete.map((nspace) => {
+      const tx = this.deleteDomainTx({ namespace: nspace });
       return {
         tx,
         next: async ({ retryCheck }: { retryCheck?: boolean } = {}) => {
           if (retryCheck) {
-            const owner = await this.getOwner({ namespace });
+            const owner = await this.getOwner({ namespace: nspace });
             if (owner === emptyAddress) return;
           }
           return this._signerService.send(tx);
         },
-        info: `Deleting ${namespace}`,
+        info: `Deleting ${nspace}`,
       };
     });
 
@@ -1414,6 +1418,6 @@ export class DomainsService {
   }
 
   get domainReader(): DomainReader {
-   return this._domainDefinitionReader;
+    return this._domainDefinitionReader;
   }
 }

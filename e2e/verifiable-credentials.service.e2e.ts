@@ -439,21 +439,20 @@ describe('Verifiable credentials tests', () => {
 
     test('initiateExchange() should return presentation matching presentation request', async () => {
       const {
-        selections: [{ selectResults }],
+        selections: [{ selectResults: slctResults }],
       } = await verifiableCredentialsService.initiateExchange({
         type: VC_API_EXCHANGE,
         url: exchangeUrl,
       });
-      expect(selectResults.verifiableCredential).toHaveLength(1);
+      expect(slctResults.verifiableCredential).toHaveLength(1);
     });
     test('initiateExchange() should filter self-sign data input_descriptors before fetching credentials and selecting matches', async () => {
       /*
        * For rationale for this behaviour, see the comment on `verifiable-credentials-base.filterSelfSignDescriptors()`
        */
-      const vpRequest: VpRequest = bloxmoveVpRequest as VpRequest;
       (axios as jest.Mocked<typeof axios>).post.mockImplementation(() => {
         return Promise.resolve({
-          data: { errors: [], vpRequest },
+          data: { errors: [], vpRequest: bloxmoveVpRequest },
         });
       });
       getClaimsBySubject.mockResolvedValue(customerRoleClaim);
@@ -462,7 +461,7 @@ describe('Verifiable credentials tests', () => {
         'getCredentialsByDefinition'
       );
       const {
-        selections: [{ selectResults }],
+        selections: [{ selectResults: results }],
       } = await verifiableCredentialsService.initiateExchange({
         type: VC_API_EXCHANGE,
         url: exchangeUrl,
@@ -489,11 +488,11 @@ describe('Verifiable credentials tests', () => {
           },
         ],
       });
-      expect(selectResults.matches).toHaveLength(1);
+      expect(results.matches).toHaveLength(1);
     });
     test('continueExchange() should return issued credentials', async () => {
       const {
-        selections: [{ selectResults }],
+        selections: [{ selectResults: continueExchangeResults }],
       } = await verifiableCredentialsService.initiateExchange({
         type: VC_API_EXCHANGE,
         url: exchangeUrl,
@@ -512,7 +511,7 @@ describe('Verifiable credentials tests', () => {
         await verifiableCredentialsService.continueExchange({
           vpRequest,
           credentials:
-            selectResults.verifiableCredential as VerifiableCredential<RoleCredentialSubject>[],
+            continueExchangeResults.verifiableCredential as VerifiableCredential<RoleCredentialSubject>[],
         })
       ).toEqual(issuedPresentation);
     });

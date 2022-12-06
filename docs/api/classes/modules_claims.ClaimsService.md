@@ -299,7 +299,7 @@ Generates claim id or returns id of existing claim with same data
 | Name | Type |
 | :------ | :------ |
 | `__namedParameters` | `Object` |
-| `__namedParameters.claimData` | [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md) |
+| `__namedParameters.claimData` | `ClaimData` |
 
 #### Returns
 
@@ -472,7 +472,7 @@ ___
 
 ### getUserClaims
 
-▸ **getUserClaims**(`options`): `Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
+▸ **getUserClaims**(`options`): `Promise`<`IServiceEndpoint` & `Pick`<`ClaimData`, ``"claimType"`` \| ``"claimTypeVersion"``\>[]\>
 
 Get published off-chain claims of the given subject.
 
@@ -490,7 +490,7 @@ claimsService.getUserClaims({
 
 #### Returns
 
-`Promise`<`IServiceEndpoint` & [`ClaimData`](../interfaces/modules_did_registry.ClaimData.md)[]\>
+`Promise`<`IServiceEndpoint` & `Pick`<`ClaimData`, ``"claimType"`` \| ``"claimTypeVersion"``\>[]\>
 
 Claims containing DID document service endpoints
 
@@ -669,7 +669,7 @@ ___
 
 ▸ **registerOnchain**(`claim`): `Promise`<`void`\>
 
-Register issued on-chain claim on Claim Manager contract.
+Register issued on-chain claim on Claim Manager contract Can be used by asset owners to register credentials on-chain for their assets.
 
 ```typescript
 const claim: Claim = await claimsService.getClaimById('7281a130-e2b1-430d-8c14-201010eae901');

@@ -14,17 +14,9 @@
 
 ### claim
 
-• **claim**: `Object`
+• **claim**: `ClaimData`
 
 Claim request params
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `claimType` | `string` | Role namespace |
-| `claimTypeVersion` | `number` | Version of the role |
-| `requestorFields?` | { `key`: `string` ; `value`: `string` \| `number`  }[] | Requestor fields that role is requiring |
 
 ___
 
