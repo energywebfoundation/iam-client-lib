@@ -1,3 +1,33 @@
+## [7.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.0...v7.0.0) (2022-12-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **claims:** Payload of selfsigned claim is arbitrary object
+
+### Bug Fixes
+
+* bump ew-credentials to 2.2.1-alpha.296.0 ([#662](https://github.com/energywebfoundation/iam-client-lib/issues/662)) ([9af689c](https://github.com/energywebfoundation/iam-client-lib/commit/9af689cca1e1e53d5bb452b77586fe473e37fec8))
+* **claims:** change selfsigned claim to record ([9986876](https://github.com/energywebfoundation/iam-client-lib/commit/9986876984fc523657e98a8a92bdd2b70f2470eb))
+* commit for 2c0a860 ([45cdac0](https://github.com/energywebfoundation/iam-client-lib/commit/45cdac00210c57db15b84b9a05978325d647f6ce))
+* publish assets on-chain ([#654](https://github.com/energywebfoundation/iam-client-lib/issues/654)) ([2c0a860](https://github.com/energywebfoundation/iam-client-lib/commit/2c0a860c7e11b9fb833ddbed71e2adf51229987b))
+* verify credential before issuer verification ([111923b](https://github.com/energywebfoundation/iam-client-lib/commit/111923bae56da5977a814e9b280be57747345c94))
+
+
+### Refactoring
+
+* **claims:** merge ClaimData with vc-verification ([0e1fafa](https://github.com/energywebfoundation/iam-client-lib/commit/0e1fafa417addaa3aba725224772f38e8212a063))
+
+
+### Documentation
+
+* add asset credential registration to documentation ([ba6f7ba](https://github.com/energywebfoundation/iam-client-lib/commit/ba6f7ba5bf9f8abe7ae0ba20bd227ab43a727ac5))
+
+
+### Style changes
+
+* add warn for shadow variables (variables in scope that share s… ([#663](https://github.com/energywebfoundation/iam-client-lib/issues/663)) ([dd28b49](https://github.com/energywebfoundation/iam-client-lib/commit/dd28b4985085b8eab371a2464c8594b09afee93f))
+
 ## [7.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0-alpha.3...v7.0.0-alpha.4) (2022-10-18)
 
 
