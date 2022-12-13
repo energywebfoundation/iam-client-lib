@@ -1,4 +1,4 @@
-import { chainConfigs, initWithPrivateKeySigner, NamespaceType } from '../../src';
+import { chainConfigs, initWithPrivateKeySigner } from '../../src';
 
 // CONFIG
 const CHAIN_ID = 246;
@@ -58,9 +58,8 @@ const rpcUrl = chainConfigs()[CHAIN_ID].rpcUrl;
         },
       ],
       metadata: {},
-      // issuer: { issuerType: 'DID', did: ['did:ethr:ewc:0x65bA1b185d067522A97834Ab4070A5b413B30b20','did:ethr:ewc:0x607Ad17512FB04Cea9174304E8c7Ac7a08B67baf'] },
-      issuer: { issuerType: 'DID', did: ['did:ethr:volta:0x627306090abaB3A6e1400e9345bC60c78a8BEf57','did:ethr:volta:0x5f757211976c68136041C439c3b3e699b3312882'] },
-      revoker: { revokerType: 'DID', did: ['did:ethr:volta:0x627306090abaB3A6e1400e9345bC60c78a8BEf57'] }
+      issuer: { issuerType: 'DID', did: ['did:ethr:ewc:0x65bA1b185d067522A97834Ab4070A5b413B30b20','did:ethr:ewc:0x607Ad17512FB04Cea9174304E8c7Ac7a08B67baf'] },
+      revoker: { revokerType: 'DID', did: ['did:ethr:ewc:0x65bA1b185d067522A97834Ab4070A5b413B30b20'] }
     },
   });
   console.log(`>>> Role ${roleName} is created`);
