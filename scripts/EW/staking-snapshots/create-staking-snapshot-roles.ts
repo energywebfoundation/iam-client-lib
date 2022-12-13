@@ -1,4 +1,4 @@
-import { chainConfigs, initWithPrivateKeySigner } from '../../src';
+import { chainConfigs, initWithPrivateKeySigner } from '../../../src';
 
 // CONFIG
 const CHAIN_ID = 246;
