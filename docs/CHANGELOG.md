@@ -1,3 +1,10 @@
+### [7.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0...v7.0.1-alpha.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* add type attribute in assethistory ([0cd2c73](https://github.com/energywebfoundation/iam-client-lib/commit/0cd2c7393ec108285337fa3687250afd5088b0d2))
+
 ## [7.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.0...v7.0.0) (2022-12-06)
 
 
