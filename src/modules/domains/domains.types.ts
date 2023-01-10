@@ -6,7 +6,6 @@ import {
   IRoleDefinition,
   IRoleDefinitionV2,
 } from '@energyweb/credential-governance';
-import { TransactionReceipt } from '@energyweb/ekc';
 import { providers } from 'ethers';
 
 export enum NamespaceType {
@@ -62,20 +61,6 @@ export function castToV2(
   } else {
     return <IRoleDefinitionV2>roleDef;
   }
-}
-
-export interface ReturnStep {
-  next: () => Promise<void>;
-  tx: EncodedCall;
-  info: string;
-}
-
-export interface ReturnStepWithRetryCheck {
-  next: (opt?: {
-    retryCheck?: boolean;
-  }) => Promise<TransactionReceipt | undefined>;
-  tx: EncodedCall;
-  info: string;
 }
 
 export type MulticallTx = {
