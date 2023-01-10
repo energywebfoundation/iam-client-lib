@@ -12,6 +12,7 @@
 - [id](modules_assets.AssetHistory.md#id)
 - [relatedTo](modules_assets.AssetHistory.md#relatedto)
 - [timestamp](modules_assets.AssetHistory.md#timestamp)
+- [type](modules_assets.AssetHistory.md#type)
 
 ## Properties
 
@@ -48,3 +49,9 @@ ___
 ### timestamp
 
 • **timestamp**: `string`
+
+___
+
+### type
+
+• **type**: [`AssetHistoryEventType`](../enums/modules_assets.AssetHistoryEventType.md)
