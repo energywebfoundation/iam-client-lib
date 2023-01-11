@@ -1,3 +1,10 @@
+## [7.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.1-alpha.1...v7.1.0-alpha.1) (2023-01-11)
+
+
+### Features
+
+* update ew-creds packages to 2.2.1-alpha.312 ([#671](https://github.com/energywebfoundation/iam-client-lib/issues/671)) ([38999ad](https://github.com/energywebfoundation/iam-client-lib/commit/38999ad86b64fca3a224b543ac84e5f9e9f5d2d4))
+
 ### [7.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0...v7.0.1-alpha.1) (2023-01-10)
 
 
