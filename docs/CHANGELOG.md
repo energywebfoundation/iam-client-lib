@@ -1,3 +1,10 @@
+## [7.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v7.1.0-alpha.1...v7.1.0-alpha.2) (2023-01-12)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([#672](https://github.com/energywebfoundation/iam-client-lib/issues/672)) ([016fd55](https://github.com/energywebfoundation/iam-client-lib/commit/016fd55ba0c9d4c4f42db4b5a30e8868c7f77129))
+
 ## [7.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.1-alpha.1...v7.1.0-alpha.1) (2023-01-11)
 
 
