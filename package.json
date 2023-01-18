@@ -64,11 +64,11 @@
     "npm": ">= 6.0.0"
   },
   "dependencies": {
-    "@energyweb/credential-governance": "2.2.1-alpha.312.0",
+    "@energyweb/credential-governance": "2.2.1-alpha.313.0",
     "@energyweb/ekc": "^0.6.7",
-    "@energyweb/onchain-claims": "2.2.1-alpha.312.0",
+    "@energyweb/onchain-claims": "2.2.1-alpha.313.0",
     "@energyweb/staking-pool": "^1.0.0-rc.14",
-    "@energyweb/vc-verification": "2.2.1-alpha.312.0",
+    "@energyweb/vc-verification": "2.2.1-alpha.313.0",
     "@ensdomains/ens": "^0.6.2",
     "@ew-did-registry/claims": "0.8.1-alpha.1037.0",
     "@ew-did-registry/credentials-interface": "0.8.1-alpha.1037.0",
