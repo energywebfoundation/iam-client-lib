@@ -109,8 +109,15 @@ describe('Authentication tests', () => {
 
       cacheClient['refresh_token'] = oldRefreshToken;
 
-      await expect(cacheClient['refreshToken']()).resolves.toStrictEqual(
-        newTokens
+      await cacheClient['refreshToken']();
+      expect(cacheClient['refresh_token']).toStrictEqual(
+        newTokens.refreshToken
+      );
+      expect(
+        cacheClient['_httpClient'].defaults.headers.common.Authorization
+      ).toBe(`Bearer ${newTokens.token}`);
+      expect(cacheClient['refresh_token']).toStrictEqual(
+        newTokens.refreshToken
       );
       expect(nockScope.isDone()).toBe(true);
     });
@@ -212,9 +219,17 @@ describe('Authentication tests', () => {
         .post(`/login`, loginPathBody)
         .reply(200, newTokens);
 
-      const statusScope = getNockScope().get(TEST_LOGIN_ENDPOINT).reply(200, {
-        user: signerService.did,
-      });
+      const statusScope = getNockScope()
+        .get(TEST_LOGIN_ENDPOINT)
+        .once()
+        .reply(200, {
+          user: null,
+        })
+        .get(TEST_LOGIN_ENDPOINT)
+        .once()
+        .reply(200, {
+          user: signerService.did,
+        });
 
       await cacheClient.authenticate();
 
@@ -237,15 +252,23 @@ describe('Authentication tests', () => {
 
       const refreshScope = getNockScope()
         .get(/^\/refresh_token/)
-        .reply(500, newTokens);
+        .reply(500);
 
       const loginScope = getNockScope()
         .post(`/login`, loginPathBody)
         .reply(200, newTokens);
 
-      const statusScope = getNockScope().get(TEST_LOGIN_ENDPOINT).reply(200, {
-        user: signerService.did,
-      });
+      const statusScope = getNockScope()
+        .get(TEST_LOGIN_ENDPOINT)
+        .once()
+        .reply(200, {
+          user: null,
+        })
+        .get(TEST_LOGIN_ENDPOINT)
+        .once()
+        .reply(200, {
+          user: signerService.did,
+        });
 
       await cacheClient.authenticate();
 
