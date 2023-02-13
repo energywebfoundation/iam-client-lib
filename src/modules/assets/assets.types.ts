@@ -17,6 +17,7 @@ export interface AssetHistory {
   at: number;
   timestamp: string;
   assetId?: string;
+  type: AssetHistoryEventType;
 }
 
 export enum AssetHistoryEventType {

@@ -1,3 +1,31 @@
+## [7.1.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v7.1.0-alpha.2...v7.1.0-alpha.3) (2023-01-18)
+
+
+### Bug Fixes
+
+* upgrade ew-credentials to v2.2.1-alpha.313.0 ([1c24466](https://github.com/energywebfoundation/iam-client-lib/commit/1c24466da851f937f1f2a8b89ad1eb60dc8aa669))
+
+## [7.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v7.1.0-alpha.1...v7.1.0-alpha.2) (2023-01-12)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([#672](https://github.com/energywebfoundation/iam-client-lib/issues/672)) ([016fd55](https://github.com/energywebfoundation/iam-client-lib/commit/016fd55ba0c9d4c4f42db4b5a30e8868c7f77129))
+
+## [7.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.1-alpha.1...v7.1.0-alpha.1) (2023-01-11)
+
+
+### Features
+
+* update ew-creds packages to 2.2.1-alpha.312 ([#671](https://github.com/energywebfoundation/iam-client-lib/issues/671)) ([38999ad](https://github.com/energywebfoundation/iam-client-lib/commit/38999ad86b64fca3a224b543ac84e5f9e9f5d2d4))
+
+### [7.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0...v7.0.1-alpha.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* add type attribute in assethistory ([0cd2c73](https://github.com/energywebfoundation/iam-client-lib/commit/0cd2c7393ec108285337fa3687250afd5088b0d2))
+
 ## [7.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v6.2.0...v7.0.0) (2022-12-06)
 
 
