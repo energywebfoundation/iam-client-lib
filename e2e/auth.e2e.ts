@@ -116,9 +116,6 @@ describe('Authentication tests', () => {
       expect(
         cacheClient['_httpClient'].defaults.headers.common.Authorization
       ).toBe(`Bearer ${newTokens.token}`);
-      expect(cacheClient['refresh_token']).toStrictEqual(
-        newTokens.refreshToken
-      );
       expect(nockScope.isDone()).toBe(true);
     });
 

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { stringify } from 'qs';
 import { IRoleDefinition } from '@energyweb/credential-governance';
 import { IDIDDocument } from '@ew-did-registry/did-resolver-interface';
@@ -76,8 +76,10 @@ export class CacheClient implements ICacheClient {
     // First try to refresh access token
     try {
       await this.refreshToken();
-    } catch {
-      getLogger().warn('[CACHE CLIENT] failed to refresh tokens');
+    } catch (e) {
+      getLogger().warn(
+        `[CACHE CLIENT] failed to refresh tokens: ${(e as AxiosError).message}`
+      );
     }
 
     // If refresh token failed or access token is not valid, then sign new identity token
@@ -680,7 +682,7 @@ export class CacheClient implements ICacheClient {
   }
 
   /**
-   * Saves access and refresh tokens
+   * Saves access and refresh tokens from login response
    *
    * @param res Response from login request
    */
