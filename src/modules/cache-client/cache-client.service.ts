@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { stringify } from 'qs';
 import { IRoleDefinition } from '@energyweb/credential-governance';
 import { IDIDDocument } from '@ew-did-registry/did-resolver-interface';
@@ -8,6 +8,7 @@ import {
   VerifiableCredential,
 } from '@ew-did-registry/credentials-interface';
 import promiseRetry from 'promise-retry';
+import setCookie from 'set-cookie-parser';
 import { IApp, IOrganization, IRole } from '../domains/domains.types';
 import { AssetHistory } from '../assets/assets.types';
 import {
@@ -72,43 +73,28 @@ export class CacheClient implements ICacheClient {
    * After authentication runs previously failed requests
    */
   async authenticate() {
-    let tokens: AuthTokens | undefined = undefined;
-
-    const setTokens = () => {
-      if (!tokens) return;
-      if (!this.isBrowser) {
-        this._httpClient.defaults.headers.common[
-          'Authorization'
-        ] = `Bearer ${tokens.token}`;
-      }
-      this.refresh_token = tokens.refreshToken;
-    };
-
     // First try to refresh access token
     try {
-      const refreshedTokens = await this.refreshToken();
-      tokens = refreshedTokens;
-      setTokens();
-
-      if (!tokens || !(await this.isAuthenticated())) {
-        tokens = undefined;
-      }
-    } catch {
-      getLogger().warn('[CACHE CLIENT] failed to refresh tokens');
+      await this.refreshToken();
+    } catch (e) {
+      getLogger().warn(
+        `[CACHE CLIENT] failed to refresh tokens: ${(e as AxiosError).message}`
+      );
     }
 
     // If refresh token failed or access token is not valid, then sign new identity token
-    if (!tokens) {
+    if (!(await this.isAuthenticated())) {
       getLogger().info('[CACHE CLIENT] obtaining new tokens');
       delete this._httpClient.defaults.headers.common['Authorization'];
       const pubKeyAndIdentityToken =
         await this._signerService.publicKeyAndIdentityToken(true);
-      const { data } = await this._httpClient.post<AuthTokens>('/login', {
+      const res = await this._httpClient.post<AuthTokens>('/login', {
         identityToken: pubKeyAndIdentityToken.identityToken,
       });
+      if (!this.isBrowser) {
+        this.setTokens(res);
+      }
       this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
-      tokens = data;
-      setTokens();
     }
     getLogger().info('[CACHE CLIENT] authenticated');
   }
@@ -681,18 +667,48 @@ export class CacheClient implements ICacheClient {
     );
   }
 
-  private async refreshToken(): Promise<AuthTokens | undefined> {
-    if (!this.refresh_token) return undefined;
+  private async refreshToken(): Promise<void> {
+    if (!this.isBrowser && !this.refresh_token) return undefined;
     getLogger().info('[CACHE CLIENT] refreshing tokens');
-    const { data } = await this._httpClient.get<{
-      token: string;
-      refreshToken: string;
-    }>(
+    const res = await this._httpClient.get<AuthTokens>(
       `/refresh_token${
         this.isBrowser ? '' : `?refresh_token=${this.refresh_token}`
       }`
     );
     getLogger().debug('[CACHE CLIENT] refreshed tokens fetched');
-    return data;
+    if (!this.isBrowser) {
+      this.setTokens(res);
+    }
+  }
+
+  /**
+   * Saves access and refresh tokens from login response
+   *
+   * @param res Response from login request
+   */
+  private setTokens({ headers, data }: AxiosResponse) {
+    let token: AuthTokens['token'] | undefined;
+    let refreshToken: AuthTokens['refreshToken'] | undefined;
+    if (headers['set-cookie']) {
+      const cookies = setCookie.parse(headers['set-cookie'], {
+        decodeValues: false,
+        map: true,
+      });
+      const tokenCookie = cookies['token'];
+      const refreshTokenCookie = cookies['refreshToken'];
+
+      if (tokenCookie && refreshTokenCookie) {
+        token = tokenCookie.value;
+        refreshToken = refreshTokenCookie.value;
+      }
+    }
+    if (!token || !refreshToken) {
+      token = data.token;
+      refreshToken = data.refreshToken;
+    }
+    this.refresh_token = refreshToken;
+    this._httpClient.defaults.headers.common[
+      'Authorization'
+    ] = `Bearer ${token}`;
   }
 }
