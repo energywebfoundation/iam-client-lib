@@ -1,3 +1,10 @@
+## [7.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.1.0...v7.2.0-alpha.1) (2023-02-14)
+
+
+### Features
+
+* get access tokens from cookies ([9f90aee](https://github.com/energywebfoundation/iam-client-lib/commit/9f90aee94fb86b2a365859fcaf99a06b004655ba))
+
 ## [7.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0...v7.1.0) (2023-02-13)
 
 
