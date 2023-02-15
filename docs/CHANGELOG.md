@@ -1,3 +1,10 @@
+## [7.2.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v7.2.0-alpha.1...v7.2.0-alpha.2) (2023-02-15)
+
+
+### Documentation
+
+* **README:** update team members and install instructions ([#677](https://github.com/energywebfoundation/iam-client-lib/issues/677)) ([0fa4e0e](https://github.com/energywebfoundation/iam-client-lib/commit/0fa4e0e4f3000af6f02f93764f56ce0d512dd77a))
+
 ## [7.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.1.0...v7.2.0-alpha.1) (2023-02-14)
 
 
