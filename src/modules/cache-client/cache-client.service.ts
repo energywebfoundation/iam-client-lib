@@ -23,7 +23,6 @@ import {
   ExecutionEnvironment,
 } from '../../utils/detect-environment';
 import { SignerService } from '../signer/signer.service';
-import { IPubKeyAndIdentityToken } from '../signer/signer.types';
 import { cacheConfigs } from '../../config/cache.config';
 import { ICacheClient } from './cache-client.interface';
 import {
@@ -39,15 +38,16 @@ import {
   StatusList2021Credential,
   StatusList2021UnsignedCredential,
 } from '../verifiable-credentials';
+import { SsiAuth } from './auth';
 
 export class CacheClient implements ICacheClient {
-  public pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
   private _httpClient: AxiosInstance;
   private authenticatePromise: Promise<void>;
   private isAuthenticating = false;
   private authEnabled: boolean;
   private isBrowser: boolean;
   private refresh_token: string | undefined;
+  private auth: SsiAuth;
 
   constructor(private _signerService: SignerService) {
     this._signerService.onInit(this.init.bind(this));
@@ -62,6 +62,7 @@ export class CacheClient implements ICacheClient {
     });
     this.authEnabled = cacheServerSupportsAuth;
     this.isBrowser = executionEnvironment() === ExecutionEnvironment.BROWSER;
+    this.auth = new SsiAuth(this._signerService, this._httpClient);
   }
 
   isAuthEnabled() {
@@ -85,16 +86,10 @@ export class CacheClient implements ICacheClient {
     // If refresh token failed or access token is not valid, then sign new identity token
     if (!(await this.isAuthenticated())) {
       getLogger().info('[CACHE CLIENT] obtaining new tokens');
-      delete this._httpClient.defaults.headers.common['Authorization'];
-      const pubKeyAndIdentityToken =
-        await this._signerService.publicKeyAndIdentityToken(true);
-      const res = await this._httpClient.post<AuthTokens>('/login', {
-        identityToken: pubKeyAndIdentityToken.identityToken,
-      });
+      const res = await this.auth.signIn();
       if (!this.isBrowser) {
         this.setTokens(res);
       }
-      this.pubKeyAndIdentityToken = pubKeyAndIdentityToken;
     }
     getLogger().info('[CACHE CLIENT] authenticated');
   }
@@ -612,7 +607,8 @@ export class CacheClient implements ICacheClient {
 
     const isAuthEndpoint =
       config.url &&
-      (config.url.indexOf('/login') >= 0 ||
+      (config.url.indexOf('/login/siwe/initiate') >= 0 ||
+        config.url.indexOf('/login/siwe/verify') >= 0 ||
         config.url.indexOf('/refresh_token') >= 0 ||
         config.url.indexOf(TEST_LOGIN_ENDPOINT) >= 0);
 

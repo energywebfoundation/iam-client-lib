@@ -14,8 +14,6 @@ describe('Authentication tests', () => {
   const SSI_HUB_URL = 'http://localhost:8080';
   const provider = new providers.JsonRpcProvider({ url: rpcUrl });
 
-  const loginPathBody = { identityToken: /(^[\w-]*\.[\w-]*\.[\w-]*$)/ };
-
   let signerService: SignerService;
   let cacheClient: CacheClient;
 
@@ -26,6 +24,9 @@ describe('Authentication tests', () => {
     setCacheConfig(network.chainId, {
       url: SSI_HUB_URL,
       cacheServerSupportsAuth: true,
+      auth: {
+        domain: 'localhost',
+      },
     });
   });
 
@@ -165,42 +166,25 @@ describe('Authentication tests', () => {
   });
 
   describe('authenticate()', () => {
+    let authInitScope: nock.Scope;
+    const nonce = 47;
+
+    beforeEach(() => {
+      authInitScope = getNockScope()
+        .post(/^\/login\/siwe\/initiate/)
+        .reply(201, { nonce });
+    });
+
+    afterEach(() => {
+      expect(authInitScope.isDone()).toBe(true);
+    });
+
     const checkTokens = (tokens: AuthTokens) => {
       expect(
         cacheClient['_httpClient'].defaults.headers.common.Authorization
       ).toBe(`Bearer ${tokens.token}`);
       expect(cacheClient['refresh_token']).toBe(tokens.refreshToken);
     };
-
-    it('should refresh tokens', async () => {
-      const newTokens = {
-        token: 'new-token',
-        refreshToken: 'new-refresh-token',
-      };
-      const oldRefreshToken = 'old-token';
-
-      cacheClient['refresh_token'] = oldRefreshToken;
-
-      const refreshScope = getNockScope()
-        .get(`/refresh_token?refresh_token=${oldRefreshToken}`)
-        .reply(200, newTokens);
-
-      const loginScope = getNockScope()
-        .post(`/login`, loginPathBody)
-        .reply(200, newTokens);
-
-      const statusScope = getNockScope().get(TEST_LOGIN_ENDPOINT).reply(200, {
-        user: signerService.did,
-      });
-
-      await cacheClient.authenticate();
-
-      checkTokens(newTokens);
-
-      expect(refreshScope.isDone()).toBe(true);
-      expect(loginScope.isDone()).toBe(false);
-      expect(statusScope.isDone()).toBe(true);
-    });
 
     it('should perform login when refresh token is empty', async () => {
       const newTokens = {
@@ -213,7 +197,7 @@ describe('Authentication tests', () => {
         .reply(200, newTokens);
 
       const loginScope = getNockScope()
-        .post(`/login`, loginPathBody)
+        .post(`/login/siwe/verify`)
         .reply(200, newTokens);
 
       const statusScope = getNockScope()
@@ -252,7 +236,7 @@ describe('Authentication tests', () => {
         .reply(500);
 
       const loginScope = getNockScope()
-        .post(`/login`, loginPathBody)
+        .post(`/login/siwe/verify`)
         .reply(200, newTokens);
 
       const statusScope = getNockScope()
@@ -291,7 +275,7 @@ describe('Authentication tests', () => {
         .reply(200, newTokens);
 
       const loginScope = getNockScope()
-        .post(`/login`, loginPathBody)
+        .post(`/login/siwe/verify`)
         .reply(200, newTokens);
 
       const statusScope = getNockScope().get(TEST_LOGIN_ENDPOINT).reply(200, {
@@ -308,14 +292,7 @@ describe('Authentication tests', () => {
     });
 
     it('should throw an error when login fails', async () => {
-      const newTokens = {
-        token: 'new-token',
-        refreshToken: 'new-refresh-token',
-      };
-
-      const loginScope = getNockScope()
-        .post(`/login`, loginPathBody)
-        .reply(500, newTokens);
+      const loginScope = getNockScope().post(`/login/siwe/verify`).reply(500);
 
       await expect(cacheClient.authenticate()).rejects.toBeDefined();
 
@@ -434,12 +411,12 @@ describe('Authentication tests', () => {
     });
 
     it('should not retry auth endpoints', async () => {
-      const nockScope = getNockScope().post('/login').reply(401);
+      const nockScope = getNockScope().post('/login/siwe/initiate').reply(401);
 
       const authMockRequest = jest.fn().mockImplementation(async () => {
         return await cacheClient['_httpClient'].post<{
           success: boolean;
-        }>('/login');
+        }>('/login/siwe/initiate');
       });
 
       await expect(
@@ -552,10 +529,17 @@ describe('Authentication tests', () => {
           success: true,
         });
 
+      const authInitScope = getNockScope()
+        .post('/login/siwe/initiate')
+        .once()
+        .reply(201, { nonce: 47 })
+        .post('/login/siwe/initiate')
+        .once()
+        .reply(202, { nonce: 48 });
       const loginScope = getNockScope()
-        .post('/login', loginPathBody)
+        .post('/login/siwe/verify')
         .reply(500)
-        .post('/login', loginPathBody)
+        .post('/login/siwe/verify')
         .reply(201, {
           success: true,
         });
@@ -565,6 +549,7 @@ describe('Authentication tests', () => {
       expect(data).toEqual({ success: true });
       expect(mockRequest).toHaveBeenCalledTimes(3);
       expect(requestScope.isDone()).toBe(true);
+      expect(authInitScope.isDone()).toBe(true);
       expect(loginScope.isDone()).toBe(true);
     });
   });
