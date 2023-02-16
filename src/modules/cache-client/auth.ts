@@ -2,7 +2,7 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 import { SiweMessage } from 'siwe';
 import { cacheConfigs } from '../../config';
 import { SignerService } from '../signer';
-import { AuthTokens, CacheServerClientOptions } from './cache-client.types';
+import { AuthTokens, SiweOptions } from './cache-client.types';
 
 /**
  * Provides authentication methods to ssi-hub
@@ -11,7 +11,8 @@ import { AuthTokens, CacheServerClientOptions } from './cache-client.types';
  * @todo Make this class top-level module in order to use in application
  */
 export class SsiAuth {
-  private config: CacheServerClientOptions['auth'];
+  private readonly config: SiweOptions;
+
   constructor(
     private signerService: SignerService,
     private http: AxiosInstance
@@ -32,9 +33,7 @@ export class SsiAuth {
       nonce,
       domain: this.config.domain,
       address: this.signerService.address,
-      uri: `${
-        cacheConfigs()[this.signerService.chainId].url
-      }/login/siwe/verify`,
+      uri: `${cacheConfigs()[this.signerService.chainId].url}login/siwe/verify`,
       version: '1',
       chainId: this.signerService.chainId,
     });

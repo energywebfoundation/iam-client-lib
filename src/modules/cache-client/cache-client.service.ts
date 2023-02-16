@@ -86,6 +86,7 @@ export class CacheClient implements ICacheClient {
     // If refresh token failed or access token is not valid, then sign new identity token
     if (!(await this.isAuthenticated())) {
       getLogger().info('[CACHE CLIENT] obtaining new tokens');
+      delete this._httpClient.defaults.headers.common['Authorization'];
       const res = await this.auth.signIn();
       if (!this.isBrowser) {
         this.setTokens(res);
