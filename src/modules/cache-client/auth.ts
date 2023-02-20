@@ -26,9 +26,10 @@ export class SsiAuth {
    * @returns authentication tokens
    */
   async signIn(): Promise<AxiosResponse<AuthTokens>> {
-    const { data: nonce } = await this.http.post<string>(
-      '/login/siwe/initiate'
-    );
+    const {
+      data: { nonce },
+    } = await this.http.post<{ nonce: string }>('/login/siwe/initiate');
+    console.dir(nonce);
     const siweMessage = new SiweMessage({
       nonce,
       domain: this.config.domain,

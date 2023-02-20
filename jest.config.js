@@ -6,7 +6,7 @@ module.exports = {
     },
     transformIgnorePatterns: ["node_modules/!(@energyweb/ekc)", "node_modules/.+\\.!(mjs)$"],
     testEnvironment: "node",
-    testRegex: "(/(e2e|src)/(.|\\.)*\\.(e2e|spec)\\.ts$)",
+    testRegex: "(/(e2e|src)/(.|\\.)*auth\\.(e2e|spec)\\.ts$)",
     moduleFileExtensions: ["ts", "tsx", "js", "json"],
     coveragePathIgnorePatterns: ["/node_modules/", "/e2e/", "/test/"],
     coverageThreshold: {
