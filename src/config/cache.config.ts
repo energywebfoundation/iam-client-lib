@@ -3,7 +3,7 @@ import { CacheServerClientOptions } from '../modules/cache-client/cache-client.t
 
 const defaultConfig: Record<number, CacheServerClientOptions> = {
   [VOLTA_CHAIN_ID]: {
-    url: 'https://identitycache-staging.energyweb.org/v1/',
+    url: 'https://identitycache-dev.energyweb.org/v1/',
     cacheServerSupportsAuth: true,
     auth: {
       domain: 'https://switchboard-dev.energyweb.org',
