@@ -25,7 +25,7 @@ describe('Authentication tests', () => {
       url: SSI_HUB_URL,
       cacheServerSupportsAuth: true,
       auth: {
-        domain: 'localhost',
+        domain: 'https://switchboard-dev.energyweb.org',
       },
     });
   });
@@ -175,16 +175,43 @@ describe('Authentication tests', () => {
         .reply(201, { nonce });
     });
 
-    afterEach(() => {
-      expect(authInitScope.isDone()).toBe(true);
-    });
-
     const checkTokens = (tokens: AuthTokens) => {
       expect(
         cacheClient['_httpClient'].defaults.headers.common.Authorization
       ).toBe(`Bearer ${tokens.token}`);
       expect(cacheClient['refresh_token']).toBe(tokens.refreshToken);
     };
+
+    it('should refresh tokens', async () => {
+      const newTokens = {
+        token: 'new-token',
+        refreshToken: 'new-refresh-token',
+      };
+      const oldRefreshToken = 'old-token';
+
+      cacheClient['refresh_token'] = oldRefreshToken;
+
+      const refreshScope = getNockScope()
+        .get(`/refresh_token?refresh_token=${oldRefreshToken}`)
+        .reply(200, newTokens);
+
+      const loginScope = getNockScope()
+        .post(`/login/siwe/verify`)
+        .reply(200, newTokens);
+
+      const statusScope = getNockScope().get(TEST_LOGIN_ENDPOINT).reply(200, {
+        user: signerService.did,
+      });
+
+      await cacheClient.authenticate();
+
+      checkTokens(newTokens);
+
+      expect(authInitScope.isDone()).toBe(false);
+      expect(refreshScope.isDone()).toBe(true);
+      expect(loginScope.isDone()).toBe(false);
+      expect(statusScope.isDone()).toBe(true);
+    });
 
     it('should perform login when refresh token is empty', async () => {
       const newTokens = {
@@ -217,6 +244,7 @@ describe('Authentication tests', () => {
       checkTokens(newTokens);
 
       expect(refreshScope.isDone()).toBe(false);
+      expect(authInitScope.isDone()).toBe(true);
       expect(loginScope.isDone()).toBe(true);
       expect(statusScope.isDone()).toBe(false);
     });
@@ -256,6 +284,7 @@ describe('Authentication tests', () => {
       checkTokens(newTokens);
 
       expect(refreshScope.isDone()).toBe(true);
+      expect(authInitScope.isDone()).toBe(true);
       expect(loginScope.isDone()).toBe(true);
       expect(statusScope.isDone()).toBe(false);
     });
@@ -287,6 +316,7 @@ describe('Authentication tests', () => {
       checkTokens(newTokens);
 
       expect(refreshScope.isDone()).toBe(true);
+      expect(authInitScope.isDone()).toBe(true);
       expect(loginScope.isDone()).toBe(true);
       expect(statusScope.isDone()).toBe(true);
     });
@@ -296,6 +326,7 @@ describe('Authentication tests', () => {
 
       await expect(cacheClient.authenticate()).rejects.toBeDefined();
 
+      expect(authInitScope.isDone()).toBe(true);
       expect(loginScope.isDone()).toBe(true);
     });
   });
@@ -535,7 +566,7 @@ describe('Authentication tests', () => {
         .reply(201, { nonce: 47 })
         .post('/login/siwe/initiate')
         .once()
-        .reply(202, { nonce: 48 });
+        .reply(201, { nonce: 48 });
       const loginScope = getNockScope()
         .post('/login/siwe/verify')
         .reply(500)
