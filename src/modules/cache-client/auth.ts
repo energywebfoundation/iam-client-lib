@@ -29,12 +29,15 @@ export class SsiAuth {
     const {
       data: { nonce },
     } = await this.http.post<{ nonce: string }>('/login/siwe/initiate');
+    const uri = new URL(
+      '/login/siwe/verify',
+      cacheConfigs()[this.signerService.chainId].url
+    ).href;
     const siweMessage = new SiweMessage({
-      statement: `I accept the Terms of Service: ${this.config.domain}`,
       nonce,
       domain: new URL(this.config.domain).host,
       address: this.signerService.address,
-      uri: `${cacheConfigs()[this.signerService.chainId].url}login/siwe/verify`,
+      uri,
       version: '1',
       chainId: this.signerService.chainId,
     });
