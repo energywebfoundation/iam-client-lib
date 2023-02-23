@@ -1,3 +1,27 @@
+## [8.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.2.0-alpha.2...v8.0.0-alpha.1) (2023-02-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* SIWE requires specifying of domain in cache config
+
+### Features
+
+* sign in to ssi-hub with siwe ([2f27318](https://github.com/energywebfoundation/iam-client-lib/commit/2f27318f7ee5a0c548dc31da5eca311c02c4f722))
+
+
+### Bug Fixes
+
+* create siwe uri from nodejs url ([531bcc7](https://github.com/energywebfoundation/iam-client-lib/commit/531bcc7dfaccb32fd140d2cf97e9f6ab88d35ced))
+* default dev ssi-hub url ([49f1412](https://github.com/energywebfoundation/iam-client-lib/commit/49f141293444c7ff3f92646176a4da38256eef11))
+* set siwe domain as host ([3f777e7](https://github.com/energywebfoundation/iam-client-lib/commit/3f777e77788739274ece3cde0eeebd045eda21d7))
+
+
+### Documentation
+
+* change default ssi-hub for volta ([f82f4c4](https://github.com/energywebfoundation/iam-client-lib/commit/f82f4c49dc6e21a98370f56766053654bdc55e52))
+* migration from v7 ([1450913](https://github.com/energywebfoundation/iam-client-lib/commit/1450913fd9b9936aba069ec6fd6a8b9efbc0e19d))
+
 ## [7.2.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v7.2.0-alpha.1...v7.2.0-alpha.2) (2023-02-15)
 
 
