@@ -23,6 +23,8 @@ nav:
       - Signer: api/modules/modules_signer.md
       - Staking: api/modules/modules_staking.md
       - 'Verifiable credentials': api/modules/modules_verifiable_credentials.md
+  - Migration:
+      - Migration from v7: migrations/from_v7.md
   - CHANGELOG: CHANGELOG.md
 theme:
   name: material

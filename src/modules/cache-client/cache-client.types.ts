@@ -1,3 +1,4 @@
+import { SiweMessage } from 'siwe';
 import { AssetHistoryEventType } from '../assets';
 
 export enum Order {
@@ -5,9 +6,12 @@ export enum Order {
   'DESC' = 'DESC',
 }
 
+export type SiweOptions = Pick<SiweMessage, 'domain'>;
+
 export interface CacheServerClientOptions {
   url: string;
   cacheServerSupportsAuth?: boolean;
+  auth: SiweOptions;
 }
 
 export type ClaimsFilter = {

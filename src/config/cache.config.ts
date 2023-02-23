@@ -1,14 +1,18 @@
 import { EWC_CHAIN_ID, VOLTA_CHAIN_ID } from '@energyweb/credential-governance';
 import { CacheServerClientOptions } from '../modules/cache-client/cache-client.types';
 
-const cacheConfig: Record<number, CacheServerClientOptions> = {
+const defaultConfig: Record<number, CacheServerClientOptions> = {
   [VOLTA_CHAIN_ID]: {
-    url: 'https://identitycache-staging.energyweb.org/v1/',
+    url: 'https://identitycache-dev.energyweb.org/v1/',
     cacheServerSupportsAuth: true,
+    auth: {
+      domain: 'https://switchboard-dev.energyweb.org',
+    },
   },
   [EWC_CHAIN_ID]: {
     url: 'https://identitycache.energyweb.org/v1/',
     cacheServerSupportsAuth: true,
+    auth: { domain: 'https://switchboard.energyweb.org' },
   },
 };
 
@@ -20,7 +24,7 @@ export const setCacheConfig = (
   chainId: number,
   options: Partial<CacheServerClientOptions>
 ) => {
-  cacheConfig[chainId] = { ...cacheConfig[chainId], ...options };
+  defaultConfig[chainId] = { ...defaultConfig[chainId], ...options };
 };
 
-export const cacheConfigs = () => ({ ...cacheConfig });
+export const cacheConfigs = () => ({ ...defaultConfig });
