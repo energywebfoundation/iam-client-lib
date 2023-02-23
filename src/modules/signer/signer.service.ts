@@ -1,5 +1,4 @@
 import { BigNumber, providers, utils, Wallet } from 'ethers';
-import base64url from 'base64url';
 import {
   TypedDataDomain,
   TypedDataField,
@@ -13,7 +12,6 @@ import {
   executionEnvironment,
 } from '../../utils/detect-environment';
 import {
-  IPubKeyAndIdentityToken,
   ProviderType,
   ProviderEvent,
   AccountInfo,
@@ -25,14 +23,8 @@ import { EkcSigner } from './ekc.signer';
 import { computeAddress } from 'ethers/lib/utils';
 import { getLogger } from '../../config/logger.config';
 
-const {
-  arrayify,
-  keccak256,
-  recoverPublicKey,
-  getAddress,
-  hashMessage,
-  verifyMessage,
-} = utils;
+const { arrayify, recoverPublicKey, getAddress, hashMessage, verifyMessage } =
+  utils;
 export type ServiceInitializer = () => Promise<void>;
 
 /**
@@ -46,7 +38,6 @@ export type ServiceInitializer = () => Promise<void>;
 export class SignerService {
   private _publicKey: string;
   private _isEthSigner: boolean;
-  private _identityToken: string;
   private _address: string;
   private _account: string;
 
@@ -86,7 +77,7 @@ export class SignerService {
         this._isEthSigner = false;
       }
     } else {
-      this._setIsEthrSigner();
+      this.sign('determine signer');
     }
 
     /**
@@ -355,6 +346,19 @@ export class SignerService {
   }
 
   /**
+   * Signs message with whatever signing implementation underlying signer provides. Unlike `signMessage` this method does not guaraties that signature will conform to EIP-191
+   * @param message Stringified message
+   */
+  async sign(message: string): Promise<string> {
+    const messageBytes = Buffer.from(message);
+    const signature = await this.signer.signMessage(messageBytes);
+    if (!this._publicKey || this._isEthSigner === undefined) {
+      await this._determineSigner(messageBytes, signature);
+    }
+    return signature;
+  }
+
+  /**
    * Tries to create conformant EIP-712 signature (https://eips.ethereum.org/EIPS/eip-712).
    *
    * ```typescript
@@ -420,7 +424,7 @@ export class SignerService {
     else if (this._signer instanceof Wallet) {
       this._publicKey = this._signer.publicKey;
     } else {
-      this._publicKey = (await this.publicKeyAndIdentityToken()).publicKey;
+      await this.sign('determine signer');
     }
     return this._publicKey;
   }
@@ -441,90 +445,21 @@ export class SignerService {
   /**
    * Generate public key and identity token for authentication purposes.
    *
-   * ```typescript
-   * signerService.publicKeyAndIdentityToken();
-   * ```
-   * @param force when true recalculates token even if it is already present
    * @return object with public key and identity token
    */
-  async publicKeyAndIdentityToken(
-    force = false
-  ): Promise<IPubKeyAndIdentityToken> {
-    if (!this._publicKey || !this._identityToken || force) {
-      await this._calculatePubKeyAndIdentityToken();
-    }
-    return {
-      publicKey: this._publicKey,
-      identityToken: this._identityToken,
-    };
-  }
-
-  /**
-   * Generate public key and identity token for authentication purposes.
-   *
-   * @return object with public key and identity token
-   */
-  private async _calculatePubKeyAndIdentityToken() {
-    const header = {
-      alg: 'ES256',
-      typ: 'JWT',
-    };
-    const encodedHeader = base64url(JSON.stringify(header));
-    const address = this._address;
-    const payload = {
-      iss: `did:${Methods.Erc1056}:${this.chainName()}:${address}`,
-      claimData: {
-        blockNumber: await this._signer.provider.getBlockNumber(),
-      },
-    };
-
-    const encodedPayload = base64url(JSON.stringify(payload));
-    const token = `0x${Buffer.from(
-      `${encodedHeader}.${encodedPayload}`
-    ).toString('hex')}`;
-    // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
-    // keccak256 hash is applied for Metamask to display a coherent hex value when signing
-    const message = arrayify(keccak256(token));
+  private async _determineSigner(message: Buffer, signature: string) {
     // Computation of the digest in order to recover the public key under the assumption
     // that signature was performed as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
-    const digest = arrayify(hashMessage(message));
-    const sig = await this._signer.signMessage(message);
-    const keyFromMessage = recoverPublicKey(message, sig);
-    const keyFromDigest = recoverPublicKey(digest, sig);
+    const prefixedMessage = arrayify(hashMessage(message));
+    const keyFromMessage = recoverPublicKey(message, signature);
+    const keyFromPrefixedMessage = recoverPublicKey(prefixedMessage, signature);
     if (getAddress(this._address) === computeAddress(keyFromMessage)) {
       this._publicKey = keyFromMessage;
       this._isEthSigner = false;
-    } else if (getAddress(this._address) === computeAddress(keyFromDigest)) {
-      this._publicKey = keyFromDigest;
-      this._isEthSigner = true;
-    } else {
-      throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
-    }
-
-    this._identityToken = `${encodedHeader}.${encodedPayload}.${base64url(
-      sig
-    )}`;
-  }
-
-  /**
-   * Set `_isEthSigner` value based on a signed message.
-   * Generates a test message and signs it.
-   */
-  private async _setIsEthrSigner() {
-    // arrayification is necessary for WalletConnect signatures to work. eth_sign expects message in bytes: https://docs.walletconnect.org/json-rpc-api-methods/ethereum#eth_sign
-    // keccak256 hash is applied for Metamask to display a coherent hex value when signing
-    const message = arrayify(keccak256('0x'));
-    // Computation of the digest in order to recover the public key under the assumption
-    // that signature was performed as per the eth_sign spec (https://eth.wiki/json-rpc/API#eth_sign)
-    const digest = arrayify(hashMessage(message));
-    const sig = await this._signer.signMessage(message);
-    const keyFromMessage = recoverPublicKey(message, sig);
-    const keyFromDigest = recoverPublicKey(digest, sig);
-    if (getAddress(this._address) === computeAddress(keyFromMessage)) {
-      this._publicKey = keyFromMessage;
-      this._isEthSigner = false;
-    } else if (getAddress(this._address) === computeAddress(keyFromDigest)) {
-      this._publicKey = keyFromDigest;
+    } else if (
+      getAddress(this._address) === computeAddress(keyFromPrefixedMessage)
+    ) {
+      this._publicKey = keyFromPrefixedMessage;
       this._isEthSigner = true;
     } else {
       throw new Error(ERROR_MESSAGES.NON_ETH_SIGN_SIGNATURE);
