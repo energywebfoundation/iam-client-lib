@@ -1,3 +1,10 @@
+## [8.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.1...v8.0.0-alpha.2) (2023-02-24)
+
+
+### Bug Fixes
+
+* add v1 to siwe uri ([#680](https://github.com/energywebfoundation/iam-client-lib/issues/680)) ([8f032d0](https://github.com/energywebfoundation/iam-client-lib/commit/8f032d0d3fcc7e462e50ad0988fc62fd8c7ba361))
+
 ## [8.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.2.0-alpha.2...v8.0.0-alpha.1) (2023-02-23)
 
 
