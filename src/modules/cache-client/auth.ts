@@ -30,8 +30,8 @@ export class SsiAuth {
       data: { nonce },
     } = await this.http.post<{ nonce: string }>('/login/siwe/initiate');
     const uri = new URL(
-      '/login/siwe/verify',
-      cacheConfigs()[this.signerService.chainId].url
+      '/v1/login/siwe/verify',
+      new URL(cacheConfigs()[this.signerService.chainId].url).origin
     ).href;
     const siweMessage = new SiweMessage({
       nonce,
