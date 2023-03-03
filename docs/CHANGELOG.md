@@ -1,3 +1,15 @@
+## [8.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.2...v8.0.0-alpha.3) (2023-03-03)
+
+
+### Features
+
+* allow different ssi-hub and siwe uri ([265d909](https://github.com/energywebfoundation/iam-client-lib/commit/265d909b291b1eda40319951f03fa68e5e3179e2))
+
+
+### Documentation
+
+* document auth to ssi-hub with siwe ([a12974f](https://github.com/energywebfoundation/iam-client-lib/commit/a12974ffe8068d05505485824878651f003ca939))
+
 ## [8.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.1...v8.0.0-alpha.2) (2023-02-24)
 
 
