@@ -24,6 +24,10 @@ setChainConfig(1111, {
   ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
   ensResolverAddress: '0xe878bdcf5148307378043bfd2b584909aa48a227',
   rpcUrl: 'http://some-rpc.com',
+  auth: {
+    domain: 'https://switchboard.energyweb.org',
+    uri: 'https://identitycache.energyweb/v1/siwe/verify',
+  },
 });
 
 setMessagingOptions(1111, {
