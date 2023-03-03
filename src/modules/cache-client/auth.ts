@@ -2,7 +2,7 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 import { SiweMessage } from 'siwe';
 import { cacheConfigs } from '../../config';
 import { SignerService } from '../signer';
-import { AuthTokens, SiweOptions } from './cache-client.types';
+import { AuthTokens } from './cache-client.types';
 
 /**
  * Provides authentication methods to ssi-hub
@@ -11,13 +11,25 @@ import { AuthTokens, SiweOptions } from './cache-client.types';
  * @todo Make this class top-level module in order to use in application
  */
 export class SsiAuth {
-  private readonly config: SiweOptions;
+  private readonly config: Partial<SiweMessage>;
 
   constructor(
     private signerService: SignerService,
     private http: AxiosInstance
   ) {
-    this.config = cacheConfigs()[this.signerService.chainId].auth;
+    const { uri, domain } = cacheConfigs()[this.signerService.chainId].auth;
+    this.config = {
+      domain: new URL(domain).host,
+      uri:
+        uri ||
+        new URL(
+          '/v1/login/siwe/verify',
+          new URL(cacheConfigs()[this.signerService.chainId].url).origin
+        ).href,
+      address: this.signerService.address,
+      version: '1',
+      chainId: this.signerService.chainId,
+    };
   }
 
   /**
@@ -29,17 +41,10 @@ export class SsiAuth {
     const {
       data: { nonce },
     } = await this.http.post<{ nonce: string }>('/login/siwe/initiate');
-    const uri = new URL(
-      '/v1/login/siwe/verify',
-      new URL(cacheConfigs()[this.signerService.chainId].url).origin
-    ).href;
+
     const siweMessage = new SiweMessage({
+      ...this.config,
       nonce,
-      domain: new URL(this.config.domain).host,
-      address: this.signerService.address,
-      uri,
-      version: '1',
-      chainId: this.signerService.chainId,
     });
     const message = siweMessage.prepareMessage();
 

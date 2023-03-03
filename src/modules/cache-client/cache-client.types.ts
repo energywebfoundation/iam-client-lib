@@ -1,4 +1,3 @@
-import { SiweMessage } from 'siwe';
 import { AssetHistoryEventType } from '../assets';
 
 export enum Order {
@@ -6,7 +5,7 @@ export enum Order {
   'DESC' = 'DESC',
 }
 
-export type SiweOptions = Pick<SiweMessage, 'domain'>;
+export type SiweOptions = { domain: string; uri?: string };
 
 export interface CacheServerClientOptions {
   url: string;
