@@ -23,11 +23,6 @@ export enum ProviderEvent {
   SessionUpdate = 'session_update',
 }
 
-export interface IPubKeyAndIdentityToken {
-  publicKey: string;
-  identityToken: string;
-}
-
 export type AccountInfo = {
   chainName: string;
   chainId: number;

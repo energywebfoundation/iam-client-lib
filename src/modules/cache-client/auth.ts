@@ -48,7 +48,7 @@ export class SsiAuth {
     });
     const message = siweMessage.prepareMessage();
 
-    const signature = await this.signerService.signer.signMessage(message);
+    const signature = await this.signerService.sign(message);
 
     return this.http.post<AuthTokens>('/login/siwe/verify', {
       message,
