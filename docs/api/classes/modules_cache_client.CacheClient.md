@@ -12,10 +12,6 @@
 
 - [constructor](modules_cache_client.CacheClient.md#constructor)
 
-### Properties
-
-- [pubKeyAndIdentityToken](modules_cache_client.CacheClient.md#pubkeyandidentitytoken)
-
 ### Accessors
 
 - [http](modules_cache_client.CacheClient.md#http)
@@ -77,16 +73,6 @@
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 
-## Properties
-
-### pubKeyAndIdentityToken
-
-• **pubKeyAndIdentityToken**: `undefined` \| [`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)
-
-#### Implementation of
-
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[pubKeyAndIdentityToken](../interfaces/modules_cache_client.ICacheClient.md#pubkeyandidentitytoken)
-
 ## Accessors
 
 ### http
@@ -142,11 +128,6 @@ ___
 ### authenticate
 
 ▸ **authenticate**(): `Promise`<`void`\>
-
-**`Description`**
-
-Refreshes access token. If login still fails then signs new identity token and requests access token
-After authentication runs previously failed requests
 
 #### Returns
 
@@ -797,25 +778,15 @@ ___
 
 `boolean`
 
-#### Implementation of
-
-ICacheClient.isAuthEnabled
-
 ___
 
 ### isAuthenticated
 
 ▸ **isAuthenticated**(): `Promise`<`boolean`\>
 
-Checks that auth token has been created, has not expired and corresponds to signer.
-This is done by a request to the server because the auth token is stored in an HTTP-only cookie and
-so the Javascript has no way to check its validity
-
 #### Returns
 
 `Promise`<`boolean`\>
-
-true if cache client is authenticated server
 
 ___
 
@@ -844,16 +815,9 @@ ___
 
 ▸ **login**(): `Promise`<`void`\>
 
-Verifies current session and establishes new one if needed
-https://energyweb.atlassian.net/wiki/spaces/MYEN/pages/2303295607/ICL-+ICS+Auth+Process
-
 #### Returns
 
 `Promise`<`void`\>
-
-#### Implementation of
-
-ICacheClient.login
 
 ___
 

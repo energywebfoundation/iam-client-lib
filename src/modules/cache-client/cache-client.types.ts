@@ -1,11 +1,10 @@
 import { AssetHistoryEventType } from '../assets';
+import { SiweOptions } from '../auth';
 
 export enum Order {
   'ASC' = 'ASC',
   'DESC' = 'DESC',
 }
-
-export type SiweOptions = { domain: string; uri?: string };
 
 export interface CacheServerClientOptions {
   url: string;
@@ -29,11 +28,4 @@ export enum SearchType {
   App = 'App',
   Org = 'Org',
   Role = 'Role',
-}
-
-export const TEST_LOGIN_ENDPOINT = '/auth/status';
-
-export interface AuthTokens {
-  token: string;
-  refreshToken: string;
 }

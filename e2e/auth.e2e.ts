@@ -1,20 +1,23 @@
 import { providers, Wallet } from 'ethers';
 import nock from 'nock';
 import {
+  AuthService,
   AuthTokens,
   CacheClient,
   ProviderType,
   setCacheConfig,
   SignerService,
-  TEST_LOGIN_ENDPOINT,
+  DEFAULT_AUTH_STATUS_PATH,
 } from '../src';
 import { rpcUrl } from './utils/setup-contracts';
 
 describe('Authentication tests', () => {
-  const SSI_HUB_URL = 'http://localhost:8080';
+  const SSI_HUB_URL = 'http://identitycache-dev.energyweb.org/v1';
   const provider = new providers.JsonRpcProvider({ url: rpcUrl });
+  const domain = 'https://switchboard-dev.energyweb.org';
 
   let signerService: SignerService;
+  let authService: AuthService;
   let cacheClient: CacheClient;
 
   const getNockScope = (): nock.Scope => nock(SSI_HUB_URL);
@@ -23,9 +26,9 @@ describe('Authentication tests', () => {
     const network = await provider.getNetwork();
     setCacheConfig(network.chainId, {
       url: SSI_HUB_URL,
-      cacheServerSupportsAuth: true,
       auth: {
-        domain: 'https://switchboard-dev.energyweb.org',
+        domain,
+        baseUrl: SSI_HUB_URL,
       },
     });
   });
@@ -38,6 +41,8 @@ describe('Authentication tests', () => {
     );
     cacheClient = new CacheClient(signerService);
     await signerService.init();
+
+    authService = cacheClient['authService'];
   });
 
   afterEach(() => {
@@ -56,7 +61,7 @@ describe('Authentication tests', () => {
     });
 
     it('should return true if the user is authenticated', async () => {
-      nockScope.get(TEST_LOGIN_ENDPOINT).reply(200, {
+      nockScope.get(DEFAULT_AUTH_STATUS_PATH).reply(200, {
         user: signerService.did,
       });
 
@@ -65,7 +70,7 @@ describe('Authentication tests', () => {
     });
 
     it('should return false if other user is authenticated', async () => {
-      nockScope.get(TEST_LOGIN_ENDPOINT).reply(200, {
+      nockScope.get(DEFAULT_AUTH_STATUS_PATH).reply(200, {
         user: 'did:ethr:0x0000000000000000000000000000000000000000',
       });
 
@@ -74,7 +79,7 @@ describe('Authentication tests', () => {
     });
 
     it('should return false if empty user in response', async () => {
-      nockScope.get(TEST_LOGIN_ENDPOINT).reply(200, {
+      nockScope.get(DEFAULT_AUTH_STATUS_PATH).reply(200, {
         user: null,
       });
 
@@ -83,7 +88,7 @@ describe('Authentication tests', () => {
     });
 
     it('should return false if server error occurred', async () => {
-      nockScope.get(TEST_LOGIN_ENDPOINT).reply(500);
+      nockScope.get(DEFAULT_AUTH_STATUS_PATH).reply(500);
 
       const isAuthenticated = await cacheClient.isAuthenticated();
       expect(isAuthenticated).toBe(false);
@@ -108,10 +113,10 @@ describe('Authentication tests', () => {
         .get(`/refresh_token?refresh_token=${oldRefreshToken}`)
         .reply(200, newTokens);
 
-      cacheClient['refresh_token'] = oldRefreshToken;
+      authService['refresh_token'] = oldRefreshToken;
 
-      await cacheClient['refreshToken']();
-      expect(cacheClient['refresh_token']).toStrictEqual(
+      await authService['refreshToken']();
+      expect(authService['refresh_token']).toStrictEqual(
         newTokens.refreshToken
       );
       expect(
@@ -131,7 +136,7 @@ describe('Authentication tests', () => {
         .get(`/refresh_token?refresh_token=${oldRefreshToken}`)
         .reply(200, newTokens);
 
-      await expect(cacheClient['refreshToken']()).resolves.toBeUndefined();
+      await expect(authService['refreshToken']()).resolves.toBeUndefined();
       expect(nockScope.isDone()).toBe(false);
     });
 
@@ -142,26 +147,26 @@ describe('Authentication tests', () => {
         .get(`/refresh_token?refresh_token=${oldRefreshToken}`)
         .reply(500);
 
-      cacheClient['refresh_token'] = oldRefreshToken;
+      authService['refresh_token'] = oldRefreshToken;
 
-      await expect(cacheClient['refreshToken']()).rejects.toBeDefined();
+      await expect(authService['refreshToken']()).rejects.toBeDefined();
       expect(nockScope.isDone()).toBe(true);
     });
   });
 
   describe('login()', () => {
-    it('should not authenticated when client is already authenticated', async () => {
-      cacheClient['isAuthenticated'] = jest.fn().mockResolvedValueOnce(true);
-      cacheClient['authenticate'] = jest.fn();
+    it('should not authenticate when client is already authenticated', async () => {
+      authService['isAuthenticated'] = jest.fn().mockResolvedValueOnce(true);
+      authService['authenticate'] = jest.fn();
       await cacheClient.login();
-      expect(cacheClient['authenticate']).not.toHaveBeenCalled();
+      expect(authService['authenticate']).not.toHaveBeenCalled();
     });
 
     it('should authenticate when client is not authenticated yet', async () => {
-      cacheClient['isAuthenticated'] = jest.fn().mockResolvedValueOnce(false);
-      cacheClient['authenticate'] = jest.fn();
+      authService['isAuthenticated'] = jest.fn().mockResolvedValueOnce(false);
+      authService['authenticate'] = jest.fn();
       await cacheClient.login();
-      expect(cacheClient['authenticate']).toHaveBeenCalledTimes(1);
+      expect(authService['authenticate']).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -171,7 +176,7 @@ describe('Authentication tests', () => {
 
     beforeEach(() => {
       authInitScope = getNockScope()
-        .post(/^\/login\/siwe\/initiate/)
+        .post('/login/siwe/initiate')
         .reply(201, { nonce });
     });
 
@@ -179,7 +184,7 @@ describe('Authentication tests', () => {
       expect(
         cacheClient['_httpClient'].defaults.headers.common.Authorization
       ).toBe(`Bearer ${tokens.token}`);
-      expect(cacheClient['refresh_token']).toBe(tokens.refreshToken);
+      expect(authService['refresh_token']).toBe(tokens.refreshToken);
     };
 
     it('should refresh tokens', async () => {
@@ -189,7 +194,7 @@ describe('Authentication tests', () => {
       };
       const oldRefreshToken = 'old-token';
 
-      cacheClient['refresh_token'] = oldRefreshToken;
+      authService['refresh_token'] = oldRefreshToken;
 
       const refreshScope = getNockScope()
         .get(`/refresh_token?refresh_token=${oldRefreshToken}`)
@@ -199,9 +204,11 @@ describe('Authentication tests', () => {
         .post(`/login/siwe/verify`)
         .reply(200, newTokens);
 
-      const statusScope = getNockScope().get(TEST_LOGIN_ENDPOINT).reply(200, {
-        user: signerService.did,
-      });
+      const statusScope = getNockScope()
+        .get(DEFAULT_AUTH_STATUS_PATH)
+        .reply(200, {
+          user: signerService.did,
+        });
 
       await cacheClient.authenticate();
 
@@ -220,7 +227,7 @@ describe('Authentication tests', () => {
       };
 
       const refreshScope = getNockScope()
-        .get(/^\/refresh_token/)
+        .get('refresh_token')
         .reply(200, newTokens);
 
       const loginScope = getNockScope()
@@ -228,12 +235,12 @@ describe('Authentication tests', () => {
         .reply(200, newTokens);
 
       const statusScope = getNockScope()
-        .get(TEST_LOGIN_ENDPOINT)
+        .get(DEFAULT_AUTH_STATUS_PATH)
         .once()
         .reply(200, {
           user: null,
         })
-        .get(TEST_LOGIN_ENDPOINT)
+        .get(DEFAULT_AUTH_STATUS_PATH)
         .once()
         .reply(200, {
           user: signerService.did,
@@ -257,23 +264,23 @@ describe('Authentication tests', () => {
 
       const oldRefreshToken = 'old-token';
 
-      cacheClient['refresh_token'] = oldRefreshToken;
+      authService['refresh_token'] = oldRefreshToken;
 
       const refreshScope = getNockScope()
-        .get(/^\/refresh_token/)
+        .get(/refresh_token/)
         .reply(500);
 
       const loginScope = getNockScope()
-        .post(`/login/siwe/verify`)
+        .post('/login/siwe/verify')
         .reply(200, newTokens);
 
       const statusScope = getNockScope()
-        .get(TEST_LOGIN_ENDPOINT)
+        .get(DEFAULT_AUTH_STATUS_PATH)
         .once()
         .reply(200, {
           user: null,
         })
-        .get(TEST_LOGIN_ENDPOINT)
+        .get(DEFAULT_AUTH_STATUS_PATH)
         .once()
         .reply(200, {
           user: signerService.did,
@@ -297,19 +304,21 @@ describe('Authentication tests', () => {
 
       const oldRefreshToken = 'old-token';
 
-      cacheClient['refresh_token'] = oldRefreshToken;
+      authService['refresh_token'] = oldRefreshToken;
 
       const refreshScope = getNockScope()
-        .get(/^\/refresh_token/)
+        .get(/refresh_token/)
         .reply(200, newTokens);
 
       const loginScope = getNockScope()
-        .post(`/login/siwe/verify`)
+        .post('/login/siwe/verify')
         .reply(200, newTokens);
 
-      const statusScope = getNockScope().get(TEST_LOGIN_ENDPOINT).reply(200, {
-        user: 'did:ethr:volta:0x0000000000000000000000000000000000000000',
-      });
+      const statusScope = getNockScope()
+        .get(DEFAULT_AUTH_STATUS_PATH)
+        .reply(200, {
+          user: 'did:ethr:volta:0x0000000000000000000000000000000000000000',
+        });
 
       await cacheClient.authenticate();
 
