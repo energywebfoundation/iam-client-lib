@@ -16,8 +16,6 @@ import { Claim } from '../claims/claims.types';
 import { SearchType } from '.';
 
 export interface ICacheClient {
-  login: () => Promise<void>;
-  isAuthEnabled: () => boolean;
   getRoleDefinition: (namespace: string) => Promise<IRoleDefinition>;
   getRolesDefinition: (
     namespace: string[]

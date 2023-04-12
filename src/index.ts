@@ -27,6 +27,7 @@ export * from './modules/verifiable-credentials';
 export * from './errors';
 export * from './config';
 export * from './utils';
+export * from './modules/auth';
 
 export {
   PubKeyType,
