@@ -15,6 +15,7 @@ describe('Authentication tests', () => {
   const SSI_HUB_URL = 'http://identitycache.energyweb.org/v1';
   const provider = new providers.JsonRpcProvider({ url: rpcUrl });
   const domain = 'http://localhost:8080';
+  const RETRY_COUNT = 3; // number of retried requests
 
   let signerService: SignerService;
   let authService: AuthService;
@@ -137,6 +138,7 @@ describe('Authentication tests', () => {
 
       nockScope = getNockScope()
         .get(`/refresh_token?refresh_token=${oldRefreshToken}`)
+        .times(RETRY_COUNT + 1)
         .reply(500);
 
       authService['refresh_token'] = oldRefreshToken;
@@ -504,7 +506,7 @@ describe('Authentication tests', () => {
         .reply(200, roleData);
 
       jest
-        .spyOn(cacheClient as any, 'handleRequestError')
+        .spyOn(authService as any, 'handleRequestError')
         .mockRejectedValueOnce(new Error());
 
       const def = await cacheClient.getRoleDefinition(roleName);
@@ -513,7 +515,7 @@ describe('Authentication tests', () => {
       expect(roleDefScope.isDone()).toBe(true);
     });
 
-    it.skip('should retry when login verify endpoint responds with 500 status code', async () => {
+    it('should retry when login verify endpoint responds with 500 status code', async () => {
       const getRoleScope = getNockScope()
         .get(ROLE_DEF_PATH)
         .reply(401)

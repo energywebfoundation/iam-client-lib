@@ -28,14 +28,14 @@ export class SiweAuthTokensClient implements IAuthTokensClient {
       const clientBaseUrl = this.httpClient.defaults.baseURL;
       if (!clientBaseUrl) {
         throw new Error(
-          'Can not create SIWE auth token client. Base Url is not provided'
+          'Can not create SIWE auth token client. Base url is not provided'
         );
       }
       baseUrl = clientBaseUrl;
     }
     const uri = baseUrl.endsWith('/')
-      ? `${baseUrl}login/siwe/verify')`
-      : `${baseUrl}/login/siwe/verify')`;
+      ? `${baseUrl}login/siwe/verify`
+      : `${baseUrl}/login/siwe/verify`;
     this.config = {
       domain,
       uri,
