@@ -1,3 +1,20 @@
+## [8.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.3...v8.0.0-alpha.4) (2023-04-12)
+
+
+### Features
+
+* refactor auth from cache client ([194a95d](https://github.com/energywebfoundation/iam-client-lib/commit/194a95dc48dccd126d780698808e262adbe2d954))
+
+
+### Bug Fixes
+
+* skip incorrect tests ([d8641a1](https://github.com/energywebfoundation/iam-client-lib/commit/d8641a1667a1d88a60f56bbefebf85c8e11b803b))
+
+
+### Refactoring
+
+* retry req to auth service ([f740145](https://github.com/energywebfoundation/iam-client-lib/commit/f740145d3e8530c56706391c997d7aae1ff0a3ad))
+
 ## [8.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.2...v8.0.0-alpha.3) (2023-03-03)
 
 
