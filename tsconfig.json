@@ -4,6 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "declaration": true,
+    "outDir": "dist",
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
