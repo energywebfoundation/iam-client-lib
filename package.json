@@ -2,11 +2,12 @@
   "name": "iam-client-lib",
   "version": "8.0.0-alpha.4",
   "description": "Library for Decentralized Identity and Access Management",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/src/index.d.ts",
+  "main": "lib/index.js",
+  "module": "lib.esm/index.js",
+  "types": "./lib/src/index.d.ts",
   "files": [
-    "dist"
+    "lib",
+    "lib.esm"
   ],
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./e2e/**/*.ts",
