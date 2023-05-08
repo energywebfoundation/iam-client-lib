@@ -369,7 +369,7 @@ ___
 
 ### updateDocument
 
-▸ **updateDocument**(`__namedParameters`): `Promise`<`boolean`\>
+▸ **updateDocument**(`«destructured»`): `Promise`<`boolean`\>
 
 Update DID document of the given DID with provided data.
 
@@ -388,7 +388,7 @@ didRegistry.updateDocument({
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`UpdateDocumentOptions`](../interfaces/modules_did_registry.UpdateDocumentOptions.md) |
+| `«destructured»` | [`UpdateDocumentOptions`](../interfaces/modules_did_registry.UpdateDocumentOptions.md) |
 
 #### Returns
 
@@ -398,7 +398,7 @@ ___
 
 ### updateSignedDidDelegate
 
-▸ **updateSignedDidDelegate**(`__namedParameters`): `Promise`<`boolean`\>
+▸ **updateSignedDidDelegate**(`«destructured»`): `Promise`<`boolean`\>
 
 Updates delegate of the DID document of given DID.
 
@@ -418,7 +418,7 @@ didRegistry.updateSignedDidDelegate({
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`UpdateSignedDidDelegateOptions`](../interfaces/modules_did_registry.UpdateSignedDidDelegateOptions.md) |
+| `«destructured»` | [`UpdateSignedDidDelegateOptions`](../interfaces/modules_did_registry.UpdateSignedDidDelegateOptions.md) |
 
 #### Returns
 
@@ -428,7 +428,7 @@ ___
 
 ### updateSignedDidPublicKey
 
-▸ **updateSignedDidPublicKey**(`__namedParameters`): `Promise`<`boolean`\>
+▸ **updateSignedDidPublicKey**(`«destructured»`): `Promise`<`boolean`\>
 
 Adds public key to the DID document of given DID.
 
@@ -449,7 +449,7 @@ didRegistry.updateSignedDidPublicKey({
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`UpdateSignedDidPublicKeyOptions`](../interfaces/modules_did_registry.UpdateSignedDidPublicKeyOptions.md) |
+| `«destructured»` | [`UpdateSignedDidPublicKeyOptions`](../interfaces/modules_did_registry.UpdateSignedDidPublicKeyOptions.md) |
 
 #### Returns
 

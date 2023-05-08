@@ -48,7 +48,7 @@ verifiableCredentialsService.createRoleVC(...);
 
 ### continueExchange
 
-▸ **continueExchange**(`__namedParameters`): `Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
+▸ **continueExchange**(`«destructured»`): `Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
 **`Description`**
 
@@ -58,7 +58,7 @@ Sends credentials requested by issuer and returns either issued credentials or n
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `ContinueExchangeCredentials`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> |
+| `«destructured»` | `ContinueExchangeCredentials`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> |
 
 #### Returns
 
