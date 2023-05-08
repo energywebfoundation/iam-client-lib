@@ -6,7 +6,7 @@ module.exports = [
     input: 'src/index.ts',
     output: [
       {
-        dir: 'lib',
+        dir: 'dist/lib',
         format: 'cjs',
         sourcemap: true,
       },
@@ -21,7 +21,7 @@ module.exports = [
     input: 'src/index.ts',
     output: [
       {
-        dir: 'lib.esm',
+        dir: 'dist/lib.esm',
         format: 'es',
         sourcemap: true,
       },
