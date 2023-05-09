@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*", "ethers/**/*"],
+  "ts-node": {
+    "compilerOptions": { "module": "CommonJS" }
+  }
+}

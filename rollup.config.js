@@ -13,7 +13,10 @@ module.exports = [
     ],
     plugins: [
       nodeResolve(),
-      typescript({ compilerOptions: { outDir: 'lib' } }),
+      typescript({
+        compilerOptions: { outDir: 'lib' },
+        tsconfig: 'tsconfig.build.json',
+      }),
     ],
     external: [/node_modules/],
   },
@@ -28,7 +31,10 @@ module.exports = [
     ],
     plugins: [
       nodeResolve(),
-      typescript({ compilerOptions: { outDir: 'lib.esm' } }),
+      typescript({
+        compilerOptions: { outDir: 'lib.esm' },
+        tsconfig: 'tsconfig.build.json',
+      }),
     ],
     external: [/node_modules/],
   },
