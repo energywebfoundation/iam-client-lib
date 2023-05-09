@@ -5,7 +5,8 @@ coverage
 *.log
 .vscode
 .idea
-dist
+lib
+lib.esm
 compiled
 .awcache
 .rpt2_cache

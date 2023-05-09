@@ -2,17 +2,17 @@
   "name": "iam-client-lib",
   "version": "8.0.0-alpha.4",
   "description": "Library for Decentralized Identity and Access Management",
-  "main": "dist/lib/index.js",
-  "module": "dist/lib.esm/index.js",
-  "types": "dist/lib/src/index.d.ts",
+  "main": "lib/index.js",
+  "module": "lib.esm/index.js",
+  "types": "lib/src/index.d.ts",
   "files": [
     "lib",
     "lib.esm"
   ],
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./e2e/**/*.ts",
-    "prebuild": "rimraf dist ethers",
-    "build": "npm run build:contracts && npm run build:ts && copyfiles \"ethers/**/*.d.ts\" dist",
+    "prebuild": "rimraf lib lib.esm ethers",
+    "build": "npm run build:contracts && npm run build:ts",
     "build:patches": "copyfiles \"patches/**/*.patch\" dist && node scripts/patches-build.js",
     "build:ts": "rollup -c",
     "build:api_docs": "node scripts/make-docs.js && typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs true && rm docs/api/README.md && git add -A docs/",

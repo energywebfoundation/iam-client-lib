@@ -6,14 +6,14 @@ module.exports = [
     input: 'src/index.ts',
     output: [
       {
-        dir: 'dist/lib',
+        dir: 'lib',
         format: 'cjs',
         sourcemap: true,
       },
     ],
     plugins: [
       nodeResolve(),
-      typescript({ compilerOptions: { outDir: 'dist/lib' } }),
+      typescript({ compilerOptions: { outDir: 'lib' } }),
     ],
     external: [/node_modules/],
   },
@@ -21,14 +21,14 @@ module.exports = [
     input: 'src/index.ts',
     output: [
       {
-        dir: 'dist/lib.esm',
+        dir: 'lib.esm',
         format: 'es',
         sourcemap: true,
       },
     ],
     plugins: [
       nodeResolve(),
-      typescript({ compilerOptions: { outDir: 'dist/lib.esm' } }),
+      typescript({ compilerOptions: { outDir: 'lib.esm' } }),
     ],
     external: [/node_modules/],
   },
