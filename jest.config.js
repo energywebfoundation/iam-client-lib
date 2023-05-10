@@ -22,4 +22,9 @@ module.exports = {
   },
   collectCoverageFrom: ['src/*.{js,ts}'],
   setupFilesAfterEnv: ['./jest.setup.js'],
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.test.json',
+    },
+  },
 };
