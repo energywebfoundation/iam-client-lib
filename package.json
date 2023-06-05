@@ -136,7 +136,6 @@
     "@walletconnect/types": "1.8.0",
     "babel-jest": "26.6.3",
     "conventional-changelog-conventionalcommits": "^4.6.3",
-    "copyfiles": "^2.4.0",
     "coveralls": "^3.1.0",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
