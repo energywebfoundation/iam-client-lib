@@ -5,9 +5,11 @@ coverage
 *.log
 .vscode
 .idea
-dist
+lib
+lib.esm
 compiled
 .awcache
 .rpt2_cache
 docs
 jest.setup.js
+rollup.config.js

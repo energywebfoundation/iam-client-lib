@@ -12,6 +12,7 @@
     "src/modules/staking",
     "src/modules/verifiable-credentials"
   ],
+  "tsconfig": "tsconfig.build.json",
   "out": "docs/api",
   "disableSources": true,
   "excludePrivate": true,

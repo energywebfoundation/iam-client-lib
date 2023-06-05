@@ -32,7 +32,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "target": "es6"
   },
-  "include": ["src/**/*", "ethers/**/*", "test/**/*", "e2e/**/*.ts"],
   "ts-node": {
     "compilerOptions": { "module": "CommonJS" }
   }
