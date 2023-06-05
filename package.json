@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./e2e/**/*.ts",
-    "prebuild": "rimraf lib lib.esm ethers",
+    "prebuild": "rimraf lib lib.esm",
     "build": "npm run build:contracts && npm run build:ts",
     "build:patches": "copyfiles \"patches/**/*.patch\" dist && node scripts/patches-build.js",
     "build:ts": "rollup -c",
