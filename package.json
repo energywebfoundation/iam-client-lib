@@ -63,11 +63,11 @@
     "npm": ">= 6.0.0"
   },
   "dependencies": {
-    "@energyweb/credential-governance": "2.2.1-alpha.314.0",
+    "@energyweb/credential-governance": "2.2.1-alpha.316.0",
     "@energyweb/ekc": "^0.6.7",
-    "@energyweb/onchain-claims": "2.2.1-alpha.314.0",
+    "@energyweb/onchain-claims": "2.2.1-alpha.316.0",
     "@energyweb/staking-pool": "^1.0.0-rc.14",
-    "@energyweb/vc-verification": "2.2.1-alpha.314.0",
+    "@energyweb/vc-verification": "2.2.1-alpha.316.0",
     "@ensdomains/ens": "^0.6.2",
     "@ew-did-registry/claims": "0.8.1-alpha.1037.0",
     "@ew-did-registry/credentials-interface": "0.8.1-alpha.1037.0",
@@ -108,10 +108,10 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/core": "7.21.4",
-    "@babel/plugin-transform-regenerator": "7.20.5",
+    "@babel/core": "7.22.1",
+    "@babel/plugin-transform-regenerator": "7.21.5",
     "@babel/plugin-transform-runtime": "^7.17.0",
-    "@babel/preset-env": "7.21.4",
+    "@babel/preset-env": "7.22.4",
     "@babel/runtime": "^7.17.2",
     "@energyweb/eslint-config": "^0.1.0",
     "@energyweb/prettier-config": "^0.0.1",
