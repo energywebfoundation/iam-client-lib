@@ -1,3 +1,10 @@
+## [8.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.4...v8.0.0-alpha.5) (2023-06-05)
+
+
+### Bug Fixes
+
+* ignore renovate did-ipfs-store ([73ff429](https://github.com/energywebfoundation/iam-client-lib/commit/73ff42994f0f146b967a6e8681b7506242d5cb02))
+
 ## [8.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.3...v8.0.0-alpha.4) (2023-04-12)
 
 
