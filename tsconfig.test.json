@@ -1,7 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["e2e/**/*"],
-  "ts-node": {
-    "compilerOptions": { "module": "CommonJS" }
-  }
+  "include": ["e2e/**/*"]
 }
