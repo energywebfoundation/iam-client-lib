@@ -10,7 +10,6 @@
 
 - [AssetProfile](../interfaces/modules_did_registry.AssetProfile.md)
 - [AssetProfiles](../interfaces/modules_did_registry.AssetProfiles.md)
-- [ClaimData](../interfaces/modules_did_registry.ClaimData.md)
 - [CreatePublicClaimOptions](../interfaces/modules_did_registry.CreatePublicClaimOptions.md)
 - [DecodeJWTTokenOptions](../interfaces/modules_did_registry.DecodeJWTTokenOptions.md)
 - [DownloadClaimsOptions](../interfaces/modules_did_registry.DownloadClaimsOptions.md)
