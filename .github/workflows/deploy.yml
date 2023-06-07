@@ -52,14 +52,14 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 
       - name: Deploy on master branch
         if: github.ref == 'refs/heads/master'
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 
       - name: Merge master into develop
