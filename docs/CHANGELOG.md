@@ -1,3 +1,15 @@
+## [8.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.5...v8.0.0-alpha.6) (2023-06-07)
+
+
+### Bug Fixes
+
+* remove semantic release action ([2a6868a](https://github.com/energywebfoundation/iam-client-lib/commit/2a6868a49c130ecc4636e96610f662d59c9168ec))
+* rename semantic release npm token ([20f5480](https://github.com/energywebfoundation/iam-client-lib/commit/20f5480306de4e5ec97fe43742793519995fb12c))
+* renovate ignore @sphereon/pex ([49886ef](https://github.com/energywebfoundation/iam-client-lib/commit/49886ef964a7862f61baad4e1a176aba61254016))
+* update node 18 ([0be2f85](https://github.com/energywebfoundation/iam-client-lib/commit/0be2f854a1c69f3d4eed7b27b70b2fa9186fa1fe))
+* update semantic-release@21.0.3 ([31cf1a6](https://github.com/energywebfoundation/iam-client-lib/commit/31cf1a6a565267b231eb5c9b5200d972b9cde043))
+* update siwe@2.1.4 ([a81db20](https://github.com/energywebfoundation/iam-client-lib/commit/a81db208e048a16bf94bc6243405931cb3add0f2))
+
 ## [8.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.4...v8.0.0-alpha.5) (2023-06-05)
 
 
