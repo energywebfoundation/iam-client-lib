@@ -5,8 +5,8 @@ module.exports = {
     '\\.(mjs|js)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/!(@energyweb/ekc)',
-    'node_modules/.+\\.!(mjs)$',
+    'node_modules/(?!@energyweb/ekc)',
+    'node_modules/.+(?!\\.mjs)$',
   ],
   testEnvironment: 'node',
   testRegex: '(/(e2e|src)/(.|\\.)*\\.(e2e|spec)\\.ts$)',
