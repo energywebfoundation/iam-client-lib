@@ -1,4 +1,5 @@
 import jsonwebtoken from 'jsonwebtoken';
+import { inspect } from 'util';
 import {
   IRoleDefinitionV2,
   IssuerFields,
@@ -49,7 +50,13 @@ import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
 const { namehash, id } = utils;
 
-const provider = new providers.JsonRpcProvider(rpcUrl);
+let provider: providers.JsonRpcProvider;
+try {
+  provider = new providers.JsonRpcProvider(rpcUrl);
+} catch (e) {
+  console.log(`rpc url ${rpcUrl}`);
+  throw e;
+}
 const staticIssuer = Wallet.createRandom().connect(provider);
 const staticIssuerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${staticIssuer.address}`;
 const dynamicIssuer = Wallet.createRandom().connect(provider);
@@ -244,6 +251,15 @@ describe('Сlaim tests', () => {
   let verifiableCredentialsService: VerifiableCredentialsServiceBase;
 
   beforeEach(async () => {
+    try {
+      console.log(
+        inspect(await provider.getNetwork(), { depth: 2, colors: true })
+      );
+    } catch (e) {
+      console.error('Provider is not connected');
+      console.log(inspect(provider.connection, { depth: 2, colors: true }));
+      throw e;
+    }
     jest.clearAllMocks();
     mockGetClaimsBySubject.mockImplementation(getClamsBySubjectInitMock);
     await replenish(await staticIssuer.getAddress());
