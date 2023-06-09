@@ -166,7 +166,7 @@ describe('Authentication tests', () => {
 
   describe('authenticate()', () => {
     let authInitScope: nock.Scope;
-    const nonce = 47;
+    const nonce = 'i3cNDECwQD7JvpWW5';
 
     beforeEach(() => {
       authInitScope = getNockScope()
@@ -435,7 +435,7 @@ describe('Authentication tests', () => {
       const authStatusScope = getNockScope()
         .get('/auth/status')
         .reply(200, { user: null });
-      const nonce = 47;
+      const nonce = 'i3cNDECwQD7JvpWW5';
       const authInitScope = getNockScope()
         .post('/login/siwe/initiate')
         .reply(200, { nonce });
@@ -472,7 +472,7 @@ describe('Authentication tests', () => {
         .get(ORG_DEF_PATH)
         .reply(200, orgData);
 
-      const nonce = 47;
+      const nonce = 'i3cNDECwQD7JvpWW5';
       const authInitScope = getNockScope()
         .post('/login/siwe/initiate')
         .reply(200, { nonce });
@@ -527,7 +527,7 @@ describe('Authentication tests', () => {
         .reply(200, { user: null });
       const authInitScope = getNockScope()
         .post('/login/siwe/initiate')
-        .reply(201, { nonce: 47 });
+        .reply(201, { nonce: 'i3cNDECwQD7JvpWW5' });
       const tokens: AuthTokens = {
         token: 'access token',
         refreshToken: 'refresh token',

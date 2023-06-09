@@ -79,7 +79,6 @@ export class CacheClient implements ICacheClient {
 
   async getRoleDefinition(namespace: string) {
     const { data } = await this._httpClient.get<IRole>(`/role/${namespace}`);
-    console.dir(data, { depth: 3, colors: true });
     return data?.definition;
   }
 
