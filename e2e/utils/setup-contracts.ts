@@ -30,6 +30,7 @@ const GANACHE_PORT = 8544;
 export const rpcUrl = `http://127.0.0.1:${GANACHE_PORT}`;
 
 const provider = new JsonRpcProvider(rpcUrl);
+
 let didRegistry: Contract;
 let ensRegistry: ENSRegistry;
 let ensResolver: RoleDefinitionResolver;

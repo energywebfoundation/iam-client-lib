@@ -49,7 +49,13 @@ import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
 
 const { namehash, id } = utils;
 
-const provider = new providers.JsonRpcProvider(rpcUrl);
+let provider: providers.JsonRpcProvider;
+try {
+  provider = new providers.JsonRpcProvider(rpcUrl);
+} catch (e) {
+  console.log(`rpc url ${rpcUrl}`);
+  throw e;
+}
 const staticIssuer = Wallet.createRandom().connect(provider);
 const staticIssuerDID = `did:${Methods.Erc1056}:${Chain.VOLTA}:${staticIssuer.address}`;
 const dynamicIssuer = Wallet.createRandom().connect(provider);
