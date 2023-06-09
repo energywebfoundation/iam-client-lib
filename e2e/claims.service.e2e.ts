@@ -1,5 +1,4 @@
 import jsonwebtoken from 'jsonwebtoken';
-import { inspect } from 'util';
 import {
   IRoleDefinitionV2,
   IssuerFields,
@@ -251,15 +250,6 @@ describe('Сlaim tests', () => {
   let verifiableCredentialsService: VerifiableCredentialsServiceBase;
 
   beforeEach(async () => {
-    try {
-      console.log(
-        inspect(await provider.getNetwork(), { depth: 2, colors: true })
-      );
-    } catch (e) {
-      console.error('Provider is not connected');
-      console.log(inspect(provider.connection, { depth: 2, colors: true }));
-      throw e;
-    }
     jest.clearAllMocks();
     mockGetClaimsBySubject.mockImplementation(getClamsBySubjectInitMock);
     await replenish(await staticIssuer.getAddress());
