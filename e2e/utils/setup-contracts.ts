@@ -27,7 +27,7 @@ const { parseEther, namehash } = utils;
 const { abi: didContractAbi, bytecode: didContractBytecode } = ethrReg;
 
 const GANACHE_PORT = 8544;
-export const rpcUrl = `http://localhost:${GANACHE_PORT}`;
+export const rpcUrl = `http://127.0.0.1:${GANACHE_PORT}`;
 
 const provider = new JsonRpcProvider(rpcUrl);
 let didRegistry: Contract;
