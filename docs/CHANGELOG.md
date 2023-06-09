@@ -1,3 +1,13 @@
+## [8.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.6...v8.0.0-alpha.7) (2023-06-09)
+
+
+### Bug Fixes
+
+* replace test rpc url localhost with ip ([326ef05](https://github.com/energywebfoundation/iam-client-lib/commit/326ef053f57ed40280ad017e5147f24406344a6b))
+* test nonce ([9a24f66](https://github.com/energywebfoundation/iam-client-lib/commit/9a24f66d859b0db38e52c51445570f80db4d578f))
+* test regex pattern ([3ffbcab](https://github.com/energywebfoundation/iam-client-lib/commit/3ffbcab11fabbf19e1bba4bcde3a2993700581b2))
+* test rpc in signer test ([f2462bb](https://github.com/energywebfoundation/iam-client-lib/commit/f2462bbe464aedf637c1a2006148b26770aa61b4))
+
 ## [8.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.5...v8.0.0-alpha.6) (2023-06-07)
 
 
