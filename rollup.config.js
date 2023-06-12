@@ -18,7 +18,7 @@ module.exports = [
         tsconfig: 'tsconfig.build.json',
       }),
     ],
-    external: [/node_modules/],
+    external: [/node_modules(?!\/tslib)/],
   },
   {
     input: 'src/index.ts',
@@ -36,6 +36,6 @@ module.exports = [
         tsconfig: 'tsconfig.build.json',
       }),
     ],
-    external: [/node_modules/],
+    external: [/node_modules(?!\/tslib)/],
   },
 ];
