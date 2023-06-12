@@ -1,3 +1,10 @@
+## [8.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.7...v8.0.0-alpha.8) (2023-06-12)
+
+
+### Bug Fixes
+
+* bundle tslib ([5be33c2](https://github.com/energywebfoundation/iam-client-lib/commit/5be33c2087e813599ba10ff4207b57ce4327c8eb))
+
 ## [8.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.6...v8.0.0-alpha.7) (2023-06-09)
 
 
