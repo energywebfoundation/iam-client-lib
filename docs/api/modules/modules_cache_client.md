@@ -13,7 +13,6 @@
 
 ### Interfaces
 
-- [AuthTokens](../interfaces/modules_cache_client.AuthTokens.md)
 - [CacheServerClientOptions](../interfaces/modules_cache_client.CacheServerClientOptions.md)
 - [ICacheClient](../interfaces/modules_cache_client.ICacheClient.md)
 
@@ -21,10 +20,6 @@
 
 - [AssetsFilter](modules_cache_client.md#assetsfilter)
 - [ClaimsFilter](modules_cache_client.md#claimsfilter)
-
-### Variables
-
-- [TEST\_LOGIN\_ENDPOINT](modules_cache_client.md#test_login_endpoint)
 
 ## Type Aliases
 
@@ -53,9 +48,3 @@ ___
 | :------ | :------ |
 | `isAccepted?` | `boolean` |
 | `namespace?` | `string` |
-
-## Variables
-
-### TEST\_LOGIN\_ENDPOINT
-
-• `Const` **TEST\_LOGIN\_ENDPOINT**: ``"/auth/status"``

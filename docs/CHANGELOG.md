@@ -1,3 +1,113 @@
+## [8.0.0-alpha.8](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.7...v8.0.0-alpha.8) (2023-06-12)
+
+
+### Bug Fixes
+
+* bundle tslib ([5be33c2](https://github.com/energywebfoundation/iam-client-lib/commit/5be33c2087e813599ba10ff4207b57ce4327c8eb))
+
+## [8.0.0-alpha.7](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.6...v8.0.0-alpha.7) (2023-06-09)
+
+
+### Bug Fixes
+
+* replace test rpc url localhost with ip ([326ef05](https://github.com/energywebfoundation/iam-client-lib/commit/326ef053f57ed40280ad017e5147f24406344a6b))
+* test nonce ([9a24f66](https://github.com/energywebfoundation/iam-client-lib/commit/9a24f66d859b0db38e52c51445570f80db4d578f))
+* test regex pattern ([3ffbcab](https://github.com/energywebfoundation/iam-client-lib/commit/3ffbcab11fabbf19e1bba4bcde3a2993700581b2))
+* test rpc in signer test ([f2462bb](https://github.com/energywebfoundation/iam-client-lib/commit/f2462bbe464aedf637c1a2006148b26770aa61b4))
+
+## [8.0.0-alpha.6](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.5...v8.0.0-alpha.6) (2023-06-07)
+
+
+### Bug Fixes
+
+* remove semantic release action ([2a6868a](https://github.com/energywebfoundation/iam-client-lib/commit/2a6868a49c130ecc4636e96610f662d59c9168ec))
+* rename semantic release npm token ([20f5480](https://github.com/energywebfoundation/iam-client-lib/commit/20f5480306de4e5ec97fe43742793519995fb12c))
+* renovate ignore @sphereon/pex ([49886ef](https://github.com/energywebfoundation/iam-client-lib/commit/49886ef964a7862f61baad4e1a176aba61254016))
+* update node 18 ([0be2f85](https://github.com/energywebfoundation/iam-client-lib/commit/0be2f854a1c69f3d4eed7b27b70b2fa9186fa1fe))
+* update semantic-release@21.0.3 ([31cf1a6](https://github.com/energywebfoundation/iam-client-lib/commit/31cf1a6a565267b231eb5c9b5200d972b9cde043))
+* update siwe@2.1.4 ([a81db20](https://github.com/energywebfoundation/iam-client-lib/commit/a81db208e048a16bf94bc6243405931cb3add0f2))
+
+## [8.0.0-alpha.5](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.4...v8.0.0-alpha.5) (2023-06-05)
+
+
+### Bug Fixes
+
+* ignore renovate did-ipfs-store ([73ff429](https://github.com/energywebfoundation/iam-client-lib/commit/73ff42994f0f146b967a6e8681b7506242d5cb02))
+
+## [8.0.0-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.3...v8.0.0-alpha.4) (2023-04-12)
+
+
+### Features
+
+* refactor auth from cache client ([194a95d](https://github.com/energywebfoundation/iam-client-lib/commit/194a95dc48dccd126d780698808e262adbe2d954))
+
+
+### Bug Fixes
+
+* skip incorrect tests ([d8641a1](https://github.com/energywebfoundation/iam-client-lib/commit/d8641a1667a1d88a60f56bbefebf85c8e11b803b))
+
+
+### Refactoring
+
+* retry req to auth service ([f740145](https://github.com/energywebfoundation/iam-client-lib/commit/f740145d3e8530c56706391c997d7aae1ff0a3ad))
+
+## [8.0.0-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.2...v8.0.0-alpha.3) (2023-03-03)
+
+
+### Features
+
+* allow different ssi-hub and siwe uri ([265d909](https://github.com/energywebfoundation/iam-client-lib/commit/265d909b291b1eda40319951f03fa68e5e3179e2))
+
+
+### Documentation
+
+* document auth to ssi-hub with siwe ([a12974f](https://github.com/energywebfoundation/iam-client-lib/commit/a12974ffe8068d05505485824878651f003ca939))
+
+## [8.0.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0-alpha.1...v8.0.0-alpha.2) (2023-02-24)
+
+
+### Bug Fixes
+
+* add v1 to siwe uri ([#680](https://github.com/energywebfoundation/iam-client-lib/issues/680)) ([8f032d0](https://github.com/energywebfoundation/iam-client-lib/commit/8f032d0d3fcc7e462e50ad0988fc62fd8c7ba361))
+
+## [8.0.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.2.0-alpha.2...v8.0.0-alpha.1) (2023-02-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* SIWE requires specifying of domain in cache config
+
+### Features
+
+* sign in to ssi-hub with siwe ([2f27318](https://github.com/energywebfoundation/iam-client-lib/commit/2f27318f7ee5a0c548dc31da5eca311c02c4f722))
+
+
+### Bug Fixes
+
+* create siwe uri from nodejs url ([531bcc7](https://github.com/energywebfoundation/iam-client-lib/commit/531bcc7dfaccb32fd140d2cf97e9f6ab88d35ced))
+* default dev ssi-hub url ([49f1412](https://github.com/energywebfoundation/iam-client-lib/commit/49f141293444c7ff3f92646176a4da38256eef11))
+* set siwe domain as host ([3f777e7](https://github.com/energywebfoundation/iam-client-lib/commit/3f777e77788739274ece3cde0eeebd045eda21d7))
+
+
+### Documentation
+
+* change default ssi-hub for volta ([f82f4c4](https://github.com/energywebfoundation/iam-client-lib/commit/f82f4c49dc6e21a98370f56766053654bdc55e52))
+* migration from v7 ([1450913](https://github.com/energywebfoundation/iam-client-lib/commit/1450913fd9b9936aba069ec6fd6a8b9efbc0e19d))
+
+## [7.2.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v7.2.0-alpha.1...v7.2.0-alpha.2) (2023-02-15)
+
+
+### Documentation
+
+* **README:** update team members and install instructions ([#677](https://github.com/energywebfoundation/iam-client-lib/issues/677)) ([0fa4e0e](https://github.com/energywebfoundation/iam-client-lib/commit/0fa4e0e4f3000af6f02f93764f56ce0d512dd77a))
+
+## [7.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v7.1.0...v7.2.0-alpha.1) (2023-02-14)
+
+
+### Features
+
+* get access tokens from cookies ([9f90aee](https://github.com/energywebfoundation/iam-client-lib/commit/9f90aee94fb86b2a365859fcaf99a06b004655ba))
+
 ## [7.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v7.0.0...v7.1.0) (2023-02-13)
 
 

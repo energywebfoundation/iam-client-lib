@@ -39,10 +39,7 @@
 - [getRolesByRevoker](modules_cache_client.ICacheClient.md#getrolesbyrevoker)
 - [getRolesDefinition](modules_cache_client.ICacheClient.md#getrolesdefinition)
 - [getSubOrganizationsByOrganization](modules_cache_client.ICacheClient.md#getsuborganizationsbyorganization)
-- [isAuthEnabled](modules_cache_client.ICacheClient.md#isauthenabled)
 - [issueClaim](modules_cache_client.ICacheClient.md#issueclaim)
-- [login](modules_cache_client.ICacheClient.md#login)
-- [pubKeyAndIdentityToken](modules_cache_client.ICacheClient.md#pubkeyandidentitytoken)
 - [rejectClaim](modules_cache_client.ICacheClient.md#rejectclaim)
 - [requestClaim](modules_cache_client.ICacheClient.md#requestclaim)
 
@@ -636,20 +633,6 @@ ___
 
 ___
 
-### isAuthEnabled
-
-• **isAuthEnabled**: () => `boolean`
-
-#### Type declaration
-
-▸ (): `boolean`
-
-##### Returns
-
-`boolean`
-
-___
-
 ### issueClaim
 
 • **issueClaim**: (`issuer`: `string`, `message`: [`IClaimIssuance`](modules_claims.IClaimIssuance.md)) => `Promise`<`void`\>
@@ -668,26 +651,6 @@ ___
 ##### Returns
 
 `Promise`<`void`\>
-
-___
-
-### login
-
-• **login**: () => `Promise`<`void`\>
-
-#### Type declaration
-
-▸ (): `Promise`<`void`\>
-
-##### Returns
-
-`Promise`<`void`\>
-
-___
-
-### pubKeyAndIdentityToken
-
-• **pubKeyAndIdentityToken**: `undefined` \| [`IPubKeyAndIdentityToken`](modules_signer.IPubKeyAndIdentityToken.md)
 
 ___
 

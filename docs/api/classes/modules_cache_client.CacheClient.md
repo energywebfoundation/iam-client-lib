@@ -12,10 +12,6 @@
 
 - [constructor](modules_cache_client.CacheClient.md#constructor)
 
-### Properties
-
-- [pubKeyAndIdentityToken](modules_cache_client.CacheClient.md#pubkeyandidentitytoken)
-
 ### Accessors
 
 - [http](modules_cache_client.CacheClient.md#http)
@@ -77,16 +73,6 @@
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 
-## Properties
-
-### pubKeyAndIdentityToken
-
-• **pubKeyAndIdentityToken**: `undefined` \| [`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)
-
-#### Implementation of
-
-[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[pubKeyAndIdentityToken](../interfaces/modules_cache_client.ICacheClient.md#pubkeyandidentitytoken)
-
 ## Accessors
 
 ### http
@@ -115,7 +101,7 @@
 
 #### Implementation of
 
-ICacheClient.addDIDToWatchList
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[addDIDToWatchList](../interfaces/modules_cache_client.ICacheClient.md#adddidtowatchlist)
 
 ___
 
@@ -143,11 +129,6 @@ ___
 
 ▸ **authenticate**(): `Promise`<`void`\>
 
-**`Description`**
-
-Refreshes access token. If login still fails then signs new identity token and requests access token
-After authentication runs previously failed requests
-
 #### Returns
 
 `Promise`<`void`\>
@@ -170,7 +151,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.deleteClaim
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[deleteClaim](../interfaces/modules_cache_client.ICacheClient.md#deleteclaim)
 
 ___
 
@@ -206,7 +187,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getAppDefinition
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAppDefinition](../interfaces/modules_cache_client.ICacheClient.md#getappdefinition)
 
 ___
 
@@ -226,7 +207,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getApplicationRoles
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationRoles](../interfaces/modules_cache_client.ICacheClient.md#getapplicationroles)
 
 ___
 
@@ -246,7 +227,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getApplicationsByOrganization
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationsByOrganization](../interfaces/modules_cache_client.ICacheClient.md#getapplicationsbyorganization)
 
 ___
 
@@ -267,7 +248,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getApplicationsByOwner
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getApplicationsByOwner](../interfaces/modules_cache_client.ICacheClient.md#getapplicationsbyowner)
 
 ___
 
@@ -287,20 +268,20 @@ ___
 
 #### Implementation of
 
-ICacheClient.getAssetById
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAssetById](../interfaces/modules_cache_client.ICacheClient.md#getassetbyid)
 
 ___
 
 ### getAssetHistory
 
-▸ **getAssetHistory**(`id`, `__namedParameters?`): `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
+▸ **getAssetHistory**(`id`, `«destructured»?`): `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `id` | `string` |
-| `__namedParameters` | [`AssetsFilter`](../modules/modules_cache_client.md#assetsfilter) |
+| `«destructured»` | [`AssetsFilter`](../modules/modules_cache_client.md#assetsfilter) |
 
 #### Returns
 
@@ -308,7 +289,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getAssetHistory
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getAssetHistory](../interfaces/modules_cache_client.ICacheClient.md#getassethistory)
 
 ___
 
@@ -328,20 +309,20 @@ ___
 
 #### Implementation of
 
-ICacheClient.getClaimById
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimById](../interfaces/modules_cache_client.ICacheClient.md#getclaimbyid)
 
 ___
 
 ### getClaimsByIssuer
 
-▸ **getClaimsByIssuer**(`issuer`, `__namedParameters?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByIssuer**(`issuer`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `issuer` | `string` |
-| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
+| `«destructured»` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns
 
@@ -349,20 +330,20 @@ ___
 
 #### Implementation of
 
-ICacheClient.getClaimsByIssuer
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByIssuer](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyissuer)
 
 ___
 
 ### getClaimsByRequester
 
-▸ **getClaimsByRequester**(`requester`, `__namedParameters?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRequester**(`requester`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `requester` | `string` |
-| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
+| `«destructured»` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns
 
@@ -370,20 +351,20 @@ ___
 
 #### Implementation of
 
-ICacheClient.getClaimsByRequester
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByRequester](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyrequester)
 
 ___
 
 ### getClaimsByRevoker
 
-▸ **getClaimsByRevoker**(`revoker`, `__namedParameters?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRevoker**(`revoker`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `revoker` | `string` |
-| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
+| `«destructured»` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns
 
@@ -391,20 +372,20 @@ ___
 
 #### Implementation of
 
-ICacheClient.getClaimsByRevoker
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsByRevoker](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbyrevoker)
 
 ___
 
 ### getClaimsBySubject
 
-▸ **getClaimsBySubject**(`subject`, `__namedParameters?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsBySubject**(`subject`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `subject` | `string` |
-| `__namedParameters` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
+| `«destructured»` | [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter) |
 
 #### Returns
 
@@ -412,7 +393,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getClaimsBySubject
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsBySubject](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbysubject)
 
 ___
 
@@ -432,7 +413,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getClaimsBySubjects
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getClaimsBySubjects](../interfaces/modules_cache_client.ICacheClient.md#getclaimsbysubjects)
 
 ___
 
@@ -452,7 +433,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getDIDsForRole
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getDIDsForRole](../interfaces/modules_cache_client.ICacheClient.md#getdidsforrole)
 
 ___
 
@@ -473,7 +454,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getDidDocument
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getDidDocument](../interfaces/modules_cache_client.ICacheClient.md#getdiddocument)
 
 ___
 
@@ -494,7 +475,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getNamespaceBySearchPhrase
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getNamespaceBySearchPhrase](../interfaces/modules_cache_client.ICacheClient.md#getnamespacebysearchphrase)
 
 ___
 
@@ -514,7 +495,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getOfferedAssets
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOfferedAssets](../interfaces/modules_cache_client.ICacheClient.md#getofferedassets)
 
 ___
 
@@ -534,7 +515,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getOrgDefinition
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrgDefinition](../interfaces/modules_cache_client.ICacheClient.md#getorgdefinition)
 
 ___
 
@@ -554,7 +535,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getOrgHierarchy
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrgHierarchy](../interfaces/modules_cache_client.ICacheClient.md#getorghierarchy)
 
 ___
 
@@ -574,7 +555,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getOrganizationRoles
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrganizationRoles](../interfaces/modules_cache_client.ICacheClient.md#getorganizationroles)
 
 ___
 
@@ -595,7 +576,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getOrganizationsByOwner
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOrganizationsByOwner](../interfaces/modules_cache_client.ICacheClient.md#getorganizationsbyowner)
 
 ___
 
@@ -615,7 +596,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getOwnedAssets
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getOwnedAssets](../interfaces/modules_cache_client.ICacheClient.md#getownedassets)
 
 ___
 
@@ -635,7 +616,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getPreviouslyOwnedAssets
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getPreviouslyOwnedAssets](../interfaces/modules_cache_client.ICacheClient.md#getpreviouslyownedassets)
 
 ___
 
@@ -655,7 +636,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getRoleDefinition
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRoleDefinition](../interfaces/modules_cache_client.ICacheClient.md#getroledefinition)
 
 ___
 
@@ -675,7 +656,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getRolesByOwner
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByOwner](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyowner)
 
 ___
 
@@ -695,7 +676,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getRolesByRevoker
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesByRevoker](../interfaces/modules_cache_client.ICacheClient.md#getrolesbyrevoker)
 
 ___
 
@@ -715,7 +696,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getRolesDefinition
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getRolesDefinition](../interfaces/modules_cache_client.ICacheClient.md#getrolesdefinition)
 
 ___
 
@@ -755,7 +736,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.getSubOrganizationsByOrganization
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[getSubOrganizationsByOrganization](../interfaces/modules_cache_client.ICacheClient.md#getsuborganizationsbyorganization)
 
 ___
 
@@ -797,25 +778,15 @@ ___
 
 `boolean`
 
-#### Implementation of
-
-ICacheClient.isAuthEnabled
-
 ___
 
 ### isAuthenticated
 
 ▸ **isAuthenticated**(): `Promise`<`boolean`\>
 
-Checks that auth token has been created, has not expired and corresponds to signer.
-This is done by a request to the server because the auth token is stored in an HTTP-only cookie and
-so the Javascript has no way to check its validity
-
 #### Returns
 
 `Promise`<`boolean`\>
-
-true if cache client is authenticated server
 
 ___
 
@@ -836,7 +807,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.issueClaim
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[issueClaim](../interfaces/modules_cache_client.ICacheClient.md#issueclaim)
 
 ___
 
@@ -844,16 +815,9 @@ ___
 
 ▸ **login**(): `Promise`<`void`\>
 
-Verifies current session and establishes new one if needed
-https://energyweb.atlassian.net/wiki/spaces/MYEN/pages/2303295607/ICL-+ICS+Auth+Process
-
 #### Returns
 
 `Promise`<`void`\>
-
-#### Implementation of
-
-ICacheClient.login
 
 ___
 
@@ -894,7 +858,7 @@ ___
 
 #### Implementation of
 
-ICacheClient.rejectClaim
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[rejectClaim](../interfaces/modules_cache_client.ICacheClient.md#rejectclaim)
 
 ___
 
@@ -914,4 +878,4 @@ ___
 
 #### Implementation of
 
-ICacheClient.requestClaim
+[ICacheClient](../interfaces/modules_cache_client.ICacheClient.md).[requestClaim](../interfaces/modules_cache_client.ICacheClient.md#requestclaim)

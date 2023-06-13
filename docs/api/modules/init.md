@@ -66,15 +66,15 @@ ___
 
 ### initWithKms
 
-▸ **initWithKms**(`__namedParameters?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](../classes/modules_assets.AssetsService.md) ; `cacheClient`: [`CacheClient`](../classes/modules_cache_client.CacheClient.md) ; `connectToDidRegistry`: (`ipfsConfig`: [`IpfsConfig`](../interfaces/modules_did_registry.IpfsConfig.md)) => `Promise`<{ `claimsService`: [`ClaimsService`](../classes/modules_claims.ClaimsService.md) ; `didRegistry`: [`DidRegistry`](../classes/modules_did_registry.DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](../classes/modules_domains.DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](../classes/modules_staking.StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](../classes/modules_messaging.MessagingService.md) ; `signerService`: [`SignerService`](../classes/modules_signer.SignerService.md)  }\>
+▸ **initWithKms**(`«destructured»?`): `Promise`<{ `connectToCacheServer`: () => `Promise`<{ `assetsService`: [`AssetsService`](../classes/modules_assets.AssetsService.md) ; `cacheClient`: [`CacheClient`](../classes/modules_cache_client.CacheClient.md) ; `connectToDidRegistry`: (`ipfsConfig`: [`IpfsConfig`](../interfaces/modules_did_registry.IpfsConfig.md)) => `Promise`<{ `claimsService`: [`ClaimsService`](../classes/modules_claims.ClaimsService.md) ; `didRegistry`: [`DidRegistry`](../classes/modules_did_registry.DidRegistry.md)  }\> ; `domainsService`: [`DomainsService`](../classes/modules_domains.DomainsService.md) ; `stakingPoolService`: ``null`` \| [`StakingFactoryService`](../classes/modules_staking.StakingFactoryService.md) ; `verifiableCredentialsService`: [`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)  }\> ; `messagingService`: [`MessagingService`](../classes/modules_messaging.MessagingService.md) ; `signerService`: [`SignerService`](../classes/modules_signer.SignerService.md)  }\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.bridge` | `undefined` \| `string` |
-| `__namedParameters.kmsServerUrl` | `undefined` \| `string` |
+| `«destructured»` | `Object` |
+| › `bridge` | `undefined` \| `string` |
+| › `kmsServerUrl` | `undefined` \| `string` |
 
 #### Returns
 

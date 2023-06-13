@@ -37,14 +37,6 @@ The following is for installing and building `iam-client-lib` directly. For guid
 Use `npm` >= 7 to install dependencies.
 
 ```sh
-npm install ./energyweb-km-utils-v1.0.0.tgz
-```
-
-```sh
-npm install ./energyweb-km-crypto-v1.0.0.tgz
-```
-
-```sh
 npm install
 ```
 
@@ -89,7 +81,7 @@ To install the latest version of `iam-client-lib`:
 npm i iam-client-lib
 ```
 
-To install the pre-realse version of `iam-client-lib`:
+To install the pre-release version of `iam-client-lib`:
 
 ```sh
 npm i iam-client-lib@canary
@@ -158,12 +150,11 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 For questions and support please use Energy Web's [Discord channel](https://discord.com/channels/706103009205288990/843970822254362664)
 
-Or reach out to our contributing team members:
+Or reach out to our contributing team members by posting an issue on this repository:
 
-- [John Henderson](https://github.com/jrhender)
 - [Dmitry Fesenko](https://github.com/JGiter)
-- [Jakub Sydor](https://github.com/Harasz)
 - [Ashish Tripathi](https://github.com/nichonien)
+- [John Henderson](https://github.com/jrhender)
 
 ## EW-DOS
 

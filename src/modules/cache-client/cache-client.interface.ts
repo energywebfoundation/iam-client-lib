@@ -9,7 +9,6 @@ import {
   IClaimRejection,
   IClaimRequest,
 } from '../claims/claims.types';
-import { IPubKeyAndIdentityToken } from '../signer/signer.types';
 import { AssetsFilter, ClaimsFilter } from './cache-client.types';
 import { Asset, AssetHistory } from '../assets/assets.types';
 import { IApp, IOrganization, IRole } from '../domains/domains.types';
@@ -17,9 +16,6 @@ import { Claim } from '../claims/claims.types';
 import { SearchType } from '.';
 
 export interface ICacheClient {
-  pubKeyAndIdentityToken: IPubKeyAndIdentityToken | undefined;
-  login: () => Promise<void>;
-  isAuthEnabled: () => boolean;
   getRoleDefinition: (namespace: string) => Promise<IRoleDefinition>;
   getRolesDefinition: (
     namespace: string[]

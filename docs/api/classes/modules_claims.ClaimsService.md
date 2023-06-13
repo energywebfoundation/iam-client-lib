@@ -290,7 +290,7 @@ ___
 
 ### getClaimId
 
-▸ **getClaimId**(`__namedParameters`): `Promise`<`string`\>
+▸ **getClaimId**(`«destructured»`): `Promise`<`string`\>
 
 Generates claim id or returns id of existing claim with same data
 
@@ -298,8 +298,8 @@ Generates claim id or returns id of existing claim with same data
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.claimData` | `ClaimData` |
+| `«destructured»` | `Object` |
+| › `claimData` | `ClaimData` |
 
 #### Returns
 

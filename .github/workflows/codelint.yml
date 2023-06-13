@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Run ESLint
         run: npx eslint --output-file eslint_report.json --format json src/** e2e/** scripts/**
       - name: Annotate Code Linting Results

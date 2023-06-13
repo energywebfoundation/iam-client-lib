@@ -1,8 +1,10 @@
 {
+  "extends": "tsconfig.json",
   "include": [
+    "src/**/*.*s",
+    "e2e/**/*.*s",
     ".eslintrc.js",
     ".prettierrc.js",
-    "scripts/**/*.*s",
-    "bili.config.ts"
+    "scripts/**/*.*s"
   ]
 }
