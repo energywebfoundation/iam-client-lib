@@ -1,3 +1,10 @@
+### [8.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0...v8.0.1-alpha.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* delete metamask connector ([f64a2e0](https://github.com/energywebfoundation/iam-client-lib/commit/f64a2e05a98eed614157e3f89292f21ea254cda9))
+
 ## [8.0.0](https://github.com/energywebfoundation/iam-client-lib/compare/v7.1.0...v8.0.0) (2023-06-13)
 
 
