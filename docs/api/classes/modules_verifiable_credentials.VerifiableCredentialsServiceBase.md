@@ -309,7 +309,7 @@ await verifiableCredentialsService.verify(presentation);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `vcOrVp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> | - |
+| `vcOrVp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> | verifiable presentation or credential |
 | `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
 
 #### Returns
