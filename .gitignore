@@ -13,3 +13,4 @@ compiled
 ethers
 site
 ethers-staking
+e2e/utils/setUpIpfsCluster/compose

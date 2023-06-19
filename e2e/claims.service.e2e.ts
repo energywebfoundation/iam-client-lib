@@ -1,4 +1,5 @@
 import jsonwebtoken from 'jsonwebtoken';
+import { ChildProcess } from 'child_process';
 import {
   IRoleDefinitionV2,
   IssuerFields,
@@ -45,7 +46,10 @@ import { ProofVerifier } from '@ew-did-registry/claims';
 import { ClaimManager } from '../ethers/ClaimManager';
 import { RoleEIP191JWT } from '@energyweb/vc-verification';
 import { JwtPayload } from '@ew-did-registry/jwt';
-import { shutDownIpfsDaemon, spawnIpfsDaemon } from './utils/setup-ipfs';
+import {
+  shutdownIpfsCluster,
+  spawnIpfsCluster,
+} from './utils/setUpIpfsCluster';
 
 const { namehash, id } = utils;
 
@@ -242,6 +246,7 @@ describe('Сlaim tests', () => {
   let claimManager: ClaimManager;
   let didRegistry: DidRegistry;
   let verifiableCredentialsService: VerifiableCredentialsServiceBase;
+  let cluster: ChildProcess;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -350,8 +355,9 @@ describe('Сlaim tests', () => {
       returnSteps: false,
     });
 
+    cluster = await spawnIpfsCluster();
     ({ didRegistry, claimsService } = await connectToDidRegistry(
-      await spawnIpfsDaemon()
+      'http://localhost:8080'
     ));
     mockGetAllowedRoles.mockImplementation(async (issuer) => {
       const roleDefs = Object.values(roles);
@@ -383,7 +389,7 @@ describe('Сlaim tests', () => {
   });
 
   afterEach(async () => {
-    await shutDownIpfsDaemon();
+    shutdownIpfsCluster(cluster);
   });
 
   describe('Role claim tests', () => {
