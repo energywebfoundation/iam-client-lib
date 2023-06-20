@@ -356,9 +356,11 @@ describe('Сlaim tests', () => {
     });
 
     cluster = await spawnIpfsCluster();
-    ({ didRegistry, claimsService } = await connectToDidRegistry(
-      'http://localhost:8080'
-    ));
+    ({ didRegistry, claimsService } = await connectToDidRegistry({
+      protocol: 'http',
+      host: 'localhost',
+      port: '8080',
+    }));
     mockGetAllowedRoles.mockImplementation(async (issuer) => {
       const roleDefs = Object.values(roles);
       const isRoleIssuerOfRole = await Promise.all(
