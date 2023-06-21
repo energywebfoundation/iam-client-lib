@@ -122,12 +122,7 @@ export class DidRegistry {
   }
 
   async init() {
-    const { protocol = 'https', host, port, headers } = this._ipfsConfig;
-    const baseUrl = new URL(`${protocol}://${host}`);
-    if (port) {
-      baseUrl.port = port.toString();
-    }
-    this._ipfsStore = new DidStore(baseUrl, { headers });
+    this._ipfsStore = new DidStore(this._ipfsConfig);
     await this._setOperator();
     this.setJWT();
     this._setDocument();
