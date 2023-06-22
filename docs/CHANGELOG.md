@@ -1,3 +1,11 @@
+### [8.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1-alpha.1...v8.0.1-alpha.2) (2023-06-22)
+
+
+### Bug Fixes
+
+* downgrade @ew-did-registry/did-ipfs-store@0.7.1-alpha.816.0 ([35711bc](https://github.com/energywebfoundation/iam-client-lib/commit/35711bc6545ca42259f2945223b5c31c9294d2f4))
+* ipfs config in claims test ([138e671](https://github.com/energywebfoundation/iam-client-lib/commit/138e671e5e4ee20db856a0b593781afe34dd1864))
+
 ### [8.0.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0...v8.0.1-alpha.1) (2023-06-14)
 
 
