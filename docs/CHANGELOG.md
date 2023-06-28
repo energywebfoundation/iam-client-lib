@@ -1,3 +1,10 @@
+### [8.0.1-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1-alpha.2...v8.0.1-alpha.3) (2023-06-28)
+
+
+### Bug Fixes
+
+* disable suppress any index err ([37c096f](https://github.com/energywebfoundation/iam-client-lib/commit/37c096ff8182d0cf4762093a10232bbe5b84e5b3))
+
 ### [8.0.1-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1-alpha.1...v8.0.1-alpha.2) (2023-06-22)
 
 
