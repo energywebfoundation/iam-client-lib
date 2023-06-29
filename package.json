@@ -80,7 +80,7 @@
     "@ew-did-registry/keys": "^0.8.1-alpha.1122.0",
     "@ew-did-registry/proxyidentity": "^0.8.1-alpha.1122.0",
     "@ew-did-registry/revocation": "^0.8.1-alpha.1122.0",
-    "@gnosis.pm/safe-apps-provider": "^0.13.1",
+    "@gnosis.pm/safe-apps-provider": "^0.15.1",
     "@metamask/detect-provider": "^1.2.0",
     "@sphereon/pex": "^2.0.1",
     "@sphereon/ssi-types": "^0.11.0",
