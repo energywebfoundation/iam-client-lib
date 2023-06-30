@@ -10,7 +10,11 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "lib": ["es2019", "dom", "esnext.asynciterable"],
+    "lib": [
+      "es2019",
+      "dom",
+      "esnext.asynciterable"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
@@ -32,6 +36,8 @@
     "target": "es6"
   },
   "ts-node": {
-    "compilerOptions": { "module": "CommonJS" }
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   }
 }
