@@ -1,19 +1,19 @@
-import { EWC_CHAIN_ID } from '@energyweb/credential-governance';
+import { VOLTA_CHAIN_ID } from '@energyweb/credential-governance';
 import { Wallet } from 'ethers';
 import { transferDomain } from '../src/utils/transfer-domains';
 
 export const domains = ['energyweb.iam.ewc'];
-export const newOwner = '0x205801aAbf81B65B3b7C52041991994d6c2e9F9d';
-export const ewcPrivateKey = Wallet.createRandom().privateKey;
+export const newOwner = '';
+export const ownerPrivKey = Wallet.createRandom().privateKey;
 
 (async function () {
   try {
     for await (const rootDomain of domains) {
       await transferDomain({
         rootDomain,
-        signer: new Wallet(ewcPrivateKey),
+        signer: new Wallet(ownerPrivKey),
         newOwner,
-        chainId: EWC_CHAIN_ID,
+        chainId: VOLTA_CHAIN_ID,
         dryRun: true,
       });
     }

@@ -1,10 +1,4 @@
 import { ChainId } from '..';
-// import {
-//   DomainHierarchy,
-//   DomainReader,
-//   DomainTransactionFactoryV2,
-//   ResolverContractType,
-// } from './domains-build.js';
 import { Wallet } from 'ethers';
 import { namehash, labelhash } from './ens-hash';
 import { getLogger } from '../config/logger.config';
@@ -36,7 +30,6 @@ export const transferDomain = async ({
   );
   const transferred: Record<string, unknown>[] = [];
   const transfer = async (domain: string) => {
-    logger.info(`Transferring ${domain}`);
     const domainHash = namehash(domain);
 
     let def;
@@ -65,11 +58,12 @@ export const transferDomain = async ({
         subnodes.push(`orgs.${domain}`);
       }
     }
-    logger.info(`Subnodes of ${domain} are ${subnodes}`);
+    logger.info(`Subnodes of ${domain} are ${subnodes ?? 'not set'}`);
     for await (const nodeName of subnodes) {
       console.group();
       const label = nodeName.split('.')[0];
       const labelHash = labelhash(label);
+      console.log(`${dryRun ? 'Would transfer' : 'Transferring'} ${nodeName}`);
       if (!dryRun) {
         await (
           await ensRegistry.setSubnodeOwner(
@@ -82,6 +76,7 @@ export const transferDomain = async ({
       await transfer(nodeName);
       console.groupEnd();
     }
+    console.log(`${dryRun ? 'Would transfer' : 'Transferring'} ${domain}`);
     if (!dryRun) {
       await (await ensRegistry.setOwner(domainHash, newOwner)).wait();
     }
