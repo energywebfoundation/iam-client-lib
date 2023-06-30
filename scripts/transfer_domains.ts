@@ -6,6 +6,7 @@ export const domains = ['energyweb.iam.ewc'];
 export const newOwner = '';
 export const ownerPrivKey = Wallet.createRandom().privateKey;
 
+// Fast rpc node is required to use this script
 (async function () {
   try {
     for await (const rootDomain of domains) {
