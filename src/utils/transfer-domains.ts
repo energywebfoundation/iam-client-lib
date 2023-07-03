@@ -1,4 +1,9 @@
-import { ChainId } from '..';
+import {
+  ChainId,
+  IAppDefinition,
+  IOrganizationDefinition,
+  IRoleDefinition,
+} from '..';
 import { Wallet } from 'ethers';
 import { namehash, labelhash } from './ens-hash';
 import { getLogger } from '../config/logger.config';
@@ -18,7 +23,10 @@ export const transferDomain = async ({
   dryRun?: boolean;
 }) => {
   const logger = getLogger();
-  const { domainHierarchy, ensRegistry } = await initDomains(signer, chainId);
+  const { domainHierarchy, ensRegistry, domainReader } = await initDomains(
+    signer,
+    chainId
+  );
   console.time('getSubdomains');
   let domains = await domainHierarchy.getSubdomainsUsingResolver({
     domain: rootDomain,
@@ -34,11 +42,18 @@ export const transferDomain = async ({
     }
   }
   domains = [...domains, ...metadomains];
-  console.dir([...domains].sort(), { depth: Infinity, colors: true });
+  // console.dir([...domains].sort(), { depth: Infinity, colors: true });
 
-  const transferred: Array<string> = [];
+  const transferred: Array<Record<string, unknown>> = [];
   const transfer = async (domain: string) => {
     const domainHash = namehash(domain);
+    let def: IRoleDefinition | IAppDefinition | IOrganizationDefinition;
+    try {
+      def = await domainReader.read({ node: domainHash });
+      transferred.push({ [domain]: def });
+    } catch (_) {
+      transferred.push({ [domain]: 'unreadable' });
+    }
 
     const level = domain.split('.').length;
     const subnodes = domains
@@ -70,7 +85,6 @@ export const transferDomain = async ({
     );
     if (!dryRun) {
       await (await ensRegistry.setOwner(domainHash, newOwner)).wait();
-      transferred.push(domain);
     }
   };
 
