@@ -27,6 +27,7 @@ export const transferDomain = async ({
   chainId: ChainId;
   dryRun?: boolean;
 }) => {
+  const rootOwner = await signer.getAddress();
   const logger = getLogger();
   const { domainHierarchy, ensRegistry, domainReader } = await initDomains(
     signer,
@@ -108,7 +109,13 @@ export const transferDomain = async ({
       `${dryRun ? 'Would transfer' : 'Transferring'} ${domain} to new owner`
     );
     if (!dryRun) {
-      await (await ensRegistry.setOwner(domainHash, newOwner)).wait();
+      // only domains belonging to root owner will be tranferred. owners od other domains will be preserved
+      await (
+        await ensRegistry.setOwner(
+          domainHash,
+          owner === rootOwner ? newOwner : owner
+        )
+      ).wait();
     }
   };
 
