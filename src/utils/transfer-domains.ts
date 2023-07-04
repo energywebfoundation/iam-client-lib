@@ -8,6 +8,11 @@ import { Wallet } from 'ethers';
 import { namehash, labelhash } from './ens-hash';
 import { getLogger } from '../config/logger.config';
 import { initDomains } from './init-domains';
+import {
+  DomainReader,
+  IIssuerDefinition,
+  IRevokerDefinition,
+} from '@energyweb/credential-governance';
 
 export const transferDomain = async ({
   rootDomain,
@@ -54,13 +59,25 @@ export const transferDomain = async ({
   const transferred: Array<Record<string, unknown>> = [];
   const transfer = async (domain: string) => {
     const domainHash = namehash(domain);
+    const owner = await ensRegistry.owner(domainHash);
+    const log: {
+      owner: string;
+      issuer?: IIssuerDefinition;
+      revoker?: IRevokerDefinition;
+    } = { owner };
     let def: IRoleDefinition | IAppDefinition | IOrganizationDefinition;
     try {
       def = await domainReader.read({ node: domainHash });
-      transferred.push({ [domain]: def });
+      if (DomainReader.isRoleDefinition(def)) {
+        log.issuer = def.issuer;
+      }
+      if (DomainReader.isRoleDefinitionV2(def)) {
+        log.revoker = def.revoker;
+      }
     } catch (_) {
-      transferred.push({ [domain]: 'unreadable' });
+      // ignore read metadomain definition error
     }
+    transferred.push({ [domain]: log });
 
     const level = domain.split('.').length;
     const subnodes = domains
@@ -75,7 +92,7 @@ export const transferDomain = async ({
         `${dryRun ? 'Would transfer' : 'Transferring'} ${node} to root owner`
       );
       if (!dryRun) {
-        // transferring node to root owner to be able to transfer to him subnodes of node. This transfer is needed, because not all nodes in tree can belong to tree owner
+        // transferring node to root owner to be able to transfer to him subnodes of node. This transfer is needed, because not all nodes in tree can belong to owner of tree root
         await (
           await ensRegistry.setSubnodeOwner(
             domainHash,
