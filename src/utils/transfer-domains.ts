@@ -28,21 +28,28 @@ export const transferDomain = async ({
     chainId
   );
   console.time('getSubdomains');
-  let domains = await domainHierarchy.getSubdomainsUsingResolver({
+  const domains = await domainHierarchy.getSubdomainsUsingResolver({
     domain: rootDomain,
     mode: 'ALL',
   });
   console.timeEnd('getSubdomains');
-  // domains which does not have definitions, like those which starts from `apps`, `orgs` and `roles`
-  const metadomains: Array<string> = [];
-  for (let d of domains) {
-    while (![...domains, ...metadomains].includes(d)) {
-      metadomains.push(d);
-      d = d.slice(0, d.lastIndexOf('.'));
+  // complement nodes to obtain connected tree
+  for (const d of domains) {
+    if (d === rootDomain) {
+      continue;
+    }
+    const parent = d.slice(d.indexOf('.') + 1);
+    if (parent === rootDomain) {
+      continue;
+    }
+    if (!domains.includes(parent)) {
+      domains.push(parent);
     }
   }
-  domains = [...domains, ...metadomains];
-  // console.dir([...domains].sort(), { depth: Infinity, colors: true });
+  console.dir(domains.sort(), {
+    depth: Infinity,
+    colors: true,
+  });
 
   const transferred: Array<Record<string, unknown>> = [];
   const transfer = async (domain: string) => {
@@ -57,9 +64,9 @@ export const transferDomain = async ({
 
     const level = domain.split('.').length;
     const subnodes = domains
-      .filter((d) => d.startsWith(domain))
+      .filter((d) => d.endsWith(domain))
       .filter((d) => d.split('.').length === level + 1);
-    logger.info(`Subnodes of ${domain} are ${subnodes ?? 'not set'}`);
+    logger.info(`Subnodes of ${domain} are ${subnodes}`);
     for await (const node of subnodes) {
       console.group();
       const label = node.split('.')[0];
