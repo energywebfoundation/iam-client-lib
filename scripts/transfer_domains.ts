@@ -1,23 +1,25 @@
-import { EWC_CHAIN_ID } from '@energyweb/credential-governance';
+import { VOLTA_CHAIN_ID } from '@energyweb/credential-governance';
 import { Wallet } from 'ethers';
-import { transferDomain } from '../src/utils/domains';
-import { domains, ewcPrivateKey } from './data';
+import { transferDomain } from '../src/utils/transfer-domains';
 
-export const newOwner = '0x3451aaEDD3f25204D483aADCF060e344155DEB02';
+export const domains = ['energyweb.iam.ewc'];
+export const newOwner = '';
+export const ownerPrivKey = Wallet.createRandom().privateKey;
 
+// Fast rpc node is required to use this script
 (async function () {
   try {
     for await (const rootDomain of domains) {
       await transferDomain({
         rootDomain,
-        signer: new Wallet(ewcPrivateKey),
+        signer: new Wallet(ownerPrivKey),
         newOwner,
-        chainId: EWC_CHAIN_ID,
+        chainId: VOLTA_CHAIN_ID,
         dryRun: true,
       });
     }
-    console.log('Domains are transferred');
+    process.stdout.write('Domains are transferred\n');
   } catch (e) {
-    console.error('Error transferring domains:', e);
+    process.stderr.write(`Error transferring domains: ${e}\n`);
   }
 })();
