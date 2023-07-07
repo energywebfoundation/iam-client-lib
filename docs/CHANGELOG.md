@@ -1,3 +1,19 @@
+### [8.0.1-alpha.4](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1-alpha.3...v8.0.1-alpha.4) (2023-07-07)
+
+
+### Bug Fixes
+
+* complement nodes to tree before transfer ([0835999](https://github.com/energywebfoundation/iam-client-lib/commit/0835999c2e77a2e67c9675610d006dea06ae5046))
+* transfer only domains of root owner ([a4cb498](https://github.com/energywebfoundation/iam-client-lib/commit/a4cb4982e96c76bc66c844e6e5858b5fbc659e91))
+
+
+### Refactoring
+
+* get all subdomains in one req ([81d5bb9](https://github.com/energywebfoundation/iam-client-lib/commit/81d5bb9313837c13dda2114feccdcdff3c538880))
+* list domains owners ([d4aa3c7](https://github.com/energywebfoundation/iam-client-lib/commit/d4aa3c77ae910d7a317068059ab28c03178bf370))
+* separate update and transfer scripts ([24e36c9](https://github.com/energywebfoundation/iam-client-lib/commit/24e36c9e7bcadf496c187de53ae9a84ea370736f))
+* transfer domain dry run logs ([c747db3](https://github.com/energywebfoundation/iam-client-lib/commit/c747db336c4102200a3510766b97245e605fa997))
+
 ### [8.0.1-alpha.3](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1-alpha.2...v8.0.1-alpha.3) (2023-06-28)
 
 
