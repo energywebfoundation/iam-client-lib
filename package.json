@@ -100,7 +100,7 @@
     "jsonwebtoken": "^9.0.0",
     "lodash.difference": "^4.5.0",
     "multiformats": "^9.6.4",
-    "nats.ws": "^1.7.1",
+    "nats.ws": "^1.16.1",
     "qs": "^6.9.4",
     "set-cookie-parser": "^2.5.1",
     "siwe": "^2.1.4",
