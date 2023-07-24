@@ -1,9 +1,5 @@
-import {
-  ICredentialSubject,
-  IPresentationDefinition,
-  PEX,
-  SelectResults,
-} from '@sphereon/pex';
+import { IPresentationDefinition, PEX, SelectResults } from '@sphereon/pex';
+import { ICredentialSubject } from '@sphereon/ssi-types';
 import { InputDescriptorV1, InputDescriptorV2 } from '@sphereon/pex-models';
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
@@ -333,8 +329,8 @@ export abstract class VerifiableCredentialsServiceBase {
         ...pex.presentationFrom(
           options.presentationDefinition,
           verifiableCredential,
-          did
-        ),
+          { holderDID: did }
+        ).presentation,
         id: 'urn:uuid:' + uuid(),
       } as Presentation;
     }
@@ -438,7 +434,7 @@ export abstract class VerifiableCredentialsServiceBase {
    * await verifiableCredentialsService.verify(credential);
    * await verifiableCredentialsService.verify(presentation);
    * ```
-   * @param {VerifiablePresentation | VerifiableCredential} vp verifiable presentation or credential
+   * @param {VerifiablePresentation | VerifiableCredential} vcOrVp verifiable presentation or credential
    * @param {ProofOptions} options proof options
    * @returns true if the proof is valid
    */
@@ -447,9 +443,9 @@ export abstract class VerifiableCredentialsServiceBase {
     options?: ProofOptions
   ): Promise<boolean> {
     let verifyFunc: (vp: string, proof_options: string) => Promise<string>;
-    if (vcOrVp.type.includes(CredentialType.VerifiablePresentation)) {
+    if (vcOrVp.type?.includes(CredentialType.VerifiablePresentation)) {
       verifyFunc = this.verifyPresentation;
-    } else if (vcOrVp.type.includes(CredentialType.VerifiableCredential)) {
+    } else if (vcOrVp.type?.includes(CredentialType.VerifiableCredential)) {
       verifyFunc = this.verifyCredential;
     } else {
       throw new Error('Unsupported verifiable credential or presentation type');

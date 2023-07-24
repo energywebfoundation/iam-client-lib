@@ -125,7 +125,7 @@ export class DidRegistry {
     this._ipfsStore = new DidStore(this._ipfsConfig);
     await this._setOperator();
     this.setJWT();
-    await this._setDocument();
+    this._setDocument();
     this._setClaims();
   }
 

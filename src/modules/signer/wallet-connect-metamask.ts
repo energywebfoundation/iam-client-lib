@@ -1,7 +1,6 @@
 import Web3Provider from '@walletconnect/ethereum-provider';
 import WalletConnect from '@walletconnect/client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
-import { ICreateSessionOptions } from '@walletconnect/types';
 import { ProviderEvent, ProviderType } from './signer.types';
 import { SignerService } from './signer.service';
 import { providers } from 'ethers';
@@ -38,14 +37,8 @@ export const createWalletConnectProvider = (
   );
   const walletConnectProvider = new Web3Provider({
     rpc,
-    connector: new Connector({ bridge, qrcodeModal: QRCodeModal }),
+    connector: new WalletConnect({ bridge, qrcodeModal: QRCodeModal }),
     infuraId,
   });
   return walletConnectProvider;
 };
-
-class Connector extends WalletConnect {
-  public async createSession(opts?: ICreateSessionOptions): Promise<void> {
-    await super.createSession(opts);
-  }
-}
