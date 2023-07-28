@@ -36,6 +36,7 @@ import { ERROR_MESSAGES } from '../../errors';
 import { CacheClient } from '../cache-client';
 import { KEY_TYPE } from './verifiable-credentials.const';
 import { Claim } from '../claims/claims.types';
+import { getLogger } from '../../config/logger.config';
 
 /**
  * Service responsible for managing verifiable credentials and presentations.
@@ -47,6 +48,7 @@ import { Claim } from '../claims/claims.types';
  * ```
  * */
 export abstract class VerifiableCredentialsServiceBase {
+  private logger = getLogger();
   /**
    * Get prepared data for signing a credential.
    *
@@ -129,7 +131,7 @@ export abstract class VerifiableCredentialsServiceBase {
   constructor(
     protected readonly _signerService: SignerService,
     protected readonly _cacheClient: CacheClient
-  ) {}
+  ) { }
 
   // * Should be overridden by the implementation
   static async create(
@@ -217,7 +219,7 @@ export abstract class VerifiableCredentialsServiceBase {
       presentation: requiredPresentation,
     });
     if (errors.length > 0) {
-      console.dir(errors, { depth: 20 });
+      this.logger.error(errors);
       throw new Error(ERROR_MESSAGES.ERROR_CONTINUING_EXCHANGE);
     }
     if (nextVpRequest) {
@@ -563,11 +565,11 @@ export abstract class VerifiableCredentialsServiceBase {
         },
         issuerFields: params.issuerFields
           ? [
-              ...params.issuerFields.map((field) => ({
-                ...field,
-                value: field.value.toString(),
-              })),
-            ]
+            ...params.issuerFields.map((field) => ({
+              ...field,
+              value: field.value.toString(),
+            })),
+          ]
           : [],
         id: params.id,
       },
