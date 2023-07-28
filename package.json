@@ -106,7 +106,8 @@
     "siwe": "^2.1.4",
     "ts-interface-checker": "^1.0.2",
     "tslib": "^2.0.3",
-    "uuid": "^7.0.3"
+    "uuid": "^7.0.3",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@babel/core": "7.22.9",
