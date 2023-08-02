@@ -69,7 +69,7 @@ export interface Claim {
   createdAt: string;
   redirectUri?: string;
   vp?: VerifiablePresentation;
-  expirationTimestamp?: string;
+  expirationTimestamp?: number;
 }
 
 export const readyToBeRegisteredOnchain = (

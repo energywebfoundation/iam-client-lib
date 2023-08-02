@@ -60,7 +60,7 @@ ___
 
 ### expirationTimestamp
 
-• `Optional` **expirationTimestamp**: `string`
+• `Optional` **expirationTimestamp**: `number`
 
 ___
 

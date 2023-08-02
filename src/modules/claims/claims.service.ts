@@ -793,7 +793,7 @@ export class ClaimsService {
         throw new Error(ERROR_MESSAGES.PUBLISH_NOT_ISSUED_CLAIM);
       }
       const expirationTimestamp = claimDataForClaimType.expirationTimestamp
-        ? Math.floor(+claimDataForClaimType.expirationTimestamp / 1000)
+        ? Math.floor(claimDataForClaimType.expirationTimestamp / 1000)
         : undefined;
 
       await this.registerOnchain({
