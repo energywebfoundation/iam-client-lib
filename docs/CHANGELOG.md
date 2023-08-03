@@ -1,3 +1,10 @@
+### [8.0.2-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1...v8.0.2-alpha.1) (2023-08-03)
+
+
+### Bug Fixes
+
+* change expiration ts to number ([1b1135c](https://github.com/energywebfoundation/iam-client-lib/commit/1b1135c9d37825ef72f46c79e0844b723a08723e))
+
 ### [8.0.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.0...v8.0.1) (2023-07-24)
 
 
