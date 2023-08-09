@@ -1,3 +1,15 @@
+## [8.1.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.2-alpha.1...v8.1.0-alpha.1) (2023-08-09)
+
+
+### Features
+
+* add winston logger ([2567501](https://github.com/energywebfoundation/iam-client-lib/commit/256750155f4e692292e107263dc2746be4740d7d))
+
+
+### Refactoring
+
+* replace console with logger ([5d13f57](https://github.com/energywebfoundation/iam-client-lib/commit/5d13f57923a16488075881b8c33c8f3c748d4d69))
+
 ### [8.0.2-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1...v8.0.2-alpha.1) (2023-08-03)
 
 
