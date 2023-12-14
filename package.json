@@ -87,7 +87,7 @@
     "@spruceid/didkit-wasm": "^0.2.1",
     "@spruceid/didkit-wasm-node": "^0.2.1",
     "@types/jsonwebtoken": "^8.5.8",
-    "@walletconnect/ethereum-provider": "^1.7.7",
+    "@walletconnect/ethereum-provider": "^2.4.4",
     "axios": "^0.27.0",
     "axios-retry": "^3.4.0",
     "base64url": "^3.0.1",
