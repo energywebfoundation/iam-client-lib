@@ -76,6 +76,7 @@ import {
   RoleEIP191JWT,
   isEIP191Jwt,
   IssuerResolver,
+  VerificationResult,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData, isClaimService } from '../did-registry/did.types';
@@ -1490,11 +1491,20 @@ export class ClaimsService {
     }
     const role = vc.credentialSubject.role.namespace;
     try {
+      let issuerVerificationResult: VerificationResult;
       if (typeof issuerDID === 'string') {
-        await this._issuerVerification.verifyIssuer(issuerDID, role);
+        issuerVerificationResult = await this._issuerVerification.verifyIssuer(
+          issuerDID,
+          role
+        );
       } else {
-        await this._issuerVerification.verifyIssuer(issuerDID.id, role);
+        issuerVerificationResult = await this._issuerVerification.verifyIssuer(
+          issuerDID.id,
+          role
+        );
       }
+      issuerVerified = issuerVerified && issuerVerificationResult.verified;
+      errors.push(issuerVerificationResult.error);
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
