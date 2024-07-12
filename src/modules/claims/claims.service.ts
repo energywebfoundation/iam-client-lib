@@ -1503,8 +1503,11 @@ export class ClaimsService {
           role
         );
       }
-      issuerVerified = issuerVerified && issuerVerificationResult.verified;
-      errors.push(issuerVerificationResult.error);
+      const { verified, error } = issuerVerificationResult;
+      issuerVerified = issuerVerified && verified;
+      if (error.length > 0) {
+        errors.push(error);
+      }
     } catch (e) {
       issuerVerified = false;
       errors.push((e as Error).message);
