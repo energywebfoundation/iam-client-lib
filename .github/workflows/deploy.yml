@@ -46,6 +46,7 @@ jobs:
         run: npm run build
 
       # Skipped, until fix issue with setting up IPFS
+      # See https://energyweb.atlassian.net/browse/SWTCH-3073
       # - name: Npm Run Test
       #   run: npm run test
 
