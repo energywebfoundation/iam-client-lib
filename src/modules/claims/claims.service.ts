@@ -110,6 +110,7 @@ export class ClaimsService {
   private _claimManagerInterface = ClaimManager__factory.createInterface();
   private _claimRevocation: ClaimRevocation;
   private _issuerVerification: IssuerVerification;
+  // Overwritten issuer resolver
   private _issuerResolver?: IssuerResolver;
   private _credentialResolver: CredentialResolver;
   private _statusVerifier: StatusListEntryVerification;
