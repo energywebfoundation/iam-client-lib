@@ -50,6 +50,10 @@ verifiableCredentialsService.createRoleVC(...);
 
 ▸ **continueExchange**(`«destructured»`): `Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
+**`Description`**
+
+Sends credentials requested by issuer and returns either issued credentials or next credentials request
+
 #### Parameters
 
 | Name | Type |
@@ -61,10 +65,6 @@ verifiableCredentialsService.createRoleVC(...);
 `Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
 issued credentials or request of additional credentials
-
-**`Description`**
-
-Sends credentials requested by issuer and returns either issued credentials or next credentials request
 
 ___
 

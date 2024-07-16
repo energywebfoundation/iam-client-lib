@@ -353,13 +353,13 @@ ___
 
 Add event handler for certain events
 
-#### Returns
-
-`void`
-
 **`Requires`**
 
 to be called after the connection to wallet was initialized
+
+#### Returns
+
+`void`
 
 ___
 
