@@ -35,13 +35,13 @@ Intended for staking pool
 
 ▸ **allServices**(): `Promise`<[`Service`](../modules/modules_staking.md#service)[]\>
 
-#### Returns
-
-`Promise`<[`Service`](../modules/modules_staking.md#service)[]\>
-
 **`Description`**
 
 Returns all services for which pools are launched
+
+#### Returns
+
+`Promise`<[`Service`](../modules/modules_staking.md#service)[]\>
 
 ___
 
@@ -49,13 +49,13 @@ ___
 
 ▸ **getPool**(): `Promise`<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
 
-#### Returns
-
-`Promise`<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
-
 **`Description`**
 
 Returns pool launched for energyweb org
+
+#### Returns
+
+`Promise`<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
 
 ___
 

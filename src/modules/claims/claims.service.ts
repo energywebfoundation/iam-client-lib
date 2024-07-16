@@ -75,6 +75,7 @@ import {
   RevocationVerification,
   RoleEIP191JWT,
   isEIP191Jwt,
+  IssuerResolver,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData, isClaimService } from '../did-registry/did.types';
@@ -109,7 +110,8 @@ export class ClaimsService {
   private _claimManagerInterface = ClaimManager__factory.createInterface();
   private _claimRevocation: ClaimRevocation;
   private _issuerVerification: IssuerVerification;
-  private _issuerResolver: EthersProviderIssuerResolver;
+  // Overwritten issuer resolver
+  private _issuerResolver?: IssuerResolver;
   private _credentialResolver: CredentialResolver;
   private _statusVerifier: StatusListEntryVerification;
 
@@ -170,6 +172,12 @@ export class ClaimsService {
       ewSigner,
       chainConfigs()[chainId].claimsRevocationRegistryAddress
     );
+  }
+
+  public setIssuerResolver(issuerResolver: IssuerResolver): void {
+    this._issuerResolver = issuerResolver;
+
+    this._setIssuerVerifier();
   }
 
   /**
@@ -1599,7 +1607,8 @@ export class ClaimsService {
       this._didRegistry.ipfsStore
     );
     const domainReader = this._domainsService.domainReader;
-    this._issuerResolver = new EthersProviderIssuerResolver(domainReader);
+    const issuerResolver =
+      this._issuerResolver || this._getDefaultIssuerResolver();
     const revokerResolver = new EthersProviderRevokerResolver(domainReader);
     const verifyProof = (vc: string, proofOptions: string) =>
       this._verifiableCredentialService.verify(
@@ -1608,12 +1617,12 @@ export class ClaimsService {
       );
     const revocationVerification = new RevocationVerification(
       revokerResolver,
-      this._issuerResolver,
+      issuerResolver,
       this._credentialResolver,
       verifyProof
     );
     this._issuerVerification = new IssuerVerification(
-      this._issuerResolver,
+      issuerResolver,
       this._credentialResolver,
       this._signerService.provider,
       this._didRegistry.registrySettings,
@@ -1631,5 +1640,9 @@ export class ClaimsService {
       }
       return JSON.stringify({ errors: [] });
     });
+  }
+
+  private _getDefaultIssuerResolver(): IssuerResolver {
+    return new EthersProviderIssuerResolver(this._domainsService.domainReader);
   }
 }

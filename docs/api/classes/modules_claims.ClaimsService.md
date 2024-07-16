@@ -47,6 +47,7 @@ claimsService.getClaimById(claim.id);
 - [resolveCredentialAndVerify](modules_claims.ClaimsService.md#resolvecredentialandverify)
 - [revokeClaim](modules_claims.ClaimsService.md#revokeclaim)
 - [revokeMultipleClaim](modules_claims.ClaimsService.md#revokemultipleclaim)
+- [setIssuerResolver](modules_claims.ClaimsService.md#setissuerresolver)
 - [verifyRoleEIP191JWT](modules_claims.ClaimsService.md#verifyroleeip191jwt)
 - [verifyVc](modules_claims.ClaimsService.md#verifyvc)
 - [create](modules_claims.ClaimsService.md#create)
@@ -817,6 +818,22 @@ claimsService.revokeMultipleClaim({
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### setIssuerResolver
+
+▸ **setIssuerResolver**(`issuerResolver`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `issuerResolver` | `IssuerResolver` |
+
+#### Returns
+
+`void`
 
 ___
 
