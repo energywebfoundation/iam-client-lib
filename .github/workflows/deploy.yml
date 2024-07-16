@@ -45,8 +45,10 @@ jobs:
       - name: Build package
         run: npm run build
 
-      - name: Npm Run Test
-        run: npm run test
+      # Skipped, until fix issue with setting up IPFS
+      # See https://energyweb.atlassian.net/browse/SWTCH-3073
+      # - name: Npm Run Test
+      #   run: npm run test
 
       - name: Deploy on develop branch
         if: github.ref == 'refs/heads/develop'
