@@ -9,6 +9,7 @@
 
 ### Classes
 
+- [CachedIssuerResolver](../classes/modules_claims.CachedIssuerResolver.md)
 - [ClaimsService](../classes/modules_claims.ClaimsService.md)
 
 ### Interfaces
