@@ -18,7 +18,7 @@ export class AuthService {
   private readonly authTokenClient: SiweAuthTokensClient;
   private authenticatePromise: Promise<void>;
   private isAuthenticating = false;
-
+  private logger = getLogger();
   /**
    *
    * @param signerService service used to sign authentication message
@@ -43,7 +43,7 @@ export class AuthService {
 
     axiosRetry(this.httpClient, {
       onRetry: (retryCount: number, error: AxiosError) => {
-        console.warn(
+        this.logger.warn(
           `[AUTH SERVICE] retrying request to ${error.config.url} for ${retryCount} time`
         );
       },
@@ -52,7 +52,7 @@ export class AuthService {
           const isRetry = await this.handleRequestError(error);
           return isRetry;
         } catch (_) {
-          console.warn(
+          this.logger.warn(
             `[AUTH SERVICE] Error handling request error to ${error.config.url}`
           );
           return true;
@@ -132,8 +132,7 @@ export class AuthService {
     if (!this.isBrowser && !this.refresh_token) return undefined;
     getLogger().info('[AuthService] refreshing tokens');
     const res = await this.httpClient.get<AuthTokens>(
-      `/refresh_token${
-        this.isBrowser ? '' : `?refresh_token=${this.refresh_token}`
+      `/refresh_token${this.isBrowser ? '' : `?refresh_token=${this.refresh_token}`
       }`
     );
     getLogger().debug('[AuthService] refreshed tokens fetched');
