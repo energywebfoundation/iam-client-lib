@@ -1,3 +1,31 @@
+## [8.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1...v8.1.0) (2024-07-16)
+
+
+### Features
+
+* add cached issuer resolver ([54ca0cf](https://github.com/energywebfoundation/iam-client-lib/commit/54ca0cf84f70a05c431d682358635a644492bcdf))
+* add winston logger ([2567501](https://github.com/energywebfoundation/iam-client-lib/commit/256750155f4e692292e107263dc2746be4740d7d))
+* set issuer resolver ([8cb5838](https://github.com/energywebfoundation/iam-client-lib/commit/8cb5838678945706270509b66212eb4a883cd939))
+* set issuer resolver ([f94963c](https://github.com/energywebfoundation/iam-client-lib/commit/f94963c52d0beee0c726b7e0cf07de4247484675))
+
+
+### Bug Fixes
+
+* change expiration ts to number ([1b1135c](https://github.com/energywebfoundation/iam-client-lib/commit/1b1135c9d37825ef72f46c79e0844b723a08723e))
+* skip test from deploy ([0b829f6](https://github.com/energywebfoundation/iam-client-lib/commit/0b829f668704116f09c4b2a3baa8a17df130aa62))
+* skip tests in deploy ([a36e047](https://github.com/energywebfoundation/iam-client-lib/commit/a36e047d7e906e65ce4768267786bd4211e5504f))
+
+
+### Refactoring
+
+* replace console with logger ([5d13f57](https://github.com/energywebfoundation/iam-client-lib/commit/5d13f57923a16488075881b8c33c8f3c748d4d69))
+
+
+### Documentation
+
+* link to ticket ([6dc211e](https://github.com/energywebfoundation/iam-client-lib/commit/6dc211e461e91bc12864847d84f936cc81e7903a))
+* overwritten issuer resolver ([dcf30c3](https://github.com/energywebfoundation/iam-client-lib/commit/dcf30c328afcc2ca07a25f4dec8d05b8bf9d8302))
+
 ## [8.1.0-alpha.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.1.0-alpha.1...v8.1.0-alpha.2) (2024-07-16)
 
 
