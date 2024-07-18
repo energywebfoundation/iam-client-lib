@@ -1,3 +1,13 @@
+### [8.1.1-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.1.0...v8.1.1-alpha.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* check error msg length ([7357300](https://github.com/energywebfoundation/iam-client-lib/commit/7357300a018eef56396af070373a83124cd0ad45))
+* check issuer verification error ([84c70a8](https://github.com/energywebfoundation/iam-client-lib/commit/84c70a83caf85a3074552da9cb3c1df17d258ef0))
+* check issuer verification result ([0855cd5](https://github.com/energywebfoundation/iam-client-lib/commit/0855cd51d34dabe9aa882e889fc6e0638ed4c98c))
+* check issuer verification result ([25c7675](https://github.com/energywebfoundation/iam-client-lib/commit/25c7675f3771baed90bbd089ec06614b4965732b))
+
 ## [8.1.0](https://github.com/energywebfoundation/iam-client-lib/compare/v8.0.1...v8.1.0) (2024-07-16)
 
 
