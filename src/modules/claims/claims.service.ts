@@ -1505,7 +1505,7 @@ export class ClaimsService {
       }
       const { verified, error } = issuerVerificationResult;
       issuerVerified = issuerVerified && verified;
-      if (error.length > 0) {
+      if (error !== "") {
         errors.push(error);
       }
     } catch (e) {
