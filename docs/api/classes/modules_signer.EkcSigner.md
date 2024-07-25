@@ -36,13 +36,17 @@
 
 ### constructor
 
-• **new EkcSigner**(`ekc`)
+• **new EkcSigner**(`ekc`): [`EkcSigner`](modules_signer.EkcSigner.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `ekc` | `default` |
+
+#### Returns
+
+[`EkcSigner`](modules_signer.EkcSigner.md)
 
 #### Overrides
 
@@ -68,11 +72,11 @@ Signer.provider
 
 ### \_signTypedData
 
-▸ **_signTypedData**(): `Promise`<`string`\>
+▸ **_signTypedData**(): `Promise`\<`string`\>
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Implementation of
 
@@ -102,11 +106,11 @@ ___
 
 ### getAddress
 
-▸ **getAddress**(): `Promise`<`string`\>
+▸ **getAddress**(): `Promise`\<`string`\>
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Overrides
 
@@ -116,7 +120,7 @@ ___
 
 ### signMessage
 
-▸ **signMessage**(`message`): `Promise`<`string`\>
+▸ **signMessage**(`message`): `Promise`\<`string`\>
 
 #### Parameters
 
@@ -126,7 +130,7 @@ ___
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Overrides
 
@@ -136,17 +140,17 @@ ___
 
 ### signTransaction
 
-▸ **signTransaction**(`transaction`): `Promise`<`string`\>
+▸ **signTransaction**(`transaction`): `Promise`\<`string`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `transaction` | `Deferrable`<`TransactionRequest`\> |
+| `transaction` | `Deferrable`\<`TransactionRequest`\> |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Overrides
 
@@ -156,7 +160,7 @@ ___
 
 ### create
 
-▸ `Static` **create**(`proxyUrl`): `Promise`<[`EkcSigner`](modules_signer.EkcSigner.md)\>
+▸ **create**(`proxyUrl`): `Promise`\<[`EkcSigner`](modules_signer.EkcSigner.md)\>
 
 #### Parameters
 
@@ -166,4 +170,4 @@ ___
 
 #### Returns
 
-`Promise`<[`EkcSigner`](modules_signer.EkcSigner.md)\>
+`Promise`\<[`EkcSigner`](modules_signer.EkcSigner.md)\>

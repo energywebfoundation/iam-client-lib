@@ -28,7 +28,7 @@ Abstraction over staking pool smart contract
 
 ### constructor
 
-• **new StakingPoolService**(`signerService`, `address`)
+• **new StakingPoolService**(`signerService`, `address`): [`StakingPoolService`](modules_staking.StakingPoolService.md)
 
 #### Parameters
 
@@ -37,67 +37,71 @@ Abstraction over staking pool smart contract
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `address` | `string` |
 
+#### Returns
+
+[`StakingPoolService`](modules_staking.StakingPoolService.md)
+
 ## Methods
 
 ### checkReward
 
-▸ **checkReward**(): `Promise`<`BigNumber`\>
+▸ **checkReward**(): `Promise`\<`BigNumber`\>
 
 Accumulated reward
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 ___
 
 ### getContributionLimit
 
-▸ **getContributionLimit**(): `Promise`<`BigNumber`\>
+▸ **getContributionLimit**(): `Promise`\<`BigNumber`\>
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 ___
 
 ### getEnd
 
-▸ **getEnd**(): `Promise`<`BigNumber`\>
+▸ **getEnd**(): `Promise`\<`BigNumber`\>
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 ___
 
 ### getHardCap
 
-▸ **getHardCap**(): `Promise`<`BigNumber`\>
+▸ **getHardCap**(): `Promise`\<`BigNumber`\>
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 ___
 
 ### getRatio
 
-▸ **getRatio**(): `Promise`<`BigNumber`\>
+▸ **getRatio**(): `Promise`\<`BigNumber`\>
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 ___
 
 ### getStake
 
-▸ **getStake**(): `Promise`<[`Stake`](../modules/modules_staking.md#stake)\>
+▸ **getStake**(): `Promise`\<[`Stake`](../modules/modules_staking.md#stake)\>
 
 #### Returns
 
-`Promise`<[`Stake`](../modules/modules_staking.md#stake)\>
+`Promise`\<[`Stake`](../modules/modules_staking.md#stake)\>
 
 Stake
 
@@ -105,29 +109,27 @@ ___
 
 ### getStart
 
-▸ **getStart**(): `Promise`<`BigNumber`\>
+▸ **getStart**(): `Promise`\<`BigNumber`\>
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 ___
 
 ### getTotalStaked
 
-▸ **getTotalStaked**(): `Promise`<`BigNumber`\>
+▸ **getTotalStaked**(): `Promise`\<`BigNumber`\>
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 ___
 
 ### partialWithdraw
 
-▸ **partialWithdraw**(`value`): `Promise`<`ContractReceipt`\>
-
-**`Description`**
+▸ **partialWithdraw**(`value`): `Promise`\<`ContractReceipt`\>
 
 #### Parameters
 
@@ -137,21 +139,15 @@ ___
 
 #### Returns
 
-`Promise`<`ContractReceipt`\>
+`Promise`\<`ContractReceipt`\>
+
+**`Description`**
 
 ___
 
 ### putStake
 
-▸ **putStake**(`stake`): `Promise`<`void`\>
-
-**`Description`**
-
-Locks stake and starts accumulating reward
-
-**`Emits`**
-
-StakingPool.StakePut
+▸ **putStake**(`stake`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -161,18 +157,26 @@ StakingPool.StakePut
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
+
+**`Description`**
+
+Locks stake and starts accumulating reward
+
+**`Emits`**
+
+StakingPool.StakePut
 
 ___
 
 ### withdraw
 
-▸ **withdraw**(): `Promise`<`void`\>
+▸ **withdraw**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
 
 **`Description`**
 
 pays back stake with accumulated reward.
-
-#### Returns
-
-`Promise`<`void`\>

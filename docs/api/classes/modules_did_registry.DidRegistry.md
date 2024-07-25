@@ -48,7 +48,7 @@ didRegistry.getDidDocument();
 
 ### constructor
 
-• **new DidRegistry**(`_signerService`, `_cacheClient`, `_assetsService`, `_ipfsConfig`)
+• **new DidRegistry**(`_signerService`, `_cacheClient`, `_assetsService`, `_ipfsConfig`): [`DidRegistry`](modules_did_registry.DidRegistry.md)
 
 #### Parameters
 
@@ -58,6 +58,10 @@ didRegistry.getDidDocument();
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 | `_assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
 | `_ipfsConfig` | [`IpfsConfig`](../interfaces/modules_did_registry.IpfsConfig.md) |
+
+#### Returns
+
+[`DidRegistry`](modules_did_registry.DidRegistry.md)
 
 ## Accessors
 
@@ -103,7 +107,7 @@ ___
 
 ### createDocument
 
-▸ **createDocument**(): `Promise`<`boolean`\>
+▸ **createDocument**(): `Promise`\<`boolean`\>
 
 Create DID document of the current user if not exists.
 
@@ -113,7 +117,7 @@ didRegistry.createDocument();
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if document was created successfully
 
@@ -121,7 +125,7 @@ ___
 
 ### createPublicClaim
 
-▸ **createPublicClaim**(`options`): `Promise`<`string`\>
+▸ **createPublicClaim**(`options`): `Promise`\<`string`\>
 
 Create a public claim with provided data.
 
@@ -143,7 +147,7 @@ didRegistry.createPublicClaim({
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 JWT token of created claim
 
@@ -151,7 +155,7 @@ ___
 
 ### decodeJWTToken
 
-▸ **decodeJWTToken**(`options`): `Promise`<`unknown`\>
+▸ **decodeJWTToken**(`options`): `Promise`\<`unknown`\>
 
 Decode JWT token of the public claim.
 
@@ -169,7 +173,7 @@ didRegistry.decodeJWTToken({
 
 #### Returns
 
-`Promise`<`unknown`\>
+`Promise`\<`unknown`\>
 
 payload of the JWT token
 
@@ -177,7 +181,7 @@ ___
 
 ### getDidDelegates
 
-▸ **getDidDelegates**(`options?`): `Promise`<`undefined` \| `string`[]\>
+▸ **getDidDelegates**(`options?`): `Promise`\<`undefined` \| `string`[]\>
 
 Gets delegates from DID document of the given DID.
 
@@ -195,7 +199,7 @@ didRegistry.getDidDelegates({
 
 #### Returns
 
-`Promise`<`undefined` \| `string`[]\>
+`Promise`\<`undefined` \| `string`[]\>
 
 list of delegates
 
@@ -203,7 +207,7 @@ ___
 
 ### getDidDocument
 
-▸ **getDidDocument**(`options?`): `Promise`<`IDIDDocument`\>
+▸ **getDidDocument**(`options?`): `Promise`\<`IDIDDocument`\>
 
 Retrieve DID Document of the given DID from SSI-Hub if possible, otherwise from blockchain.
 Optionally include claims object within services in the document.
@@ -223,7 +227,7 @@ didRegistry.getDidDocument({
 
 #### Returns
 
-`Promise`<`IDIDDocument`\>
+`Promise`\<`IDIDDocument`\>
 
 DID document
 
@@ -231,7 +235,7 @@ ___
 
 ### getDidPublicKeys
 
-▸ **getDidPublicKeys**(`options?`): `Promise`<`IPublicKey`[]\>
+▸ **getDidPublicKeys**(`options?`): `Promise`\<`IPublicKey`[]\>
 
 Gets public keys from DID document of the given DID.
 
@@ -249,7 +253,7 @@ didRegistry.getDidPublicKeys({
 
 #### Returns
 
-`Promise`<`IPublicKey`[]\>
+`Promise`\<`IPublicKey`[]\>
 
 list of public keys
 
@@ -257,7 +261,7 @@ ___
 
 ### getServices
 
-▸ **getServices**(`options?`): `Promise`<`IServiceEndpoint`[]\>
+▸ **getServices**(`options?`): `Promise`\<`IServiceEndpoint`[]\>
 
 Gets services from DID document of the given DID.
 
@@ -275,7 +279,7 @@ didRegistry.getServices({
 
 #### Returns
 
-`Promise`<`IServiceEndpoint`[]\>
+`Promise`\<`IServiceEndpoint`[]\>
 
 list of claims
 
@@ -283,11 +287,11 @@ ___
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
@@ -317,7 +321,7 @@ ___
 
 ### issuePublicClaim
 
-▸ **issuePublicClaim**(`options`): `Promise`<`string`\>
+▸ **issuePublicClaim**(`options`): `Promise`\<`string`\>
 
 If token provided issue new token signed by issuer,
 otherwise create a new claim token based on provided public claim data.
@@ -343,7 +347,7 @@ didRegistry.issuePublicClaim({
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 JWT token of created claim
 
@@ -351,7 +355,7 @@ ___
 
 ### revokeDidDocument
 
-▸ **revokeDidDocument**(): `Promise`<`boolean`\>
+▸ **revokeDidDocument**(): `Promise`\<`boolean`\>
 
 Revoke DID document of the current user.
 
@@ -361,7 +365,7 @@ didRegistry.revokeDidDocument();
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if document was revoked successfully
 
@@ -369,7 +373,7 @@ ___
 
 ### updateDocument
 
-▸ **updateDocument**(`«destructured»`): `Promise`<`boolean`\>
+▸ **updateDocument**(`«destructured»`): `Promise`\<`boolean`\>
 
 Update DID document of the given DID with provided data.
 
@@ -392,13 +396,13 @@ didRegistry.updateDocument({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 ___
 
 ### updateSignedDidDelegate
 
-▸ **updateSignedDidDelegate**(`«destructured»`): `Promise`<`boolean`\>
+▸ **updateSignedDidDelegate**(`«destructured»`): `Promise`\<`boolean`\>
 
 Updates delegate of the DID document of given DID.
 
@@ -422,13 +426,13 @@ didRegistry.updateSignedDidDelegate({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 ___
 
 ### updateSignedDidPublicKey
 
-▸ **updateSignedDidPublicKey**(`«destructured»`): `Promise`<`boolean`\>
+▸ **updateSignedDidPublicKey**(`«destructured»`): `Promise`\<`boolean`\>
 
 Adds public key to the DID document of given DID.
 
@@ -453,13 +457,13 @@ didRegistry.updateSignedDidPublicKey({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 ___
 
 ### verifyPublicClaim
 
-▸ **verifyPublicClaim**(`token`, `iss`): `Promise`<``null`` \| `string`\>
+▸ **verifyPublicClaim**(`token`, `iss`): `Promise`\<``null`` \| `string`\>
 
 Verifies issued token of the public claim.
 
@@ -479,7 +483,7 @@ didRegistry.verifyPublicClaim({
 
 #### Returns
 
-`Promise`<``null`` \| `string`\>
+`Promise`\<``null`` \| `string`\>
 
 DID of the authenticated identity on successful verification or null otherwise
 
@@ -487,7 +491,7 @@ ___
 
 ### connect
 
-▸ `Static` **connect**(`signerService`, `cacheClient`, `assetsService`, `ipfsConfig`): `Promise`<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
+▸ **connect**(`signerService`, `cacheClient`, `assetsService`, `ipfsConfig`): `Promise`\<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
 
 #### Parameters
 
@@ -500,4 +504,4 @@ ___
 
 #### Returns
 
-`Promise`<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
+`Promise`\<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>

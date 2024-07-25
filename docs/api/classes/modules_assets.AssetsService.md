@@ -37,7 +37,7 @@ assetsService.registerAsset();
 
 ### constructor
 
-• **new AssetsService**(`_signerService`, `_cacheClient`)
+• **new AssetsService**(`_signerService`, `_cacheClient`): [`AssetsService`](modules_assets.AssetsService.md)
 
 #### Parameters
 
@@ -46,11 +46,15 @@ assetsService.registerAsset();
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
+#### Returns
+
+[`AssetsService`](modules_assets.AssetsService.md)
+
 ## Methods
 
 ### acceptAssetOffer
 
-▸ **acceptAssetOffer**(`options`): `Promise`<`void`\>
+▸ **acceptAssetOffer**(`options`): `Promise`\<`void`\>
 
 Accept an offered asset.
 
@@ -68,13 +72,13 @@ assetsService.acceptAssetOffer({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### cancelAssetOffer
 
-▸ **cancelAssetOffer**(`options`): `Promise`<`void`\>
+▸ **cancelAssetOffer**(`options`): `Promise`\<`void`\>
 
 Cancel an asset offer.
 
@@ -92,13 +96,13 @@ assetsService.cancelAssetOffer({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### getAssetById
 
-▸ **getAssetById**(`options`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)\>
+▸ **getAssetById**(`options`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)\>
 
 Retrieve asset by id.
 
@@ -116,7 +120,7 @@ assetsService.getAssetById({
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)\>
 
 asset
 
@@ -124,7 +128,7 @@ ___
 
 ### getAssetHistory
 
-▸ **getAssetHistory**(`options`): `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
+▸ **getAssetHistory**(`options`): `Promise`\<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
 Retrieve history of a given asset DID
 
@@ -146,7 +150,7 @@ assetsService.getAssetHistory({
 
 #### Returns
 
-`Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
+`Promise`\<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
 asset history
 
@@ -154,7 +158,7 @@ ___
 
 ### getAssetOwner
 
-▸ **getAssetOwner**(`id`): `Promise`<`string`\>
+▸ **getAssetOwner**(`id`): `Promise`\<`string`\>
 
 Retrieve DID of the asset owner of the given asset DID.
 
@@ -170,7 +174,7 @@ assetsService.getAssetOwner('did:ethr:volta:0x000...1');
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 asset owner DID
 
@@ -178,7 +182,7 @@ ___
 
 ### getOfferedAssets
 
-▸ **getOfferedAssets**(`options?`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getOfferedAssets**(`options?`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 Retrieve assets offered to the given user.
 
@@ -196,7 +200,7 @@ assetsService.getOfferedAssets({
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 offered assets
 
@@ -204,7 +208,7 @@ ___
 
 ### getOwnedAssets
 
-▸ **getOwnedAssets**(`options?`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getOwnedAssets**(`options?`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 Retrieve owned assets of the given user.
 
@@ -222,7 +226,7 @@ assetsService.getOwnedAssets({
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 owned assets
 
@@ -230,7 +234,7 @@ ___
 
 ### getPreviouslyOwnedAssets
 
-▸ **getPreviouslyOwnedAssets**(`options`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getPreviouslyOwnedAssets**(`options`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 Retrieve previously owned assets of the given user.
 
@@ -248,7 +252,7 @@ assetsService.getPreviouslyOwnedAssets({
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 previously owned assets
 
@@ -256,17 +260,17 @@ ___
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### offerAsset
 
-▸ **offerAsset**(`options`): `Promise`<`void`\>
+▸ **offerAsset**(`options`): `Promise`\<`void`\>
 
 Send an asset offer transfer to a given address
 
@@ -285,13 +289,13 @@ assetsService.offerAsset({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### registerAsset
 
-▸ **registerAsset**(): `Promise`<`string`\>
+▸ **registerAsset**(): `Promise`\<`string`\>
 
 Register a new asset to the user.
 
@@ -301,7 +305,7 @@ assetsService.registerAsset();
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 asset address
 
@@ -309,7 +313,7 @@ ___
 
 ### rejectAssetOffer
 
-▸ **rejectAssetOffer**(`options`): `Promise`<`void`\>
+▸ **rejectAssetOffer**(`options`): `Promise`\<`void`\>
 
 Reject an offered asset.
 
@@ -327,13 +331,13 @@ assetsService.rejectAssetOffer({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `cacheClient`): `Promise`<[`AssetsService`](modules_assets.AssetsService.md)\>
+▸ **create**(`signerService`, `cacheClient`): `Promise`\<[`AssetsService`](modules_assets.AssetsService.md)\>
 
 #### Parameters
 
@@ -344,4 +348,4 @@ ___
 
 #### Returns
 
-`Promise`<[`AssetsService`](modules_assets.AssetsService.md)\>
+`Promise`\<[`AssetsService`](modules_assets.AssetsService.md)\>
