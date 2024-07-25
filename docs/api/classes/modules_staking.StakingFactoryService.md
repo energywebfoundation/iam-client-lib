@@ -20,7 +20,7 @@ Intended for staking pool
 
 ### constructor
 
-• **new StakingFactoryService**(`_signerService`, `_domainsService`)
+• **new StakingFactoryService**(`_signerService`, `_domainsService`): [`StakingFactoryService`](modules_staking.StakingFactoryService.md)
 
 #### Parameters
 
@@ -29,39 +29,43 @@ Intended for staking pool
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_domainsService` | [`DomainsService`](modules_domains.DomainsService.md) |
 
+#### Returns
+
+[`StakingFactoryService`](modules_staking.StakingFactoryService.md)
+
 ## Methods
 
 ### allServices
 
-▸ **allServices**(): `Promise`<[`Service`](../modules/modules_staking.md#service)[]\>
+▸ **allServices**(): `Promise`\<[`Service`](../modules/modules_staking.md#service)[]\>
+
+#### Returns
+
+`Promise`\<[`Service`](../modules/modules_staking.md#service)[]\>
 
 **`Description`**
 
 Returns all services for which pools are launched
 
-#### Returns
-
-`Promise`<[`Service`](../modules/modules_staking.md#service)[]\>
-
 ___
 
 ### getPool
 
-▸ **getPool**(): `Promise`<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
+▸ **getPool**(): `Promise`\<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
+
+#### Returns
+
+`Promise`\<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
 
 **`Description`**
 
 Returns pool launched for energyweb org
 
-#### Returns
-
-`Promise`<[`StakingPoolService`](modules_staking.StakingPoolService.md)\>
-
 ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `domainsService`): `Promise`<[`StakingFactoryService`](modules_staking.StakingFactoryService.md)\>
+▸ **create**(`signerService`, `domainsService`): `Promise`\<[`StakingFactoryService`](modules_staking.StakingFactoryService.md)\>
 
 #### Parameters
 
@@ -72,4 +76,4 @@ ___
 
 #### Returns
 
-`Promise`<[`StakingFactoryService`](modules_staking.StakingFactoryService.md)\>
+`Promise`\<[`StakingFactoryService`](modules_staking.StakingFactoryService.md)\>

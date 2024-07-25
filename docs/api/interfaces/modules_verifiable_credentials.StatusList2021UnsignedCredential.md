@@ -17,7 +17,7 @@
 
 ### @context
 
-• **@context**: (`string` \| `Record`<`string`, `unknown`\>)[]
+• **@context**: (`string` \| `Record`\<`string`, `unknown`\>)[]
 
 ___
 

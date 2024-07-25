@@ -21,4 +21,4 @@ ___
 
 ### claims
 
-• `Optional` **claims**: { `namespace`: `string` ; `subject`: `string`  }[]
+• `Optional` **claims**: \{ `namespace`: `string` ; `subject`: `string`  }[]

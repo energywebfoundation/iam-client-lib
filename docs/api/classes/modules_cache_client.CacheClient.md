@@ -65,13 +65,17 @@
 
 ### constructor
 
-• **new CacheClient**(`_signerService`)
+• **new CacheClient**(`_signerService`): [`CacheClient`](modules_cache_client.CacheClient.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
+
+#### Returns
+
+[`CacheClient`](modules_cache_client.CacheClient.md)
 
 ## Accessors
 
@@ -87,7 +91,7 @@
 
 ### addDIDToWatchList
 
-▸ **addDIDToWatchList**(`did`): `Promise`<`void`\>
+▸ **addDIDToWatchList**(`did`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -97,7 +101,7 @@
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 
@@ -107,7 +111,7 @@ ___
 
 ### addStatusToCredential
 
-▸ **addStatusToCredential**(`credential`): `Promise`<`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & { `credentialStatus`: `StatusList2021Entry`  }\>
+▸ **addStatusToCredential**(`credential`): `Promise`\<`Credential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & \{ `credentialStatus`: `StatusList2021Entry`  }\>
 
 Sets location of the credential status
 
@@ -115,11 +119,11 @@ Sets location of the credential status
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `credential` | `Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | unsigned credential |
+| `credential` | `Credential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | unsigned credential |
 
 #### Returns
 
-`Promise`<`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & { `credentialStatus`: `StatusList2021Entry`  }\>
+`Promise`\<`Credential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & \{ `credentialStatus`: `StatusList2021Entry`  }\>
 
 credential with reference to status location
 
@@ -127,17 +131,17 @@ ___
 
 ### authenticate
 
-▸ **authenticate**(): `Promise`<`void`\>
+▸ **authenticate**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### deleteClaim
 
-▸ **deleteClaim**(`id`): `Promise`<`void`\>
+▸ **deleteClaim**(`id`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -147,7 +151,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 
@@ -157,7 +161,7 @@ ___
 
 ### getAllowedRolesByIssuer
 
-▸ **getAllowedRolesByIssuer**(`did`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getAllowedRolesByIssuer**(`did`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Parameters
 
@@ -167,13 +171,13 @@ ___
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 ___
 
 ### getAppDefinition
 
-▸ **getAppDefinition**(`namespace`): `Promise`<`IAppDefinition`\>
+▸ **getAppDefinition**(`namespace`): `Promise`\<`IAppDefinition`\>
 
 #### Parameters
 
@@ -183,7 +187,7 @@ ___
 
 #### Returns
 
-`Promise`<`IAppDefinition`\>
+`Promise`\<`IAppDefinition`\>
 
 #### Implementation of
 
@@ -193,7 +197,7 @@ ___
 
 ### getApplicationRoles
 
-▸ **getApplicationRoles**(`namespace`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getApplicationRoles**(`namespace`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Parameters
 
@@ -203,7 +207,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Implementation of
 
@@ -213,7 +217,7 @@ ___
 
 ### getApplicationsByOrganization
 
-▸ **getApplicationsByOrganization**(`namespace`): `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+▸ **getApplicationsByOrganization**(`namespace`): `Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
 #### Parameters
 
@@ -223,7 +227,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+`Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
 #### Implementation of
 
@@ -233,7 +237,7 @@ ___
 
 ### getApplicationsByOwner
 
-▸ **getApplicationsByOwner**(`owner`, `withRelations?`): `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+▸ **getApplicationsByOwner**(`owner`, `withRelations?`): `Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
 #### Parameters
 
@@ -244,7 +248,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+`Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
 #### Implementation of
 
@@ -254,7 +258,7 @@ ___
 
 ### getAssetById
 
-▸ **getAssetById**(`id`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)\>
+▸ **getAssetById**(`id`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)\>
 
 #### Parameters
 
@@ -264,7 +268,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)\>
 
 #### Implementation of
 
@@ -274,7 +278,7 @@ ___
 
 ### getAssetHistory
 
-▸ **getAssetHistory**(`id`, `«destructured»?`): `Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
+▸ **getAssetHistory**(`id`, `«destructured»?`): `Promise`\<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
 #### Parameters
 
@@ -285,7 +289,7 @@ ___
 
 #### Returns
 
-`Promise`<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
+`Promise`\<[`AssetHistory`](../interfaces/modules_assets.AssetHistory.md)[]\>
 
 #### Implementation of
 
@@ -295,7 +299,7 @@ ___
 
 ### getClaimById
 
-▸ **getClaimById**(`claimId`): `Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
+▸ **getClaimById**(`claimId`): `Promise`\<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
 
 #### Parameters
 
@@ -305,7 +309,7 @@ ___
 
 #### Returns
 
-`Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
+`Promise`\<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
 
 #### Implementation of
 
@@ -315,7 +319,7 @@ ___
 
 ### getClaimsByIssuer
 
-▸ **getClaimsByIssuer**(`issuer`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByIssuer**(`issuer`, `«destructured»?`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
@@ -326,7 +330,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Implementation of
 
@@ -336,7 +340,7 @@ ___
 
 ### getClaimsByRequester
 
-▸ **getClaimsByRequester**(`requester`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRequester**(`requester`, `«destructured»?`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
@@ -347,7 +351,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Implementation of
 
@@ -357,7 +361,7 @@ ___
 
 ### getClaimsByRevoker
 
-▸ **getClaimsByRevoker**(`revoker`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRevoker**(`revoker`, `«destructured»?`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
@@ -368,7 +372,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Implementation of
 
@@ -378,7 +382,7 @@ ___
 
 ### getClaimsBySubject
 
-▸ **getClaimsBySubject**(`subject`, `«destructured»?`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsBySubject**(`subject`, `«destructured»?`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
@@ -389,7 +393,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Implementation of
 
@@ -399,7 +403,7 @@ ___
 
 ### getClaimsBySubjects
 
-▸ **getClaimsBySubjects**(`subjects`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsBySubjects**(`subjects`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Parameters
 
@@ -409,7 +413,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 #### Implementation of
 
@@ -419,7 +423,7 @@ ___
 
 ### getDIDsForRole
 
-▸ **getDIDsForRole**(`namespace`): `Promise`<`string`[]\>
+▸ **getDIDsForRole**(`namespace`): `Promise`\<`string`[]\>
 
 #### Parameters
 
@@ -429,7 +433,7 @@ ___
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]\>
 
 #### Implementation of
 
@@ -439,7 +443,7 @@ ___
 
 ### getDidDocument
 
-▸ **getDidDocument**(`did`, `includeClaims?`): `Promise`<`IDIDDocument`\>
+▸ **getDidDocument**(`did`, `includeClaims?`): `Promise`\<`IDIDDocument`\>
 
 #### Parameters
 
@@ -450,7 +454,7 @@ ___
 
 #### Returns
 
-`Promise`<`IDIDDocument`\>
+`Promise`\<`IDIDDocument`\>
 
 #### Implementation of
 
@@ -460,7 +464,7 @@ ___
 
 ### getNamespaceBySearchPhrase
 
-▸ **getNamespaceBySearchPhrase**(`search`, `types?`): `Promise`<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
+▸ **getNamespaceBySearchPhrase**(`search`, `types?`): `Promise`\<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
 
 #### Parameters
 
@@ -471,7 +475,7 @@ ___
 
 #### Returns
 
-`Promise`<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
+`Promise`\<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
 
 #### Implementation of
 
@@ -481,7 +485,7 @@ ___
 
 ### getOfferedAssets
 
-▸ **getOfferedAssets**(`did`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getOfferedAssets**(`did`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 #### Parameters
 
@@ -491,7 +495,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 #### Implementation of
 
@@ -501,7 +505,7 @@ ___
 
 ### getOrgDefinition
 
-▸ **getOrgDefinition**(`namespace`): `Promise`<`IOrganizationDefinition`\>
+▸ **getOrgDefinition**(`namespace`): `Promise`\<`IOrganizationDefinition`\>
 
 #### Parameters
 
@@ -511,7 +515,7 @@ ___
 
 #### Returns
 
-`Promise`<`IOrganizationDefinition`\>
+`Promise`\<`IOrganizationDefinition`\>
 
 #### Implementation of
 
@@ -521,7 +525,7 @@ ___
 
 ### getOrgHierarchy
 
-▸ **getOrgHierarchy**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
+▸ **getOrgHierarchy**(`namespace`): `Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
 
 #### Parameters
 
@@ -531,7 +535,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
+`Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
 
 #### Implementation of
 
@@ -541,7 +545,7 @@ ___
 
 ### getOrganizationRoles
 
-▸ **getOrganizationRoles**(`namespace`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getOrganizationRoles**(`namespace`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Parameters
 
@@ -551,7 +555,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Implementation of
 
@@ -561,7 +565,7 @@ ___
 
 ### getOrganizationsByOwner
 
-▸ **getOrganizationsByOwner**(`owner`, `withRelations?`): `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+▸ **getOrganizationsByOwner**(`owner`, `withRelations?`): `Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 #### Parameters
 
@@ -572,7 +576,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+`Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 #### Implementation of
 
@@ -582,7 +586,7 @@ ___
 
 ### getOwnedAssets
 
-▸ **getOwnedAssets**(`did`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getOwnedAssets**(`did`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 #### Parameters
 
@@ -592,7 +596,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 #### Implementation of
 
@@ -602,7 +606,7 @@ ___
 
 ### getPreviouslyOwnedAssets
 
-▸ **getPreviouslyOwnedAssets**(`owner`): `Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+▸ **getPreviouslyOwnedAssets**(`owner`): `Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 #### Parameters
 
@@ -612,7 +616,7 @@ ___
 
 #### Returns
 
-`Promise`<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](../interfaces/modules_assets.Asset.md)[]\>
 
 #### Implementation of
 
@@ -622,7 +626,7 @@ ___
 
 ### getRoleDefinition
 
-▸ **getRoleDefinition**(`namespace`): `Promise`<`IRoleDefinition` \| `IRoleDefinitionV2`\>
+▸ **getRoleDefinition**(`namespace`): `Promise`\<`IRoleDefinition` \| `IRoleDefinitionV2`\>
 
 #### Parameters
 
@@ -632,7 +636,7 @@ ___
 
 #### Returns
 
-`Promise`<`IRoleDefinition` \| `IRoleDefinitionV2`\>
+`Promise`\<`IRoleDefinition` \| `IRoleDefinitionV2`\>
 
 #### Implementation of
 
@@ -642,7 +646,7 @@ ___
 
 ### getRolesByOwner
 
-▸ **getRolesByOwner**(`owner`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getRolesByOwner**(`owner`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Parameters
 
@@ -652,7 +656,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Implementation of
 
@@ -662,7 +666,7 @@ ___
 
 ### getRolesByRevoker
 
-▸ **getRolesByRevoker**(`revoker`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getRolesByRevoker**(`revoker`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Parameters
 
@@ -672,7 +676,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Implementation of
 
@@ -682,7 +686,7 @@ ___
 
 ### getRolesDefinition
 
-▸ **getRolesDefinition**(`namespaces`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+▸ **getRolesDefinition**(`namespaces`): `Promise`\<`Record`\<`string`, `IRoleDefinition`\>\>
 
 #### Parameters
 
@@ -692,7 +696,7 @@ ___
 
 #### Returns
 
-`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+`Promise`\<`Record`\<`string`, `IRoleDefinition`\>\>
 
 #### Implementation of
 
@@ -702,7 +706,7 @@ ___
 
 ### getStatusListCredential
 
-▸ **getStatusListCredential**(`credential`): `Promise`<``null`` \| [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+▸ **getStatusListCredential**(`credential`): `Promise`\<``null`` \| [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
 
 Fetch the StatusList2021Credential object from storage.
 
@@ -710,11 +714,11 @@ Fetch the StatusList2021Credential object from storage.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential with status list 2021 |
+| `credential` | `VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential with status list 2021 |
 
 #### Returns
 
-`Promise`<``null`` \| [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+`Promise`\<``null`` \| [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
 
 status list credential if found
 
@@ -722,7 +726,7 @@ ___
 
 ### getSubOrganizationsByOrganization
 
-▸ **getSubOrganizationsByOrganization**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+▸ **getSubOrganizationsByOrganization**(`namespace`): `Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 #### Parameters
 
@@ -732,7 +736,7 @@ ___
 
 #### Returns
 
-`Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+`Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 #### Implementation of
 
@@ -742,17 +746,17 @@ ___
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### initiateCredentialStatusUpdate
 
-▸ **initiateCredentialStatusUpdate**(`verifiableCredential`): `Promise`<[`StatusList2021UnsignedCredential`](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)\>
+▸ **initiateCredentialStatusUpdate**(`verifiableCredential`): `Promise`\<[`StatusList2021UnsignedCredential`](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)\>
 
 Get the StatusList2021Credential object to be signed
 
@@ -760,11 +764,11 @@ Get the StatusList2021Credential object to be signed
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential to be revoked |
+| `verifiableCredential` | `VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential to be revoked |
 
 #### Returns
 
-`Promise`<[`StatusList2021UnsignedCredential`](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)\>
+`Promise`\<[`StatusList2021UnsignedCredential`](../interfaces/modules_verifiable_credentials.StatusList2021UnsignedCredential.md)\>
 
 unsigned status list credential
 
@@ -782,17 +786,17 @@ ___
 
 ### isAuthenticated
 
-▸ **isAuthenticated**(): `Promise`<`boolean`\>
+▸ **isAuthenticated**(): `Promise`\<`boolean`\>
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 ___
 
 ### issueClaim
 
-▸ **issueClaim**(`issuer`, `message`): `Promise`<`void`\>
+▸ **issueClaim**(`issuer`, `message`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -803,7 +807,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 
@@ -813,17 +817,17 @@ ___
 
 ### login
 
-▸ **login**(): `Promise`<`void`\>
+▸ **login**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### persistCredentialStatusUpdate
 
-▸ **persistCredentialStatusUpdate**(`statusListCredential`): `Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+▸ **persistCredentialStatusUpdate**(`statusListCredential`): `Promise`\<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
 
 Persist signed StatusList2021Credential object in storage.
 
@@ -835,7 +839,7 @@ Persist signed StatusList2021Credential object in storage.
 
 #### Returns
 
-`Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+`Promise`\<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
 
 status list credential
 
@@ -843,7 +847,7 @@ ___
 
 ### rejectClaim
 
-▸ **rejectClaim**(`issuer`, `message`): `Promise`<`void`\>
+▸ **rejectClaim**(`issuer`, `message`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -854,7 +858,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 
@@ -864,7 +868,7 @@ ___
 
 ### requestClaim
 
-▸ **requestClaim**(`message`): `Promise`<`void`\>
+▸ **requestClaim**(`message`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -874,7 +878,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 

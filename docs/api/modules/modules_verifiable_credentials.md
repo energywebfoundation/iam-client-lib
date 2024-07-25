@@ -40,7 +40,7 @@
 
 ### StatusList2021Credential
 
-Ƭ **StatusList2021Credential**: `VerifiableCredential`<[`StatusList2021CredentialSubject`](../interfaces/modules_verifiable_credentials.StatusList2021CredentialSubject.md)\>
+Ƭ **StatusList2021Credential**: `VerifiableCredential`\<[`StatusList2021CredentialSubject`](../interfaces/modules_verifiable_credentials.StatusList2021CredentialSubject.md)\>
 
 ## Variables
 
@@ -53,9 +53,9 @@
 | Name | Type |
 | :------ | :------ |
 | `EIP712Domain` | `never`[] |
-| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
-| `StatusList2021` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
-| `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+| `Proof` | \{ `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `StatusList2021` | \{ `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `VerifiableCredential` | \{ `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
 
 ___
 
@@ -67,13 +67,13 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `CredentialSubject` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `CredentialSubject` | \{ `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `EIP712Domain` | `never`[] |
-| `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
-| `IssuerFields` | { `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
-| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
-| `StatusList2021Entry` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
-| `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+| `EWFRole` | \{ `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
+| `IssuerFields` | \{ `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
+| `Proof` | \{ `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `StatusList2021Entry` | \{ `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `VerifiableCredential` | \{ `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
 
 ___
 
@@ -86,8 +86,8 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `EIP712Domain` | `never`[] |
-| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
-| `VerifiablePresentation` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+| `Proof` | \{ `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `VerifiablePresentation` | \{ `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
 
 ___
 
@@ -99,25 +99,25 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `CredentialSubject` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `CredentialSubject` | \{ `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
 | `EIP712Domain` | `never`[] |
-| `EWFRole` | { `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
-| `IssuerFields` | { `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
-| `Proof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
-| `StatusList2021Entry` | { `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
-| `VC712Domain` | { `name`: `string` = 'domain'; `type`: `string` = 'VC712DomainData' }[] |
+| `EWFRole` | \{ `name`: `string` = 'namespace'; `type`: `string` = 'string' }[] |
+| `IssuerFields` | \{ `name`: `string` = 'key'; `type`: `string` = 'string' }[] |
+| `Proof` | \{ `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `StatusList2021Entry` | \{ `name`: `string` = 'id'; `type`: `string` = 'string' }[] |
+| `VC712Domain` | \{ `name`: `string` = 'domain'; `type`: `string` = 'VC712DomainData' }[] |
 | `VC712DomainData` | `never`[] |
-| `VC712DomainSchema` | { `name`: `string` = 'StatusList2021Entry'; `type`: `string` = 'VC712DomainTypedDataField[]' }[] |
-| `VC712DomainTypedDataField` | { `name`: `string` = 'name'; `type`: `string` = 'string' }[] |
-| `VCProof` | { `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
-| `VerifiableCredential` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
-| `VerifiablePresentation` | { `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+| `VC712DomainSchema` | \{ `name`: `string` = 'StatusList2021Entry'; `type`: `string` = 'VC712DomainTypedDataField[]' }[] |
+| `VC712DomainTypedDataField` | \{ `name`: `string` = 'name'; `type`: `string` = 'string' }[] |
+| `VCProof` | \{ `name`: `string` = '@context'; `type`: `string` = 'string' }[] |
+| `VerifiableCredential` | \{ `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
+| `VerifiablePresentation` | \{ `name`: `string` = '@context'; `type`: `string` = 'string[]' }[] |
 
 ## Functions
 
 ### getVerifiableCredentialsService
 
-▸ **getVerifiableCredentialsService**(`signerService`, `cacheClient`): `Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ **getVerifiableCredentialsService**(`signerService`, `cacheClient`): `Promise`\<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
@@ -128,23 +128,23 @@ ___
 
 #### Returns
 
-`Promise`<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+`Promise`\<[`VerifiableCredentialsServiceBase`](../classes/modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 ___
 
 ### isRoleCredential
 
-▸ **isRoleCredential**(`credential`): credential is VerifiableCredential<RoleCredentialSubject\>
+▸ **isRoleCredential**(`credential`): credential is VerifiableCredential\<RoleCredentialSubject\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `credential` | `VerifiableCredential`<`ICredentialSubject`\> |
+| `credential` | `VerifiableCredential`\<`ICredentialSubject`\> |
 
 #### Returns
 
-credential is VerifiableCredential<RoleCredentialSubject\>
+credential is VerifiableCredential\<RoleCredentialSubject\>
 
 ___
 

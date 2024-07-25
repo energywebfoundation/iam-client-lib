@@ -15,7 +15,7 @@
 
 ### headers
 
-• `Optional` **headers**: `Record`<`string`, `any`\>
+• `Optional` **headers**: `Record`\<`string`, `any`\>
 
 ___
 

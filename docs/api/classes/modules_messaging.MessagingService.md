@@ -27,7 +27,7 @@ messagingService.subscribeTo(...);
 
 ### constructor
 
-• **new MessagingService**(`_signerService`)
+• **new MessagingService**(`_signerService`): [`MessagingService`](modules_messaging.MessagingService.md)
 
 #### Parameters
 
@@ -35,15 +35,19 @@ messagingService.subscribeTo(...);
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 
+#### Returns
+
+[`MessagingService`](modules_messaging.MessagingService.md)
+
 ## Methods
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
@@ -72,7 +76,7 @@ ___
 
 ### subscribeTo
 
-▸ **subscribeTo**(`options`): `Promise`<`undefined` \| `number`\>
+▸ **subscribeTo**(`options`): `Promise`\<`undefined` \| `number`\>
 
 Subscribe to messages on the given subject.
 
@@ -91,7 +95,7 @@ messagingService.subscribeTo({
 
 #### Returns
 
-`Promise`<`undefined` \| `number`\>
+`Promise`\<`undefined` \| `number`\>
 
 subscription id
 
@@ -99,7 +103,7 @@ ___
 
 ### unsubscribeFrom
 
-▸ **unsubscribeFrom**(`subscriptionId`): `Promise`<`void`\>
+▸ **unsubscribeFrom**(`subscriptionId`): `Promise`\<`void`\>
 
 Unsubscribe from the given subscription id.
 
@@ -115,13 +119,13 @@ messagingService.unsubscribeFrom(55);
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### create
 
-▸ `Static` **create**(`signerService`): `Promise`<[`MessagingService`](modules_messaging.MessagingService.md)\>
+▸ **create**(`signerService`): `Promise`\<[`MessagingService`](modules_messaging.MessagingService.md)\>
 
 #### Parameters
 
@@ -131,4 +135,4 @@ ___
 
 #### Returns
 
-`Promise`<[`MessagingService`](modules_messaging.MessagingService.md)\>
+`Promise`\<[`MessagingService`](modules_messaging.MessagingService.md)\>

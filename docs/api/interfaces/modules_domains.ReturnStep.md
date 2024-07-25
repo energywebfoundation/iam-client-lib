@@ -20,15 +20,15 @@ ___
 
 ### next
 
-• **next**: () => `Promise`<`void`\>
+• **next**: () => `Promise`\<`void`\>
 
 #### Type declaration
 
-▸ (): `Promise`<`void`\>
+▸ (): `Promise`\<`void`\>
 
 ##### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 

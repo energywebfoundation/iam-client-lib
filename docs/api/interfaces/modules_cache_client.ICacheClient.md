@@ -47,11 +47,11 @@
 
 ### addDIDToWatchList
 
-• **addDIDToWatchList**: (`did`: `string`) => `Promise`<`void`\>
+• **addDIDToWatchList**: (`did`: `string`) => `Promise`\<`void`\>
 
 #### Type declaration
 
-▸ (`did`): `Promise`<`void`\>
+▸ (`did`): `Promise`\<`void`\>
 
 ##### Parameters
 
@@ -61,17 +61,17 @@
 
 ##### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### deleteClaim
 
-• **deleteClaim**: (`claimId`: `string`) => `Promise`<`void`\>
+• **deleteClaim**: (`claimId`: `string`) => `Promise`\<`void`\>
 
 #### Type declaration
 
-▸ (`claimId`): `Promise`<`void`\>
+▸ (`claimId`): `Promise`\<`void`\>
 
 ##### Parameters
 
@@ -81,17 +81,17 @@ ___
 
 ##### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### getAppDefinition
 
-• **getAppDefinition**: (`namespace`: `string`) => `Promise`<`IAppDefinition`\>
+• **getAppDefinition**: (`namespace`: `string`) => `Promise`\<`IAppDefinition`\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<`IAppDefinition`\>
+▸ (`namespace`): `Promise`\<`IAppDefinition`\>
 
 ##### Parameters
 
@@ -101,17 +101,17 @@ ___
 
 ##### Returns
 
-`Promise`<`IAppDefinition`\>
+`Promise`\<`IAppDefinition`\>
 
 ___
 
 ### getApplicationRoles
 
-• **getApplicationRoles**: (`namespace`: `string`) => `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+• **getApplicationRoles**: (`namespace`: `string`) => `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+▸ (`namespace`): `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ##### Parameters
 
@@ -121,17 +121,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ___
 
 ### getApplicationsByOrganization
 
-• **getApplicationsByOrganization**: (`namespace`: `string`) => `Promise`<[`IApp`](modules_domains.IApp.md)[]\>
+• **getApplicationsByOrganization**: (`namespace`: `string`) => `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<[`IApp`](modules_domains.IApp.md)[]\>
+▸ (`namespace`): `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 ##### Parameters
 
@@ -141,17 +141,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IApp`](modules_domains.IApp.md)[]\>
+`Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 ___
 
 ### getApplicationsByOwner
 
-• **getApplicationsByOwner**: (`owner`: `string`) => `Promise`<[`IApp`](modules_domains.IApp.md)[]\>
+• **getApplicationsByOwner**: (`owner`: `string`) => `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`): `Promise`<[`IApp`](modules_domains.IApp.md)[]\>
+▸ (`owner`): `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 ##### Parameters
 
@@ -161,17 +161,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IApp`](modules_domains.IApp.md)[]\>
+`Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 ___
 
 ### getAssetById
 
-• **getAssetById**: (`id`: `string`) => `Promise`<[`Asset`](modules_assets.Asset.md)\>
+• **getAssetById**: (`id`: `string`) => `Promise`\<[`Asset`](modules_assets.Asset.md)\>
 
 #### Type declaration
 
-▸ (`id`): `Promise`<[`Asset`](modules_assets.Asset.md)\>
+▸ (`id`): `Promise`\<[`Asset`](modules_assets.Asset.md)\>
 
 ##### Parameters
 
@@ -181,17 +181,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Asset`](modules_assets.Asset.md)\>
+`Promise`\<[`Asset`](modules_assets.Asset.md)\>
 
 ___
 
 ### getAssetHistory
 
-• **getAssetHistory**: (`id`: `string`, `filter?`: [`AssetsFilter`](../modules/modules_cache_client.md#assetsfilter)) => `Promise`<[`AssetHistory`](modules_assets.AssetHistory.md)[]\>
+• **getAssetHistory**: (`id`: `string`, `filter?`: [`AssetsFilter`](../modules/modules_cache_client.md#assetsfilter)) => `Promise`\<[`AssetHistory`](modules_assets.AssetHistory.md)[]\>
 
 #### Type declaration
 
-▸ (`id`, `filter?`): `Promise`<[`AssetHistory`](modules_assets.AssetHistory.md)[]\>
+▸ (`id`, `filter?`): `Promise`\<[`AssetHistory`](modules_assets.AssetHistory.md)[]\>
 
 ##### Parameters
 
@@ -202,17 +202,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`AssetHistory`](modules_assets.AssetHistory.md)[]\>
+`Promise`\<[`AssetHistory`](modules_assets.AssetHistory.md)[]\>
 
 ___
 
 ### getClaimById
 
-• **getClaimById**: (`claimId`: `string`) => `Promise`<`undefined` \| [`Claim`](modules_claims.Claim.md)\>
+• **getClaimById**: (`claimId`: `string`) => `Promise`\<`undefined` \| [`Claim`](modules_claims.Claim.md)\>
 
 #### Type declaration
 
-▸ (`claimId`): `Promise`<`undefined` \| [`Claim`](modules_claims.Claim.md)\>
+▸ (`claimId`): `Promise`\<`undefined` \| [`Claim`](modules_claims.Claim.md)\>
 
 ##### Parameters
 
@@ -222,17 +222,17 @@ ___
 
 ##### Returns
 
-`Promise`<`undefined` \| [`Claim`](modules_claims.Claim.md)\>
+`Promise`\<`undefined` \| [`Claim`](modules_claims.Claim.md)\>
 
 ___
 
 ### getClaimsByIssuer
 
-• **getClaimsByIssuer**: (`issuer`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+• **getClaimsByIssuer**: (`issuer`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 #### Type declaration
 
-▸ (`issuer`, `filter?`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+▸ (`issuer`, `filter?`): `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ##### Parameters
 
@@ -243,17 +243,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ___
 
 ### getClaimsByRequester
 
-• **getClaimsByRequester**: (`requester`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+• **getClaimsByRequester**: (`requester`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 #### Type declaration
 
-▸ (`requester`, `filter?`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+▸ (`requester`, `filter?`): `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ##### Parameters
 
@@ -264,17 +264,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ___
 
 ### getClaimsByRevoker
 
-• **getClaimsByRevoker**: (`revoker`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+• **getClaimsByRevoker**: (`revoker`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 #### Type declaration
 
-▸ (`revoker`, `filter?`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+▸ (`revoker`, `filter?`): `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ##### Parameters
 
@@ -285,17 +285,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ___
 
 ### getClaimsBySubject
 
-• **getClaimsBySubject**: (`subject`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+• **getClaimsBySubject**: (`subject`: `string`, `filter?`: [`ClaimsFilter`](../modules/modules_cache_client.md#claimsfilter)) => `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 #### Type declaration
 
-▸ (`subject`, `filter?`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+▸ (`subject`, `filter?`): `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ##### Parameters
 
@@ -306,17 +306,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ___
 
 ### getClaimsBySubjects
 
-• **getClaimsBySubjects**: (`subjects`: `string`[]) => `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+• **getClaimsBySubjects**: (`subjects`: `string`[]) => `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 #### Type declaration
 
-▸ (`subjects`): `Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+▸ (`subjects`): `Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ##### Parameters
 
@@ -326,17 +326,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Claim`](modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](modules_claims.Claim.md)[]\>
 
 ___
 
 ### getDIDsForRole
 
-• **getDIDsForRole**: (`namespace`: `string`) => `Promise`<`string`[]\>
+• **getDIDsForRole**: (`namespace`: `string`) => `Promise`\<`string`[]\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<`string`[]\>
+▸ (`namespace`): `Promise`\<`string`[]\>
 
 ##### Parameters
 
@@ -346,17 +346,17 @@ ___
 
 ##### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]\>
 
 ___
 
 ### getDidDocument
 
-• **getDidDocument**: (`did`: `string`, `includeClaims?`: `boolean`) => `Promise`<`IDIDDocument`\>
+• **getDidDocument**: (`did`: `string`, `includeClaims?`: `boolean`) => `Promise`\<`IDIDDocument`\>
 
 #### Type declaration
 
-▸ (`did`, `includeClaims?`): `Promise`<`IDIDDocument`\>
+▸ (`did`, `includeClaims?`): `Promise`\<`IDIDDocument`\>
 
 ##### Parameters
 
@@ -367,17 +367,17 @@ ___
 
 ##### Returns
 
-`Promise`<`IDIDDocument`\>
+`Promise`\<`IDIDDocument`\>
 
 ___
 
 ### getNamespaceBySearchPhrase
 
-• **getNamespaceBySearchPhrase**: (`phrase`: `string`, `types?`: [`SearchType`](../enums/modules_cache_client.SearchType.md)[]) => `Promise`<([`IRole`](modules_domains.IRole.md) \| [`IOrganization`](modules_domains.IOrganization.md) \| [`IApp`](modules_domains.IApp.md))[]\>
+• **getNamespaceBySearchPhrase**: (`phrase`: `string`, `types?`: [`SearchType`](../enums/modules_cache_client.SearchType.md)[]) => `Promise`\<([`IRole`](modules_domains.IRole.md) \| [`IOrganization`](modules_domains.IOrganization.md) \| [`IApp`](modules_domains.IApp.md))[]\>
 
 #### Type declaration
 
-▸ (`phrase`, `types?`): `Promise`<([`IRole`](modules_domains.IRole.md) \| [`IOrganization`](modules_domains.IOrganization.md) \| [`IApp`](modules_domains.IApp.md))[]\>
+▸ (`phrase`, `types?`): `Promise`\<([`IRole`](modules_domains.IRole.md) \| [`IOrganization`](modules_domains.IOrganization.md) \| [`IApp`](modules_domains.IApp.md))[]\>
 
 ##### Parameters
 
@@ -388,17 +388,17 @@ ___
 
 ##### Returns
 
-`Promise`<([`IRole`](modules_domains.IRole.md) \| [`IOrganization`](modules_domains.IOrganization.md) \| [`IApp`](modules_domains.IApp.md))[]\>
+`Promise`\<([`IRole`](modules_domains.IRole.md) \| [`IOrganization`](modules_domains.IOrganization.md) \| [`IApp`](modules_domains.IApp.md))[]\>
 
 ___
 
 ### getOfferedAssets
 
-• **getOfferedAssets**: (`offeredTo`: `string`) => `Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+• **getOfferedAssets**: (`offeredTo`: `string`) => `Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 #### Type declaration
 
-▸ (`offeredTo`): `Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+▸ (`offeredTo`): `Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 ##### Parameters
 
@@ -408,17 +408,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 ___
 
 ### getOrgDefinition
 
-• **getOrgDefinition**: (`namespace`: `string`) => `Promise`<`IOrganizationDefinition`\>
+• **getOrgDefinition**: (`namespace`: `string`) => `Promise`\<`IOrganizationDefinition`\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<`IOrganizationDefinition`\>
+▸ (`namespace`): `Promise`\<`IOrganizationDefinition`\>
 
 ##### Parameters
 
@@ -428,17 +428,17 @@ ___
 
 ##### Returns
 
-`Promise`<`IOrganizationDefinition`\>
+`Promise`\<`IOrganizationDefinition`\>
 
 ___
 
 ### getOrgHierarchy
 
-• **getOrgHierarchy**: (`namespace`: `string`) => `Promise`<[`IOrganization`](modules_domains.IOrganization.md)\>
+• **getOrgHierarchy**: (`namespace`: `string`) => `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<[`IOrganization`](modules_domains.IOrganization.md)\>
+▸ (`namespace`): `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)\>
 
 ##### Parameters
 
@@ -448,17 +448,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IOrganization`](modules_domains.IOrganization.md)\>
+`Promise`\<[`IOrganization`](modules_domains.IOrganization.md)\>
 
 ___
 
 ### getOrganizationRoles
 
-• **getOrganizationRoles**: (`namespace`: `string`) => `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+• **getOrganizationRoles**: (`namespace`: `string`) => `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+▸ (`namespace`): `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ##### Parameters
 
@@ -468,17 +468,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ___
 
 ### getOrganizationsByOwner
 
-• **getOrganizationsByOwner**: (`owner`: `string`, `excludeSubOrgs?`: `boolean`) => `Promise`<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+• **getOrganizationsByOwner**: (`owner`: `string`, `excludeSubOrgs?`: `boolean`) => `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`, `excludeSubOrgs?`): `Promise`<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+▸ (`owner`, `excludeSubOrgs?`): `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 ##### Parameters
 
@@ -489,17 +489,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+`Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 ___
 
 ### getOwnedAssets
 
-• **getOwnedAssets**: (`owner`: `string`) => `Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+• **getOwnedAssets**: (`owner`: `string`) => `Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`): `Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+▸ (`owner`): `Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 ##### Parameters
 
@@ -509,17 +509,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 ___
 
 ### getPreviouslyOwnedAssets
 
-• **getPreviouslyOwnedAssets**: (`owner`: `string`) => `Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+• **getPreviouslyOwnedAssets**: (`owner`: `string`) => `Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`): `Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+▸ (`owner`): `Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 ##### Parameters
 
@@ -529,17 +529,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`Asset`](modules_assets.Asset.md)[]\>
+`Promise`\<[`Asset`](modules_assets.Asset.md)[]\>
 
 ___
 
 ### getRoleDefinition
 
-• **getRoleDefinition**: (`namespace`: `string`) => `Promise`<`IRoleDefinition`\>
+• **getRoleDefinition**: (`namespace`: `string`) => `Promise`\<`IRoleDefinition`\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<`IRoleDefinition`\>
+▸ (`namespace`): `Promise`\<`IRoleDefinition`\>
 
 ##### Parameters
 
@@ -549,17 +549,17 @@ ___
 
 ##### Returns
 
-`Promise`<`IRoleDefinition`\>
+`Promise`\<`IRoleDefinition`\>
 
 ___
 
 ### getRolesByOwner
 
-• **getRolesByOwner**: (`owner`: `string`) => `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+• **getRolesByOwner**: (`owner`: `string`) => `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`): `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+▸ (`owner`): `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ##### Parameters
 
@@ -569,17 +569,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ___
 
 ### getRolesByRevoker
 
-• **getRolesByRevoker**: (`revoker`: `string`) => `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+• **getRolesByRevoker**: (`revoker`: `string`) => `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 #### Type declaration
 
-▸ (`revoker`): `Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+▸ (`revoker`): `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ##### Parameters
 
@@ -589,17 +589,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IRole`](modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ___
 
 ### getRolesDefinition
 
-• **getRolesDefinition**: (`namespace`: `string`[]) => `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+• **getRolesDefinition**: (`namespace`: `string`[]) => `Promise`\<`Record`\<`string`, `IRoleDefinition`\>\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+▸ (`namespace`): `Promise`\<`Record`\<`string`, `IRoleDefinition`\>\>
 
 ##### Parameters
 
@@ -609,17 +609,17 @@ ___
 
 ##### Returns
 
-`Promise`<`Record`<`string`, `IRoleDefinition`\>\>
+`Promise`\<`Record`\<`string`, `IRoleDefinition`\>\>
 
 ___
 
 ### getSubOrganizationsByOrganization
 
-• **getSubOrganizationsByOrganization**: (`namespace`: `string`) => `Promise`<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+• **getSubOrganizationsByOrganization**: (`namespace`: `string`) => `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 #### Type declaration
 
-▸ (`namespace`): `Promise`<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+▸ (`namespace`): `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 ##### Parameters
 
@@ -629,17 +629,17 @@ ___
 
 ##### Returns
 
-`Promise`<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+`Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 ___
 
 ### issueClaim
 
-• **issueClaim**: (`issuer`: `string`, `message`: [`IClaimIssuance`](modules_claims.IClaimIssuance.md)) => `Promise`<`void`\>
+• **issueClaim**: (`issuer`: `string`, `message`: [`IClaimIssuance`](modules_claims.IClaimIssuance.md)) => `Promise`\<`void`\>
 
 #### Type declaration
 
-▸ (`issuer`, `message`): `Promise`<`void`\>
+▸ (`issuer`, `message`): `Promise`\<`void`\>
 
 ##### Parameters
 
@@ -650,17 +650,17 @@ ___
 
 ##### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### rejectClaim
 
-• **rejectClaim**: (`issuer`: `string`, `message`: [`IClaimRejection`](modules_claims.IClaimRejection.md)) => `Promise`<`void`\>
+• **rejectClaim**: (`issuer`: `string`, `message`: [`IClaimRejection`](modules_claims.IClaimRejection.md)) => `Promise`\<`void`\>
 
 #### Type declaration
 
-▸ (`issuer`, `message`): `Promise`<`void`\>
+▸ (`issuer`, `message`): `Promise`\<`void`\>
 
 ##### Parameters
 
@@ -671,17 +671,17 @@ ___
 
 ##### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### requestClaim
 
-• **requestClaim**: (`message`: [`IClaimRequest`](modules_claims.IClaimRequest.md)) => `Promise`<`void`\>
+• **requestClaim**: (`message`: [`IClaimRequest`](modules_claims.IClaimRequest.md)) => `Promise`\<`void`\>
 
 #### Type declaration
 
-▸ (`message`): `Promise`<`void`\>
+▸ (`message`): `Promise`\<`void`\>
 
 ##### Parameters
 
@@ -691,4 +691,4 @@ ___
 
 ##### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>

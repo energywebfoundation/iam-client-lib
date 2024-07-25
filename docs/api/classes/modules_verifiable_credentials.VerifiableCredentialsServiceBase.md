@@ -35,7 +35,7 @@ verifiableCredentialsService.createRoleVC(...);
 
 ### constructor
 
-• **new VerifiableCredentialsServiceBase**(`_signerService`, `_cacheClient`)
+• **new VerifiableCredentialsServiceBase**(`_signerService`, `_cacheClient`): [`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)
 
 #### Parameters
 
@@ -44,33 +44,37 @@ verifiableCredentialsService.createRoleVC(...);
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 
+#### Returns
+
+[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)
+
 ## Methods
 
 ### continueExchange
 
-▸ **continueExchange**(`«destructured»`): `Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
-
-**`Description`**
-
-Sends credentials requested by issuer and returns either issued credentials or next credentials request
+▸ **continueExchange**(`«destructured»`): `Promise`\<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | `ContinueExchangeCredentials`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> |
+| `«destructured»` | `ContinueExchangeCredentials`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> |
 
 #### Returns
 
-`Promise`<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
+`Promise`\<`undefined` \| `VerifiablePresentation` \| `VpRequest`\>
 
 issued credentials or request of additional credentials
+
+**`Description`**
+
+Sends credentials requested by issuer and returns either issued credentials or next credentials request
 
 ___
 
 ### createCredential
 
-▸ **createCredential**(`params`): `Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>
+▸ **createCredential**(`params`): `Credential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>
 
 Create a credential with given parameters.
 
@@ -92,7 +96,7 @@ await verifiableCredentialsService.createCredential({
 
 #### Returns
 
-`Credential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>
+`Credential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>
 
 Energy Web credential
 
@@ -112,7 +116,7 @@ verifiableCredentialsService.createPresentation([...credentials]);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] | role credential parameters |
+| `verifiableCredential` | `VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] | role credential parameters |
 | `options?` | [`CreatePresentationParams`](../interfaces/modules_verifiable_credentials.CreatePresentationParams.md) | presentation options |
 
 #### Returns
@@ -125,7 +129,7 @@ ___
 
 ### createRoleVC
 
-▸ **createRoleVC**(`credentialParams`, `proofOptions?`): `Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
+▸ **createRoleVC**(`credentialParams`, `proofOptions?`): `Promise`\<`VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
 
 #### Parameters
 
@@ -136,13 +140,13 @@ ___
 
 #### Returns
 
-`Promise`<`VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
+`Promise`\<`VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>\>
 
 ___
 
 ### createVerifiablePresentation
 
-▸ **createVerifiablePresentation**(`verifiableCredential`, `options?`): `Promise`<`VerifiablePresentation`\>
+▸ **createVerifiablePresentation**(`verifiableCredential`, `options?`): `Promise`\<`VerifiablePresentation`\>
 
 Create a verifiable presentation with given verifiable credentials and EIP712 signature.
 
@@ -154,12 +158,12 @@ verifiableCredentialsService.createVerifiablePresentation([...credentials]);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `verifiableCredential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] | role credential parameters |
+| `verifiableCredential` | `VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\>[] | role credential parameters |
 | `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
 
 #### Returns
 
-`Promise`<`VerifiablePresentation`\>
+`Promise`\<`VerifiablePresentation`\>
 
 verifiable presentation
 
@@ -167,7 +171,7 @@ ___
 
 ### getCredentialsByDefinition
 
-▸ **getCredentialsByDefinition**(`presentationDefinition`): `Promise`<`SelectResults`\>
+▸ **getCredentialsByDefinition**(`presentationDefinition`): `Promise`\<`SelectResults`\>
 
 Returns issued role verifiable credentials which matches definition.
 
@@ -183,7 +187,7 @@ await verifiableCredentialsService.getCredentialsByDefinition(presentationDefini
 
 #### Returns
 
-`Promise`<`SelectResults`\>
+`Promise`\<`SelectResults`\>
 
 results of matching each role verifiable credential to definition
 
@@ -191,7 +195,7 @@ ___
 
 ### initiateExchange
 
-▸ **initiateExchange**(`options`): `Promise`<`ContinueExchangeSelections`\>
+▸ **initiateExchange**(`options`): `Promise`\<`ContinueExchangeSelections`\>
 
 Initialize credential exchange. Only vc-api exchanges currently supported.
 
@@ -210,7 +214,7 @@ verifiableCredentialsService.initiateExchange({
 
 #### Returns
 
-`Promise`<`ContinueExchangeSelections`\>
+`Promise`\<`ContinueExchangeSelections`\>
 
 credentials query with matching verifiable presentations
 
@@ -218,7 +222,7 @@ ___
 
 ### isRevoked
 
-▸ **isRevoked**(`credential`): `Promise`<`boolean`\>
+▸ **isRevoked**(`credential`): `Promise`\<`boolean`\>
 
 Check if given verifiable credential is revoked.
 
@@ -230,11 +234,11 @@ await verifiableCredentialsService.isRevoked(credential);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
+| `credential` | `VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if credential is revoked
 
@@ -242,7 +246,7 @@ ___
 
 ### revocationDetails
 
-▸ **revocationDetails**(`credential`): `Promise`<``null`` \| [`CredentialRevocationDetailsResult`](../interfaces/modules_verifiable_credentials.CredentialRevocationDetailsResult.md)\>
+▸ **revocationDetails**(`credential`): `Promise`\<``null`` \| [`CredentialRevocationDetailsResult`](../interfaces/modules_verifiable_credentials.CredentialRevocationDetailsResult.md)\>
 
 Get the credentials revocation details.
 
@@ -254,11 +258,11 @@ await verifiableCredentialsService.revocationDetails(credential);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
+| `credential` | `VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
 
 #### Returns
 
-`Promise`<``null`` \| [`CredentialRevocationDetailsResult`](../interfaces/modules_verifiable_credentials.CredentialRevocationDetailsResult.md)\>
+`Promise`\<``null`` \| [`CredentialRevocationDetailsResult`](../interfaces/modules_verifiable_credentials.CredentialRevocationDetailsResult.md)\>
 
 revoker and revocationTimeStamp for the revocation
 
@@ -266,7 +270,7 @@ ___
 
 ### revokeCredential
 
-▸ **revokeCredential**(`credential`): `Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+▸ **revokeCredential**(`credential`): `Promise`\<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
 
 Revoke given verifiable credential with StatusList2021.
 
@@ -278,11 +282,11 @@ await verifiableCredentialsService.revokeCredential(credential);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `credential` | `VerifiableCredential`<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
+| `credential` | `VerifiableCredential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> | verifiable credential |
 
 #### Returns
 
-`Promise`<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
+`Promise`\<[`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
 
 StatusList2021Credential
 
@@ -290,7 +294,7 @@ ___
 
 ### verify
 
-▸ **verify**<`T`\>(`vcOrVp`, `options?`): `Promise`<`boolean`\>
+▸ **verify**\<`T`\>(`vcOrVp`, `options?`): `Promise`\<`boolean`\>
 
 Verify a given credential or presentation. Throws an error if the credential or presentation proof is not valid.
 
@@ -309,12 +313,12 @@ await verifiableCredentialsService.verify(presentation);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `vcOrVp` | `VerifiablePresentation` \| `VerifiableCredential`<`T`\> | verifiable presentation or credential |
+| `vcOrVp` | `VerifiablePresentation` \| `VerifiableCredential`\<`T`\> | verifiable presentation or credential |
 | `options?` | [`ProofOptions`](../interfaces/modules_verifiable_credentials.ProofOptions.md) | proof options |
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if the proof is valid
 
@@ -322,7 +326,7 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `cacheClient`): `Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+▸ **create**(`signerService`, `cacheClient`): `Promise`\<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
 
 #### Parameters
 
@@ -333,4 +337,4 @@ ___
 
 #### Returns
 
-`Promise`<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
+`Promise`\<[`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md)\>
