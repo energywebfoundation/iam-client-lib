@@ -20,11 +20,11 @@ ___
 
 ### next
 
-• **next**: (`opt?`: { `retryCheck?`: `boolean`  }) => `Promise`<`undefined` \| `TransactionReceipt`\>
+• **next**: (`opt?`: \{ `retryCheck?`: `boolean`  }) => `Promise`\<`undefined` \| `TransactionReceipt`\>
 
 #### Type declaration
 
-▸ (`opt?`): `Promise`<`undefined` \| `TransactionReceipt`\>
+▸ (`opt?`): `Promise`\<`undefined` \| `TransactionReceipt`\>
 
 ##### Parameters
 
@@ -35,7 +35,7 @@ ___
 
 ##### Returns
 
-`Promise`<`undefined` \| `TransactionReceipt`\>
+`Promise`\<`undefined` \| `TransactionReceipt`\>
 
 ___
 

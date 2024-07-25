@@ -248,6 +248,10 @@ export class AuthService {
 
     try {
       await this.authenticatePromise;
+      if (config.headers) {
+        config.headers.Authorization =
+          this.httpClient.defaults.headers.common['Authorization'];
+      }
     } finally {
       this.isAuthenticating = false;
     }

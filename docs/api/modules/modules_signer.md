@@ -55,15 +55,15 @@ ___
 
 ### ServiceInitializer
 
-Ƭ **ServiceInitializer**: () => `Promise`<`void`\>
+Ƭ **ServiceInitializer**: () => `Promise`\<`void`\>
 
 #### Type declaration
 
-▸ (): `Promise`<`void`\>
+▸ (): `Promise`\<`void`\>
 
 ##### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
@@ -104,12 +104,7 @@ ___
 
 ### fromGnosis
 
-▸ **fromGnosis**(`safeAppSdk`): `Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
-
-**`Description`**
-
-Intended for use in Volta Gnosis web interface(https://volta.gnosis-safe.io/).
-Dapp should provide SafeAppSdk injected by Gnosis interface
+▸ **fromGnosis**(`safeAppSdk`): `Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 #### Parameters
 
@@ -119,13 +114,18 @@ Dapp should provide SafeAppSdk injected by Gnosis interface
 
 #### Returns
 
-`Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+`Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+
+**`Description`**
+
+Intended for use in Volta Gnosis web interface(https://volta.gnosis-safe.io/).
+Dapp should provide SafeAppSdk injected by Gnosis interface
 
 ___
 
 ### fromKms
 
-▸ **fromKms**(`bridge`, `kmsServerUrl`, `infuraId?`): `Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+▸ **fromKms**(`bridge`, `kmsServerUrl`, `infuraId?`): `Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 #### Parameters
 
@@ -137,23 +137,23 @@ ___
 
 #### Returns
 
-`Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+`Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 ___
 
 ### fromMetaMask
 
-▸ **fromMetaMask**(): `Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+▸ **fromMetaMask**(): `Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 #### Returns
 
-`Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+`Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 ___
 
 ### fromPrivateKey
 
-▸ **fromPrivateKey**(`privateKey`, `rpcUrl`): `Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+▸ **fromPrivateKey**(`privateKey`, `rpcUrl`): `Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 #### Parameters
 
@@ -164,13 +164,13 @@ ___
 
 #### Returns
 
-`Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+`Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 ___
 
 ### fromWalletConnectMetamask
 
-▸ **fromWalletConnectMetamask**(`bridge`, `infuraId?`): `Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+▸ **fromWalletConnectMetamask**(`bridge`, `infuraId?`): `Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 #### Parameters
 
@@ -181,14 +181,14 @@ ___
 
 #### Returns
 
-`Promise`<[`SignerService`](../classes/modules_signer.SignerService.md)\>
+`Promise`\<[`SignerService`](../classes/modules_signer.SignerService.md)\>
 
 ___
 
 ### isMetamaskExtensionPresent
 
-▸ **isMetamaskExtensionPresent**(): `Promise`<{ `chainId`: `undefined` \| `number` ; `isMetamaskPresent`: `boolean` = !!provider }\>
+▸ **isMetamaskExtensionPresent**(): `Promise`\<\{ `chainId`: `undefined` \| `number` ; `isMetamaskPresent`: `boolean` = !!provider }\>
 
 #### Returns
 
-`Promise`<{ `chainId`: `undefined` \| `number` ; `isMetamaskPresent`: `boolean` = !!provider }\>
+`Promise`\<\{ `chainId`: `undefined` \| `number` ; `isMetamaskPresent`: `boolean` = !!provider }\>

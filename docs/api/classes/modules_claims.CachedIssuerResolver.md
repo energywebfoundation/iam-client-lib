@@ -20,7 +20,7 @@
 
 ### constructor
 
-• **new CachedIssuerResolver**(`domainsService`)
+• **new CachedIssuerResolver**(`domainsService`): [`CachedIssuerResolver`](modules_claims.CachedIssuerResolver.md)
 
 #### Parameters
 
@@ -28,11 +28,15 @@
 | :------ | :------ |
 | `domainsService` | [`DomainsService`](modules_domains.DomainsService.md) |
 
+#### Returns
+
+[`CachedIssuerResolver`](modules_claims.CachedIssuerResolver.md)
+
 ## Methods
 
 ### getIssuerDefinition
 
-▸ **getIssuerDefinition**(`namespace`): `Promise`<`IIssuerDefinition`\>
+▸ **getIssuerDefinition**(`namespace`): `Promise`\<`IIssuerDefinition`\>
 
 #### Parameters
 
@@ -42,7 +46,7 @@
 
 #### Returns
 
-`Promise`<`IIssuerDefinition`\>
+`Promise`\<`IIssuerDefinition`\>
 
 #### Implementation of
 

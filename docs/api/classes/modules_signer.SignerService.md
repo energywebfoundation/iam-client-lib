@@ -49,14 +49,18 @@ signerService.signMessage(...);
 
 ### constructor
 
-• **new SignerService**(`_signer`, `_providerType`)
+• **new SignerService**(`_signer`, `_providerType`): [`SignerService`](modules_signer.SignerService.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `_signer` | `Required`<[`SignerT`](../modules/modules_signer.md#signert)\> |
+| `_signer` | `Required`\<[`SignerT`](../modules/modules_signer.md#signert)\> |
 | `_providerType` | [`ProviderType`](../enums/modules_signer.ProviderType.md) |
+
+#### Returns
+
+[`SignerService`](modules_signer.SignerService.md)
 
 ## Accessors
 
@@ -206,7 +210,7 @@ ___
 
 ### signer
 
-• `get` **signer**(): `Required`<[`SignerT`](../modules/modules_signer.md#signert)\>
+• `get` **signer**(): `Required`\<[`SignerT`](../modules/modules_signer.md#signert)\>
 
 The instance of the `ether` library signer in use by the service
 
@@ -216,7 +220,7 @@ signerService.signer;
 
 #### Returns
 
-`Required`<[`SignerT`](../modules/modules_signer.md#signert)\>
+`Required`\<[`SignerT`](../modules/modules_signer.md#signert)\>
 
 signer
 
@@ -224,7 +228,7 @@ signer
 
 ### balance
 
-▸ **balance**(): `Promise`<`BigNumber`\>
+▸ **balance**(): `Promise`\<`BigNumber`\>
 
 Get current user balance.
 
@@ -234,7 +238,7 @@ signerService.getBalance();
 
 #### Returns
 
-`Promise`<`BigNumber`\>
+`Promise`\<`BigNumber`\>
 
 user balance
 
@@ -242,7 +246,7 @@ ___
 
 ### call
 
-▸ **call**(`options`): `Promise`<`string`\>
+▸ **call**(`options`): `Promise`\<`string`\>
 
 Makes a (readonly) call to a smart contract.
 https://docs.ethers.io/v5/single-page/#/v5/api/providers/provider/-%23-Provider-call
@@ -262,7 +266,7 @@ signerService.call({
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 the result of the call
 
@@ -288,7 +292,7 @@ ___
 
 ### closeConnection
 
-▸ **closeConnection**(): `Promise`<`boolean`\>
+▸ **closeConnection**(): `Promise`\<`boolean`\>
 
 Close connection with the signer wallet.
 
@@ -298,7 +302,7 @@ signerService.closeConnection();
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if connection was closed
 
@@ -306,24 +310,24 @@ ___
 
 ### connect
 
-▸ **connect**(`signer`, `providerType`): `Promise`<`void`\>
+▸ **connect**(`signer`, `providerType`): `Promise`\<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `signer` | `Required`<[`SignerT`](../modules/modules_signer.md#signert)\> |
+| `signer` | `Required`\<[`SignerT`](../modules/modules_signer.md#signert)\> |
 | `providerType` | [`ProviderType`](../enums/modules_signer.ProviderType.md) |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### emit
 
-▸ **emit**(`e`): `Promise`<`void`\>
+▸ **emit**(`e`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -333,17 +337,17 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
@@ -353,13 +357,13 @@ ___
 
 Add event handler for certain events
 
-**`Requires`**
-
-to be called after the connection to wallet was initialized
-
 #### Returns
 
 `void`
+
+**`Requires`**
+
+to be called after the connection to wallet was initialized
 
 ___
 
@@ -400,7 +404,7 @@ ___
 
 ### publicKey
 
-▸ **publicKey**(): `Promise`<`string`\>
+▸ **publicKey**(): `Promise`\<`string`\>
 
 Get current user public key.
 
@@ -410,7 +414,7 @@ signerService.publicKey();
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 public key
 
@@ -418,7 +422,7 @@ ___
 
 ### publicKeyAndIdentityToken
 
-▸ **publicKeyAndIdentityToken**(`force?`): `Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
+▸ **publicKeyAndIdentityToken**(`force?`): `Promise`\<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
 
 Generate public key and identity token for authentication purposes.
 
@@ -434,7 +438,7 @@ signerService.publicKeyAndIdentityToken();
 
 #### Returns
 
-`Promise`<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
+`Promise`\<[`IPubKeyAndIdentityToken`](../interfaces/modules_signer.IPubKeyAndIdentityToken.md)\>
 
 object with public key and identity token
 
@@ -442,7 +446,7 @@ ___
 
 ### send
 
-▸ **send**(`options`): `Promise`<`TransactionReceipt`\>
+▸ **send**(`options`): `Promise`\<`TransactionReceipt`\>
 
 Send transaction to the blockchain.
 
@@ -461,7 +465,7 @@ signerService.send({
 
 #### Returns
 
-`Promise`<`TransactionReceipt`\>
+`Promise`\<`TransactionReceipt`\>
 
 transaction receipt
 
@@ -469,7 +473,7 @@ ___
 
 ### signMessage
 
-▸ **signMessage**(`message`): `Promise`<`string`\>
+▸ **signMessage**(`message`): `Promise`\<`string`\>
 
 Tries to create `eth_sign` conformant signature (https://eth.wiki/json-rpc/API#eth_sign).
 Whether or not to hash the message prior to signature is depends on whether is signer EIP-191 compliant.
@@ -487,7 +491,7 @@ signerService.signMessage(arrayify('Hello World'));
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 the signature
 
@@ -495,7 +499,7 @@ ___
 
 ### signTypedData
 
-▸ **signTypedData**(`domain`, `types`, `message`): `Promise`<`string`\>
+▸ **signTypedData**(`domain`, `types`, `message`): `Promise`\<`string`\>
 
 Tries to create conformant EIP-712 signature (https://eips.ethereum.org/EIPS/eip-712).
 
@@ -512,11 +516,11 @@ signerService.signTypedData(
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `domain` | `TypedDataDomain` | EIP-712 domain object |
-| `types` | `Record`<`string`, `TypedDataField`[]\> | EIP-712 types object |
-| `message` | `Record`<`string`, `unknown`\> | EIP-712 message object |
+| `types` | `Record`\<`string`, `TypedDataField`[]\> | EIP-712 types object |
+| `message` | `Record`\<`string`, `unknown`\> | EIP-712 message object |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 the signature

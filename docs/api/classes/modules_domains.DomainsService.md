@@ -58,7 +58,7 @@ domainsService.createOrganization(...);
 
 ### constructor
 
-• **new DomainsService**(`_signerService`, `_cacheClient`)
+• **new DomainsService**(`_signerService`, `_cacheClient`): [`DomainsService`](modules_domains.DomainsService.md)
 
 #### Parameters
 
@@ -66,6 +66,10 @@ domainsService.createOrganization(...);
 | :------ | :------ |
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
+
+#### Returns
+
+[`DomainsService`](modules_domains.DomainsService.md)
 
 ## Accessors
 
@@ -81,7 +85,7 @@ domainsService.createOrganization(...);
 
 ### changeAppOwnership
 
-▸ **changeAppOwnership**(`options`): `Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+▸ **changeAppOwnership**(`options`): `Promise`\<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
 Change owner of application domain.
 
@@ -101,7 +105,7 @@ domainsService.changeAppOwnership({
 
 #### Returns
 
-`Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+`Promise`\<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
 array of steps if `returnSteps` is true
 
@@ -109,7 +113,7 @@ ___
 
 ### changeOrgOwnership
 
-▸ **changeOrgOwnership**(`options`): `Promise`<`undefined` \| [`MulticallTx`](../modules/modules_domains.md#multicalltx)\>
+▸ **changeOrgOwnership**(`options`): `Promise`\<`undefined` \| [`MulticallTx`](../modules/modules_domains.md#multicalltx)\>
 
 Change owner of organization domain including all subdomains.
 
@@ -130,7 +134,7 @@ domainsService.changeOrgOwnership({
 
 #### Returns
 
-`Promise`<`undefined` \| [`MulticallTx`](../modules/modules_domains.md#multicalltx)\>
+`Promise`\<`undefined` \| [`MulticallTx`](../modules/modules_domains.md#multicalltx)\>
 
 array of steps if `returnSteps` is true
 
@@ -138,7 +142,7 @@ ___
 
 ### changeRoleOwnership
 
-▸ **changeRoleOwnership**(`options`): `Promise`<`void`\>
+▸ **changeRoleOwnership**(`options`): `Promise`\<`void`\>
 
 Change owner of role domain.
 
@@ -157,13 +161,13 @@ domainsService.changeRoleOwnership({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### checkExistenceOfDomain
 
-▸ **checkExistenceOfDomain**(`options`): `Promise`<`boolean`\>
+▸ **checkExistenceOfDomain**(`options`): `Promise`\<`boolean`\>
 
 Check if domain exists in ENS registry.
 
@@ -181,7 +185,7 @@ domainsService.checkExistenceOfDomain({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if domain exists, false otherwise
 
@@ -189,7 +193,7 @@ ___
 
 ### createApplication
 
-▸ **createApplication**(`options`): `Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+▸ **createApplication**(`options`): `Promise`\<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
 Create application domain with given definition for given namespace.
 Also includes creating subdomain for roles. (roles.yourApp.apps.yourOrg.ewc).
@@ -213,7 +217,7 @@ domainsService.createApplication({
 
 #### Returns
 
-`Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+`Promise`\<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
 array of steps if `returnSteps` is true
 
@@ -221,7 +225,7 @@ ___
 
 ### createOrganization
 
-▸ **createOrganization**(`options`): `Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+▸ **createOrganization**(`options`): `Promise`\<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
 Create organization domain with given definition for given namespace.
 Also includes creating subdomains for roles and applications. (roles.yourOrg.ewc, apps.yourOrg.ewc).
@@ -245,7 +249,7 @@ domainsService.createOrganization({
 
 #### Returns
 
-`Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+`Promise`\<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
 array of steps if `returnSteps` is true
 
@@ -253,7 +257,7 @@ ___
 
 ### createRole
 
-▸ **createRole**(`options`): `Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+▸ **createRole**(`options`): `Promise`\<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
 Create role domain with given definition for given namespace.
 
@@ -285,7 +289,7 @@ domainsService.createRole({
 
 #### Returns
 
-`Promise`<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
+`Promise`\<`undefined` \| [`ReturnStep`](../interfaces/modules_domains.ReturnStep.md)[]\>
 
 array of steps if `returnSteps` is true
 
@@ -293,7 +297,7 @@ ___
 
 ### deleteApplication
 
-▸ **deleteApplication**(`options`): `Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+▸ **deleteApplication**(`options`): `Promise`\<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
 Delete application domain and all subdomains.
 
@@ -312,7 +316,7 @@ domainsService.deleteApplication({
 
 #### Returns
 
-`Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+`Promise`\<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
 array of steps if `returnSteps` is true
 
@@ -320,7 +324,7 @@ ___
 
 ### deleteOrganization
 
-▸ **deleteOrganization**(`options`): `Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+▸ **deleteOrganization**(`options`): `Promise`\<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
 Delete organization domain and all subdomains.
 
@@ -339,7 +343,7 @@ domainsService.deleteOrganization({
 
 #### Returns
 
-`Promise`<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
+`Promise`\<`undefined` \| [`ReturnStepWithRetryCheck`](../interfaces/modules_domains.ReturnStepWithRetryCheck.md)[]\>
 
 array of steps if `returnSteps` is true
 
@@ -347,7 +351,7 @@ ___
 
 ### deleteRole
 
-▸ **deleteRole**(`options`): `Promise`<`void`\>
+▸ **deleteRole**(`options`): `Promise`\<`void`\>
 
 Delete role domain.
 
@@ -365,13 +369,13 @@ domainsService.deleteRole({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### getAllowedRolesByIssuer
 
-▸ **getAllowedRolesByIssuer**(`did`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getAllowedRolesByIssuer**(`did`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 Get all roles that a DID can issue.
 
@@ -387,7 +391,7 @@ domainsService.getAllowedRolesByIssuer('did:ethr:0x00...0');
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 array of roles that the DID can issue
 
@@ -395,7 +399,7 @@ ___
 
 ### getAllowedRolesByRevoker
 
-▸ **getAllowedRolesByRevoker**(`did`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getAllowedRolesByRevoker**(`did`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 Get all roles that a DID can revoke.
 
@@ -411,7 +415,7 @@ domainsService.getAllowedRolesByRevoker('did:ethr:0x00...0');
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 array of roles that the DID can issue
 
@@ -419,7 +423,7 @@ ___
 
 ### getAppsOfOrg
 
-▸ **getAppsOfOrg**(`org`): `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+▸ **getAppsOfOrg**(`org`): `Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
 Fetch all applications for organization namespace.
 
@@ -435,7 +439,7 @@ domainsService.getAppsOfOrg('energyweb.iam.ewc');
 
 #### Returns
 
-`Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+`Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
 array of applications
 
@@ -443,7 +447,7 @@ ___
 
 ### getDIDsByRole
 
-▸ **getDIDsByRole**(`role`): `Promise`<`string`[]\>
+▸ **getDIDsByRole**(`role`): `Promise`\<`string`[]\>
 
 Get users did which have certain role.
 
@@ -459,7 +463,7 @@ domainsService.getDIDsByRole('auth.roles.energyweb.iam.ewc');
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]\>
 
 array of users DID
 
@@ -467,7 +471,7 @@ ___
 
 ### getDefinition
 
-▸ **getDefinition**(`options`): `Promise`<`IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`\>
+▸ **getDefinition**(`options`): `Promise`\<`IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
 Fetch cached domain definition for organization, application or role.
 
@@ -486,7 +490,7 @@ domainsService.getDefinition({
 
 #### Returns
 
-`Promise`<`IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`\>
+`Promise`\<`IRoleDefinition` \| `IRoleDefinitionV2` \| `IOrganizationDefinition` \| `IAppDefinition`\>
 
 domain definition
 
@@ -494,7 +498,7 @@ ___
 
 ### getENSTypesByOwner
 
-▸ **getENSTypesByOwner**(`options`): `Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[] \| [`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+▸ **getENSTypesByOwner**(`options`): `Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[] \| [`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 Get all organization/application/role for certain owner.
 
@@ -514,7 +518,7 @@ domainsService.getENSTypesByOwner({
 
 #### Returns
 
-`Promise`<[`IApp`](../interfaces/modules_domains.IApp.md)[] \| [`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+`Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[] \| [`IRole`](../interfaces/modules_domains.IRole.md)[] \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 array of organizations/applications/roles for certain owner
 
@@ -522,7 +526,7 @@ ___
 
 ### getENSTypesBySearchPhrase
 
-▸ **getENSTypesBySearchPhrase**(`search`, `types?`): `Promise`<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
+▸ **getENSTypesBySearchPhrase**(`search`, `types?`): `Promise`\<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
 
 Search for organization/application/role with a given search phrase.
 
@@ -542,7 +546,7 @@ domainsService.getENSTypesBySearchPhrase({
 
 #### Returns
 
-`Promise`<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
+`Promise`\<([`IRole`](../interfaces/modules_domains.IRole.md) \| [`IOrganization`](../interfaces/modules_domains.IOrganization.md) \| [`IApp`](../interfaces/modules_domains.IApp.md))[]\>
 
 array of founded organizations/applications/roles
 
@@ -550,7 +554,7 @@ ___
 
 ### getOrgHierarchy
 
-▸ **getOrgHierarchy**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
+▸ **getOrgHierarchy**(`namespace`): `Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
 
 Get organization hierarchy. Max 20 levels deep.
 
@@ -566,7 +570,7 @@ domainsService.getOrgHierarchy('energyweb.iam.ewc');
 
 #### Returns
 
-`Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
+`Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)\>
 
 organization with all nested sub-organizations
 
@@ -574,7 +578,7 @@ ___
 
 ### getRolesByNamespace
 
-▸ **getRolesByNamespace**(`options`): `Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getRolesByNamespace**(`options`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 Fetch all roles subdomains for certain domain.
 
@@ -593,7 +597,7 @@ domainsService.getRolesByNamespace({
 
 #### Returns
 
-`Promise`<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+`Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 array of role subdomains
 
@@ -601,7 +605,7 @@ ___
 
 ### getSubOrgsByOrgNamespace
 
-▸ **getSubOrgsByOrgNamespace**(`namespace`): `Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+▸ **getSubOrgsByOrgNamespace**(`namespace`): `Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 Fetch all sub-organizations for organization namespace.
 
@@ -617,7 +621,7 @@ domainsService.getSubOrgsByOrgNamespace('energyweb.iam.ewc');
 
 #### Returns
 
-`Promise`<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+`Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 array of sub-organizations
 
@@ -625,7 +629,7 @@ ___
 
 ### getSubdomains
 
-▸ **getSubdomains**(`options`): `Promise`<`string`[]\>
+▸ **getSubdomains**(`options`): `Promise`\<`string`[]\>
 
 Fetch subdomains for certain domain.
 
@@ -644,7 +648,7 @@ domainsService.getSubdomains({
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]\>
 
 array of subdomains
 
@@ -652,17 +656,17 @@ ___
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### isOwner
 
-▸ **isOwner**(`options`): `Promise`<`boolean`\>
+▸ **isOwner**(`options`): `Promise`\<`boolean`\>
 
 Check if user is owner of the domain.
 
@@ -681,7 +685,7 @@ domainsService.isOwner({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if user is owner, false otherwise
 
@@ -689,7 +693,7 @@ ___
 
 ### namespacesWithRelations
 
-▸ **namespacesWithRelations**(`namespaces`): `Promise`<{ `namespace`: `string` ; `owner`: `string`  }[]\>
+▸ **namespacesWithRelations**(`namespaces`): `Promise`\<\{ `namespace`: `string` ; `owner`: `string`  }[]\>
 
 Collect related data for given domain. Currently only related data is owner.
 
@@ -707,13 +711,13 @@ domainsService.namespacesWithRelations(['root.roles.energyweb.iam.ewc', 'admin.r
 
 #### Returns
 
-`Promise`<{ `namespace`: `string` ; `owner`: `string`  }[]\>
+`Promise`\<\{ `namespace`: `string` ; `owner`: `string`  }[]\>
 
 ___
 
 ### readName
 
-▸ **readName**(`namehashToRead`): `Promise`<`string`\>
+▸ **readName**(`namehashToRead`): `Promise`\<`string`\>
 
 #### Parameters
 
@@ -723,13 +727,13 @@ ___
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 ___
 
 ### registrationTypesOfRoles
 
-▸ **registrationTypesOfRoles**(`roles`): `Promise`<`Record`<`string`, `Set`<[`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)\>\>\>
+▸ **registrationTypesOfRoles**(`roles`): `Promise`\<`Record`\<`string`, `Set`\<[`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)\>\>\>
 
 Get possible registration types for given roles.
 
@@ -747,13 +751,13 @@ domainsService.registrationTypesOfRoles(['root.roles.energyweb.iam.ewc', 'admin.
 
 #### Returns
 
-`Promise`<`Record`<`string`, `Set`<[`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)\>\>\>
+`Promise`\<`Record`\<`string`, `Set`\<[`RegistrationTypes`](../enums/modules_claims.RegistrationTypes.md)\>\>\>
 
 ___
 
 ### setRoleDefinition
 
-▸ **setRoleDefinition**(`options`): `Promise`<`void`\>
+▸ **setRoleDefinition**(`options`): `Promise`\<`void`\>
 
 Update ENS domain definition for already created domain.
 
@@ -774,13 +778,13 @@ domainsService.setRoleDefinition({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### updateLegacyDefinition
 
-▸ **updateLegacyDefinition**(`domain`, `data`): `Promise`<`boolean`\>
+▸ **updateLegacyDefinition**(`domain`, `data`): `Promise`\<`boolean`\>
 
 Move domain to latest version of resolver.
 
@@ -809,13 +813,13 @@ domainsService.updateLegacyDefinition({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 ___
 
 ### validateOwnership
 
-▸ **validateOwnership**(`options`): `Promise`<`string`[]\>
+▸ **validateOwnership**(`options`): `Promise`\<`string`[]\>
 
 Get not owned domains in given namespace for current user.
 
@@ -834,7 +838,7 @@ domainsService.validateOwnership({
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]\>
 
 array of not owned domains
 
@@ -842,7 +846,7 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `cacheClient`): `Promise`<[`DomainsService`](modules_domains.DomainsService.md)\>
+▸ **create**(`signerService`, `cacheClient`): `Promise`\<[`DomainsService`](modules_domains.DomainsService.md)\>
 
 #### Parameters
 
@@ -853,4 +857,4 @@ ___
 
 #### Returns
 
-`Promise`<[`DomainsService`](modules_domains.DomainsService.md)\>
+`Promise`\<[`DomainsService`](modules_domains.DomainsService.md)\>

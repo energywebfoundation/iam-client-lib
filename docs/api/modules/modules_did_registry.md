@@ -33,7 +33,7 @@
 
 ### isClaimService
 
-▸ **isClaimService**(`service`): service is IServiceEndpoint & Pick<ClaimData, "claimType" \| "claimTypeVersion"\>
+▸ **isClaimService**(`service`): service is IServiceEndpoint & Pick\<ClaimData, "claimType" \| "claimTypeVersion"\>
 
 #### Parameters
 
@@ -43,4 +43,4 @@
 
 #### Returns
 
-service is IServiceEndpoint & Pick<ClaimData, "claimType" \| "claimTypeVersion"\>
+service is IServiceEndpoint & Pick\<ClaimData, "claimType" \| "claimTypeVersion"\>

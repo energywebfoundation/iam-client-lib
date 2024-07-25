@@ -13,7 +13,7 @@
 
 ### data
 
-• **data**: `Record`<`string`, `unknown`\>
+• **data**: `Record`\<`string`, `unknown`\>
 
 Claim data
 

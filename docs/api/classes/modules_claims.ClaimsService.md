@@ -56,7 +56,7 @@ claimsService.getClaimById(claim.id);
 
 ### constructor
 
-• **new ClaimsService**(`_signerService`, `_domainsService`, `_cacheClient`, `_didRegistry`, `_verifiableCredentialService`)
+• **new ClaimsService**(`_signerService`, `_domainsService`, `_cacheClient`, `_didRegistry`, `_verifiableCredentialService`): [`ClaimsService`](modules_claims.ClaimsService.md)
 
 #### Parameters
 
@@ -68,11 +68,15 @@ claimsService.getClaimById(claim.id);
 | `_didRegistry` | [`DidRegistry`](modules_did_registry.DidRegistry.md) |
 | `_verifiableCredentialService` | [`VerifiableCredentialsServiceBase`](modules_verifiable_credentials.VerifiableCredentialsServiceBase.md) |
 
+#### Returns
+
+[`ClaimsService`](modules_claims.ClaimsService.md)
+
 ## Methods
 
 ### claimRevocationDetails
 
-▸ **claimRevocationDetails**(`options`): `Promise`<`undefined` \| [`ClaimRevocationDetailsResult`](../interfaces/modules_claims.ClaimRevocationDetailsResult.md)\>
+▸ **claimRevocationDetails**(`options`): `Promise`\<`undefined` \| [`ClaimRevocationDetailsResult`](../interfaces/modules_claims.ClaimRevocationDetailsResult.md)\>
 
 Get the revocation details for a subject's On-Chain claim. Returns the revoker and revocationTimeStamp for the revocation.
 
@@ -99,7 +103,7 @@ claimsService.claimRevocationDetails({
 
 #### Returns
 
-`Promise`<`undefined` \| [`ClaimRevocationDetailsResult`](../interfaces/modules_claims.ClaimRevocationDetailsResult.md)\>
+`Promise`\<`undefined` \| [`ClaimRevocationDetailsResult`](../interfaces/modules_claims.ClaimRevocationDetailsResult.md)\>
 
 revocation details
 
@@ -107,7 +111,7 @@ ___
 
 ### createClaimRequest
 
-▸ **createClaimRequest**(`options`): `Promise`<`void`\>
+▸ **createClaimRequest**(`options`): `Promise`\<`void`\>
 
 Allows subject to request for credential by creating and sending a claim request to claim issuer.
 
@@ -131,13 +135,13 @@ claimsService.createClaimRequest({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### createDelegateProof
 
-▸ **createDelegateProof**(`delegateKey`, `identity`, `algorithm?`): `Promise`<`string`\>
+▸ **createDelegateProof**(`delegateKey`, `identity`, `algorithm?`): `Promise`\<`string`\>
 
 Create a public claim to prove identity.
 
@@ -159,7 +163,7 @@ claimsService.createDelegateProof(
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 JWT token of delegate
 
@@ -167,7 +171,7 @@ ___
 
 ### createIdentityProof
 
-▸ **createIdentityProof**(): `Promise`<`string`\>
+▸ **createIdentityProof**(): `Promise`\<`string`\>
 
 Create a public claim to prove identity.
 
@@ -177,7 +181,7 @@ claimsService.createIdentityProof();
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 JWT token of created identity
 
@@ -185,7 +189,7 @@ ___
 
 ### createSelfSignedClaim
 
-▸ **createSelfSignedClaim**(`options`): `Promise`<`string`\>
+▸ **createSelfSignedClaim**(`options`): `Promise`\<`string`\>
 
 Creates self signed off-chain claim with `data` and adds it to `subject` document. Signer must own or control subject.
 
@@ -213,7 +217,7 @@ claimsService.createSelfSignedClaim({
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 URl to IPFS
 
@@ -221,7 +225,7 @@ ___
 
 ### deleteClaim
 
-▸ **deleteClaim**(`options`): `Promise`<`void`\>
+▸ **deleteClaim**(`options`): `Promise`\<`void`\>
 
 Delete claim request. Works only for pending claims (not issued or rejected).
 
@@ -239,13 +243,13 @@ claimsService.deleteClaim({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### fetchCredential
 
-▸ **fetchCredential**(`subjectDID`, `roleNamespace`): `Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
+▸ **fetchCredential**(`subjectDID`, `roleNamespace`): `Promise`\<`undefined` \| `VerifiableCredential`\<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
 
 Fetch a credential from storage
 
@@ -258,7 +262,7 @@ Fetch a credential from storage
 
 #### Returns
 
-`Promise`<`undefined` \| `VerifiableCredential`<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
+`Promise`\<`undefined` \| `VerifiableCredential`\<`RoleCredentialSubject`\> \| `RoleEIP191JWT`\>
 
 credential if available or undefined if not
 
@@ -266,7 +270,7 @@ ___
 
 ### getClaimById
 
-▸ **getClaimById**(`claimId`): `Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
+▸ **getClaimById**(`claimId`): `Promise`\<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
 
 Retrieve claim with given id.
 
@@ -283,7 +287,7 @@ claimsService.getClaimById(claimId);
 
 #### Returns
 
-`Promise`<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
+`Promise`\<`undefined` \| [`Claim`](../interfaces/modules_claims.Claim.md)\>
 
 claim with given id
 
@@ -291,7 +295,7 @@ ___
 
 ### getClaimId
 
-▸ **getClaimId**(`«destructured»`): `Promise`<`string`\>
+▸ **getClaimId**(`«destructured»`): `Promise`\<`string`\>
 
 Generates claim id or returns id of existing claim with same data
 
@@ -304,7 +308,7 @@ Generates claim id or returns id of existing claim with same data
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 claim identifier
 
@@ -312,7 +316,7 @@ ___
 
 ### getClaimsByIssuer
 
-▸ **getClaimsByIssuer**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByIssuer**(`options`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 Retrieve claims issued by a given issuer with allowing filter by status and parent namespace.
 
@@ -332,7 +336,7 @@ claimsService.getClaimsByIssuer({
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 list of claims
 
@@ -340,7 +344,7 @@ ___
 
 ### getClaimsByRequester
 
-▸ **getClaimsByRequester**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRequester**(`options`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 Retrieve claims requested by a given requester with allowing filter by status and parent namespace.
 
@@ -360,7 +364,7 @@ claimsService.getClaimsByRequester({
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 list of claims
 
@@ -368,7 +372,7 @@ ___
 
 ### getClaimsByRevoker
 
-▸ **getClaimsByRevoker**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsByRevoker**(`options`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 Retrieve all claims that a user can revoke. Allow to filter by namespace
 
@@ -387,7 +391,7 @@ claimsService.getClaimsByRevoker({
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 list of claims
 
@@ -395,7 +399,7 @@ ___
 
 ### getClaimsBySubject
 
-▸ **getClaimsBySubject**(`options`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsBySubject**(`options`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 Retrieve claims for given subject with allowing filter by status and parent namespace.
 
@@ -415,7 +419,7 @@ claimsService.getClaimsBySubject({
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 list of claims
 
@@ -423,7 +427,7 @@ ___
 
 ### getClaimsBySubjects
 
-▸ **getClaimsBySubjects**(`subjects`): `Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+▸ **getClaimsBySubjects**(`subjects`): `Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 Retrieve claims related to a given subjects.
 
@@ -439,7 +443,7 @@ claimsService.getClaimsBySubjects(['did:ethr:0x00...0', 'did:ethr:0x00...1', ...
 
 #### Returns
 
-`Promise`<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
+`Promise`\<[`Claim`](../interfaces/modules_claims.Claim.md)[]\>
 
 list of claims
 
@@ -473,7 +477,7 @@ ___
 
 ### getUserClaims
 
-▸ **getUserClaims**(`options`): `Promise`<`IServiceEndpoint` & `Pick`<`ClaimData`, ``"claimType"`` \| ``"claimTypeVersion"``\>[]\>
+▸ **getUserClaims**(`options`): `Promise`\<`IServiceEndpoint` & `Pick`\<`ClaimData`, ``"claimType"`` \| ``"claimTypeVersion"``\>[]\>
 
 Get published off-chain claims of the given subject.
 
@@ -491,7 +495,7 @@ claimsService.getUserClaims({
 
 #### Returns
 
-`Promise`<`IServiceEndpoint` & `Pick`<`ClaimData`, ``"claimType"`` \| ``"claimTypeVersion"``\>[]\>
+`Promise`\<`IServiceEndpoint` & `Pick`\<`ClaimData`, ``"claimType"`` \| ``"claimTypeVersion"``\>[]\>
 
 Claims containing DID document service endpoints
 
@@ -499,7 +503,7 @@ ___
 
 ### hasOnChainRole
 
-▸ **hasOnChainRole**(`did`, `role`, `version`): `Promise`<`boolean`\>
+▸ **hasOnChainRole**(`did`, `role`, `version`): `Promise`\<`boolean`\>
 
 A utility function to check the blockchain directly if a DID has a role.
 
@@ -517,7 +521,7 @@ claimsService.hasOnChainRole('did:ethr:ewc:0x00...0', 'email.roles.iam.ewc', 1);
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 `true` if DID has role at the version. `false` if not.
 
@@ -525,17 +529,17 @@ ___
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### isClaimRevoked
 
-▸ **isClaimRevoked**(`options`): `Promise`<`boolean`\>
+▸ **isClaimRevoked**(`options`): `Promise`\<`boolean`\>
 
 Check if On-Chain claim is revoked.
 
@@ -562,7 +566,7 @@ claimsService.isClaimRevoked({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if claim is revoked
 
@@ -570,7 +574,7 @@ ___
 
 ### issueClaim
 
-▸ **issueClaim**(`options`): `Promise`<`undefined` \| `string`\>
+▸ **issueClaim**(`options`): `Promise`\<`undefined` \| `string`\>
 
 Issue claim without previous request. Option available for issuers only.
 If `credentialStatus` is not overridden then status from ssi-hub will be set.
@@ -595,7 +599,7 @@ claimsService.issueClaim({
 
 #### Returns
 
-`Promise`<`undefined` \| `string`\>
+`Promise`\<`undefined` \| `string`\>
 
 Issued token if registrationTypes includes RegistrationTypes.OffChain
 
@@ -603,7 +607,7 @@ ___
 
 ### issueClaimRequest
 
-▸ **issueClaimRequest**(`options`): `Promise`<`void`\>
+▸ **issueClaimRequest**(`options`): `Promise`\<`void`\>
 
 Issue a claim request by signing both off-chain and on-chain request and persisting result to the cache-server.
 Optionally, issue on-chain role can be submitted to the ClaimManager contract as well.
@@ -630,13 +634,13 @@ claimsService.issueClaimRequest({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### publishPublicClaim
 
-▸ **publishPublicClaim**(`options`): `Promise`<`undefined` \| `string`\>
+▸ **publishPublicClaim**(`options`): `Promise`\<`undefined` \| `string`\>
 
 Register role to claim manager contract if registrationTypes includes RegistrationTypes.OnChain
 Publish role to IPFS and add DID document service if registrationTypes includes RegistrationTypes.OffChain
@@ -660,7 +664,7 @@ claimsService.publishPublicClaim({
 
 #### Returns
 
-`Promise`<`undefined` \| `string`\>
+`Promise`\<`undefined` \| `string`\>
 
 URl to IPFS if registrationTypes includes RegistrationTypes.OffChain
 
@@ -668,7 +672,7 @@ ___
 
 ### registerOnchain
 
-▸ **registerOnchain**(`claim`): `Promise`<`void`\>
+▸ **registerOnchain**(`claim`): `Promise`\<`void`\>
 
 Register issued on-chain claim on Claim Manager contract Can be used by asset owners to register credentials on-chain for their assets.
 
@@ -692,13 +696,13 @@ claimsService.registerOnchain({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### rejectClaimRequest
 
-▸ **rejectClaimRequest**(`options`): `Promise`<`void`\>
+▸ **rejectClaimRequest**(`options`): `Promise`\<`void`\>
 
 Reject claim request.
 
@@ -719,13 +723,13 @@ claimsService.rejectClaimRequest({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### resolveCredentialAndVerify
 
-▸ **resolveCredentialAndVerify**(`subjectDID`, `roleNamespace`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+▸ **resolveCredentialAndVerify**(`subjectDID`, `roleNamespace`): `Promise`\<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Resolve a credential from storage and verify its proof/signature and its issuer's authority
 
@@ -738,7 +742,7 @@ Resolve a credential from storage and verify its proof/signature and its issuer'
 
 #### Returns
 
-`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+`Promise`\<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 void. Returns "Proof Not Verified" error if VC not verified. Returns error if issuer not verified
 
@@ -746,7 +750,7 @@ ___
 
 ### revokeClaim
 
-▸ **revokeClaim**(`options`): `Promise`<`boolean`\>
+▸ **revokeClaim**(`options`): `Promise`\<`boolean`\>
 
 Revoke On-Chain issued claim by `claimId` or given `namespace` and `subject`. Required `claimId` or `claim` parameters.
 
@@ -775,7 +779,7 @@ claimsService.revokeClaim({
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 true if claim was revoked
 
@@ -783,7 +787,7 @@ ___
 
 ### revokeMultipleClaim
 
-▸ **revokeMultipleClaim**(`options`): `Promise`<`void`\>
+▸ **revokeMultipleClaim**(`options`): `Promise`\<`void`\>
 
 Revoke On-Chain issued claims of the given namespace for multiple subjects. Namespace must be the same for all subjects.
 Specify `claims` or `claimIds` parameters.
@@ -817,7 +821,7 @@ claimsService.revokeMultipleClaim({
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
@@ -839,7 +843,7 @@ ___
 
 ### verifyRoleEIP191JWT
 
-▸ **verifyRoleEIP191JWT**(`roleEIP191JWT`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+▸ **verifyRoleEIP191JWT**(`roleEIP191JWT`): `Promise`\<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Verifies:
 - That off-chain claim was issued by authorized issuer
@@ -853,7 +857,7 @@ Verifies:
 
 #### Returns
 
-`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+`Promise`\<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Boolean indicating if verified and array of error messages
 
@@ -861,7 +865,7 @@ ___
 
 ### verifyVc
 
-▸ **verifyVc**(`vc`): `Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+▸ **verifyVc**(`vc`): `Promise`\<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Verifies:
 - That credential proof is valid
@@ -872,11 +876,11 @@ Verifies:
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `vc` | `VerifiableCredential`<`RoleCredentialSubject`\> | to be verified |
+| `vc` | `VerifiableCredential`\<`RoleCredentialSubject`\> | to be verified |
 
 #### Returns
 
-`Promise`<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
+`Promise`\<[`CredentialVerificationResult`](../interfaces/modules_claims.CredentialVerificationResult.md)\>
 
 Boolean indicating if verified and array of error messages
 
@@ -884,7 +888,7 @@ ___
 
 ### create
 
-▸ `Static` **create**(`signerService`, `domainsService`, `cacheClient`, `didRegistry`, `verifiableCredentialService`): `Promise`<[`ClaimsService`](modules_claims.ClaimsService.md)\>
+▸ **create**(`signerService`, `domainsService`, `cacheClient`, `didRegistry`, `verifiableCredentialService`): `Promise`\<[`ClaimsService`](modules_claims.ClaimsService.md)\>
 
 #### Parameters
 
@@ -898,4 +902,4 @@ ___
 
 #### Returns
 
-`Promise`<[`ClaimsService`](modules_claims.ClaimsService.md)\>
+`Promise`\<[`ClaimsService`](modules_claims.ClaimsService.md)\>
