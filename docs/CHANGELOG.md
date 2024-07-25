@@ -1,3 +1,11 @@
+### [8.1.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.1.1...v8.1.2) (2024-07-25)
+
+
+### Bug Fixes
+
+* set axios-retry config ([407af9e](https://github.com/energywebfoundation/iam-client-lib/commit/407af9eb6ed11989e2b67c989997f13af5f069d0))
+* set axios-retry config ([175dd06](https://github.com/energywebfoundation/iam-client-lib/commit/175dd0652b9bafc44413b92debcee4627d744446))
+
 ### [8.1.2-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.1.1...v8.1.2-alpha.1) (2024-07-25)
 
 
