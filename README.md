@@ -93,7 +93,7 @@ Note that some library dependencies require `node.js` built-ins. When `iam-clien
 
 **Note:** You can see a full implementation of initializing `iam-client-lib` in the Switchboard application [here](https://github.com/energywebfoundation/switchboard-dapp/blob/develop/src/app/shared/services/iam.service.ts).
 
-Your application will need to initialize the library's modules. Because the library's modules have internal depenencies, modules must be initialized by the application in the correct order:
+Your application will need to initialize the library's modules. Because the library's modules have internal dependencies, modules must be initialized by the application in the correct order:
 
 #### 1. Initialize signer service
 
@@ -109,7 +109,7 @@ const { signerService, messagingService, connectToCacheServer } =
 Depending on the signer type (i.e. MetaMask, WalletConnect), a signature may be requested.
 
 ```js
-// IAM has builtin default settings for VOLTA CHAIN, which can overriden
+// IAM has builtin default settings for VOLTA CHAIN, which can overridden
 // 1111 is an example of another ChainID (https://chainlist.org/)
 setChainConfig(1111, {
   didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
