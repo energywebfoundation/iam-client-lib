@@ -70,7 +70,6 @@ import {
   CredentialResolver,
   EthersProviderIssuerResolver,
   EthersProviderRevokerResolver,
-  IpfsCredentialResolver,
   IssuerVerification,
   RevocationVerification,
   RoleEIP191JWT,
@@ -82,6 +81,7 @@ import { readyToBeRegisteredOnchain } from './claims.types';
 import { VerifiableCredentialsServiceBase } from '../verifiable-credentials';
 import { StatusListEntryVerification } from '@ew-did-registry/revocation';
 import { getLogger } from '../../config';
+import { S3CredentialResolver } from './s3-credential-resolver';
 
 const {
   id,
@@ -355,8 +355,7 @@ export class ClaimsService {
 
     // temporarily, until claimIssuer is not removed from Claim entity
     const issuer = [
-      `did:${
-        Methods.Erc1056
+      `did:${Methods.Erc1056
       }:${this._signerService.chainName()}:${emptyAddress}`,
     ];
 
@@ -1567,8 +1566,8 @@ export class ClaimsService {
     return credentialIsOffChain
       ? this.verifyRoleEIP191JWT(resolvedCredential as RoleEIP191JWT)
       : this.verifyVc(
-          resolvedCredential as VerifiableCredential<RoleCredentialSubject>
-        );
+        resolvedCredential as VerifiableCredential<RoleCredentialSubject>
+      );
   }
 
   /**
@@ -1577,7 +1576,7 @@ export class ClaimsService {
    *
    */
   private _setIssuerVerifier() {
-    this._credentialResolver = new IpfsCredentialResolver(
+    this._credentialResolver = new S3CredentialResolver(
       this._signerService.provider,
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore
