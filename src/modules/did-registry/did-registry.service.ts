@@ -24,7 +24,7 @@ import {
   DIDDocumentFull,
   IDIDDocumentFull,
 } from '@ew-did-registry/did-document';
-import { DidStore } from '@ew-did-registry/did-ipfs-store';
+import { DidStore } from '@ew-did-registry/did-s3-store';
 import { Methods } from '@ew-did-registry/did';
 import {
   ClaimsIssuer,
@@ -43,7 +43,7 @@ import {
   GetDIDDocumentOptions,
   GetDidPublicKeysOptions,
   GetServicesOptions,
-  IpfsConfig,
+  DidStoreConfig,
   IssuePublicClaimOptions,
   UpdateDocumentOptions,
   UpdateSignedDidDelegateOptions,
@@ -78,7 +78,7 @@ export class DidRegistry {
   private _operator: Operator;
   private _did: string;
   private _document: IDIDDocumentFull;
-  private _ipfsStore: DidStore;
+  private _didStore: DidStore;
   private _jwt: JWT;
   private _userClaims: ClaimsUser;
   private _issuerClaims: ClaimsIssuer;
@@ -87,7 +87,7 @@ export class DidRegistry {
     private _signerService: SignerService,
     private _cacheClient: CacheClient,
     private _assetsService: AssetsService,
-    private _ipfsConfig: IpfsConfig
+    private _didStoreConfig: DidStoreConfig
   ) {
     this._signerService.onInit(this.init.bind(this));
   }
@@ -96,13 +96,13 @@ export class DidRegistry {
     signerService: SignerService,
     cacheClient: CacheClient,
     assetsService: AssetsService,
-    ipfsConfig: IpfsConfig
+    didConfig: DidStoreConfig
   ) {
     const registry = new DidRegistry(
       signerService,
       cacheClient,
       assetsService,
-      ipfsConfig
+      didConfig
     );
     await registry.init();
     return registry;
@@ -113,8 +113,8 @@ export class DidRegistry {
   }
 
   // temporarily, to allow claim service to save claim
-  get ipfsStore() {
-    return this._ipfsStore;
+  get didStore() {
+    return this._didStore;
   }
 
   get identityOwner() {
@@ -122,7 +122,7 @@ export class DidRegistry {
   }
 
   async init() {
-    this._ipfsStore = new DidStore(this._ipfsConfig);
+    this._didStore = new DidStore(this._didStoreConfig.bucketName, this._didStoreConfig.credential);
     await this._setOperator();
     this.setJWT();
     this._setDocument();
@@ -166,11 +166,11 @@ export class DidRegistry {
       ...document,
       service: includeClaims
         ? await this.downloadClaims({
-            services:
-              document.service && document.service.length > 0
-                ? document.service
-                : [],
-          })
+          services:
+            document.service && document.service.length > 0
+              ? document.service
+              : [],
+        })
         : [],
     };
   }
@@ -380,7 +380,7 @@ export class DidRegistry {
     if (!publicKey)
       throw new Error(
         ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
-          'publicKey'
+        'publicKey'
       );
     const didDocument = await this.getDIDDocFull(did);
     const isDIdDocUpdated = await didDocument.updatePublicKey({
@@ -419,7 +419,7 @@ export class DidRegistry {
     if (!delegatePublicKey)
       throw new Error(
         ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
-          'delegatePublicKey'
+        'delegatePublicKey'
       );
     const didDocument = await this.getDIDDocFull(did);
     const isDIdDocUpdated = await didDocument.updateDelegate({
@@ -553,9 +553,8 @@ export class DidRegistry {
       throw new Error(ERROR_MESSAGES.UNKNOWN_PROVIDER);
     }
 
-    this._did = `did:${
-      Methods.Erc1056
-    }:${this._signerService.chainName()}:${await signer.getAddress()}`;
+    this._did = `did:${Methods.Erc1056
+      }:${this._signerService.chainName()}:${await signer.getAddress()}`;
     const address =
       chainConfigs()[this._signerService.chainId].didRegistryAddress;
     this._operator = new Operator(this._identityOwner, { address });
@@ -594,12 +593,12 @@ export class DidRegistry {
     this._userClaims = new ClaimsUser(
       this._identityOwner,
       this._document,
-      this._ipfsStore
+      this._didStore
     );
     this._issuerClaims = new ClaimsIssuer(
       this._identityOwner,
       this._document,
-      this._ipfsStore
+      this._didStore
     );
   }
 
@@ -623,7 +622,7 @@ export class DidRegistry {
           return { serviceEndpoint, ...rest };
         }
 
-        const tokenOrVc = await this._ipfsStore.get(serviceEndpoint);
+        const tokenOrVc = await this._didStore.get(serviceEndpoint);
 
         if (/(^[\w-]*\.[\w-]*\.[\w-]*$)/.test(tokenOrVc)) {
           const decodedData = this._jwt?.decode(tokenOrVc) as {
@@ -702,7 +701,7 @@ export class DidRegistry {
     } catch (e) {
       throw new Error(
         ERROR_MESSAGES.CAN_NOT_UPDATE_DOCUMENT_PROPERTIES_INVALID_OR_MISSING +
-          (e as Error).message
+        (e as Error).message
       );
     }
   }
