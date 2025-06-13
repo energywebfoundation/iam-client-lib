@@ -438,12 +438,12 @@ describe('Сlaim tests', () => {
         [...currentGetClaimsBySubjectMock(did)].concat(
           did === subjectDID
             ? [
-                {
-                  claimType,
-                  claimTypeVersion: version,
-                  issuedToken: issuedClaim.issuedToken,
-                },
-              ]
+              {
+                claimType,
+                claimTypeVersion: version,
+                issuedToken: issuedClaim.issuedToken,
+              },
+            ]
             : []
         )
       );
@@ -969,9 +969,8 @@ describe('Сlaim tests', () => {
       test('should be able to issue without request and publish onchain for owned asset', async () => {
         await signerService.connect(rootOwner, ProviderType.PrivateKey);
         const assetClaimType = `${roleForAsset}.${root}`;
-        const assetDID = `did:${Methods.Erc1056}:${
-          Chain.VOLTA
-        }:${await assetsService.registerAsset()}`;
+        const assetDID = `did:${Methods.Erc1056}:${Chain.VOLTA
+          }:${await assetsService.registerAsset()}`;
 
         const claim = await issueWithoutRequest(rootOwner, {
           subjectDID: assetDID,
@@ -1342,7 +1341,7 @@ describe('Сlaim tests', () => {
         },
         subject: rootOwnerDID,
       });
-      const claim = await didRegistry.ipfsStore.get(claimUrl);
+      const claim = await didRegistry.didStore.get(claimUrl);
 
       const document = await didRegistry.getDidDocument();
       const proofVerivier = new ProofVerifier(document);
@@ -1353,9 +1352,8 @@ describe('Сlaim tests', () => {
     });
 
     test('Should be able to create selfsigned claim for owned identity', async () => {
-      const assetDID = `did:${Methods.Erc1056}:${
-        Chain.VOLTA
-      }:${await assetsService.registerAsset()}`;
+      const assetDID = `did:${Methods.Erc1056}:${Chain.VOLTA
+        }:${await assetsService.registerAsset()}`;
       mockGetCachedOwnedAssets.mockResolvedValueOnce([
         { document: { id: assetDID }, id: assetDID },
       ]);
@@ -1364,7 +1362,7 @@ describe('Сlaim tests', () => {
         data: { claimType, claimTypeVersion: 1 },
         subject: assetDID,
       });
-      const claim = await didRegistry.ipfsStore.get(claimUrl);
+      const claim = await didRegistry.didStore.get(claimUrl);
 
       const ownerDoc = await didRegistry.getDidDocument({
         did: rootOwnerDID,

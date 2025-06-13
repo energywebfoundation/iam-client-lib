@@ -70,13 +70,13 @@ import {
   CredentialResolver,
   EthersProviderIssuerResolver,
   EthersProviderRevokerResolver,
-  IpfsCredentialResolver,
   IssuerVerification,
   RevocationVerification,
   RoleEIP191JWT,
   isEIP191Jwt,
   IssuerResolver,
   VerificationResult,
+  S3CredentialResolver,
 } from '@energyweb/vc-verification';
 import { DidRegistry } from '../did-registry/did-registry.service';
 import { ClaimData, isClaimService } from '../did-registry/did.types';
@@ -365,8 +365,7 @@ export class ClaimsService {
 
     // temporarily, until claimIssuer is not removed from Claim entity
     const issuer = [
-      `did:${
-        Methods.Erc1056
+      `did:${Methods.Erc1056
       }:${this._signerService.chainName()}:${emptyAddress}`,
     ];
 
@@ -830,7 +829,7 @@ export class ClaimsService {
       if (!verifiedDid || !compareDID(verifiedDid, iss as string)) {
         throw new Error('Incorrect signature');
       }
-      url = await this._didRegistry.ipfsStore.save(claimToken);
+      url = await this._didRegistry.didStore.save(claimToken);
       const data = {
         type: DIDAttribute.ServicePoint,
         value: {
@@ -1604,8 +1603,8 @@ export class ClaimsService {
     return isEIP191Jwt(resolvedCredential)
       ? this.verifyRoleEIP191JWT(resolvedCredential)
       : this.verifyVc(
-          resolvedCredential as VerifiableCredential<RoleCredentialSubject>
-        );
+        resolvedCredential as VerifiableCredential<RoleCredentialSubject>
+      );
   }
 
   /**
@@ -1614,10 +1613,10 @@ export class ClaimsService {
    *
    */
   private _setIssuerVerifier() {
-    this._credentialResolver = new IpfsCredentialResolver(
+    this._credentialResolver = new S3CredentialResolver(
       this._signerService.provider,
       this._didRegistry.registrySettings,
-      this._didRegistry.ipfsStore
+      this._didRegistry.didStore
     );
     const domainReader = this._domainsService.domainReader;
     const issuerResolver =
