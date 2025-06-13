@@ -1,3 +1,10 @@
+## [8.2.0-alpha.1](https://github.com/energywebfoundation/iam-client-lib/compare/v8.1.2...v8.2.0-alpha.1) (2025-06-13)
+
+
+### Features
+
+* implement s3 storage ([029a721](https://github.com/energywebfoundation/iam-client-lib/commit/029a721111a19511ab2b76b508f5b46d17aee64d))
+
 ### [8.1.2](https://github.com/energywebfoundation/iam-client-lib/compare/v8.1.1...v8.1.2) (2024-07-25)
 
 
