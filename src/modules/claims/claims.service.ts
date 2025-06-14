@@ -70,7 +70,7 @@ import {
   CredentialResolver,
   EthersProviderIssuerResolver,
   EthersProviderRevokerResolver,
-  IpfsCredentialResolver,
+  S3CredentialResolver,
   IssuerVerification,
   RevocationVerification,
   RoleEIP191JWT,
@@ -356,8 +356,7 @@ export class ClaimsService {
 
     // temporarily, until claimIssuer is not removed from Claim entity
     const issuer = [
-      `did:${
-        Methods.Erc1056
+      `did:${Methods.Erc1056
       }:${this._signerService.chainName()}:${emptyAddress}`,
     ];
 
@@ -1583,8 +1582,8 @@ export class ClaimsService {
     return isEIP191Jwt(resolvedCredential)
       ? this.verifyRoleEIP191JWT(resolvedCredential)
       : this.verifyVc(
-          resolvedCredential as VerifiableCredential<RoleCredentialSubject>
-        );
+        resolvedCredential as VerifiableCredential<RoleCredentialSubject>
+      );
   }
 
   /**
@@ -1593,7 +1592,7 @@ export class ClaimsService {
    *
    */
   private _setIssuerVerifier() {
-    this._credentialResolver = new IpfsCredentialResolver(
+    this._credentialResolver = new S3CredentialResolver(
       this._signerService.provider,
       this._didRegistry.registrySettings,
       this._didRegistry.ipfsStore

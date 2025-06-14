@@ -14,12 +14,13 @@ export interface AssetProfile {
   icon?: string;
 }
 
-export interface IpfsConfig {
-  host: string;
+export interface DidStoreConfig {
+  host?: string;
   port?: number;
   protocol?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headers?: Record<string, any>;
+  [x: string]: any;
 }
 
 export interface AssetProfiles {
@@ -158,6 +159,6 @@ export interface ValidDateUpdateDocumentRequestOptions {
 export const isClaimService = (
   service: IServiceEndpoint
 ): service is IServiceEndpoint &
-  Pick<ClaimData, 'claimType' | 'claimTypeVersion'> => {
+Pick<ClaimData, 'claimType' | 'claimTypeVersion'> => {
   return has(service, 'claimType') && has(service, 'claimTypeVersion');
 };

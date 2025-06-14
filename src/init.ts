@@ -10,7 +10,7 @@ import {
   SignerService,
 } from './modules/signer';
 import { StakingFactoryService } from './modules/staking';
-import { DidRegistry, IpfsConfig } from './modules/did-registry';
+import { DidRegistry, DidStoreConfig } from './modules/did-registry';
 import { MessagingService } from './modules/messaging';
 import { CacheClient } from './modules/cache-client';
 import { DomainsService } from './modules/domains';
@@ -98,13 +98,13 @@ export async function init(signerService: SignerService) {
     );
 
     async function connectToDidRegistry(
-      ipfsConfig: IpfsConfig
+      didStoreConfig: DidStoreConfig
     ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
       const didRegistry = await DidRegistry.connect(
         signerService,
         cacheClient,
         assetsService,
-        ipfsConfig
+        didStoreConfig
       );
       const claimsService = await ClaimsService.create(
         signerService,
