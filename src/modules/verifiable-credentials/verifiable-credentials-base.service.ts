@@ -1,6 +1,6 @@
 import { IPresentationDefinition, PEX, SelectResults } from '@sphereon/pex';
 import { ICredentialSubject } from '@sphereon/ssi-types';
-import { InputDescriptorV1, InputDescriptorV2 } from '@sphereon/pex-models';
+import { InputDescriptorV1, InputDescriptorV2, PresentationDefinitionV1, PresentationDefinitionV2 } from '@sphereon/pex-models';
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
 import {
@@ -17,6 +17,7 @@ import {
   ContinueExchangeSelections,
   VpRequestPresentationDefinitionQuery,
   CredentialType,
+  isPresentationDefinitionV2,
 } from '@ew-did-registry/credentials-interface';
 import { SignerService } from '../signer';
 import {
@@ -175,21 +176,36 @@ export abstract class VerifiableCredentialsServiceBase {
 
     const selections = await Promise.all(
       credentialQuery.map(async ({ presentationDefinition }) => {
-        const presentationDefFiltered = {
-          ...presentationDefinition,
-          input_descriptors: this.filterSelfSignDescriptors(
-            presentationDefinition?.input_descriptors
-          ),
-        };
-        const selectResults = await this.getCredentialsByDefinition(
-          presentationDefFiltered
-        );
+        let presentationDefFiltered: IPresentationDefinition;
+
+        if (isPresentationDefinitionV2(presentationDefinition)) {
+          // It’s V2
+          presentationDefFiltered = {
+            ...presentationDefinition,
+            input_descriptors: this.filterSelfSignDescriptors(
+              presentationDefinition.input_descriptors
+            )
+          } as PresentationDefinitionV2;
+        } else {
+          // It’s V1
+          presentationDefFiltered = {
+            ...presentationDefinition,
+            input_descriptors: this.filterSelfSignDescriptors(
+              presentationDefinition.input_descriptors
+            ),
+          } as PresentationDefinitionV1;
+        }
+
+        const selectResults = await this.getCredentialsByDefinition(presentationDefFiltered);
+
         return {
           presentationDefinition,
           selectResults,
         };
       })
     );
+
+
     return { vpRequest, selections };
   }
 

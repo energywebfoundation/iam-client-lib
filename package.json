@@ -39,7 +39,8 @@
     "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\"",
     "updateDomains": "npx ts-node scripts/update_domains",
     "transferDomains": "npx ts-node scripts/transfer_domains",
-    "bench": "node benchmarks/runner"
+    "bench": "node benchmarks/runner",
+    "publish:canary": "npm version prerelease --preid=dev.$RUN_NUMBER --no-git-tag-version --exact && npm publish --tag=canary --access=public"
   },
   "keywords": [
     "decentralized",
@@ -75,6 +76,7 @@
     "@ew-did-registry/did-document": "0.9.1-alpha.1545.0",
     "@ew-did-registry/did-ethr-resolver": "0.9.1-alpha.1545.0",
     "@ew-did-registry/did-resolver-interface": "0.9.1-alpha.1545.0",
+    "@ew-did-registry/did-s3-store": "^0.9.1-alpha.1559.0",
     "@ew-did-registry/jwt": "0.9.1-alpha.1545.0",
     "@ew-did-registry/keys": "0.9.1-alpha.1545.0",
     "@ew-did-registry/proxyidentity": "0.9.1-alpha.1545.0",

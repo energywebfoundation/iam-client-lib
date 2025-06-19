@@ -24,7 +24,6 @@ import {
   DIDDocumentFull,
   IDIDDocumentFull,
 } from '@ew-did-registry/did-document';
-import { DidStore } from '@ew-did-registry/did-s3-store';
 import { Methods } from '@ew-did-registry/did';
 import {
   ClaimsIssuer,
@@ -59,6 +58,8 @@ import {
 } from './did-registry.validation';
 import { getLogger } from '../../config/logger.config';
 import { isVerifiableCredential } from '@ew-did-registry/credentials-interface';
+import { cacheConfigs } from '../../config';
+import { DidStore } from '@ew-did-registry/did-ssi-hub-store';
 
 const { JsonRpcProvider } = providers;
 
@@ -122,7 +123,14 @@ export class DidRegistry {
   }
 
   async init() {
-    this._didStore = new DidStore(this._didStoreConfig.bucketName, this._didStoreConfig.credential);
+    const {
+      url: cacheClientBaseUrl,
+    } = cacheConfigs()[this._signerService.chainId];
+    this._didStore = new DidStore({
+      baseURL: cacheClientBaseUrl,
+      did: this._signerService.did,
+      privateKey: this._didStoreConfig.privateKey,
+    });
     await this._setOperator();
     this.setJWT();
     this._setDocument();
