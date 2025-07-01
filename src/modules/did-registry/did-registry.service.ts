@@ -1,8 +1,14 @@
-import { Wallet, providers, BigNumber } from 'ethers';
-import { CID } from 'multiformats/cid';
-import { KeyType } from '@ew-did-registry/keys';
-import { JWT } from '@ew-did-registry/jwt';
-import { ProxyOperator } from '@ew-did-registry/proxyidentity';
+import {
+  ClaimsIssuer,
+  ClaimsUser,
+  ProofVerifier,
+} from '@ew-did-registry/claims';
+import { isVerifiableCredential } from '@ew-did-registry/credentials-interface';
+import { Methods } from '@ew-did-registry/did';
+import {
+  DIDDocumentFull,
+  IDIDDocumentFull,
+} from '@ew-did-registry/did-document';
 import {
   addressOf,
   EwSigner,
@@ -20,46 +26,43 @@ import {
   PubKeyType,
   RegistrySettings,
 } from '@ew-did-registry/did-resolver-interface';
-import {
-  DIDDocumentFull,
-  IDIDDocumentFull,
-} from '@ew-did-registry/did-document';
-import { Methods } from '@ew-did-registry/did';
-import {
-  ClaimsIssuer,
-  ClaimsUser,
-  ProofVerifier,
-} from '@ew-did-registry/claims';
-import { SignerService } from '../signer/signer.service';
+import { DidStore as S3DidStore } from '@ew-did-registry/did-s3-store';
+import { DidStore as SSIDidStore } from '@ew-did-registry/did-ssi-hub-store';
+import { IDidStore } from '@ew-did-registry/did-store-interface';
+import { JWT } from '@ew-did-registry/jwt';
+import { KeyType } from '@ew-did-registry/keys';
+import { ProxyOperator } from '@ew-did-registry/proxyidentity';
+import { BigNumber, providers, Wallet } from 'ethers';
+import { CID } from 'multiformats/cid';
+import { cacheConfigs } from '../../config';
+import { chainConfigs } from '../../config/chain.config';
+import { getLogger } from '../../config/logger.config';
 import { ERROR_MESSAGES } from '../../errors';
+import { AssetsService } from '../assets/assets.service';
 import { CacheClient } from '../cache-client/cache-client.service';
+import { SignerService } from '../signer/signer.service';
+import {
+  UpdateDelegate,
+  UpdatePublicKey,
+  UpdateServicePoint,
+} from './did-registry.validation';
 import {
   ClaimData,
   CreatePublicClaimOptions,
   DecodeJWTTokenOptions,
+  DidStoreConfig,
+  DidStoreType,
   DownloadClaimsOptions,
   GetDidDelegatesOptions,
   GetDIDDocumentOptions,
   GetDidPublicKeysOptions,
   GetServicesOptions,
-  DidStoreConfig,
   IssuePublicClaimOptions,
   UpdateDocumentOptions,
   UpdateSignedDidDelegateOptions,
   UpdateSignedDidPublicKeyOptions,
-  ValidDateUpdateDocumentRequestOptions,
+  ValidDateUpdateDocumentRequestOptions
 } from './did.types';
-import { chainConfigs } from '../../config/chain.config';
-import { AssetsService } from '../assets/assets.service';
-import {
-  UpdateServicePoint,
-  UpdateDelegate,
-  UpdatePublicKey,
-} from './did-registry.validation';
-import { getLogger } from '../../config/logger.config';
-import { isVerifiableCredential } from '@ew-did-registry/credentials-interface';
-import { cacheConfigs } from '../../config';
-import { DidStore } from '@ew-did-registry/did-ssi-hub-store';
 
 const { JsonRpcProvider } = providers;
 
@@ -79,7 +82,7 @@ export class DidRegistry {
   private _operator: Operator;
   private _did: string;
   private _document: IDIDDocumentFull;
-  private _didStore: DidStore;
+  private _didStore: IDidStore;
   private _jwt: JWT;
   private _userClaims: ClaimsUser;
   private _issuerClaims: ClaimsIssuer;
@@ -123,18 +126,39 @@ export class DidRegistry {
   }
 
   async init() {
-    const {
-      url: cacheClientBaseUrl,
-    } = cacheConfigs()[this._signerService.chainId];
-    this._didStore = new DidStore({
-      baseURL: cacheClientBaseUrl,
-      did: this._signerService.did,
-      privateKey: this._didStoreConfig.privateKey,
-    });
+    this._didStore = this.createDidStore(this._didStoreConfig);
     await this._setOperator();
     this.setJWT();
     this._setDocument();
     this._setClaims();
+  }
+
+  /**
+   * Factory method to create a type-safe `IDidStore` instance based on the given configuration.
+   *
+   * @private
+   * @param {DidStoreConfig} config - The configuration object for the DID store.
+   *   - When `type` is `DidStoreType.SSI`, expects properties required for `SSIDidStore` construction.
+   *   - When `type` is `DidStoreType.S3`, expects properties required for `S3DidStore` construction.
+   * @returns {IDidStore} A concrete implementation of `IDidStore` matching the specified type.
+   * 
+   */
+  private createDidStore(config: DidStoreConfig): IDidStore {
+    switch (config.type) {
+      case DidStoreType.SSI: {
+        const {
+          url: cacheClientBaseUrl,
+        } = cacheConfigs()[this._signerService.chainId];
+
+        return new SSIDidStore({
+          baseURL: cacheClientBaseUrl,
+          did: this._signerService.did,
+          privateKey: config.privateKey,
+        });
+      }
+      case DidStoreType.S3:
+        return new S3DidStore(config.bucketName, config.credential);
+    }
   }
 
   /**
