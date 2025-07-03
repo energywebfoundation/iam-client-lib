@@ -14,14 +14,15 @@ export interface AssetProfile {
   icon?: string;
 }
 
-export interface DidStoreConfig {
-  host: string;
-  port?: number;
-  protocol?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  headers?: Record<string, any>;
-  [x: string]: any;
+export enum DidStoreType {
+  SSI = 'ssi',
+  S3 = 's3',
 }
+
+export interface DidStoreConfigBase { type: DidStoreType; }
+export interface SSIConfig extends DidStoreConfigBase { type: DidStoreType.SSI;[x: string]: any; }
+export interface S3Config extends DidStoreConfigBase { type: DidStoreType.S3;[x: string]: any; }
+export type DidStoreConfig = SSIConfig | S3Config;
 
 export interface AssetProfiles {
   [key: string]: AssetProfile;
