@@ -26,15 +26,12 @@ import {
   PubKeyType,
   RegistrySettings,
 } from '@ew-did-registry/did-resolver-interface';
-import { DidStore as S3DidStore } from '@ew-did-registry/did-s3-store';
-import { DidStore as SSIDidStore } from '@ew-did-registry/did-ssi-hub-store';
 import { IDidStore } from '@ew-did-registry/did-store-interface';
 import { JWT } from '@ew-did-registry/jwt';
 import { KeyType } from '@ew-did-registry/keys';
 import { ProxyOperator } from '@ew-did-registry/proxyidentity';
 import { BigNumber, providers, Wallet } from 'ethers';
 import { CID } from 'multiformats/cid';
-import { cacheConfigs } from '../../config';
 import { chainConfigs } from '../../config/chain.config';
 import { getLogger } from '../../config/logger.config';
 import { ERROR_MESSAGES } from '../../errors';
@@ -46,12 +43,12 @@ import {
   UpdatePublicKey,
   UpdateServicePoint,
 } from './did-registry.validation';
+import { DidStoreProxy } from './did-store.proxy';
 import {
   ClaimData,
   CreatePublicClaimOptions,
   DecodeJWTTokenOptions,
   DidStoreConfig,
-  DidStoreType,
   DownloadClaimsOptions,
   GetDidDelegatesOptions,
   GetDIDDocumentOptions,
@@ -63,6 +60,7 @@ import {
   UpdateSignedDidPublicKeyOptions,
   ValidDateUpdateDocumentRequestOptions
 } from './did.types';
+import { DomainsService } from '../domains';
 
 const { JsonRpcProvider } = providers;
 
@@ -126,7 +124,11 @@ export class DidRegistry {
   }
 
   async init() {
-    this._didStore = this.createDidStore(this._didStoreConfig);
+    this._didStore = new DidStoreProxy(this._didStoreConfig.type, this._cacheClient)
+
+    const data = await DomainsService.create(this._signerService, this._cacheClient);
+    data.isOwner({ domain: 'iam.ewc' });
+    data.isOwner({ domain: 'auth.ewc' });
     await this._setOperator();
     this.setJWT();
     this._setDocument();
@@ -143,23 +145,23 @@ export class DidRegistry {
    * @returns {IDidStore} A concrete implementation of `IDidStore` matching the specified type.
    * 
    */
-  private createDidStore(config: DidStoreConfig): IDidStore {
-    switch (config.type) {
-      case DidStoreType.SSI: {
-        const {
-          url: cacheClientBaseUrl,
-        } = cacheConfigs()[this._signerService.chainId];
+  // private createDidStore(config: DidStoreConfig): IDidStore {
+  //   switch (config.type) {
+  //     case DidStoreType.SSI: {
+  //       const {
+  //         url: cacheClientBaseUrl,
+  //       } = cacheConfigs()[this._signerService.chainId];
 
-        return new SSIDidStore({
-          baseURL: cacheClientBaseUrl,
-          did: this._signerService.did,
-          privateKey: config.privateKey,
-        });
-      }
-      case DidStoreType.S3:
-        return new S3DidStore(config.bucketName, config.credential);
-    }
-  }
+  //       return new SSIDidStore({
+  //         baseURL: cacheClientBaseUrl,
+  //         did: this._signerService.did,
+  //         privateKey: config.privateKey,
+  //       });
+  //     }
+  //     case DidStoreType.S3:
+  //       return new S3DidStore(config.bucketName, config.credential);
+  //   }
+  // }
 
   /**
    * Retrieve DID Document of the given DID from SSI-Hub if possible, otherwise from blockchain.

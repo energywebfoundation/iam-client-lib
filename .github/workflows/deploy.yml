@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: ['develop', 'master']
+    branches: ['develop', 'master', 'feat/ssi-store']
   pull_request:
 
 jobs:
@@ -49,6 +49,14 @@ jobs:
       # See https://energyweb.atlassian.net/browse/SWTCH-3073
       # - name: Npm Run Test
       #   run: npm run test
+
+      - name: Deploy on feat/ssi-store branch
+        if: github.ref == 'refs/heads/feat/ssi-store'
+        env:
+          GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: npm run publish:canary
 
       - name: Deploy on develop branch
         if: github.ref == 'refs/heads/develop'

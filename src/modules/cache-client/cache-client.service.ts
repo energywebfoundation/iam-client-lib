@@ -27,6 +27,7 @@ import {
   StatusList2021UnsignedCredential,
 } from '../verifiable-credentials';
 import { AuthService, SiweOptions, DEFAULT_AUTH_STATUS_PATH } from '../auth';
+import { DidStoreType } from '../did-registry';
 
 export class CacheClient implements ICacheClient {
   private _httpClient: AxiosInstance;
@@ -426,5 +427,23 @@ export class CacheClient implements ICacheClient {
 
   isAuthEnabled() {
     return this.authEnabled;
+  }
+
+  async addStoreClaim(claim: string, type: DidStoreType = DidStoreType.S3): Promise<string> {
+    const { data } = await this._httpClient.post<string>(
+      '/store',
+      {
+        data: claim,
+        type
+      }
+    );
+    return data;
+  }
+
+  async getStoreClaim(uri: string): Promise<string> {
+    const { data } = await this._httpClient.get<string>(
+      `/store/${uri}`
+    );
+    return data;
   }
 }

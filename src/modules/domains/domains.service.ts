@@ -632,8 +632,8 @@ export class DomainsService {
     const apps = this._cacheClient
       ? await this.getAppsOfOrg(namespace)
       : await this.getSubdomains({
-          domain: `${NamespaceType.Application}.${namespace}`,
-        });
+        domain: `${NamespaceType.Application}.${namespace}`,
+      });
     if (apps && apps.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_APPS);
     }
@@ -641,8 +641,8 @@ export class DomainsService {
     const roles = this._cacheClient
       ? await this._cacheClient.getOrganizationRoles(namespace)
       : await this.getSubdomains({
-          domain: `${NamespaceType.Role}.${namespace}`,
-        });
+        domain: `${NamespaceType.Role}.${namespace}`,
+      });
 
     if (roles && roles.length > 0) {
       throw new Error(ERROR_MESSAGES.ORG_WITH_ROLES);
@@ -716,8 +716,8 @@ export class DomainsService {
     const roles = this._cacheClient
       ? await this._cacheClient.getApplicationRoles(namespace)
       : await this.getSubdomains({
-          domain: `${NamespaceType.Role}.${namespace}`,
-        });
+        domain: `${NamespaceType.Role}.${namespace}`,
+      });
 
     if (roles && roles.length > 0) {
       throw new Error(ERROR_MESSAGES.APP_WITH_ROLES);
@@ -1062,8 +1062,13 @@ export class DomainsService {
     domain,
     user = this._owner,
   }: IsOwnerOptions): Promise<boolean> {
+    debugger;
     const domainHash = namehash(domain);
     const owner = await this._ensRegistry.owner(domainHash);
+
+    console.log("address", this._ensRegistry.address);
+    console.log("domain", domain);
+    console.log("owner", owner);
     return owner === user;
   }
 
@@ -1125,16 +1130,16 @@ export class DomainsService {
       // Need to use newRole/newDomain as need to set reverse domain name
       const updateDomain = DomainReader.isRoleDefinition(data)
         ? this._domainDefinitionTransactionFactory.newRole({
-            domain,
-            roleDefinition: {
-              ...castToV2(data),
-              version: parseInt(data.version.toString(), 10),
-            },
-          })
+          domain,
+          roleDefinition: {
+            ...castToV2(data),
+            version: parseInt(data.version.toString(), 10),
+          },
+        })
         : this._domainDefinitionTransactionFactory.newDomain({
-            domain,
-            domainDefinition: data,
-          });
+          domain,
+          domainDefinition: data,
+        });
       await this._signerService.send(updateResolverTransaction);
       await this._signerService.send(updateDomain);
       return true;
@@ -1396,8 +1401,8 @@ export class DomainsService {
       type === NamespaceType.Role
         ? [namespace]
         : type === NamespaceType.Application
-        ? [namespace, NamespaceType.Application]
-        : [namespace, NamespaceType.Application, NamespaceType.Organization];
+          ? [namespace, NamespaceType.Application]
+          : [namespace, NamespaceType.Application, NamespaceType.Organization];
     return Promise.all(
       namespacesToCheck.map((ns) => this.getOwner({ namespace: ns }))
     ).then((owners) =>
