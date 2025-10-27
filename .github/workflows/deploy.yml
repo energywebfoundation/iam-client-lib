@@ -2,12 +2,12 @@ name: Deploy
 
 on:
   push:
-    branches: ['develop', 'master']
+    branches: ["develop", "master", "fix/test-deploy"]
   pull_request:
 
 jobs:
   cancel-previous:
-    name: 'Cancel Previous Runs'
+    name: "Cancel Previous Runs"
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.SECRET_NAME }}
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '18'
+          node-version: "18"
           registry-url: https://registry.npmjs.org/
 
       - name: Configure Git
@@ -49,6 +49,14 @@ jobs:
       # See https://energyweb.atlassian.net/browse/SWTCH-3073
       # - name: Npm Run Test
       #   run: npm run test
+
+      - name: Deploy on fix/test-deploy branch
+        if: github.ref == 'refs/heads/fix/test-deploy'
+        env:
+          GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: npm run publish:canary
 
       - name: Deploy on develop branch
         if: github.ref == 'refs/heads/develop'
