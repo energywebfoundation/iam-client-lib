@@ -18,7 +18,7 @@ const {
 2. Connecting to cache server. Depending on signer type signature might be requested
 
 ```typescript
-// IAM has builtin default settings for VOLTA CHAIN, which can overriden
+// IAM has builtin default settings for VOLTA CHAIN, which can overridden
 setChainConfig(1111, {
   didContractAddress: '0x3e2fb24edc3536d655720280b427c91bcb55f3d6',
   ensRegistryAddress: '0xa372d665f83197a63bbe633ebe19c7bfd4943003',
