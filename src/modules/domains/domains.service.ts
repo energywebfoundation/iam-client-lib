@@ -1062,7 +1062,6 @@ export class DomainsService {
     domain,
     user = this._owner,
   }: IsOwnerOptions): Promise<boolean> {
-    debugger;
     const domainHash = namehash(domain);
     const owner = await this._ensRegistry.owner(domainHash);
 
