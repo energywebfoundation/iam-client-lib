@@ -7,6 +7,8 @@
 ### Properties
 
 - [owner](modules_domains.GetENSTypesByOwnerOptions.md#owner)
+- [skip](modules_domains.GetENSTypesByOwnerOptions.md#skip)
+- [take](modules_domains.GetENSTypesByOwnerOptions.md#take)
 - [type](modules_domains.GetENSTypesByOwnerOptions.md#type)
 - [withRelations](modules_domains.GetENSTypesByOwnerOptions.md#withrelations)
 
@@ -17,6 +19,22 @@
 • **owner**: `string`
 
 Address of the owner
+
+___
+
+### skip
+
+• `Optional` **skip**: `number`
+
+Pagination offset
+
+___
+
+### take
+
+• `Optional` **take**: `number`
+
+Pagination limit
 
 ___
 

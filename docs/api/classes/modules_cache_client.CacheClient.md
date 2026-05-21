@@ -237,7 +237,7 @@ ___
 
 ### getApplicationsByOwner
 
-▸ **getApplicationsByOwner**(`owner`, `withRelations?`): `Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
+▸ **getApplicationsByOwner**(`owner`, `withRelations?`, `«destructured»?`): `Promise`\<[`IApp`](../interfaces/modules_domains.IApp.md)[]\>
 
 #### Parameters
 
@@ -245,6 +245,7 @@ ___
 | :------ | :------ | :------ |
 | `owner` | `string` | `undefined` |
 | `withRelations` | `boolean` | `true` |
+| `«destructured»` | [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter) | `{}` |
 
 #### Returns
 
@@ -565,7 +566,7 @@ ___
 
 ### getOrganizationsByOwner
 
-▸ **getOrganizationsByOwner**(`owner`, `withRelations?`): `Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
+▸ **getOrganizationsByOwner**(`owner`, `withRelations?`, `«destructured»?`): `Promise`\<[`IOrganization`](../interfaces/modules_domains.IOrganization.md)[]\>
 
 #### Parameters
 
@@ -573,6 +574,7 @@ ___
 | :------ | :------ | :------ |
 | `owner` | `string` | `undefined` |
 | `withRelations` | `boolean` | `true` |
+| `«destructured»` | [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter) | `{}` |
 
 #### Returns
 
@@ -646,13 +648,14 @@ ___
 
 ### getRolesByOwner
 
-▸ **getRolesByOwner**(`owner`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
+▸ **getRolesByOwner**(`owner`, `«destructured»?`): `Promise`\<[`IRole`](../interfaces/modules_domains.IRole.md)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `owner` | `string` |
+| `«destructured»` | [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter) |
 
 #### Returns
 

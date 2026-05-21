@@ -896,16 +896,24 @@ export class DomainsService {
     type,
     owner,
     withRelations = true,
+    skip,
+    take,
   }: GetENSTypesByOwnerOptions): Promise<IOrganization[] | IApp[] | IRole[]> {
     DomainsService.validateOwnerAddress(owner);
     if (type === NamespaceType.Organization) {
-      return this._cacheClient.getOrganizationsByOwner(owner, withRelations);
+      return this._cacheClient.getOrganizationsByOwner(owner, withRelations, {
+        skip,
+        take,
+      });
     }
     if (type === NamespaceType.Application) {
-      return this._cacheClient.getApplicationsByOwner(owner, withRelations);
+      return this._cacheClient.getApplicationsByOwner(owner, withRelations, {
+        skip,
+        take,
+      });
     }
     if (type === NamespaceType.Role) {
-      return this._cacheClient.getRolesByOwner(owner);
+      return this._cacheClient.getRolesByOwner(owner, { skip, take });
     }
     throw new ENSTypeNotSupportedError();
   }

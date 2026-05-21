@@ -20,8 +20,8 @@ didRegistry.getDidDocument();
 
 ### Accessors
 
+- [didStore](modules_did_registry.DidRegistry.md#didstore)
 - [identityOwner](modules_did_registry.DidRegistry.md#identityowner)
-- [ipfsStore](modules_did_registry.DidRegistry.md#ipfsstore)
 - [jwt](modules_did_registry.DidRegistry.md#jwt)
 - [registrySettings](modules_did_registry.DidRegistry.md#registrysettings)
 
@@ -48,7 +48,7 @@ didRegistry.getDidDocument();
 
 ### constructor
 
-• **new DidRegistry**(`_signerService`, `_cacheClient`, `_assetsService`, `_ipfsConfig`): [`DidRegistry`](modules_did_registry.DidRegistry.md)
+• **new DidRegistry**(`_signerService`, `_cacheClient`, `_assetsService`, `_didStoreConfig`): [`DidRegistry`](modules_did_registry.DidRegistry.md)
 
 #### Parameters
 
@@ -57,13 +57,23 @@ didRegistry.getDidDocument();
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 | `_assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
-| `_ipfsConfig` | [`IpfsConfig`](../interfaces/modules_did_registry.IpfsConfig.md) |
+| `_didStoreConfig` | [`DidStoreConfig`](../interfaces/modules_did_registry.DidStoreConfig.md) |
 
 #### Returns
 
 [`DidRegistry`](modules_did_registry.DidRegistry.md)
 
 ## Accessors
+
+### didStore
+
+• `get` **didStore**(): `DidStore`
+
+#### Returns
+
+`DidStore`
+
+___
 
 ### identityOwner
 
@@ -72,16 +82,6 @@ didRegistry.getDidDocument();
 #### Returns
 
 `EwSigner`
-
-___
-
-### ipfsStore
-
-• `get` **ipfsStore**(): `DidStore`
-
-#### Returns
-
-`DidStore`
 
 ___
 
@@ -491,7 +491,7 @@ ___
 
 ### connect
 
-▸ **connect**(`signerService`, `cacheClient`, `assetsService`, `ipfsConfig`): `Promise`\<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
+▸ **connect**(`signerService`, `cacheClient`, `assetsService`, `didConfig`): `Promise`\<[`DidRegistry`](modules_did_registry.DidRegistry.md)\>
 
 #### Parameters
 
@@ -500,7 +500,7 @@ ___
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 | `assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
-| `ipfsConfig` | [`IpfsConfig`](../interfaces/modules_did_registry.IpfsConfig.md) |
+| `didConfig` | [`DidStoreConfig`](../interfaces/modules_did_registry.DidStoreConfig.md) |
 
 #### Returns
 

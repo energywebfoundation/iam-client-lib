@@ -180,7 +180,7 @@ export abstract class VerifiableCredentialsServiceBase {
           input_descriptors: this.filterSelfSignDescriptors(
             presentationDefinition?.input_descriptors
           ),
-        };
+        } as IPresentationDefinition;
         const selectResults = await this.getCredentialsByDefinition(
           presentationDefFiltered
         );

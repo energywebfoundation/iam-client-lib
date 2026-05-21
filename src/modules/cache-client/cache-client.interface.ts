@@ -9,7 +9,7 @@ import {
   IClaimRejection,
   IClaimRequest,
 } from '../claims/claims.types';
-import { AssetsFilter, ClaimsFilter } from './cache-client.types';
+import { AssetsFilter, ClaimsFilter, DomainsFilter } from './cache-client.types';
 import { Asset, AssetHistory } from '../assets/assets.types';
 import { IApp, IOrganization, IRole } from '../domains/domains.types';
 import { Claim } from '../claims/claims.types';
@@ -27,9 +27,14 @@ export interface ICacheClient {
   getOrganizationRoles: (namespace: string) => Promise<IRole[]>;
   getOrganizationsByOwner: (
     owner: string,
-    excludeSubOrgs?: boolean
+    excludeSubOrgs?: boolean,
+    filter?: DomainsFilter
   ) => Promise<IOrganization[]>;
-  getApplicationsByOwner: (owner: string) => Promise<IApp[]>;
+  getApplicationsByOwner: (
+    owner: string,
+    withRelations?: boolean,
+    filter?: DomainsFilter
+  ) => Promise<IApp[]>;
   getApplicationsByOrganization: (namespace: string) => Promise<IApp[]>;
   getSubOrganizationsByOrganization: (
     namespace: string
@@ -39,7 +44,10 @@ export interface ICacheClient {
     phrase: string,
     types?: SearchType[]
   ) => Promise<(IOrganization | IApp | IRole)[]>;
-  getRolesByOwner: (owner: string) => Promise<IRole[]>;
+  getRolesByOwner: (
+    owner: string,
+    filter?: DomainsFilter
+  ) => Promise<IRole[]>;
   getDIDsForRole: (namespace: string) => Promise<string[]>;
 
   getClaimsBySubjects: (subjects: string[]) => Promise<Claim[]>;
