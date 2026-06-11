@@ -5,7 +5,7 @@ module.exports = {
       channel: 'latest',
     },
     {
-      name: 'develop',
+      name: 'feat/claim-pagination',
       prerelease: 'alpha',
       channel: 'canary',
     },
