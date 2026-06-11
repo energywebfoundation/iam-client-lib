@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: ['feat/claim-pagination', 'master']
+    branches: ['intelligent-dev', 'master']
   pull_request:
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
       #   run: npm run test
 
       - name: Deploy on develop branch
-        if: github.ref == 'refs/heads/feat/claim-pagination'
+        if: github.ref == 'refs/heads/intelligent-dev'
         env:
           # GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
