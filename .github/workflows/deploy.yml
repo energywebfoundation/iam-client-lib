@@ -52,12 +52,11 @@ jobs:
       # - name: Npm Run Test
       #   run: npm run test
 
-      - name: Deploy on develop branch
-        if: github.ref == 'refs/heads/feat/claim-pagination'
+      - name: Publish to npm
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/claim-pagination'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        run: npm publish --tag canary
 
       - name: Deploy on master branch
         if: github.ref == 'refs/heads/master'
