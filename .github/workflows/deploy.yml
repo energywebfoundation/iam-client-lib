@@ -55,14 +55,14 @@ jobs:
       - name: Deploy on develop branch
         if: github.ref == 'refs/heads/feat/claim-pagination'
         env:
-          # GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
+          GITHUB_TOKEN: ${{ github.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 
       - name: Deploy on master branch
         if: github.ref == 'refs/heads/master'
         env:
-          GITHUB_TOKEN: ${{ secrets.SECRET_NAME }}
+          GITHUB_TOKEN: ${{ github.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 

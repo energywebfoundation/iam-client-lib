@@ -10,6 +10,6 @@ module.exports = {
       channel: 'canary',
     },
   ],
-  repositoryUrl: 'git@github.com:energywebfoundation/iam-client-lib.git',
+  repositoryUrl: 'https://github.com/energywebfoundation/iam-client-lib.git',
   extends: '@energyweb/semantic-release-config',
 };
