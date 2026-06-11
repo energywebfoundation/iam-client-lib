@@ -31,7 +31,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Configure Git
-        if: github.ref == 'refs/heads/master'
         run: |
           git config --global user.email ${{ secrets.GH_EMAIL }}
           git config --global user.name ${{ secrets.GH_USER }}
