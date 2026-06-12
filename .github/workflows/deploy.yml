@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: ['feat/claim-pagination', 'master']
+    branches: ['intelligent-dev', 'master']
   pull_request:
 
 jobs:
@@ -53,7 +53,7 @@ jobs:
       #   run: npm run test
 
       - name: Publish to npm
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/claim-pagination'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/intelligent-dev'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --tag canary
