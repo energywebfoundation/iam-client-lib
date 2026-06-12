@@ -7,7 +7,7 @@ on:
 
 jobs:
   cancel-previous:
-    name: 'Cancel Previous Runs'
+    name: "Cancel Previous Runs"
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -27,7 +27,7 @@ jobs:
           # token: ${{ secrets.SECRET_NAME }}
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '18'
+          node-version: "18"
           registry-url: https://registry.npmjs.org/
 
       - name: Configure Git
@@ -56,7 +56,8 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/intelligent-dev'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --tag canary
+          RUN_NUMBER: ${{ github.run_number }}
+        run: npm version prerelease --preid=dev.$RUN_NUMBER --no-git-tag-version --exact && npm publish --tag=canary --access=public
 
       - name: Deploy on master branch
         if: github.ref == 'refs/heads/master'
