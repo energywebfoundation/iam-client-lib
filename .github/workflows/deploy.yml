@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: ['intelligent-dev', 'master']
+    branches: ["intelligent-dev", "master"]
   pull_request:
 
 jobs:
@@ -57,7 +57,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           RUN_NUMBER: ${{ github.run_number }}
-        run: npm version prerelease --preid=dev.$RUN_NUMBER --no-git-tag-version --exact && npm publish --tag=canary --access=public
+        run: npm publish --access=public
 
       - name: Deploy on master branch
         if: github.ref == 'refs/heads/master'
