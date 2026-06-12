@@ -9,6 +9,8 @@
 - [did](modules_claims.GetClaimsByIssuerOptions.md#did)
 - [isAccepted](modules_claims.GetClaimsByIssuerOptions.md#isaccepted)
 - [namespace](modules_claims.GetClaimsByIssuerOptions.md#namespace)
+- [skip](modules_claims.GetClaimsByIssuerOptions.md#skip)
+- [take](modules_claims.GetClaimsByIssuerOptions.md#take)
 
 ## Properties
 
@@ -33,3 +35,19 @@ ___
 • `Optional` **namespace**: `string`
 
 Indicates what namespace `Claims` should be in
+
+___
+
+### skip
+
+• `Optional` **skip**: `number`
+
+Number of records to skip (pagination offset)
+
+___
+
+### take
+
+• `Optional` **take**: `number`
+
+Maximum number of records to return

@@ -19,7 +19,7 @@ import { Asset } from '../assets/assets.types';
 import { SignerService } from '../signer/signer.service';
 import { cacheConfigs } from '../../config/cache.config';
 import { ICacheClient } from './cache-client.interface';
-import { AssetsFilter, ClaimsFilter } from './cache-client.types';
+import { AssetsFilter, ClaimsFilter, DomainsFilter } from './cache-client.types';
 import { SearchType } from '.';
 import {
   RoleCredentialSubject,
@@ -121,9 +121,20 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
-  async getOrganizationsByOwner(owner: string, withRelations = true) {
+  async getOrganizationsByOwner(
+    owner: string,
+    withRelations = true,
+    { skip, take }: DomainsFilter = {}
+  ) {
     const { data } = await this._httpClient.get<IOrganization[]>(
-      `/org/owner/${owner}?withRelations=${withRelations}`
+      `/org/owner/${owner}`,
+      {
+        params: {
+          withRelations,
+          skip,
+          take,
+        },
+      }
     );
     return data;
   }
@@ -162,9 +173,20 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
-  async getApplicationsByOwner(owner: string, withRelations = true) {
+  async getApplicationsByOwner(
+    owner: string,
+    withRelations = true,
+    { skip, take }: DomainsFilter = {}
+  ) {
     const { data } = await this._httpClient.get<IApp[]>(
-      `/app/owner/${owner}?withRelations=${withRelations}`
+      `/app/owner/${owner}`,
+      {
+        params: {
+          withRelations,
+          skip,
+          take,
+        },
+      }
     );
     return data;
   }
@@ -176,9 +198,15 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
-  async getRolesByOwner(owner: string) {
+  async getRolesByOwner(owner: string, { skip, take }: DomainsFilter = {}) {
     const { data } = await this._httpClient.get<IRole[]>(
-      `/role/owner/${owner}`
+      `/role/owner/${owner}`,
+      {
+        params: {
+          skip,
+          take,
+        },
+      }
     );
     return data;
   }
@@ -192,7 +220,7 @@ export class CacheClient implements ICacheClient {
 
   async getClaimsByIssuer(
     issuer: string,
-    { isAccepted, namespace }: ClaimsFilter = {}
+    { isAccepted, namespace, skip, take }: ClaimsFilter = {}
   ) {
     const { data } = await this._httpClient.get<Claim[]>(
       `/claim/issuer/${issuer}`,
@@ -200,6 +228,8 @@ export class CacheClient implements ICacheClient {
         params: {
           isAccepted,
           namespace,
+          skip,
+          take,
         },
       }
     );
@@ -208,7 +238,7 @@ export class CacheClient implements ICacheClient {
 
   async getClaimsByRequester(
     requester: string,
-    { isAccepted, namespace }: ClaimsFilter = {}
+    { isAccepted, namespace, skip, take }: ClaimsFilter = {}
   ) {
     const { data } = await this._httpClient.get<Claim[]>(
       `/claim/requester/${requester}`,
@@ -216,6 +246,8 @@ export class CacheClient implements ICacheClient {
         params: {
           isAccepted,
           namespace,
+          skip,
+          take,
         },
       }
     );
@@ -224,7 +256,7 @@ export class CacheClient implements ICacheClient {
 
   async getClaimsBySubject(
     subject: string,
-    { isAccepted, namespace }: ClaimsFilter = {}
+    { isAccepted, namespace, skip, take }: ClaimsFilter = {}
   ) {
     const { data } = await this._httpClient.get<Claim[]>(
       `/claim/subject/${subject}`,
@@ -232,6 +264,8 @@ export class CacheClient implements ICacheClient {
         params: {
           isAccepted,
           namespace,
+          skip,
+          take,
         },
       }
     );
@@ -245,12 +279,14 @@ export class CacheClient implements ICacheClient {
     return data;
   }
 
-  async getClaimsByRevoker(revoker: string, { namespace }: ClaimsFilter = {}) {
+  async getClaimsByRevoker(revoker: string, { namespace, skip, take }: ClaimsFilter = {}) {
     const { data } = await this._httpClient.get<Claim[]>(
       `/claim/revoker/${revoker}`,
       {
         params: {
           namespace,
+          skip,
+          take,
         },
       }
     );
@@ -335,9 +371,16 @@ export class CacheClient implements ICacheClient {
     id: string,
     { order, take, skip, type }: AssetsFilter = {}
   ) {
-    const query = stringify({ order, take, skip, type }, { skipNulls: true });
     const { data } = await this._httpClient.get<AssetHistory[]>(
-      `/assets/history/${id}?${query}`
+      `/assets/history/${id}`,
+      {
+        params: {
+          order,
+          take,
+          skip,
+          type,
+        },
+      }
     );
     return data;
   }

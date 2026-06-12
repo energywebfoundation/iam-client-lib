@@ -215,6 +215,12 @@ export interface GetENSTypesByOwnerOptions {
 
   /** Indicates whether to include related roles or not */
   withRelations?: boolean;
+
+  /** Pagination offset */
+  skip?: number;
+
+  /** Pagination limit */
+  take?: number;
 }
 
 export interface GetSubdomainsOptions {

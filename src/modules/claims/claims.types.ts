@@ -119,6 +119,12 @@ export interface GetClaimsByRequesterOptions {
 
   /** Indicates what namespace `Claims` should be in  */
   namespace?: string;
+
+  /** Number of records to skip (pagination offset) */
+  skip?: number;
+
+  /** Maximum number of records to return */
+  take?: number;
 }
 
 export interface GetClaimsByIssuerOptions {
@@ -130,6 +136,12 @@ export interface GetClaimsByIssuerOptions {
 
   /** Indicates what namespace `Claims` should be in */
   namespace?: string;
+
+  /** Number of records to skip (pagination offset) */
+  skip?: number;
+
+  /** Maximum number of records to return */
+  take?: number;
 }
 
 export interface GetClaimsBySubjectOptions {
@@ -141,6 +153,12 @@ export interface GetClaimsBySubjectOptions {
 
   /** Indicates what namespace `Claims` should be in */
   namespace?: string;
+
+  /** Number of records to skip (pagination offset) */
+  skip?: number;
+
+  /** Maximum number of records to return */
+  take?: number;
 }
 
 export interface GetClaimsByRevokerOptions {
@@ -149,6 +167,12 @@ export interface GetClaimsByRevokerOptions {
 
   /** Indicates what namespace `Claims` should be in */
   namespace?: string;
+
+  /** Number of records to skip (pagination offset) */
+  skip?: number;
+
+  /** Maximum number of records to return */
+  take?: number;
 }
 
 export interface CreateClaimRequestOptions {

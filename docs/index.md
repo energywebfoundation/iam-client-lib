@@ -179,6 +179,7 @@ For a deep-dive into the motivation and methodology behind our technical solutio
 - [Discord](https://discord.com/channels/706103009205288990/843970822254362664)
 - [Telegram](https://t.me/energyweb)
 
+##
 ## License
 
 This project is licensed under the GNU General Public License v3.0 or later - see the [LICENSE](LICENSE) file for details

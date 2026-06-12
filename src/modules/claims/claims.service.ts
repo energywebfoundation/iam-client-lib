@@ -247,10 +247,14 @@ export class ClaimsService {
     did,
     isAccepted,
     namespace,
+    skip,
+    take,
   }: GetClaimsByRequesterOptions): Promise<Claim[]> {
     return this._cacheClient.getClaimsByRequester(did, {
       isAccepted,
       namespace,
+      skip,
+      take,
     });
   }
 
@@ -272,8 +276,15 @@ export class ClaimsService {
     did,
     isAccepted,
     namespace,
+    skip,
+    take,
   }: GetClaimsByIssuerOptions): Promise<Claim[]> {
-    return this._cacheClient.getClaimsByIssuer(did, { isAccepted, namespace });
+    return this._cacheClient.getClaimsByIssuer(did, {
+      isAccepted,
+      namespace,
+      skip,
+      take,
+    });
   }
 
   /**
@@ -294,8 +305,15 @@ export class ClaimsService {
     did,
     isAccepted,
     namespace,
+    skip,
+    take,
   }: GetClaimsBySubjectOptions): Promise<Claim[]> {
-    return this._cacheClient.getClaimsBySubject(did, { isAccepted, namespace });
+    return this._cacheClient.getClaimsBySubject(did, {
+      isAccepted,
+      namespace,
+      skip,
+      take,
+    });
   }
 
   /**
@@ -314,8 +332,14 @@ export class ClaimsService {
   async getClaimsByRevoker({
     did,
     namespace,
+    skip,
+    take,
   }: GetClaimsByRevokerOptions): Promise<Claim[]> {
-    return this._cacheClient.getClaimsByRevoker(did, { namespace });
+    return this._cacheClient.getClaimsByRevoker(did, {
+      namespace,
+      skip,
+      take,
+    });
   }
 
   /**

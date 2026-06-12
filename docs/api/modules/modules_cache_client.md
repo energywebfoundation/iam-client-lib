@@ -20,6 +20,7 @@
 
 - [AssetsFilter](modules_cache_client.md#assetsfilter)
 - [ClaimsFilter](modules_cache_client.md#claimsfilter)
+- [DomainsFilter](modules_cache_client.md#domainsfilter)
 
 ## Type Aliases
 
@@ -44,7 +45,25 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
-| `isAccepted?` | `boolean` |
-| `namespace?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `isAccepted?` | `boolean` | - |
+| `namespace?` | `string` | - |
+| `skip?` | `number` | Number of records to skip (pagination offset) |
+| `take?` | `number` | Maximum number of records to return |
+
+___
+
+### DomainsFilter
+
+Ƭ **DomainsFilter**: `Object`
+
+Optional pagination filter for domain list endpoints
+(roles by owner, organizations by owner, applications by owner).
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `skip?` | `number` | Number of records to skip (pagination offset) |
+| `take?` | `number` | Maximum number of records to return |

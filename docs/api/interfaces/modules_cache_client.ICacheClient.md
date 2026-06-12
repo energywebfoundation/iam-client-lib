@@ -147,17 +147,19 @@ ___
 
 ### getApplicationsByOwner
 
-• **getApplicationsByOwner**: (`owner`: `string`) => `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
+• **getApplicationsByOwner**: (`owner`: `string`, `withRelations?`: `boolean`, `filter?`: [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter)) => `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`): `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
+▸ (`owner`, `withRelations?`, `filter?`): `Promise`\<[`IApp`](modules_domains.IApp.md)[]\>
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `owner` | `string` |
+| `withRelations?` | `boolean` |
+| `filter?` | [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter) |
 
 ##### Returns
 
@@ -474,11 +476,11 @@ ___
 
 ### getOrganizationsByOwner
 
-• **getOrganizationsByOwner**: (`owner`: `string`, `excludeSubOrgs?`: `boolean`) => `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+• **getOrganizationsByOwner**: (`owner`: `string`, `excludeSubOrgs?`: `boolean`, `filter?`: [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter)) => `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`, `excludeSubOrgs?`): `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
+▸ (`owner`, `excludeSubOrgs?`, `filter?`): `Promise`\<[`IOrganization`](modules_domains.IOrganization.md)[]\>
 
 ##### Parameters
 
@@ -486,6 +488,7 @@ ___
 | :------ | :------ |
 | `owner` | `string` |
 | `excludeSubOrgs?` | `boolean` |
+| `filter?` | [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter) |
 
 ##### Returns
 
@@ -555,17 +558,18 @@ ___
 
 ### getRolesByOwner
 
-• **getRolesByOwner**: (`owner`: `string`) => `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
+• **getRolesByOwner**: (`owner`: `string`, `filter?`: [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter)) => `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 #### Type declaration
 
-▸ (`owner`): `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
+▸ (`owner`, `filter?`): `Promise`\<[`IRole`](modules_domains.IRole.md)[]\>
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `owner` | `string` |
+| `filter?` | [`DomainsFilter`](../modules/modules_cache_client.md#domainsfilter) |
 
 ##### Returns
 
