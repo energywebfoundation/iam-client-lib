@@ -57,7 +57,7 @@ didRegistry.getDidDocument();
 | `_signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `_cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 | `_assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
-| `_didStoreConfig` | [`DidStoreConfig`](../interfaces/modules_did_registry.DidStoreConfig.md) |
+| `_didStoreConfig` | [`DidStoreConfig`](../modules/modules_did_registry.md#didstoreconfig) |
 
 #### Returns
 
@@ -67,11 +67,11 @@ didRegistry.getDidDocument();
 
 ### didStore
 
-• `get` **didStore**(): `DidStore`
+• `get` **didStore**(): `IDidStore`
 
 #### Returns
 
-`DidStore`
+`IDidStore`
 
 ___
 
@@ -500,7 +500,7 @@ ___
 | `signerService` | [`SignerService`](modules_signer.SignerService.md) |
 | `cacheClient` | [`CacheClient`](modules_cache_client.CacheClient.md) |
 | `assetsService` | [`AssetsService`](modules_assets.AssetsService.md) |
-| `didConfig` | [`DidStoreConfig`](../interfaces/modules_did_registry.DidStoreConfig.md) |
+| `didConfig` | [`DidStoreConfig`](../modules/modules_did_registry.md#didstoreconfig) |
 
 #### Returns
 

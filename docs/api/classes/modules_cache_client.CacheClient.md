@@ -20,6 +20,7 @@
 
 - [addDIDToWatchList](modules_cache_client.CacheClient.md#adddidtowatchlist)
 - [addStatusToCredential](modules_cache_client.CacheClient.md#addstatustocredential)
+- [addStoreClaim](modules_cache_client.CacheClient.md#addstoreclaim)
 - [authenticate](modules_cache_client.CacheClient.md#authenticate)
 - [deleteClaim](modules_cache_client.CacheClient.md#deleteclaim)
 - [getAllowedRolesByIssuer](modules_cache_client.CacheClient.md#getallowedrolesbyissuer)
@@ -50,6 +51,7 @@
 - [getRolesByRevoker](modules_cache_client.CacheClient.md#getrolesbyrevoker)
 - [getRolesDefinition](modules_cache_client.CacheClient.md#getrolesdefinition)
 - [getStatusListCredential](modules_cache_client.CacheClient.md#getstatuslistcredential)
+- [getStoreClaim](modules_cache_client.CacheClient.md#getstoreclaim)
 - [getSubOrganizationsByOrganization](modules_cache_client.CacheClient.md#getsuborganizationsbyorganization)
 - [init](modules_cache_client.CacheClient.md#init)
 - [initiateCredentialStatusUpdate](modules_cache_client.CacheClient.md#initiatecredentialstatusupdate)
@@ -126,6 +128,23 @@ Sets location of the credential status
 `Promise`\<`Credential`\<[`RoleCredentialSubject`](../interfaces/modules_verifiable_credentials.RoleCredentialSubject.md)\> & \{ `credentialStatus`: `StatusList2021Entry`  }\>
 
 credential with reference to status location
+
+___
+
+### addStoreClaim
+
+▸ **addStoreClaim**(`claim`, `type?`): `Promise`\<`string`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `claim` | `string` | `undefined` |
+| `type` | [`DidStoreType`](../enums/modules_did_registry.DidStoreType.md) | `DidStoreType.S3` |
+
+#### Returns
+
+`Promise`\<`string`\>
 
 ___
 
@@ -724,6 +743,22 @@ Fetch the StatusList2021Credential object from storage.
 `Promise`\<``null`` \| [`StatusList2021Credential`](../modules/modules_verifiable_credentials.md#statuslist2021credential)\>
 
 status list credential if found
+
+___
+
+### getStoreClaim
+
+▸ **getStoreClaim**(`uri`): `Promise`\<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `uri` | `string` |
+
+#### Returns
+
+`Promise`\<`string`\>
 
 ___
 
