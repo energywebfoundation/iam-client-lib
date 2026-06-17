@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: ["intelligent-dev", "master"]
+    branches: ["intelligent-dev", "master",'fix/diff-merge']
   pull_request:
 
 jobs:
@@ -53,7 +53,7 @@ jobs:
       #   run: npm run test
 
       - name: Publish to npm
-        if: github.event_name == 'push' && github.ref == 'refs/heads/intelligent-dev'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/fix/diff-merge'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           RUN_NUMBER: ${{ github.run_number }}
