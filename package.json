@@ -28,7 +28,7 @@
     "build:typechain:roledefinitionresolverv2": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/credential-governance/dist/contracts/RoleDefinitionResolverV2.json\"",
     "build:typechain:domainnotifier": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/credential-governance/dist/contracts/DomainNotifier.json\"",
     "build:typechain:publicresolver": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/credential-governance/dist/contracts/PublicResolver.json\"",
-    "build:typechain:staking-pool": "typechain --target ethers-v5 --out-dir ethers-staking \"./node_modules/@energyweb/staking-pool/dist/contracts/StakingPool.sol/StakingPool.json\"",
+    "build:typechain:staking-pool": "typechain --target ethers-v5 --out-dir ethers-staking \"./contracts/StakingPool.json\"",
     "build:typechain:credential-revocation-registry": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@ew-did-registry/revocation/build/contracts/CredentialRevocationRegistry.json\"",
     "build:typechain:claims-revocation-registry": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/onchain-claims/dist/contracts/ClaimsRevocationRegistry.json\"",
     "prepare": "npm run build && patch-package",
@@ -66,7 +66,6 @@
     "@energyweb/credential-governance": "2.2.1-alpha.342.0",
     "@energyweb/ekc": "^0.6.7",
     "@energyweb/onchain-claims": "2.2.1-alpha.342.0",
-    "@energyweb/staking-pool": "^1.0.0-rc.14",
     "@energyweb/vc-verification": "2.2.1-alpha.342.0",
     "@ensdomains/ens": "^0.6.2",
     "@ew-did-registry/claims": "0.9.1-alpha.1545.0",
@@ -118,15 +117,15 @@
     "@babel/runtime": "^7.17.2",
     "@energyweb/eslint-config": "^0.1.0",
     "@energyweb/prettier-config": "^0.0.1",
-    "@energyweb/semantic-release-config": "^1.1.1",
+    "@energyweb/semantic-release-config": "^1.1.2",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-typescript": "^11.1.0",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^10.0.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.0.2",
-    "@semantic-release/npm": "^10.0.3",
-    "@semantic-release/release-notes-generator": "^11.0.2",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/github": "^12.0.10",
+    "@semantic-release/npm": "^13.2.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "@typechain/ethers-v5": "7.2.0",
     "@types/jest": "^29.5.14",
     "@types/lodash.difference": "^4.5.6",
@@ -138,7 +137,7 @@
     "@typescript-eslint/parser": "^5.9.1",
     "@walletconnect/types": "1.8.0",
     "babel-jest": "^30.0.0",
-    "conventional-changelog-conventionalcommits": "^4.6.3",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-no-only-tests": "^2.6.0",
@@ -155,7 +154,7 @@
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "rollup": "^3.20.2",
-    "semantic-release": "^21.0.3",
+    "semantic-release": "^25.0.9",
     "ts-jest": "^29.4.0",
     "typechain": "5.2.0",
     "typedoc": "^0.25.0",
@@ -175,5 +174,10 @@
   },
   "optionalDependencies": {
     "fsevents": "^2.3.2"
+  },
+  "overrides": {
+    "@energyweb/ekc": {
+      "ethers": "$ethers"
+    }
   }
 }
