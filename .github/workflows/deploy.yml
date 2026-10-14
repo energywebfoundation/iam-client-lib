@@ -21,13 +21,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           # token: ${{ secrets.SECRET_NAME }}
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22"
           registry-url: https://registry.npmjs.org/
 
       - name: Configure Git

@@ -13,5 +13,4 @@ after this steps when `npm run build` command will be executed the iam-client-li
 
 for unix and windows environments lib is executing `npm i` and `npm run build` without problems
 
-but `npm run test:watch` throws error with message `cannot find ganache-cli` on `windows` environment. on linux ones its workng fine. 
-doing `npm i -g ganache-cli` does not help here. this needs further investigation.
+tests run against a local Hardhat chain (configured in `hardhat.config.js`) that `npm run start-rpc` starts on port 8544 and stops when the tests finish. `npm run local-chain` starts the same chain on its own.
