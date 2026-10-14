@@ -175,12 +175,13 @@ export abstract class VerifiableCredentialsServiceBase {
 
     const selections = await Promise.all(
       credentialQuery.map(async ({ presentationDefinition }) => {
+        // Filtering only removes descriptors, so the definition keeps its version (V1 or V2)
         const presentationDefFiltered = {
           ...presentationDefinition,
           input_descriptors: this.filterSelfSignDescriptors(
             presentationDefinition?.input_descriptors
           ),
-        };
+        } as IPresentationDefinition;
         const selectResults = await this.getCredentialsByDefinition(
           presentationDefFiltered
         );

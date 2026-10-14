@@ -28,15 +28,15 @@
     "build:typechain:roledefinitionresolverv2": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/credential-governance/dist/contracts/RoleDefinitionResolverV2.json\"",
     "build:typechain:domainnotifier": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/credential-governance/dist/contracts/DomainNotifier.json\"",
     "build:typechain:publicresolver": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/credential-governance/dist/contracts/PublicResolver.json\"",
-    "build:typechain:staking-pool": "typechain --target ethers-v5 --out-dir ethers-staking \"./node_modules/@energyweb/staking-pool/dist/contracts/StakingPool.sol/StakingPool.json\"",
+    "build:typechain:staking-pool": "typechain --target ethers-v5 --out-dir ethers-staking \"./contracts/StakingPool.json\"",
     "build:typechain:credential-revocation-registry": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@ew-did-registry/revocation/build/contracts/CredentialRevocationRegistry.json\"",
     "build:typechain:claims-revocation-registry": "typechain --target ethers-v5 --out-dir ethers \"./node_modules/@energyweb/onchain-claims/dist/contracts/ClaimsRevocationRegistry.json\"",
     "prepare": "npm run build && patch-package",
-    "start-rpc": "run-with-testrpc -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 73799 -a 20 -e 10000000 -l=10000000",
-    "ganache": "ganache-cli -m \"candy maple cake sugar pudding cream honey rich smooth crumble sweet treat\" -p 8544 --chainId 73799 -a 20 -e 10000000 -l=10000000",
+    "start-rpc": "node scripts/run-with-local-chain.js",
+    "local-chain": "node scripts/run-with-local-chain.js",
     "test:watch": "npm run start-rpc -- \"jest --coverage --env=./jest.env.js --watchAll\"",
     "test": "npm run start-rpc -- \"jest --no-cache --env=./jest.env.js\"",
-    "test:watch:windows": "concurrently \"npm run start-rpc\" \"jest --coverage --env=./jest.env.js --watchAll\"",
+    "test:watch:windows": "concurrently \"npm run local-chain\" \"jest --coverage --env=./jest.env.js --watchAll\"",
     "updateDomains": "npx ts-node scripts/update_domains",
     "transferDomains": "npx ts-node scripts/transfer_domains",
     "bench": "node benchmarks/runner"
@@ -66,7 +66,6 @@
     "@energyweb/credential-governance": "2.2.1-alpha.342.0",
     "@energyweb/ekc": "^0.6.7",
     "@energyweb/onchain-claims": "2.2.1-alpha.342.0",
-    "@energyweb/staking-pool": "^1.0.0-rc.14",
     "@energyweb/vc-verification": "2.2.1-alpha.342.0",
     "@ensdomains/ens": "^0.6.2",
     "@ew-did-registry/claims": "0.9.1-alpha.1545.0",
@@ -89,7 +88,7 @@
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/ethereum-provider": "^1.7.7",
     "@walletconnect/qrcode-modal": "^1.8.0",
-    "axios": "^0.27.0",
+    "axios": "^0.34.0",
     "axios-retry": "^3.4.0",
     "base64url": "^3.0.1",
     "concurrently": "^6.1.0",
@@ -107,44 +106,42 @@
     "siwe": "^2.1.4",
     "ts-interface-checker": "^1.0.2",
     "tslib": "^2.0.3",
-    "uuid": "^7.0.3",
+    "uuid": "^11.1.1",
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "@babel/core": "7.23.2",
+    "@babel/core": "^7.29.7",
     "@babel/plugin-transform-regenerator": "7.22.10",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "7.23.2",
     "@babel/runtime": "^7.17.2",
     "@energyweb/eslint-config": "^0.1.0",
     "@energyweb/prettier-config": "^0.0.1",
-    "@energyweb/semantic-release-config": "^1.1.1",
+    "@energyweb/semantic-release-config": "^1.1.2",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-typescript": "^11.1.0",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^10.0.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.0.2",
-    "@semantic-release/npm": "^10.0.3",
-    "@semantic-release/release-notes-generator": "^11.0.2",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/github": "^12.0.10",
+    "@semantic-release/npm": "^13.2.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "@typechain/ethers-v5": "7.2.0",
     "@types/jest": "^29.5.14",
     "@types/lodash.difference": "^4.5.6",
     "@types/promise-retry": "^1.1.3",
     "@types/qs": "^6.9.5",
     "@types/set-cookie-parser": "^2.4.2",
-    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^5.9.1",
     "@typescript-eslint/parser": "^5.9.1",
     "@walletconnect/types": "1.8.0",
     "babel-jest": "^30.0.0",
-    "conventional-changelog-conventionalcommits": "^4.6.3",
-    "coveralls": "^3.1.0",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "ganache-cli": "^6.12.2",
+    "hardhat": "^2.29.1",
     "husky": "^4.3.8",
     "jest": "^30.0.0",
     "jest-config": "^30.0.0",
@@ -152,12 +149,11 @@
     "jwt-decode": "^3.1.2",
     "lint-staged": "^11.1.1",
     "nock": "^13.2.8",
-    "patch-package": "^6.4.7",
+    "patch-package": "^8.0.1",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "rollup": "^3.20.2",
-    "run-with-testrpc": "0.3.1",
-    "semantic-release": "^21.0.3",
+    "semantic-release": "^25.0.9",
     "ts-jest": "^29.4.0",
     "typechain": "5.2.0",
     "typedoc": "^0.25.0",
@@ -177,5 +173,53 @@
   },
   "optionalDependencies": {
     "fsevents": "^2.3.2"
+  },
+  "overrides": {
+    "@energyweb/ekc": {
+      "ethers": "$ethers"
+    },
+    "@energyweb/vc-verification": {
+      "@ew-did-registry/did-ipfs-store": {
+        ".": "0.9.1-alpha.1545.0",
+        "axios": "$axios"
+      }
+    },
+    "@ew-did-registry/did-ipfs-store": {
+      "axios": "$axios"
+    },
+    "@ew-did-registry/revocation": {
+      "axios": "$axios"
+    },
+    "@json-rpc-tools/provider": {
+      "axios": "$axios"
+    },
+    "@walletconnect/socket-transport": {
+      "ws": "^7.5.13"
+    },
+    "@ethersproject/providers": {
+      "ws": "^8.22.0"
+    },
+    "hardhat": {
+      "undici": "^6.29.0",
+      "adm-zip": "^0.6.1",
+      "uuid": "$uuid"
+    },
+    "mocha": {
+      "serialize-javascript": "^7.1.2",
+      "diff": "^8.0.4"
+    },
+    "solc": {
+      "tmp": "^0.2.7",
+      "yargs-parser": "^5.0.1"
+    },
+    "@ew-did-registry/keys": {
+      "bn.js": "^5.2.5"
+    },
+    "@walletconnect/utils": {
+      "bn.js": "^4.12.5"
+    },
+    "@sentry/node": {
+      "cookie": "^0.7.2"
+    }
   }
 }
