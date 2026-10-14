@@ -44,7 +44,7 @@ export class AuthService {
     axiosRetry(this.httpClient, {
       onRetry: (retryCount: number, error: AxiosError) => {
         this.logger.warn(
-          `[AUTH SERVICE] retrying request to ${error.config.url} for ${retryCount} time`
+          `[AUTH SERVICE] retrying request to ${error.config?.url} for ${retryCount} time`
         );
       },
       retryCondition: async (error: AxiosError) => {
@@ -53,7 +53,7 @@ export class AuthService {
           return isRetry;
         } catch (_) {
           this.logger.warn(
-            `[AUTH SERVICE] Error handling request error to ${error.config.url}`
+            `[AUTH SERVICE] Error handling request error to ${error.config?.url}`
           );
           return true;
         }
@@ -132,7 +132,8 @@ export class AuthService {
     if (!this.isBrowser && !this.refresh_token) return undefined;
     getLogger().info('[AuthService] refreshing tokens');
     const res = await this.httpClient.get<AuthTokens>(
-      `/refresh_token${this.isBrowser ? '' : `?refresh_token=${this.refresh_token}`
+      `/refresh_token${
+        this.isBrowser ? '' : `?refresh_token=${this.refresh_token}`
       }`
     );
     getLogger().debug('[AuthService] refreshed tokens fetched');
@@ -186,11 +187,11 @@ export class AuthService {
 
     const errorDetails = {
       message: error.message,
-      url: error.config.url,
-      method: error.config.method,
+      url: error.config?.url,
+      method: error.config?.method,
       requestHeaders: {
-        ...error.config.headers,
-        Authorization: error.config.headers?.Authorization ? '***' : undefined,
+        ...error.config?.headers,
+        Authorization: error.config?.headers?.Authorization ? '***' : undefined,
       },
       status: error.response?.status,
       statusText: error.response?.statusText,
@@ -216,7 +217,7 @@ export class AuthService {
     const clientErrorsToRetry = [401, 403, 407, 408, 411, 412, 425, 426];
 
     const isAuthEndpoint =
-      config.url &&
+      config?.url &&
       (config.url.indexOf('/login/siwe/initiate') >= 0 ||
         config.url.indexOf('/login/siwe/verify') >= 0 ||
         config.url.indexOf('/refresh_token') >= 0 ||
@@ -248,7 +249,7 @@ export class AuthService {
 
     try {
       await this.authenticatePromise;
-      if (config.headers) {
+      if (config?.headers) {
         config.headers.Authorization =
           this.httpClient.defaults.headers.common['Authorization'];
       }

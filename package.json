@@ -88,7 +88,7 @@
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/ethereum-provider": "^1.7.7",
     "@walletconnect/qrcode-modal": "^1.8.0",
-    "axios": "^0.27.0",
+    "axios": "^0.34.0",
     "axios-retry": "^3.4.0",
     "base64url": "^3.0.1",
     "concurrently": "^6.1.0",
@@ -150,7 +150,7 @@
     "jwt-decode": "^3.1.2",
     "lint-staged": "^11.1.1",
     "nock": "^13.2.8",
-    "patch-package": "^6.4.7",
+    "patch-package": "^8.0.1",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "rollup": "^3.20.2",
@@ -178,6 +178,37 @@
   "overrides": {
     "@energyweb/ekc": {
       "ethers": "$ethers"
+    },
+    "@energyweb/vc-verification": {
+      "@ew-did-registry/did-ipfs-store": {
+        ".": "0.9.1-alpha.1545.0",
+        "axios": "$axios"
+      }
+    },
+    "@ew-did-registry/did-ipfs-store": {
+      "axios": "$axios"
+    },
+    "@ew-did-registry/revocation": {
+      "axios": "$axios"
+    },
+    "@json-rpc-tools/provider": {
+      "axios": "$axios"
+    },
+    "@walletconnect/socket-transport": {
+      "ws": "^7.5.13"
+    },
+    "@ethersproject/providers": {
+      "ws": "^8.22.0"
+    },
+    "hardhat": {
+      "undici": "^6.29.0",
+      "adm-zip": "^0.6.1"
+    },
+    "mocha": {
+      "serialize-javascript": "^7.1.2"
+    },
+    "solc": {
+      "tmp": "^0.2.7"
     }
   }
 }
