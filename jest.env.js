@@ -1,4 +1,4 @@
-const Environment = require("jest-environment-node");
+const { TestEnvironment: Environment } = require("jest-environment-node");
 const nodeCrypto = require("crypto");
 const { TextDecoder, TextEncoder } = require("util");
 
