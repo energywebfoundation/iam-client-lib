@@ -110,7 +110,7 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "@babel/core": "7.23.2",
+    "@babel/core": "^7.29.7",
     "@babel/plugin-transform-regenerator": "7.22.10",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "7.23.2",
@@ -205,7 +205,8 @@
       "uuid": "$uuid"
     },
     "mocha": {
-      "serialize-javascript": "^7.1.2"
+      "serialize-javascript": "^7.1.2",
+      "diff": "^8.0.4"
     },
     "solc": {
       "tmp": "^0.2.7",
@@ -216,6 +217,9 @@
     },
     "@walletconnect/utils": {
       "bn.js": "^4.12.5"
+    },
+    "@sentry/node": {
+      "cookie": "^0.7.2"
     }
   }
 }
