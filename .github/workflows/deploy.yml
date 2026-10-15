@@ -48,9 +48,10 @@ jobs:
       - name: Build package
         run: npm run build
 
-      # Skipped, until fix issue with setting up IPFS
+      # Enabled for develop. master stays skipped until IPFS setup is fixed.
       # See https://energyweb.atlassian.net/browse/SWTCH-3073
       # - name: Npm Run Test
+      #   if: github.ref == 'refs/heads/develop' || github.base_ref == 'develop'
       #   run: npm run test
 
       - name: Deploy on develop branch
