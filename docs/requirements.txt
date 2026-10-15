@@ -1,1 +1,2 @@
 mkdocs-material
+requests>=2.33.0 # not directly required; floor set to avoid known vulnerabilities
