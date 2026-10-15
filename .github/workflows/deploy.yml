@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: ['develop', 'master', 'fix/deploy']
+    branches: ['develop', 'master']
   pull_request:
 
 jobs:
@@ -55,7 +55,7 @@ jobs:
       #   run: npm run test
 
       - name: Deploy on develop branch
-        if: github.ref == 'refs/heads/fix/deploy'
+        if: github.ref == 'refs/heads/develop'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

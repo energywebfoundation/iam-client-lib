@@ -5,7 +5,7 @@ module.exports = {
       channel: 'latest',
     },
     {
-      name: 'fix/deploy',
+      name: 'develop',
       prerelease: 'alpha',
       channel: 'canary',
     },
