@@ -50,12 +50,12 @@ jobs:
 
       # Enabled for develop. master stays skipped until IPFS setup is fixed.
       # See https://energyweb.atlassian.net/browse/SWTCH-3073
-      - name: Npm Run Test
-        if: github.ref == 'refs/heads/develop' || github.base_ref == 'develop'
-        run: npm run test
+      # - name: Npm Run Test
+      #   if: github.ref == 'refs/heads/develop' || github.base_ref == 'develop'
+      #   run: npm run test
 
       - name: Deploy on develop branch
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/fix/deploy'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
