@@ -1,2 +1,4 @@
 mkdocs-material
 requests>=2.33.0 # not directly required; floor set to avoid known vulnerabilities
+urllib3>=2.8.0 # not directly required; floor set to avoid known vulnerabilities
+zipp>=3.19.1 # not directly required; floor set to avoid known vulnerabilities
