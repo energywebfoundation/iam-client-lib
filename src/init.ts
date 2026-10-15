@@ -10,16 +10,24 @@ import {
   SignerService,
 } from './modules/signer';
 import { StakingFactoryService } from './modules/staking';
-import { DidRegistry } from './modules/didRegistry';
+import { DidRegistry, DidStoreConfig } from './modules/did-registry';
 import { MessagingService } from './modules/messaging';
-import { CacheClient } from './modules/cacheClient';
+import { CacheClient } from './modules/cache-client';
 import { DomainsService } from './modules/domains';
 import { AssetsService } from './modules/assets';
 import { ClaimsService } from './modules/claims';
-import { defaultAzureProxyUrl, defaultBridgeUrl, defaultKmsServerUrl } from './utils';
+import {
+  defaultAzureProxyUrl,
+  defaultBridgeUrl,
+  defaultKmsServerUrl,
+} from './utils';
 import { chainConfigs } from './config';
+import { getVerifiableCredentialsService } from './modules/verifiable-credentials';
 
-export async function initWithPrivateKeySigner(privateKey: string, rpcUrl: string) {
+export async function initWithPrivateKeySigner(
+  privateKey: string,
+  rpcUrl: string
+) {
   const signerService = await fromPrivateKey(privateKey, rpcUrl);
   return init(signerService);
 }
@@ -44,45 +52,66 @@ export async function initWithGnosis(safeAppSdk: SafeAppSdk) {
 }
 
 export async function initWithEKC(proxyUrl = defaultAzureProxyUrl) {
-  const signerService = new SignerService(await EkcSigner.create(proxyUrl), ProviderType.EKC);
+  const signerService = new SignerService(
+    await EkcSigner.create(proxyUrl),
+    ProviderType.EKC
+  );
   await signerService.init();
   return init(signerService);
 }
 
+/**
+ * Initializes messaging service and creates initializer of cache client
+ *
+ * @param signerService initialized instance of signer service
+ */
 export async function init(signerService: SignerService) {
   const messagingService = await MessagingService.create(signerService);
 
   async function connectToCacheServer() {
     const chainId = signerService.chainId;
-    const stakingPoolFactoryAddress = chainConfigs()[chainId].stakingPoolFactoryAddress;
+    const stakingPoolFactoryAddress =
+      chainConfigs()[chainId].stakingPoolFactoryAddress;
 
     const cacheClient = new CacheClient(signerService);
     await cacheClient.init();
     await cacheClient.login();
-    const domainsService = await DomainsService.create(signerService, cacheClient);
+    const verifiableCredentialsService = await getVerifiableCredentialsService(
+      signerService,
+      cacheClient
+    );
+    const domainsService = await DomainsService.create(
+      signerService,
+      cacheClient
+    );
 
-    const stakingAddressProvided = stakingPoolFactoryAddress && stakingPoolFactoryAddress.length;
+    const stakingAddressProvided =
+      stakingPoolFactoryAddress && stakingPoolFactoryAddress.length;
 
     const stakingPoolService = stakingAddressProvided
       ? await StakingFactoryService.create(signerService, domainsService)
       : null;
 
-    const assetsService = await AssetsService.create(signerService, cacheClient);
+    const assetsService = await AssetsService.create(
+      signerService,
+      cacheClient
+    );
 
     async function connectToDidRegistry(
-      ipfsStore?: string
+      didConfig: DidStoreConfig
     ): Promise<{ didRegistry: DidRegistry; claimsService: ClaimsService }> {
       const didRegistry = await DidRegistry.connect(
         signerService,
         cacheClient,
         assetsService,
-        ipfsStore
+        didConfig
       );
       const claimsService = await ClaimsService.create(
         signerService,
         domainsService,
         cacheClient,
-        didRegistry
+        didRegistry,
+        verifiableCredentialsService
       );
       return { didRegistry, claimsService };
     }
@@ -92,6 +121,7 @@ export async function init(signerService: SignerService) {
       assetsService,
       connectToDidRegistry,
       stakingPoolService,
+      verifiableCredentialsService,
     };
   }
 

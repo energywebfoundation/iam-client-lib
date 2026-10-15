@@ -1,3 +1,6 @@
+import { TypedDataSigner } from '@ethersproject/abstract-signer';
+import { Signer } from 'ethers';
+
 export enum ProviderType {
   WalletConnect = 'WalletConnect',
   EwKeyManager = 'EwKeyManager',
@@ -33,3 +36,5 @@ export type AccountInfo = {
 
 export const PUBLIC_KEY = 'PublicKey';
 export const IS_ETH_SIGNER = 'isEthSigner';
+
+export type SignerT = Signer & TypedDataSigner;

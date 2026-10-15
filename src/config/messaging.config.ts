@@ -1,4 +1,4 @@
-import { EWC_CHAIN_ID } from '@energyweb/iam-contracts';
+import { EWC_CHAIN_ID } from '@energyweb/credential-governance';
 import { MessagingMethod } from '../modules/messaging/messaging.types';
 import { VOLTA_CHAIN_ID } from '../utils/constants';
 import { ChainId } from './chain.config';

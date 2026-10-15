@@ -1,0 +1,235 @@
+
+Subnodes of energyweb.iam.ewc are apps.energyweb.iam.ewc,myrea.energyweb.iam.ewc
+  Would transfer apps.energyweb.iam.ewc to root owner
+  Subnodes of apps.energyweb.iam.ewc are 247.apps.energyweb.iam.ewc,consortiapool.apps.energyweb.iam.ewc,ddhub.apps.energyweb.iam.ewc,dmq.apps.energyweb.iam.ewc,dsb.apps.energyweb.ia
+m.ewc,internal.apps.energyweb.iam.ewc,marketplace.apps.energyweb.iam.ewc,messaging.apps.energyweb.iam.ewc,staking.apps.energyweb.iam.ewc,verification.apps.energyweb.iam.ewc
+    Would transfer 247.apps.energyweb.iam.ewc to root owner
+    Subnodes of 247.apps.energyweb.iam.ewc are roles.247.apps.energyweb.iam.ewc
+      Would transfer roles.247.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.247.apps.energyweb.iam.ewc are user.roles.247.apps.energyweb.iam.ewc
+        Would transfer user.roles.247.apps.energyweb.iam.ewc to root owner
+        Subnodes of user.roles.247.apps.energyweb.iam.ewc are 
+        Would transfer user.roles.247.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.247.apps.energyweb.iam.ewc to new owner
+    Would transfer 247.apps.energyweb.iam.ewc to new owner
+    Would transfer consortiapool.apps.energyweb.iam.ewc to root owner
+    Subnodes of consortiapool.apps.energyweb.iam.ewc are roles.consortiapool.apps.energyweb.iam.ewc
+      Would transfer roles.consortiapool.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.consortiapool.apps.energyweb.iam.ewc are goldpool.roles.consortiapool.apps.energyweb.iam.ewc,goldpoolscripttest.roles.consortiapool.apps.energyweb.iam.ewc,gol
+dpoolscripttest2.roles.consortiapool.apps.energyweb.iam.ewc,goldpoolscripttest3.roles.consortiapool.apps.energyweb.iam.ewc,goldpoolscripttest4.roles.consortiapool.apps.energyweb.iam.
+ewc,silverpool.roles.consortiapool.apps.energyweb.iam.ewc,snapshot1.roles.consortiapool.apps.energyweb.iam.ewc,snapshot2.roles.consortiapool.apps.energyweb.iam.ewc
+        Would transfer goldpool.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of goldpool.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer goldpool.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+        Would transfer goldpoolscripttest.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of goldpoolscripttest.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer goldpoolscripttest.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+        Would transfer goldpoolscripttest2.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of goldpoolscripttest2.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer goldpoolscripttest2.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+        Would transfer goldpoolscripttest3.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of goldpoolscripttest3.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer goldpoolscripttest3.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+        Would transfer goldpoolscripttest4.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of goldpoolscripttest4.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer goldpoolscripttest4.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+        Would transfer silverpool.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of silverpool.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer silverpool.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+        Would transfer snapshot1.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of snapshot1.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer snapshot1.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+        Would transfer snapshot2.roles.consortiapool.apps.energyweb.iam.ewc to root owner
+        Subnodes of snapshot2.roles.consortiapool.apps.energyweb.iam.ewc are 
+        Would transfer snapshot2.roles.consortiapool.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.consortiapool.apps.energyweb.iam.ewc to new owner
+    Would transfer consortiapool.apps.energyweb.iam.ewc to new owner
+    Would transfer ddhub.apps.energyweb.iam.ewc to root owner
+    Subnodes of ddhub.apps.energyweb.iam.ewc are roles.ddhub.apps.energyweb.iam.ewc
+      Would transfer roles.ddhub.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.ddhub.apps.energyweb.iam.ewc are admin.roles.ddhub.apps.energyweb.iam.ewc,dlenode.roles.ddhub.apps.energyweb.iam.ewc,dleworker.roles.ddhub.apps.energyweb.iam.
+ewc,topiccreator.roles.ddhub.apps.energyweb.iam.ewc,user.roles.ddhub.apps.energyweb.iam.ewc
+        Would transfer admin.roles.ddhub.apps.energyweb.iam.ewc to root owner
+        Subnodes of admin.roles.ddhub.apps.energyweb.iam.ewc are 
+        Would transfer admin.roles.ddhub.apps.energyweb.iam.ewc to new owner
+        Would transfer dlenode.roles.ddhub.apps.energyweb.iam.ewc to root owner
+        Subnodes of dlenode.roles.ddhub.apps.energyweb.iam.ewc are 
+        Would transfer dlenode.roles.ddhub.apps.energyweb.iam.ewc to new owner
+        Would transfer dleworker.roles.ddhub.apps.energyweb.iam.ewc to root owner
+        Subnodes of dleworker.roles.ddhub.apps.energyweb.iam.ewc are 
+        Would transfer dleworker.roles.ddhub.apps.energyweb.iam.ewc to new owner
+        Would transfer topiccreator.roles.ddhub.apps.energyweb.iam.ewc to root owner
+        Subnodes of topiccreator.roles.ddhub.apps.energyweb.iam.ewc are 
+        Would transfer topiccreator.roles.ddhub.apps.energyweb.iam.ewc to new owner
+        Would transfer user.roles.ddhub.apps.energyweb.iam.ewc to root owner
+        Subnodes of user.roles.ddhub.apps.energyweb.iam.ewc are 
+        Would transfer user.roles.ddhub.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.ddhub.apps.energyweb.iam.ewc to new owner
+    Would transfer ddhub.apps.energyweb.iam.ewc to new owner
+    Would transfer dmq.apps.energyweb.iam.ewc to root owner
+    Subnodes of dmq.apps.energyweb.iam.ewc are roles.dmq.apps.energyweb.iam.ewc
+      Would transfer roles.dmq.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.dmq.apps.energyweb.iam.ewc are admin.roles.dmq.apps.energyweb.iam.ewc,subscriber.roles.dmq.apps.energyweb.iam.ewc
+        Would transfer admin.roles.dmq.apps.energyweb.iam.ewc to root owner
+        Subnodes of admin.roles.dmq.apps.energyweb.iam.ewc are 
+        Would transfer admin.roles.dmq.apps.energyweb.iam.ewc to new owner
+        Would transfer subscriber.roles.dmq.apps.energyweb.iam.ewc to root owner
+        Subnodes of subscriber.roles.dmq.apps.energyweb.iam.ewc are 
+        Would transfer subscriber.roles.dmq.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.dmq.apps.energyweb.iam.ewc to new owner
+    Would transfer dmq.apps.energyweb.iam.ewc to new owner
+    Would transfer dsb.apps.energyweb.iam.ewc to root owner
+    Subnodes of dsb.apps.energyweb.iam.ewc are roles.dsb.apps.energyweb.iam.ewc
+      Would transfer roles.dsb.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.dsb.apps.energyweb.iam.ewc are channelcreation.roles.dsb.apps.energyweb.iam.ewc,messagebroker.roles.dsb.apps.energyweb.iam.ewc,user.roles.dsb.apps.energyweb.i
+am.ewc
+        Would transfer channelcreation.roles.dsb.apps.energyweb.iam.ewc to root owner
+        Subnodes of channelcreation.roles.dsb.apps.energyweb.iam.ewc are 
+        Would transfer channelcreation.roles.dsb.apps.energyweb.iam.ewc to new owner
+        Would transfer messagebroker.roles.dsb.apps.energyweb.iam.ewc to root owner
+        Subnodes of messagebroker.roles.dsb.apps.energyweb.iam.ewc are 
+        Would transfer messagebroker.roles.dsb.apps.energyweb.iam.ewc to new owner
+        Would transfer user.roles.dsb.apps.energyweb.iam.ewc to root owner
+        Subnodes of user.roles.dsb.apps.energyweb.iam.ewc are 
+        Would transfer user.roles.dsb.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.dsb.apps.energyweb.iam.ewc to new owner
+    Would transfer dsb.apps.energyweb.iam.ewc to new owner
+    Would transfer internal.apps.energyweb.iam.ewc to root owner
+    Subnodes of internal.apps.energyweb.iam.ewc are roles.internal.apps.energyweb.iam.ewc
+      Would transfer roles.internal.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.internal.apps.energyweb.iam.ewc are mailtest.roles.internal.apps.energyweb.iam.ewc,member.roles.internal.apps.energyweb.iam.ewc,memeber.roles.internal.apps.en
+ergyweb.iam.ewc,testmail.roles.internal.apps.energyweb.iam.ewc,testmember.roles.internal.apps.energyweb.iam.ewc,user.roles.internal.apps.energyweb.iam.ewc,userrole.roles.internal.app
+s.energyweb.iam.ewc
+        Would transfer mailtest.roles.internal.apps.energyweb.iam.ewc to root owner
+        Subnodes of mailtest.roles.internal.apps.energyweb.iam.ewc are 
+        Would transfer mailtest.roles.internal.apps.energyweb.iam.ewc to new owner
+        Would transfer member.roles.internal.apps.energyweb.iam.ewc to root owner
+        Subnodes of member.roles.internal.apps.energyweb.iam.ewc are 
+        Would transfer member.roles.internal.apps.energyweb.iam.ewc to new owner
+        Would transfer memeber.roles.internal.apps.energyweb.iam.ewc to root owner
+        Subnodes of memeber.roles.internal.apps.energyweb.iam.ewc are 
+        Would transfer memeber.roles.internal.apps.energyweb.iam.ewc to new owner
+        Would transfer testmail.roles.internal.apps.energyweb.iam.ewc to root owner
+        Subnodes of testmail.roles.internal.apps.energyweb.iam.ewc are 
+        Would transfer testmail.roles.internal.apps.energyweb.iam.ewc to new owner
+        Would transfer testmember.roles.internal.apps.energyweb.iam.ewc to root owner
+        Subnodes of testmember.roles.internal.apps.energyweb.iam.ewc are 
+        Would transfer testmember.roles.internal.apps.energyweb.iam.ewc to new owner
+        Would transfer user.roles.internal.apps.energyweb.iam.ewc to root owner
+        Subnodes of user.roles.internal.apps.energyweb.iam.ewc are 
+        Would transfer user.roles.internal.apps.energyweb.iam.ewc to new owner
+        Would transfer userrole.roles.internal.apps.energyweb.iam.ewc to root owner
+        Subnodes of userrole.roles.internal.apps.energyweb.iam.ewc are 
+        Would transfer userrole.roles.internal.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.internal.apps.energyweb.iam.ewc to new owner
+    Would transfer internal.apps.energyweb.iam.ewc to new owner
+    Would transfer marketplace.apps.energyweb.iam.ewc to root owner
+    Subnodes of marketplace.apps.energyweb.iam.ewc are roles.marketplace.apps.energyweb.iam.ewc
+      Would transfer roles.marketplace.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.marketplace.apps.energyweb.iam.ewc are admin.roles.marketplace.apps.energyweb.iam.ewc,topiccreator.roles.marketplace.apps.energyweb.iam.ewc,user.roles.marketp
+lace.apps.energyweb.iam.ewc
+        Would transfer admin.roles.marketplace.apps.energyweb.iam.ewc to root owner
+        Subnodes of admin.roles.marketplace.apps.energyweb.iam.ewc are 
+        Would transfer admin.roles.marketplace.apps.energyweb.iam.ewc to new owner
+        Would transfer topiccreator.roles.marketplace.apps.energyweb.iam.ewc to root owner
+        Subnodes of topiccreator.roles.marketplace.apps.energyweb.iam.ewc are 
+        Would transfer topiccreator.roles.marketplace.apps.energyweb.iam.ewc to new owner
+        Would transfer user.roles.marketplace.apps.energyweb.iam.ewc to root owner
+        Subnodes of user.roles.marketplace.apps.energyweb.iam.ewc are 
+        Would transfer user.roles.marketplace.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.marketplace.apps.energyweb.iam.ewc to new owner
+    Would transfer marketplace.apps.energyweb.iam.ewc to new owner
+    Would transfer messaging.apps.energyweb.iam.ewc to root owner
+    Subnodes of messaging.apps.energyweb.iam.ewc are roles.messaging.apps.energyweb.iam.ewc
+      Would transfer roles.messaging.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.messaging.apps.energyweb.iam.ewc are admin.roles.messaging.apps.energyweb.iam.ewc,channeladmin.roles.messaging.apps.energyweb.iam.ewc,channelcreate.roles.mess
+aging.apps.energyweb.iam.ewc,channelpublisher.roles.messaging.apps.energyweb.iam.ewc,channelreceiver.roles.messaging.apps.energyweb.iam.ewc,channelsender.roles.messaging.apps.energyw
+eb.iam.ewc,channelsubscriber.roles.messaging.apps.energyweb.iam.ewc,messagebroker.roles.messaging.apps.energyweb.iam.ewc,user.roles.messaging.apps.energyweb.iam.ewc
+        Would transfer admin.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of admin.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer admin.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer channeladmin.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of channeladmin.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer channeladmin.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer channelcreate.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of channelcreate.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer channelcreate.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer channelpublisher.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of channelpublisher.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer channelpublisher.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer channelreceiver.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of channelreceiver.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer channelreceiver.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer channelsender.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of channelsender.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer channelsender.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer channelsubscriber.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of channelsubscriber.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer channelsubscriber.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer messagebroker.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of messagebroker.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer messagebroker.roles.messaging.apps.energyweb.iam.ewc to new owner
+        Would transfer user.roles.messaging.apps.energyweb.iam.ewc to root owner
+        Subnodes of user.roles.messaging.apps.energyweb.iam.ewc are 
+        Would transfer user.roles.messaging.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.messaging.apps.energyweb.iam.ewc to new owner
+    Would transfer messaging.apps.energyweb.iam.ewc to new owner
+    Would transfer staking.apps.energyweb.iam.ewc to root owner
+    Subnodes of staking.apps.energyweb.iam.ewc are roles.staking.apps.energyweb.iam.ewc
+      Would transfer roles.staking.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.staking.apps.energyweb.iam.ewc are owner.roles.staking.apps.energyweb.iam.ewc
+        Would transfer owner.roles.staking.apps.energyweb.iam.ewc to root owner
+        Subnodes of owner.roles.staking.apps.energyweb.iam.ewc are 
+        Would transfer owner.roles.staking.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.staking.apps.energyweb.iam.ewc to new owner
+    Would transfer staking.apps.energyweb.iam.ewc to new owner
+    Would transfer verification.apps.energyweb.iam.ewc to root owner
+    Subnodes of verification.apps.energyweb.iam.ewc are roles.verification.apps.energyweb.iam.ewc
+      Would transfer roles.verification.apps.energyweb.iam.ewc to root owner
+      Subnodes of roles.verification.apps.energyweb.iam.ewc are agent.roles.verification.apps.energyweb.iam.ewc,email.roles.verification.apps.energyweb.iam.ewc
+        Would transfer agent.roles.verification.apps.energyweb.iam.ewc to root owner
+        Subnodes of agent.roles.verification.apps.energyweb.iam.ewc are 
+        Would transfer agent.roles.verification.apps.energyweb.iam.ewc to new owner
+        Would transfer email.roles.verification.apps.energyweb.iam.ewc to root owner
+        Subnodes of email.roles.verification.apps.energyweb.iam.ewc are 
+        Would transfer email.roles.verification.apps.energyweb.iam.ewc to new owner
+      Would transfer roles.verification.apps.energyweb.iam.ewc to new owner
+    Would transfer verification.apps.energyweb.iam.ewc to new owner
+  Would transfer apps.energyweb.iam.ewc to new owner
+  Would transfer myrea.energyweb.iam.ewc to root owner
+  Subnodes of myrea.energyweb.iam.ewc are apps.myrea.energyweb.iam.ewc,bhub.myrea.energyweb.iam.ewc,roles.myrea.energyweb.iam.ewc,testorg.myrea.energyweb.iam.ewc
+    Would transfer apps.myrea.energyweb.iam.ewc to root owner
+    Subnodes of apps.myrea.energyweb.iam.ewc are Solar.apps.myrea.energyweb.iam.ewc
+      Would transfer Solar.apps.myrea.energyweb.iam.ewc to root owner
+      Subnodes of Solar.apps.myrea.energyweb.iam.ewc are 
+      Would transfer Solar.apps.myrea.energyweb.iam.ewc to new owner
+    Would transfer apps.myrea.energyweb.iam.ewc to new owner
+    Would transfer bhub.myrea.energyweb.iam.ewc to root owner
+    Subnodes of bhub.myrea.energyweb.iam.ewc are apps.bhub.myrea.energyweb.iam.ewc
+      Would transfer apps.bhub.myrea.energyweb.iam.ewc to root owner
+      Subnodes of apps.bhub.myrea.energyweb.iam.ewc are Mest.apps.bhub.myrea.energyweb.iam.ewc
+        Would transfer Mest.apps.bhub.myrea.energyweb.iam.ewc to root owner
+        Subnodes of Mest.apps.bhub.myrea.energyweb.iam.ewc are roles.Mest.apps.bhub.myrea.energyweb.iam.ewc
+          Would transfer roles.Mest.apps.bhub.myrea.energyweb.iam.ewc to root owner
+          Subnodes of roles.Mest.apps.bhub.myrea.energyweb.iam.ewc are sh1.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc,sh2.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc
+            Would transfer sh1.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc to root owner
+            Subnodes of sh1.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc are 
+            Would transfer sh1.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc to new owner
+            Would transfer sh2.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc to root owner
+            Subnodes of sh2.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc are 
+            Would transfer sh2.roles.Mest.apps.bhub.myrea.energyweb.iam.ewc to new owner
+          Would transfer roles.Mest.apps.bhub.myrea.energyweb.iam.ewc to new owner
+        Would transfer Mest.apps.bhub.myrea.energyweb.iam.ewc to new owner
+      Would transfer apps.bhub.myrea.energyweb.iam.ewc to new owner
+    Would transfer bhub.myrea.energyweb.iam.ewc to new owner
+    Would transfer roles.myrea.energyweb.iam.ewc to root owner
+    Subnodes of roles.myrea.energyweb.iam.ewc are verifier.roles.myrea.energyweb.iam.ewc
+      Would transfer verifier.roles.myrea.energyweb.iam.ewc to root owner
+      Subnodes of verifier.roles.myrea.energyweb.iam.ewc are 
+      Would transfer verifier.roles.myrea.energyweb.iam.ewc to new owner
+    Would transfer roles.myrea.energyweb.iam.ewc to new owner
+    Would transfer testorg.myrea.energyweb.iam.ewc to root owner
+    Subnodes of testorg.myrea.energyweb.iam.ewc are 
+    Would transfer testorg.myrea.energyweb.iam.ewc to new owner
+  Would transfer myrea.energyweb.iam.ewc to new owner
+Would transfer energyweb.iam.ewc to new owner

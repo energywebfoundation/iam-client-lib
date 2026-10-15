@@ -1,9 +1,9 @@
 # Application
 
-[Application Interface](../api/interfaces/cacheServerClient_cacheServerClient_types.IApp.md
+[Application Interface](../api/interfaces/modules_domains.IApp.md)
 
 **Application** represents service provided by parent organization. The only domain type contained by application is Role.
-Application domain is described by [IApplication](../docs/interfaces/IApplication.md).
+Application domain is described by [IApplication](../api/interfaces/modules_domains.IApp.md).
 Example of application
 
 ```
@@ -26,6 +26,6 @@ Example of application
 
 ## Public APIs
 
--   [getAppsByOrgNamespace](../api/classes/iam.IAM.md#getappsbyorgnamespace)
--   [createApplication](../api/classes/iam.IAM.md#createapplication)
--   [deleteApplication](../api/classes/iam.IAM.md#deleteapplication)
+-   [getAppsByOrgNamespace](../api/classes/modules_domains.DomainsService.md#getAppsOfOrg)
+-   [createApplication](../api/classes/modules_domains.DomainsService.md#createApplication)
+-   [deleteApplication](../api/classes/modules_domains.DomainsService.md#deleteApplication)
