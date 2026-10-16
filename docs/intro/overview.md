@@ -1,6 +1,6 @@
 # Overview
 
-The iam-client-library provides high-level functions related to the identity and access management domain of the Energy Web Stack. It allows you to anchor assets on the Energy Web Chain and managing their participation in and access to utility packages and applications built on top of the blockchain. This includes:
+The iam-client-library provides high-level functions related to the identity and access management domain of the Energy Web Stack. It allows you to anchor assets on the Energy Web Chain and manage their participation in and access to utility packages and applications built on top of the blockchain. This includes:
 
 - Creating and managing digital identities, which are the primary form of identification in EW-DOS
 - Facilitating claim(credential) requests and issuance for digital identities
