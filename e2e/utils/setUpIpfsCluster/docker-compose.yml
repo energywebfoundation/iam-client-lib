@@ -6,10 +6,17 @@ services:
   cluster_proxy:
     container_name: cluster_proxy
     image: nginx:alpine
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
     ports:
       - 8080:8080
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
     depends_on:
       - cluster0
       - ipfs0
@@ -21,6 +28,9 @@ services:
   ipfs0:
     container_name: ipfs0
     image: ipfs/go-ipfs:latest
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
     expose:
       - "8080"
     # ports:
@@ -29,10 +39,15 @@ services:
     #     - "8080:8080" # ipfs gateway - expose if needed/wanted
     volumes:
       - ./compose/ipfs0:/data/ipfs
+    tmpfs:
+      - /tmp
 
   cluster0:
     container_name: cluster0
     image: ipfs/ipfs-cluster:latest
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
     depends_on:
       - ipfs0
     environment:
@@ -54,6 +69,8 @@ services:
       # - "9096:9096" # Cluster swarm endpoint
     volumes:
       - ./compose/cluster0:/data/ipfs-cluster
+    tmpfs:
+      - /tmp
 
   ##################################################################################
   ## Cluster PEER 1 ################################################################
@@ -63,12 +80,20 @@ services:
   ipfs1:
     container_name: ipfs1
     image: ipfs/go-ipfs:latest
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
     volumes:
       - ./compose/ipfs1:/data/ipfs
+    tmpfs:
+      - /tmp
 
   cluster1:
     container_name: cluster1
     image: ipfs/ipfs-cluster:latest
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
     depends_on:
       - ipfs1
     environment:
@@ -79,6 +104,8 @@ services:
       CLUSTER_MONITORPINGINTERVAL: 2s # Speed up peer discovery
     volumes:
       - ./compose/cluster1:/data/ipfs-cluster
+    tmpfs:
+      - /tmp
 
   ##################################################################################
   ## Cluster PEER 2 ################################################################
@@ -88,12 +115,20 @@ services:
   ipfs2:
     container_name: ipfs2
     image: ipfs/go-ipfs:latest
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
     volumes:
       - ./compose/ipfs2:/data/ipfs
+    tmpfs:
+      - /tmp
 
   cluster2:
     container_name: cluster2
     image: ipfs/ipfs-cluster:latest
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
     depends_on:
       - ipfs2
     environment:
@@ -104,5 +139,7 @@ services:
       CLUSTER_MONITORPINGINTERVAL: 2s # Speed up peer discovery
     volumes:
       - ./compose/cluster2:/data/ipfs-cluster
+    tmpfs:
+      - /tmp
     # For adding more peers, copy PEER 1 and rename things to ipfs2, cluster2.
     # Keep bootstrapping to cluster0.
