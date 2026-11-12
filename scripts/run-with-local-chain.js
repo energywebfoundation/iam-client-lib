@@ -36,10 +36,10 @@ function waitForPort(port) {
  * @description Starts a local Hardhat chain (configured in hardhat.config.js), runs the given command against it
  * and stops the chain when the command exits. Without a command the chain keeps running until the process is interrupted.
  *
- * Usage: node scripts/run-with-local-chain.js ["<command>"]
+ * Usage: node scripts/run-with-local-chain.js [<command> <args...>]
  */
 async function main() {
-  const command = process.argv.slice(2).join(' ');
+  const args = process.argv.slice(2);
   const chain = spawn(
     process.execPath,
     [
@@ -51,7 +51,7 @@ async function main() {
       String(PORT),
     ],
     {
-      stdio: command ? 'ignore' : 'inherit',
+      stdio: args.length ? 'ignore' : 'inherit',
       env: { ...process.env, HARDHAT_DISABLE_TELEMETRY_PROMPT: 'true' },
     }
   );
@@ -70,9 +70,13 @@ async function main() {
   await waitForPort(PORT);
   console.log(`Local chain listening on http://127.0.0.1:${PORT}`);
 
-  if (!command) return;
+  if (!args.length) return;
 
-  const child = spawn(command, { shell: true, stdio: 'inherit' });
+  // Spawn without a shell so argv is not re-interpreted by sh/bash.
+  const child = spawn(args[0], args.slice(1), {
+    shell: false,
+    stdio: 'inherit',
+  });
   child.on('exit', (code, signal) => stop(signal ? 1 : code ?? 1));
 }
 
