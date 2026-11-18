@@ -1,0 +1,5 @@
+# Generated / vendored build artifact (not source)
+src/utils/domains-build.js
+
+# E2E fixtures intentionally contain sample JWTs / claim tokens
+e2e/fixtures/

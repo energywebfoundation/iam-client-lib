@@ -1,0 +1,9 @@
+# Accepted dependency findings — bump when transitive upgrades are available.
+# decode-uri-component DoS via malformed percent-encoded input
+CVE-2026-118664
+
+# follow-redirects info disclosure via cross-origin redirects
+CVE-2026-116689
+
+# joi DoS via inefficient regex in email validation
+CVE-2026-118772
