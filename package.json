@@ -200,7 +200,7 @@
       "ws": "^8.22.0"
     },
     "hardhat": {
-      "undici": "^6.29.0",
+      "undici": "^6.29.1",
       "adm-zip": "^0.6.1",
       "uuid": "$uuid"
     },
@@ -213,7 +213,10 @@
       "yargs-parser": "^5.0.1"
     },
     "@ew-did-registry/keys": {
-      "bn.js": "^5.2.5"
+      "bn.js": "^5.2.5",
+      "key-encoder": {
+        "bn.js": "^4.12.5"
+      }
     },
     "@walletconnect/utils": {
       "bn.js": "^4.12.5"
